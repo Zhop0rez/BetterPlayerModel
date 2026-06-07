@@ -26,7 +26,7 @@ Better Player Model is designed to bring Bedrock Edition's animation capabilitie
 To compile the project locally, ensure you have JDK 21 installed:
 
 ```bash
-git clone https://github.com/moon1walcker/BetterPlayerModel.git
+git clone https://github.com/Zhop0rez/BetterPlayerModel.git
 cd BetterPlayerModel
 ./gradlew build
 ```
