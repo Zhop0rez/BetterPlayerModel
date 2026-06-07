@@ -41,6 +41,10 @@ This project is a specialized adaptation and evolution of the Yes_Steve_Model ec
 *   **Micaftic:** For the Fox-model-loader architecture.
 *   **Elfmcys:** For the original Yes_Steve_Model concepts.
 
+### Where to find models?
+Looking for high-quality player models? You can browse and download hundreds of community-made models from the Yes-steve-model community repository:
+**[Download Models Here](https://github.com/Elaina69/Yes-Steve-Model-Repo/tree/main)**
+
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for the full text.
