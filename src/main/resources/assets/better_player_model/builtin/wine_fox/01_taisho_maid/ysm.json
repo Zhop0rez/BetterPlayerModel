@@ -1,0 +1,184 @@
+﻿{
+  "spec": 2,
+  "metadata": {
+    "name": "Wine Foxпј€й…’з‹ђпј‰",
+    "tips": "дёЂеЏЄз€±е–ќи‘Ўиђ„й…’зљ„з‹ђеЁгЂ‚\nA fox girl who loves to drink wine.\nд№±и€ћеЏ‚иЂѓи‡Є VRChat зљ„ж°ёй›ЏеЎ”иЏІеЉЁз”»гЂ‚\nйџід№ђдёєж”№зј–зљ„ Zufolo ImpazzitoгЂ‚",
+    "license": {
+      "type": "CC BY-NC-SA 4.0"
+    },
+    "authors": [
+      {
+        "name": "е®ЊзѕЋе†»з»“",
+        "role": "жЁЎећ‹еЋџдЅњ",
+        "avatar": "avatar/wmdj.jpg",
+        "contact": {
+          "Afdian": "https://afdian.com/a/6TGESILA",
+          "Bilibili": "https://space.bilibili.com/17798027"
+        },
+        "comment": "OwO"
+      },
+      {
+        "name": "жџе±‘жµ·ићє",
+        "role": "еЉЁз”»еЋџдЅњ",
+        "avatar": "avatar/hl.png",
+        "contact": {
+          "Afdian": "https://afdian.com/a/lucia2048",
+          "Bilibili": "https://space.bilibili.com/14975572"
+        },
+        "comment": "жј‚жіЉдєЋзѕ¤жџд№‹дё­"
+      },
+      {
+        "name": "е“Ґж–Їж‹‰пј€ж зґ е›ўйџпј‰",
+        "role": "жЁЎећ‹дї®ж”№",
+        "avatar": "avatar/gsl.png",
+        "contact": {
+          "Afdian": "https://afdian.com/a/6TGESILA",
+          "Bilibili": "https://space.bilibili.com/17798027"
+        },
+        "comment": "дёЂдёЄMCжЁЎећ‹/YSMдЅњиЂ…пјЊжѓіжі•еѕ€е¤љпјЊж—¶й—ґеѕ€е°‘"
+      },
+      {
+        "name": "з™Ѕеё†е°Џе–µ",
+        "role": "ж–°з‰€жќђиґЁ",
+        "avatar": "avatar/bfxm.jpg",
+        "comment": "дёЂеЏЄз€±зЋ©mcзљ„е°ЏзЊ«е’ЄзЅўдє†qwq",
+        "contact": {
+          "Bilibili": "https://space.bilibili.com/492836494"
+        }
+      },
+      {
+        "name": "и“ќзЋ«з‘°",
+        "role": "UI жќђиґЁ/иґґе›ѕ",
+        "avatar": "avatar/lmg.png",
+        "contact": {
+          "Bilibili": "https://space.bilibili.com/11814817"
+        },
+        "comment": "8жњ€24еЏ·пјЊдј еҐ‡ж°ёдёЌиђЅе№•"
+      },
+      {
+        "name": "еўЁжџ“йЂќзѕЅ",
+        "role": "йќўе…·жЁЎећ‹",
+        "avatar": "avatar/mrsy.png",
+        "comment": "дє‹е€°е¦‚д»ЉпјЊе…€ж‘ёй±јеђ§",
+        "contact": {
+          "Bilibili": "https://space.bilibili.com/5718046"
+        }
+      },
+      {
+        "name": "MaksжЂњж‚Ї",
+        "role": "иЅЅе…·жЁЎећ‹",
+        "avatar": "avatar/maks.jpg",
+        "comment": "ysmдєєеЃ¶е€¶дЅњдё­пЅћ",
+        "contact": {
+          "Bilibili": "https://space.bilibili.com/352177387"
+        }
+      },
+      {
+        "name": "жµ…й™ЊиЏЊ",
+        "role": "жЁЎећ‹дї®ж”№",
+        "avatar": "avatar/nico.png",
+        "comment": "жњЂзѕЋеҐЅзљ„е‰ЌйЂ”пјЊеЏЇдёЌи¦ЃеЇ№ж€‘е†·й…·",
+        "contact": {
+          "Bilibili": "https://space.bilibili.com/14975572"
+        }
+      },
+      {
+        "name": "зҐёеѕЎзҐћ",
+        "role": "еЉЁз”»дї®ж”№",
+        "avatar": "avatar/hys.png",
+        "comment": "дє”еЌЃд»ЈзІѕзҐћз—…дєє",
+        "contact": {
+          "Bilibili": "https://space.bilibili.com/164557734"
+        }
+      },
+      {
+        "name": "зѕЉжЇ›",
+        "role": "йџіж•€/еЉЁз”»дї®ж”№",
+        "avatar": "avatar/wool.png",
+        "comment": "е–µе–µе–µе–µ",
+        "contact": {
+          "Bilibili": "https://space.bilibili.com/85335217"
+        }
+      }
+    ],
+    "link": {
+      "home": "https://modrinth.com/mod/yes-steve-model",
+      "donate": "https://afdian.com/a/ysmmod"
+    }
+  },
+  "properties": {
+    "extra_animation": {
+      "extra0": "еЏиє«",
+      "extra1": "ж‰“ж‹›е‘ј",
+      "extra2": "йј“жЋЊ",
+      "extra3": "Get Down",
+      "extra4": "д№±и€ћ",
+      "extra5": "еЌ–иђЊ",
+      "extra6": "еѕЎз¬”ж‘‡",
+      "extra7": "и€ћи№€"
+    },
+    "preview_animation": "gui",
+    "disable_preview_rotation": true,
+    "free": true
+  },
+  "files": {
+    "player": {
+      "model": {
+        "main": "models/main.json",
+        "arm": "models/arm.json"
+      },
+      "animation": {
+        "main": "animations/main.animation.json",
+        "extra": "animations/extra.animation.json",
+        "tac": "animations/tac.animation.json",
+        "carryon": "animations/carryon.animation.json",
+        "tlm": "animations/tlm.animation.json",
+        "fp_arm": "animations/fp.arm.animation.json"
+      },
+      "animation_controllers": [
+        "controller/wine_fox.animation_controllers.json"
+      ],
+      "texture": [
+        "textures/skin.png",
+        "textures/skin_white.png"
+      ]
+    },
+    "projectiles": {
+      "minecraft:arrow": {
+        "model": "models/arrow.json",
+        "animation": "animations/arrow.animation.json",
+        "texture": "textures/arrow.png"
+      },
+      "minecraft:trident": {
+        "model": "models/trident.json",
+        "texture": "textures/trident.png"
+      }
+    },
+    "vehicles": {
+      "minecraft:horse": {
+        "model": "models/foxcar.json",
+        "texture": {
+          "uv": "textures/foxcar.png",
+          "specular": "textures/foxcar_s.png"
+        },
+        "animation": "animations/vehicle/horse.animation.json"
+      },
+      "minecraft:mule": {
+        "model": "models/foxcar.json",
+        "texture": {
+          "uv": "textures/foxcar.png",
+          "specular": "textures/foxcar_s.png"
+        },
+        "animation": "animations/vehicle/mule.animation.json"
+      },
+      "minecraft:minecart": {
+        "model": "models/minecart.json",
+        "texture": "textures/minecart.png"
+      },
+      "minecraft:boat": {
+        "model": "models/boat.json",
+        "texture": "textures/boat.png"
+      }
+    }
+  }
+}

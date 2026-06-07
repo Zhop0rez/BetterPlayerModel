@@ -1,0 +1,77 @@
+﻿{
+	"spec": 2,
+	"metadata": {
+		"name": "е¤§й…’з‹ђ",
+		"tips": "В§7е–њж¬ўе–ќи‘Ўиђ„й…’зљ„з‹ђеЁгЂ‚еЉ е…Ґдє†йѓЁе€†е°Џе·§жЂќ",
+		"license": {
+			"type": "CC BY-NC-SA 4.0"
+		},
+		"authors": [
+			{
+				"name": "еЏ—дёЌдє†иЂЃеё€",
+				"role": "дї®ж”№",
+				"avatar": "avatar/sbl.webp",
+				"contact": {
+					"Bilibili": "https://space.bilibili.com/7033128"
+				},
+				"comment": "OwO"
+			}
+		]
+	},
+	"properties": {
+		"height_scale": 0.8,
+		"width_scale": 0.8,
+		"extra_animation": {
+			"extra0": "#extra_config",
+			"extra1": "ж‰“ж‹›е‘ј",
+			"extra2": "йј“жЋЊ",
+			"extra3": "Get Down",
+			"extra4": "д№±и€ћ",
+			"extra5": "еЌ–иђЊ",
+			"extra6": "еѕЎз¬”ж‘‡",
+			"extra7": "и€ћи№€"
+		},
+		"extra_animation_buttons": [
+			{
+				"id": "extra_config",
+				"name": "еЏиє« & й›Ёдјћ",
+				"config_forms": [
+					{
+						"type": "checkbox",
+						"title": "й›Ёдјћ",
+						"description": "жЇеђ¦жѕз¤єж€–йљђи—Џй›Ёдјћ",
+						"value": "v.roaming.umbrella"
+					}
+				]
+			}
+		],
+		"preview_animation": "gui",
+		"gui_no_lighting": false,
+		"default_texture": "default",
+		"render_layers_first": false,
+		"free": true,
+		"all_cutout": false,
+		"disable_preview_rotation": false
+	},
+	"files": {
+		"player": {
+			"model": {
+				"main": "models/main.json",
+				"arm": "models/arm.json"
+			},
+			"animation": {
+				"main": "animations/main.animation.json",
+				"arm": "animations/arm.animation.json",
+				"extra": "animations/extra.animation.json",
+				"slashblade": "animations/slashblade.animation.json",
+				"tac": "animations/tac.animation.json",
+				"tlm": "animations/tlm.animation.json"
+			},
+			"texture": [
+				{
+					"uv": "textures/default.png"
+				}
+			]
+		}
+	}
+}

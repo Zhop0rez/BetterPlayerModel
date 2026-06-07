@@ -1,0 +1,86 @@
+﻿{
+	"spec": 2,
+	"metadata": {
+		"name": "зєёжќї",
+		"tips": "ж— ж•Њзєёжќїе¤§зЋ‹",
+		"license": {
+			"type": "All Rights Reserved"
+		},
+		"authors": [
+			{
+				"name": "е°±еЏ«зєёжќї",
+				"role": "жЁЎећ‹дЅњиЂ…",
+				"avatar": "avatar/zb.avif",
+				"contact": {
+					"donate": "https://afdian.com/a/lucia2048",
+					"Bilibili": "https://space.bilibili.com/29208164"
+				},
+				"comment": "жќ‚й±ј~жќ‚й±ј~"
+			},
+			{
+				"name": "з‹±й™…жџиЉ’",
+				"role": "жЁЎећ‹дї®зђ†",
+				"avatar": "avatar/з‹±й™…жџиЉ’.avif",
+				"contact": {
+					"Afdian": "https://afdian.com/a/3256286845xingmang",
+					"Bilibili": "https://space.bilibili.com/349150095"
+				},
+				"comment": "еёёжЂЃж‘ёй±јпјЊдёЌе®љж›ґж–°"
+			}
+		],
+		"link": {
+			"home": "https://space.bilibili.com/29208164",
+			"donate": "https://afdian.com/a/15354qq"
+		}
+	},
+	"properties": {
+		"height_scale": 0.7,
+		"width_scale": 0.7,
+		"extra_animation": {
+			"е€‡жЌўе…ЅиЂі": "е€‡жЌўе…ЅиЂі",
+			"ж”ѕйЈће­”жЋзЃЇ": "ж”ѕйЈће­”жЋзЃЇ",
+			"е€‡жЌўе°ѕе·ґ": "е€‡жЌўе°ѕе·ґ",
+			"з¬‘": "з¬‘",
+			"ж‹›ж‰‹": "ж‹›ж‰‹",
+			"йј“жЋЊ": "йј“жЋЊ",
+			"з‚№е¤ґ": "з‚№е¤ґ",
+			"ж‘‡е¤ґ": "ж‘‡е¤ґ",
+			"жЉ•й™Ќ": "жЉ•й™Ќ",
+			"жѓЉи®¶": "жѓЉи®¶",
+			"иєє": "иєє",
+			"иєє2": "иєє2",
+			"еќђ": "еќђ",
+			"дёЌж»Ў": "дёЌж»Ў",
+			"еЉЁжЂЃpose": "еЉЁжЂЃpose"
+		},
+		"preview_animation": "gui",
+		"default_texture": "default",
+		"free": true,
+		"render_layers_first": false,
+		"disable_preview_rotation": true,
+		"all_cutout": false
+	},
+	"files": {
+		"player": {
+			"model": {
+				"main": "models/main.json",
+				"arm": "models/arm.json"
+			},
+			"animation": {
+				"main": "animations/main.animation.json",
+				"extra": "animations/extra.animation.json"
+			},
+			"texture": [
+				{
+					"uv": "textures/default.png"
+				}
+			]
+		},
+		"arrow": {
+			"model": "models/arrow.json",
+			"texture": {
+				"uv": "textures/arrow.png"
+			}
+		}
+	}
+}
