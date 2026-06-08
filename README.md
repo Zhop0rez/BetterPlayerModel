@@ -18,7 +18,7 @@ Better Player Model is designed to bring Bedrock Edition's animation capabilitie
 
 1.  Download the latest release from the [Releases](../../releases) section.
 2.  Place the `.jar` file in your Minecraft `mods` folder.
-3.  Place your custom models in the `config/yes_steve_model/custom` directory.
+3.  Place your custom models in the `config/better_player_model/custom` directory.
 
 ## Development
 
