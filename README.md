@@ -14,6 +14,11 @@ Better Player Model is designed to bring Bedrock Edition's animation capabilitie
 *   **Optimized Performance:** Specifically tuned for Fabric 1.21.11 to ensure minimal impact on frame rates during bone transformations and rendering.
 *   **Multiplayer Synchronization:** Optional server-side component to synchronize custom models and animations between clients.
 
+## Demonstration
+![Demonstration](https://cdn.modrinth.com/data/cached_images/e70ae2d78a5560f027a17cd4b957a7d99f3ecb44_0.webp)
+![Demonstration](https://cdn.modrinth.com/data/cached_images/5dcc07fa9696eb23b5ee2bbd51b0e529a24192f1_0.webp)
+![Demonstration](https://i.imgur.com/iPOUCZw.gif)
+
 ## Installation
 
 1.  Download the latest release from the [Releases](../../releases) section.
