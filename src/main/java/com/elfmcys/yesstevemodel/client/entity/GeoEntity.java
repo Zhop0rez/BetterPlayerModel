@@ -227,9 +227,13 @@ public abstract class GeoEntity<T extends Entity> extends AnimatableEntity<T> {
     public AnimationEvent<?> processAnimationImpl(float partialTick, boolean isFirstPerson) {
         RenderSystem.assertOnRenderThread();
         if (this.modelFuture != null) {
-            AnimationEvent<?> event = awaitAsyncResult();
-            if (event != null) {
-                return event;
+            if (com.elfmcys.yesstevemodel.client.renderer.ModelPreviewRenderer.isPreview() || com.elfmcys.yesstevemodel.client.renderer.ModelPreviewRenderer.isExtraPlayer()) {
+                awaitAsyncResult();
+            } else {
+                AnimationEvent<?> event = awaitAsyncResult();
+                if (event != null) {
+                    return event;
+                }
             }
         }
         return super.processAnimationImpl(partialTick, isFirstPerson);

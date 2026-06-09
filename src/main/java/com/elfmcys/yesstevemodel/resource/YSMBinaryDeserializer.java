@@ -266,7 +266,7 @@ public class YSMBinaryDeserializer implements AutoCloseable{
 
         }
 
-        if (format > 9) {
+        if (format > 15) {
             parseSoundFiles();
             int soundTableCount = reader.readVarInt();
             for (int i = 0; i < soundTableCount; ++i) {
@@ -587,7 +587,7 @@ public class YSMBinaryDeserializer implements AutoCloseable{
             }
         }
 
-        if (format > 9) {
+        if (format > 15) {
             int extraAnimationButtonsCount = reader.readVarInt();
             for (int i = 0; i < extraAnimationButtonsCount; i++) {
                 RawYsmModel.ExtraAnimationButton btn = new RawYsmModel.ExtraAnimationButton();
@@ -749,7 +749,7 @@ public class YSMBinaryDeserializer implements AutoCloseable{
             }
 
             // Effects
-            if (format > 9) {
+            if (format > 15) {
                 int soundEffectsCount = reader.readVarInt();
                 for (int i = 0; i < soundEffectsCount; i++) {
                     RawYsmModel.RawSoundEffect sfx = new RawYsmModel.RawSoundEffect();

@@ -185,6 +185,9 @@ public class QueryBinding extends ContextBinding {
     }
 
     private static float getYawSpeed(IContext<Entity> context) {
+        if (com.elfmcys.yesstevemodel.client.renderer.ModelPreviewRenderer.isPreview() || com.elfmcys.yesstevemodel.client.renderer.ModelPreviewRenderer.isExtraPlayer()) {
+            return 0.0f;
+        }
         if (context.entity() instanceof LocalPlayer) {
             return PlayerEntityFrameState.getHeadYawDelta();
         }

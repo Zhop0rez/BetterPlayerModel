@@ -75,6 +75,10 @@ public abstract class AnimatableEntity<TEntity extends Entity> {
 
     private int lastAnimationEvaluationControllerCount;
 
+    private boolean lastAnimationEvaluationPreview;
+
+    private boolean lastAnimationEvaluationExtraPlayer;
+
     private final AnimationData manager = new AnimationData();
 
     public float lastTick = -1.0f;
@@ -137,6 +141,8 @@ public abstract class AnimatableEntity<TEntity extends Entity> {
         this.lastAnimationEvaluationModel = null;
         this.lastAnimationEvaluationBoneCount = 0;
         this.lastAnimationEvaluationControllerCount = 0;
+        this.lastAnimationEvaluationPreview = false;
+        this.lastAnimationEvaluationExtraPlayer = false;
         this.animationStates.clear();
     }
 
@@ -371,11 +377,13 @@ public abstract class AnimatableEntity<TEntity extends Entity> {
                 int boneCount = getEvaluationContext().getBoneCount();
                 int controllerCount = this.manager.getAnimationControllers().size();
                 boolean canReuseEvaluation = this.lastAnimationEvaluationFrameId == renderFrameId
-                        && Float.compare(this.lastAnimationEvaluationSeekTime, this.seekTime) == 0
-                        && this.lastAnimationEvaluationActive == z
-                        && this.lastAnimationEvaluationModel == this.currentModel
-                        && this.lastAnimationEvaluationBoneCount == boneCount
-                        && this.lastAnimationEvaluationControllerCount == controllerCount;
+                     && Float.compare(this.lastAnimationEvaluationSeekTime, this.seekTime) == 0
+                     && this.lastAnimationEvaluationActive == z
+                     && this.lastAnimationEvaluationModel == this.currentModel
+                     && this.lastAnimationEvaluationBoneCount == boneCount
+                     && this.lastAnimationEvaluationControllerCount == controllerCount
+                     && this.lastAnimationEvaluationPreview == ModelPreviewRenderer.isPreview()
+                     && this.lastAnimationEvaluationExtraPlayer == ModelPreviewRenderer.isExtraPlayer();
                 if (canReuseEvaluation) {
                     AnimationFrameProfiler.logReusedEvaluation(this, event, this.seekTime);
                 } else {
@@ -395,6 +403,8 @@ public abstract class AnimatableEntity<TEntity extends Entity> {
                         this.lastAnimationEvaluationModel = this.currentModel;
                         this.lastAnimationEvaluationBoneCount = boneCount;
                         this.lastAnimationEvaluationControllerCount = controllerCount;
+                        this.lastAnimationEvaluationPreview = ModelPreviewRenderer.isPreview();
+                        this.lastAnimationEvaluationExtraPlayer = ModelPreviewRenderer.isExtraPlayer();
                     } finally {
                         AnimationFrameProfiler.endEvaluation(profilerScope);
                     }
