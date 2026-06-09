@@ -1,0 +1,85 @@
+﻿{
+  "spec": 2,
+  "metadata": {
+    "name": "жџе±‘жµ·ићє",
+    "tips": "жІѕжџ“дє†ж–°жҐд№‹еЉ›зљ„зєўи‰ІеЅўжЂЃ",
+    "license": {
+      "type": "All Rights Reserved"
+    },
+    "authors": [
+      {
+        "name": "жџе±‘жµ·ићє",
+        "role": "еЉЁз”»",
+        "avatar": "avatar/жџе±‘жµ·ићє.avif",
+        "contact": {
+          "qq": "741330261"
+        },
+        "comment": "жј‚жіЉдєЋзѕ¤жџд№‹дё­"
+      },
+      {
+        "name": "й›’д»Ѓ",
+        "role": "жЁЎећ‹",
+        "avatar": "avatar/й›’д»Ѓ.avif",
+        "comment": "doro doro"
+      },
+      {
+        "name": "зєёжќї",
+        "role": "жЁЎећ‹",
+        "avatar": "avatar/zb.avif",
+        "contact": {
+          "qq": "1535492940"
+        },
+        "comment": "е°Џз‰ўе¤§и‚е¦€е¦€"
+      },
+      {
+        "name": "з™Ѕеё†е°Џе–µ",
+        "role": "зє№зђ†",
+        "avatar": "avatar/з™Ѕеё†е°Џе–µ.avif",
+        "comment": "meow"
+      }
+    ],
+    "link": {
+      "home": "https://space.bilibili.com/14975572",
+      "donate": "https://afdian.com/a/lucia2048"
+    }
+  },
+  "properties": {
+    "height_scale": 0.6,
+    "width_scale": 0.6,
+    "extra_animation": {
+      "ж‘‡": "ж‘‡",
+      "иЅ¬ењ€ењ€": "иЅ¬ењ€ењ€",
+      "её­ењ°иЂЊеќђ": "её­ењ°иЂЊеќђ",
+      "ж–°е№ґеї«д№ђ": "ж–°е№ґеї«д№ђ"
+    },
+    "preview_animation": "gui",
+    "default_texture": "texture",
+    "free": true,
+    "render_layers_first": false,
+    "disable_preview_rotation": true,
+    "all_cutout": false
+  },
+  "files": {
+    "player": {
+      "model": {
+        "main": "models/main.json",
+        "arm": "models/arm.json"
+      },
+      "animation": {
+        "main": "animations/main.animation.json",
+        "extra": "animations/extra.animation.json"
+      },
+      "texture": [
+        {
+          "uv": "textures/texture.png"
+        }
+      ]
+    },
+    "arrow": {
+      "model": "models/arrow.json",
+      "texture": {
+        "uv": "textures/arrow.png"
+      }
+    }
+  }
+}

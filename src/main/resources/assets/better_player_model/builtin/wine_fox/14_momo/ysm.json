@@ -1,0 +1,126 @@
+﻿{
+  "spec": 2,
+  "metadata": {
+    "name": "MoMo Wine Fox",
+    "tips": "ж¬ўиїЋжќҐе€°з‹ђз‹ђзљ„дё–з•Њ~",
+    "license": {
+      "type": "CC BY-NC-SA 4.0"
+    },
+    "authors": [
+      {
+        "name": "е†ЌжќҐе‡ ж–¤е°ЏиЋ«иЋ«",
+        "role": "й­”ж”№еЉЁз”»/жќђиґЁ",
+        "comment": "е¦‚жћњдЅ жњ‰ж‰Ђзѓ­з€±зљ„зѕЋеҐЅзљ„ж„їжњ›пјЊе°±е¤§иѓ†еЋ»иїЅж±‚е®ѓ",
+        "avatar": "avatar/zljjxmm.png",
+        "contact": {
+          "bilibili": "https://space.bilibili.com/3493267685509797"
+        }
+      },
+      {
+        "name": "Tex_offcial",
+        "role": "жќђиґЁ",
+        "contact": {
+          "blibli": "https://b23.tv/0angYgR"
+        },
+        "avatar": "avatar/tex.png"
+      }
+    ]
+  },
+  "properties": {
+    "extra_animation": {
+      "huhupeizhi": "#huhu_config",
+      "ж‰ѕдёЌе€°з‹ђж‰ѕдёЌе€°з‹ђ": "и—Џиµ·жќҐ~",
+      "#H_d_c": "з‹ђи№€~",
+      "ж‹›ж‰‹": "ж‹›ж‰‹"
+    },
+    "preview_animation": "gui",
+    "free": true,
+    "height_scale": 0.7,
+    "width_scale": 0.7,
+    "render_layers_first": false,
+    "disable_preview_rotation": false,
+    "all_cutout": false,
+    "extra_animation_buttons": [
+      {
+        "id": "huhu_config",
+        "name": "з‹ђз‹ђж•Ізє§й…Ќд»¶",
+        "config_forms": [
+          {
+            "type": "range",
+            "title": "з‹ђз‹ђе¤§е°ЏеЏпјЃ",
+            "description": "е°±жЇз‹ђз‹ђе¤§е°ЏеЏпјЃ",
+            "value": "v.player_size",
+            "step": 0.2,
+            "min": 0.2,
+            "max": 5
+          },
+          {
+            "type": "range",
+            "title": "з‹ђз‹ђе¤§е®ќе‰‘пјЃ",
+            "description": "е°±и¦Ѓз‹ђз‹ђе¤§е®ќе‰‘пјЃ",
+            "value": "v.hold",
+            "step": 1,
+            "min": 0,
+            "max": 10
+          },
+          {
+            "type": "checkbox",
+            "title": "иѓЊеЊ…жёІжџ“",
+            "description": "е°±жЇиѓЊеЊ…жёІжџ“пјЃ",
+            "value": "v.roaming.back"
+          },
+          {
+            "type": "checkbox",
+            "title": "е°Џз‹ђз‹ёжёІжџ“ејЂе…і",
+            "description": "йљѕйЃ“дёЌеЏЇз€±е›",
+            "value": "v.roaming.smallfox_size"
+          }
+        ]
+      }
+    ],
+    "extra_animation_classify": [
+      {
+        "id": "H_d_c",
+        "extra_animation": {
+          "з‹ђз‹ђж‘‡пј€е®Њж•ґпј‰": "з‹ђз‹ђж‘‡",
+          "dooble": "dooble",
+          "еЌ–иђЊ": "еЌ–иђЊ",
+          "ж‘‡ж‘‡": "ж‘‡ж‘‡",
+          "дё‰д»Ѕйє¦йњё": "дё‰д»Ѕйє¦йњё~",
+          "extra:ciallo": "CialloпЅћ(в€ гѓ»П‰< )вЊ’в…",
+          "дјёж‡’и…°": "дјёж‡’и…°~"
+        }
+      }
+    ],
+    "default_texture": "skin_pink",
+    "gui_no_lighting": false
+  },
+  "files": {
+    "player": {
+      "model": {
+        "main": "models/main.json",
+        "arm": "models/arm.json"
+      },
+      "animation": {
+        "main": "animations/main.animation.json",
+        "extra": "animations/extra.animation.json",
+        "tac": "animations/tac.animation.json",
+        "carryon": "animations/carryon.animation.json",
+        "tlm": "animations/tlm.animation.json",
+        "arm": "animations/arm.animation.json"
+      },
+      "texture": [
+        {
+          "uv": "textures/skin_pink.png"
+        },
+        {
+          "uv": "textures/skin_green.png"
+        }
+      ],
+      "animation_controllers": [
+        "controller/parallel.animation_controllers.json",
+        "controller/armor.animation_controllers.json"
+      ]
+    }
+  }
+}

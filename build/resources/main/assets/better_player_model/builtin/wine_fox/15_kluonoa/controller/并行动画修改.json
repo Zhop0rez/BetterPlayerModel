@@ -1,0 +1,64 @@
+﻿{
+	"format_version": "1.19.0",
+	"animation_controllers": {
+		"player.parallel_2": {
+			"initial_state": "йљђи—Џе…‰зЋЇ",
+			"states": {
+				"йљђи—Џе…‰зЋЇ": {
+					"animations": ["е…‰зЋЇйљђи—Џ"],
+					"transitions": [
+						{"ејЂжњє": "!ctrl.sleep"}
+					]
+				},
+				"ејЂжњє": {
+					"animations": ["е…‰зЋЇејЂжњє"],
+					"transitions": [
+						{"еёёжЂЃ": "q.all_animations_finished"}
+					]
+				},
+				"еёёжЂЃ": {
+					"animations": ["е…‰зЋЇеёёжЂЃ"],
+					"transitions": [
+						{"е…іжњє": "ctrl.sleep"}
+					]
+				},
+				"е…іжњє": {
+					"animations": ["е…‰зЋЇе…іжњє"],
+					"transitions": [
+						{"йљђи—Џе…‰зЋЇ": "q.all_animations_finished"}
+					]
+				}
+			}
+		},
+		"player.parallel_3": {
+			"states": {
+				"default": {
+					"animations": [
+						{"empty": "v.roaming.emotion==0||ysm.rendering_in_inventory"},
+						{"иЎЁжѓ…_з–‘жѓ‘": "v.roaming.emotion==1"},
+						{"иЎЁжѓ…_е№Ід»Ђд№€": "v.roaming.emotion==2"},
+						{"иЎЁжѓ…_е®іжЂ•": "v.roaming.emotion==3"},
+						{"иЎЁжѓ…_е§”е±€е·ґе·ґ": "v.roaming.emotion==4"},
+						{"иЎЁжѓ…_и‹¦е‘ЂиҐї": "v.roaming.emotion==5"}
+					]
+				}
+			}
+		},
+		"player.parallel_5": {
+			"states": {
+				"default": {
+					"animations": ["empty"],
+					"transitions": [
+						{"й›Ёе€®": "v.show_car&&ysm.weather>=1&&ysm.is_open_air"}
+					]
+				},
+				"й›Ёе€®": {
+					"animations": ["й›Ёе€®е™Ё"],
+					"transitions": [
+						{"default": "!(v.show_car&&ysm.weather>=1&&ysm.is_open_air)&&q.all_animations_finished"}
+					]
+				}
+			}
+		}
+	}
+}

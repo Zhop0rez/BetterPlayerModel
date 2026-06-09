@@ -1,0 +1,13 @@
+﻿{
+  "custom": {
+    "category": "neutral",
+    "subtitle": "subtitle.better_player_model.custom",
+    "sounds": [
+      {
+        "name": "better_player_model:empty",
+        "preload": false,
+        "stream": true
+      }
+    ]
+  }
+}

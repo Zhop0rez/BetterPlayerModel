@@ -1,0 +1,25 @@
+package com.elfmcys.yesstevemodel.capability.fabric;
+
+import com.elfmcys.yesstevemodel.capability.ProjectileModelCapability;
+import org.ladysnake.cca.api.v3.component.Component;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+public final class ProjectileModelComponent implements Component {
+
+    private final ProjectileModelCapability capability = new ProjectileModelCapability();
+
+    public ProjectileModelCapability capability() {
+        return capability;
+    }
+
+    @Override
+    public void readFromNbt(CompoundTag tag, HolderLookup.Provider provider) {
+        if (tag.contains("ProjectileModel", 10)) {
+            capability.deserializeNBT(tag.getCompound("ProjectileModel"));
+        }
+    }
+
+    @Override
+    public void writeToNbt(CompoundTag tag, HolderLookup.Provider provider) {
+        tag.put("ProjectileModel", capability.serializeNBT());
+    }}

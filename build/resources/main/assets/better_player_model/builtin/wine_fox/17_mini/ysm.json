@@ -1,0 +1,156 @@
+﻿{
+  "spec": 2,
+  "metadata": {
+    "name": "е°Џе°Џй…’з‹ђ",
+    "tips": "з‹—дї®й‡‘пјЊй…’з‹ђеҐЅеѓЏеЏе°Џдє†",
+    "license": {
+      "type": "All Rights Reserved",
+      "desc:": ""
+    },
+    "authors": [
+      {
+        "name": "з™Ѕи‰ІеЊ—з†Љ",
+        "avatar": "avatar/1.png",
+        "role": "жЁЎећ‹",
+        "comment": "жѓіи¦Ѓж€ђдёєе»єжЁЎй«ж‰‹"
+      },
+      {
+        "name": "д»Ђд№€йё­",
+        "avatar": "avatar/y.png",
+        "role": "еЉЁз”»",
+        "comment": "жѓіи¦Ѓж€ђдёєеЉЁз”»й«ж‰‹"
+      }
+    ],
+    "link": {
+      "home": "https://b23.tv/5QTEZxW",
+      "donate": "https://afdian.com/a/bx233"
+    }
+  },
+  "files": {
+    "player": {
+      "model": {
+        "main": "models/main.json",
+        "arm": "models/arm.json"
+      },
+      "animation": {
+        "main": "animations/main.animation.json",
+        "arm": "animations/arm.animation.json",
+        "extra": "animations/extra.animation.json"
+      },
+      "texture": [
+        {
+          "uv": "textures/texture.png"
+        }
+      ]
+    },
+    "projectiles": [
+      {
+        "model": "models/arrow.json",
+        "texture": {
+          "uv": "textures/arrow.png"
+        },
+        "match": ["minecraft:arrow"]
+      }
+    ],
+    "vehicles": [
+      {
+        "match": ["immersive_aircraft:biplane"],
+        "model": "models/plane.json",
+        "texture": {
+          "uv": "textures/texture.png"
+        },
+        "animation": "animations/plane.animation.json"
+      }
+    ]
+  },
+  "properties": {
+    "height_scale": 0.7,
+    "width_scale": 0.7,
+    "extra_animation": {
+      "extra0": "#иЎЁжѓ…",
+      "extra1": "ж‰“ж‹›е‘ј",
+      "extra2": "ж‹Ќж‰‹",
+      "extra3": "иЎЊдёєи‰єжњЇ",
+      "extra4": "ж‘‡е¤ґ",
+      "extra5": "еЌ–иђЊ",
+      "extra6": "ж‘‡ж‘†и€ћ",
+      "#еЉЁдЅњ": "еЉЁдЅњ"
+    },
+    "preview_animation": "gui",
+    "free": false,
+    "render_layers_first": false,
+    "disable_preview_rotation": false,
+    "all_cutout": false,
+    "gui_no_lighting": false,
+    "extra_animation_buttons": [
+      {
+        "id": "иЎЁжѓ…",
+        "name": "иЎЁжѓ…/жЁЎећ‹е¤§е°Џ",
+        "config_forms": [
+          {
+            "type": "radio",
+            "title": "зњјзќ›",
+            "description": "зњјзќ›",
+            "value": "v.hh",
+            "labels": {
+              "й»и®¤": "v.hh=0",
+              "е“­е“­": "v.hh=1",
+              "й—­зњј": "v.hh=2",
+              "е±‘": "v.hh=3",
+              "ж™•": "v.hh=4",
+              "еЏій—­зњј": "v.hh=5",
+              "е·¦й—­зњј": "v.hh=6"
+            }
+          },
+          {
+            "type": "radio",
+            "title": "еґе·ґ",
+            "description": "еґе·ґ",
+            "value": "v.hhh",
+            "labels": {
+              "й»и®¤": "v.hhh=0",
+              "w": "v.hhh=1",
+              "еЂ’v": "v.hhh=2",
+              "ww": "v.hhh=3",
+              "жµЃеЏЈж°ґ": "v.hhh=4"
+            }
+          },
+          {
+            "type": "range",
+            "title": "иє«дЅ“е¤§е°Џ",
+            "description": "иє«дЅ“е¤§е°Џ",
+            "value": "v.player_root_size",
+            "step": 0.05,
+            "min": -1,
+            "max": 2
+          },
+          {
+            "type": "radio",
+            "title": "зњјзќ›з±»ећ‹",
+            "description": "зњјзќ›з±»ећ‹",
+            "value": "v.yj",
+            "labels": {
+              "й»и®¤": "v.yj=0",
+              "з±»ећ‹дёЂ": "v.yj=1",
+              "з±»ећ‹дєЊ": "v.yj=2"
+            }
+          }
+        ]
+      }
+    ],
+    "gui_background": "textures/gui/background.png",
+    "extra_animation_classify": [
+      {
+        "id": "еЉЁдЅњ",
+        "extra_animation": {
+          "2": "и€ћи№€",
+          "3": "ж‘‡ж‘†",
+          "up": "дёѕж‰‹",
+          "new": "еЏЇз€±ж‘‡",
+          "new2": "ж‘‡е¤ґ",
+          "new4": "дЅЋзљ®иґЁй†‡"
+        }
+      }
+    ]
+  }
+}

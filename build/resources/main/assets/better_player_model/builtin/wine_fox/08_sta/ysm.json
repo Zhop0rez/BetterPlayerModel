@@ -1,0 +1,555 @@
+﻿{
+  "spec": 2,
+  "metadata": {
+    "name": "В§6ж–ЇеЎ”В·жџЏ",
+    "tips": "з”џдєЋж€еЊєзљ„еќ¦е…‹еќџењєпјЊењЁз”џй”€зљ„й’ўй“ЃдёЋжІ™е°дё­ж‘ёз€¬ж»љж‰“й•їе¤§гЂ‚и‡Єе№јз—ґиї·е»єйЂ  иЅЅе…·з»ґдї®пјЊйќ зї»зѓ‚ж—§дё–ж€иЅ¦ж‰‹е†Ње’ЊеЃ·её€жµЃжµЄе·ҐзЁ‹её€е­¦ж€ђдёЂиє«ж‰‹и‰єгЂ‚ж„џжџ“иµ‹дє€еҐ№жѓЉдєєзљ„иЂђеЉ›е’ЊжЂЄеЉ›пјЊиѓЅеѕ’ж‰‹жЋ°ејЇй’ўз­‹пјЊеЌґд№џе› ж­¤иў«и§†дЅњвЂњеј‚з±»вЂќгЂ‚\nе¦‚д»ЉжЇжЃ¶ењџжњЂжЉўж‰‹зљ„жњєжў°её€пјЊи®ѕи®Ўиї‡ж— ж•°йЂ‚еє”иѕђе°„еЊєзљ„з‹‚й‡ЋиЅЅе…·пјЊдЅ†жњ¬дєєејЂиЅ¦е Єз§°зЃѕйљѕ",
+    "license": {
+      "type": "CC BY-NC-SA 4.0",
+      "desc:": "",
+      "desc": "е…Ѓи®ёдєЊе€›гЂЃиЎЌз”џе€›дЅњгЂЃдЅ†йњЂи¦Ѓж ‡жіЁдЅњиЂ…гЂЃе№¶з¦Ѓж­ўз›€е€©гЂЃй™¤йќћдёЋдЅњиЂ…е•†и®®еҐЅ"
+    },
+    "authors": [
+      {
+        "name": "е“Ґж–Їж‹‰",
+        "avatar": "avatar/gsl.png",
+        "role": "иЂЃе¦€",
+        "comment": "иї™жЇж€‘дёЂдёЄиµ›еЌљ еєџењџдё–з•Њи§‚зљ„еҐіе„ї"
+      },
+      {
+        "name": "ж–ЇеЎ”",
+        "avatar": "avatar/st.png",
+        "role": "и§’и‰І",
+        "comment": "е“ЄдёЄе¤©ж‰Ќз”Ёе†·еЌґж¶ІеЅ“ж±ЅжІ№еЉ пјџ"
+      },
+      {
+        "name": "ж зґ ",
+        "avatar": "avatar/ys.png",
+        "role": "е›ўйџ",
+        "comment": "е®ж–№е…±дє«жЁЎећ‹ еЏ‚дёЋиЂ… Nona жµЃйЈЋLFly жџе±‘жµ·ићє"
+      }
+    ],
+    "link": {
+      "home": "https://space.bilibili.com/17798027",
+      "donate": "https://afdian.com/a/6TGESILA"
+    }
+  },
+  "files": {
+    "player": {
+      "model": {
+        "main": "models/main.json",
+        "arm": "models/arm.json"
+      },
+      "animation": {
+        "main": "animations/main.animation.json",
+        "arm": "animations/arm.animation.json",
+        "extra": "animations/extra.animation.json",
+        "tac": "animations/tac.animation.json",
+        "carryon": "animations/carryon.animation.json",
+        "swem": "animations/swem.animation.json",
+        "parcool": "animations/parcool.animation.json"
+      },
+      "texture": [
+        {
+          "uv": "textures/texture.png"
+        }
+      ],
+      "animation_controllers": ["controller/main.animation_controllers.json"]
+    }
+  },
+  "properties": {
+    "height_scale": 0.7,
+    "width_scale": 0.7,
+    "extra_animation": {
+      "#и€ћи№€/еЉЁдЅњ": "В§9и€ћи№€/еЉЁдЅњ",
+      "#ж€жњЇеЉЁдЅњ": "В§6ж€жњЇеЉЁдЅњ",
+      "#ж€жњЇиЈ…е¤‡е€‡жЌў": "В§6зЉ¶жЂЃе€‡жЌў",
+      "йѓЁзЅІй”е‰‘ж‹Њй›·": "#kuojian",
+      "#е§їеЉїе€‡жЌў": "В§cе§їеЉїе€‡жЌў Pose",
+      "ж‘†е§їеЉї": "В§eжњєжў°её€ж–ЇеЎ”",
+      "#и‡Єе®љд№‰дЅ“ећ‹/з‰№ж•€/иЎЁжѓ…": "В§cи‡Єе®љд№‰жЁЎећ‹"
+    },
+    "extra_animation_classify": [
+      {
+        "id": "и‡Єе®љд№‰дЅ“ећ‹/з‰№ж•€/иЎЁжѓ…",
+        "extra_animation": {
+          "дЅ“ећ‹е€‡жЌў": "#root_config",
+          "иЎЁжѓ…е€‡жЌў": "#eye_config",
+          "вЂ”вЂ”еґйѓЁиЎЁжѓ…": "#mouth_config",
+          "вЂ”вЂ”йќўйѓЁиЎЁжѓ…": "#иЎЁжѓ…й…ЌзЅ®",
+          "empty": "#еЏж›ґжњЌиЈ…"
+        }
+      },
+      {
+        "id": "и€ћи№€",
+        "extra_animation": {
+          "#return": "иї”е›ћжЊ‰й’®",
+          "extra6": "иђќиЋ‰ж‘‡",
+          "extra18": "й№їд№ѓе­ђи™Ћи§†зњ€зњ€",
+          "extra11": "е‚¬зњ жњЇ",
+          "extra12": "жџиѕ‰й—ЄиЂЂ",
+          "extra13": "ж©™и‰Іж­Јд№‰",
+          "extra14": "дє’иЃ”зЅ‘иї‡еє¦дѕќе­",
+          "extra20": "ж‘‡е•Љж‘‡",
+          "extra10": "ж‘‡ж‘‡д№ђ",
+          "extra4": "ејЂиЅ¦иЅ¦",
+          "extra19": "и‡ґе‘Ѕе…¬еЏёж‘‡",
+          "extra21": "еї«иїњз¦»дє’иЃ”зЅ‘",
+          "extra16": "dance",
+          "extra17": "alice didida",
+          "extra22": "и°ЋиЁЂи€ћиЂ…",
+          "extra25": "йЂџйЂљ"
+        }
+      },
+      {
+        "id": "еЉЁдЅњ",
+        "extra_animation": {
+          "#return": "иї”е›ћжЊ‰й’®",
+          "extra2": "йј“жЋЊ",
+          "extra3": "з‚№е¤ґ",
+          "extra23": "е·¦ж‘‡еЏіж‘‡",
+          "extra5": "иѓње€©",
+          "extra7": "жЉ–и‚©и€ћ",
+          "extra9": "дјјдє†",
+          "extra0": "жЉ±и‚©"
+        }
+      },
+      {
+        "id": "ж€жњЇеЉЁдЅњ",
+        "extra_animation": {
+          "ж€жњЇеЉЁдЅњ-е‰Ќиї›": "В§6е‰Ќиї›",
+          "ж€жњЇеЉЁдЅњ-дЅ жЋ©жЉ¤ж€‘": "В§6дЅ жЋ©жЉ¤ж€‘",
+          "ж€жњЇеЉЁдЅњ-иї‡жќҐ": "В§6иї‡жќҐиї™й‡Њ",
+          "ж€жњЇеЉЁдЅњ-ж€‘жЋ©жЉ¤дЅ ": "В§6ж€‘жЋ©жЉ¤дЅ ",
+          "ж€жњЇеЉЁдЅњ-з­‰ еЃњдё‹": "В§6з­‰ еЃњдё‹",
+          "ж€жњЇеЉЁдЅњ-ж€‘еЏјдЅ е¦€зљ„": "В§6й„™и§†",
+          "ж€жњЇеЉЁдЅњ-ж‰ѕжЋ©жЉ¤": "В§6ж‰ѕжЋ©жЉ¤",
+          "ж€жњЇеЉЁдЅњ-й›†еђ€": "В§6й›†еђ€"
+        }
+      },
+      {
+        "id": "е§їеЉїе€‡жЌў",
+        "extra_animation": {
+          "pose0": "жЊЃжњ‰жћЄжў°",
+          "pose1": "ж‰‹жЊЃиґµй‡Ќз‰©",
+          "extra1": "еЋџењ°еќђдё‹",
+          "pose2": "ињ·зј©еќђ",
+          "pose5": "иєєдё‹",
+          "pose4": "иєєдё‹-йњЂи¦ЃиѓЊеЊ…",
+          "pose3": "и¶ґдё‹",
+          "pose": "зќЎи§‰"
+        }
+      },
+      {
+        "id": "ж€жњЇиЈ…е¤‡е€‡жЌў",
+        "extra_animation": {
+          "й©ѕй©¶еќ¦е…‹2": "В§4иї›е…ҐиЅ¦иѕ†",
+          "з¦»ејЂеќ¦е…‹": "В§4дё‹иЅ¦"
+        }
+      },
+      {
+        "id": "и€ћи№€/еЉЁдЅњ",
+        "extra_animation": {
+          "#и€ћи№€": "и€ћи№€",
+          "#еЉЁдЅњ": "еЉЁдЅњ",
+          "dance1": "В§6иЂЃйј и€ћ",
+          "й©ѕй©¶еќ¦е…‹": "В§6й©ѕй©¶еќ¦е…‹",
+          "ж­¤йќўеђ‘ж•Њ": "В§6ж­¤йќўеђ‘ж•Њ",
+          "дёѕжћЄ": "В§6е‡†е¤‡ж€ж–—",
+          "ж јж–—жњЇ": "В§6ж јж–—жњЇ",
+          "#В§6ж°‘дё»еЉЁдЅњ": "В§6ж°‘дё»еЉЁдЅњ"
+        }
+      },
+      {
+        "id": "В§6ж°‘дё»еЉЁдЅњ",
+        "extra_animation": {
+          "hd_a_1": "В§6ж•¬з¤ј",
+          "hd_a_2": "В§6зЁЌжЃЇ",
+          "hd_a_3": "В§6жЃ­иїЋж°‘дё»"
+        }
+      }
+    ],
+    "extra_animation_buttons": [
+      {
+        "id": "eye_config",
+        "name": "и‡Єе®љд№‰зњјзќ›",
+        "config_forms": [
+          {
+            "type": "range",
+            "title": "зќЃзњје№…еє¦: ",
+            "description": "з”ЁжќҐе€‡жЌўзќЃзњје№…еє¦",
+            "value": "v.player_eyeballs",
+            "step": 1,
+            "min": -100,
+            "max": 50
+          },
+          {
+            "type": "range",
+            "title": "зќ«жЇ›ж—‹иЅ¬:",
+            "description": "з”ЁжќҐе€‡жЌўзќ«жЇ›ж—‹иЅ¬",
+            "value": "v.player_eyebrow",
+            "step": 1,
+            "min": -20,
+            "max": 20
+          },
+          {
+            "type": "range",
+            "title": "зќ«жЇ›е№…еє¦:",
+            "description": "з”ЁжќҐе€‡жЌўзќ«жЇ›е№…еє¦",
+            "value": "v.player_eyebrow2",
+            "step": 1,
+            "min": 0,
+            "max": 45
+          },
+          {
+            "type": "range",
+            "title": "зќ«жЇ›дЅЌзЅ®:",
+            "description": "з”ЁжќҐе€‡жЌўзќ«жЇ›дЅЌзЅ®",
+            "value": "v.player_eyebrow_V",
+            "step": 1,
+            "min": -150,
+            "max": 100
+          },
+          {
+            "type": "range",
+            "title": "зњ‰жЇ›дЅЌзЅ®",
+            "description": "",
+            "value": "v.meimao_v",
+            "step": 1,
+            "min": -20,
+            "max": 10
+          },
+          {
+            "type": "range",
+            "title": "зњ‰жЇ›ж—‹иЅ¬",
+            "description": "",
+            "value": "v.meimao_r",
+            "step": 1,
+            "min": -45,
+            "max": 45
+          },
+          {
+            "type": "range",
+            "title": "зћіе­”дёЉдё‹дЅЌзЅ®: ",
+            "description": "з”ЁжќҐе€‡жЌўзћіе­”дёЉдё‹дЅЌзЅ®",
+            "value": "v.player_eyebase_pitch",
+            "step": 1,
+            "min": -100,
+            "max": 100
+          },
+          {
+            "type": "range",
+            "title": "зћіе­”е·¦еЏідЅЌзЅ®: ",
+            "description": "з”ЁжќҐе€‡жЌўзћіе­”е·¦еЏідЅЌзЅ®",
+            "value": "v.player_eyebase_yaw",
+            "step": 1,
+            "min": -100,
+            "max": 100
+          },
+          {
+            "type": "range",
+            "title": "е¤–ж–њзњј",
+            "description": "йїе·ґйїе·ґ",
+            "value": "v.player_eyebase_yaw2",
+            "step": 1,
+            "min": -60,
+            "max": 100
+          },
+          {
+            "type": "range",
+            "title": "зћіе­”зј©ж”ѕ: ",
+            "description": "з”ЁжќҐе€‡жЌўзћіе­”зј©ж”ѕ",
+            "value": "v.player_eyebase",
+            "step": 1,
+            "min": -100,
+            "max": 60
+          },
+          {
+            "type": "checkbox",
+            "title": "е€‡жЌўй«е…‰",
+            "description": "й«е…‰е€‡жЌў",
+            "value": "v.player_eye_light"
+          },
+          {
+            "type": "radio",
+            "title": "й‡ЌзЅ®иЎЁжѓ…",
+            "description": "й‡ЌзЅ®иЎЁжѓ…",
+            "value": "v.player_eye_YS",
+            "labels": {
+              "й‡ЌзЅ®": "v.player_eye_YS=0;      v.player_eyeballs=0;    v.player_eyebrow=0;    v.player_eyebrow2=0; v.player_eyebrow_v=0; v.player_eyebase_pitch=0; v.player_eyebase_yaw2=0; v.player_eyebase_yaw=0;  v.player_eyebase=0;     v.player_eye_light=0;  v.player_eye_tear=0;  v.player_eye=0;  v.player_face=0;  v.player_face_emoji=0;  v.player_mouth=0"
+            }
+          }
+        ]
+      },
+      {
+        "id": "еЏж›ґжњЌиЈ…",
+        "name": "еЏж›ґжњЌиЈ…/иЎЁжѓ…",
+        "config_forms": [
+          {
+            "type": "checkbox",
+            "title": "з©їж€ґиѓЊеЊ…",
+            "description": " (з”ЁжќҐжѕз¤єз©їж€ґиѓЊеЊ…)",
+            "value": "v.bag"
+          },
+          {
+            "type": "checkbox",
+            "title": "з©їж€ґеёЅе­ђ",
+            "description": " (з”ЁжќҐжѕз¤єз©їж€ґеёЅе­ђ)",
+            "value": "v.hat"
+          },
+          {
+            "type": "radio",
+            "title": "йЂ‰ж‹©иѓЊеЊ…ledиЎЁжѓ…",
+            "description": "йЂ‰ж‹©жЁЎећ‹иѓЊеЊ…ledиЎЁжѓ…пј€йњЂжѕз¤єиѓЊеЊ…пј‰",
+            "value": "v.roaming.bagemotion",
+            "labels": {
+              "fumoз¬‘": "v.roaming.bagemotion=0;",
+              "ж— иЇ­": "v.roaming.bagemotion=1;",
+              "0.0": "v.roaming.bagemotion=2;",
+              "???": "v.roaming.bagemotion=3;",
+              "з€±еїѓ": "v.roaming.bagemotion=4;"
+            }
+          }
+        ]
+      },
+      {
+        "id": "root_config",
+        "name": "и‡Єе®љд№‰дЅ“ећ‹",
+        "config_forms": [
+          {
+            "type": "range",
+            "title": "зЋ©е®¶е¤§е°Џ: ",
+            "description": "Change the player size (ж”№еЏзЋ©е®¶е¤§е°Џ)",
+            "value": "v.player_root_size",
+            "step": 0.05,
+            "min": -1,
+            "max": 2
+          },
+          {
+            "type": "range",
+            "title": "зЋ©е®¶е®Ѕеє¦: ",
+            "description": "Change the player size (ж”№еЏзЋ©е®¶е®Ѕеє¦)",
+            "value": "v.player_root_width",
+            "step": 0.05,
+            "min": -1,
+            "max": 3
+          },
+          {
+            "type": "range",
+            "title": "зЋ©е®¶дЅЌзЅ®: ",
+            "description": "Change the player size (ж”№еЏзЋ©е®¶дЅЌзЅ®)",
+            "value": "v.player_root_seat",
+            "step": 0.05,
+            "min": -1,
+            "max": 2
+          },
+          {
+            "type": "range",
+            "title": "е¤ґйѓЁе¤§е°Џ: ",
+            "description": "Change the player size (ж”№еЏзЋ©е®¶е¤ґйѓЁе¤§е°Џ)",
+            "value": "v.player_head_size",
+            "step": 0.05,
+            "min": -1,
+            "max": 1
+          },
+          {
+            "type": "range",
+            "title": "е¤ґйѓЁе®Ѕеє¦: ",
+            "description": "Change the player size (ж”№еЏзЋ©е®¶е¤ґйѓЁе®Ѕеє¦)",
+            "value": "v.player_head_width",
+            "step": 0.05,
+            "min": -1,
+            "max": 2
+          },
+          {
+            "type": "range",
+            "title": "ж‰‹и‡‚е¤§е°Џ: ",
+            "description": "Change the player size (ж”№еЏзЋ©е®¶ж‰‹и‡‚е¤§е°Џ)",
+            "value": "v.player_arm_size",
+            "step": 0.05,
+            "min": 0,
+            "max": 2
+          },
+          {
+            "type": "range",
+            "title": "ж‰‹и‡‚й•їзџ­: ",
+            "description": "Change the player size (ж”№еЏзЋ©е®¶ж‰‹и‡‚й•їзџ­)",
+            "value": "v.player_arm_length",
+            "step": 0.05,
+            "min": -1,
+            "max": 1
+          },
+          {
+            "type": "range",
+            "title": "и…їйѓЁе¤§е°Џ: ",
+            "description": "Change the player size (ж”№еЏзЋ©е®¶и…їйѓЁе¤§е°Џ)",
+            "value": "v.player_Leg_size",
+            "step": 0.05,
+            "min": 0,
+            "max": 3
+          },
+          {
+            "type": "range",
+            "title": "и…їйѓЁй•їзџ­: ",
+            "description": "Change the player size (ж”№еЏзЋ©е®¶и…їйѓЁй•їзџ­)",
+            "value": "v.player_Leg_length",
+            "step": 0.05,
+            "min": -1,
+            "max": 1
+          },
+          {
+            "type": "radio",
+            "title": "йў„и®ѕдЅ“ећ‹е€‡жЌў",
+            "description": "йў„и®ѕдЅ“ећ‹е€‡жЌў",
+            "value": "v.player_size_YS",
+            "labels": {
+              "й‡ЌзЅ®": "v.player_size_YS=0;        v.player_root_size=1;     v.player_root_width=0;     v.player_root_seat=0;       v.player_head_size=0;      v.player_head_width=0;       v.player_arm_size=0;     v.player_arm_length=0;       v.player_Leg_size=0;      v.player_Leg_length=0",
+              "е®ЅдЅ“ж–ЇеЎ”": "v.player_size_YS=1;    v.player_root_size=0.1;     v.player_root_width=2;     v.player_root_seat=-0.05;   v.player_head_size=-0.3;   v.player_head_width=-0.45;   v.player_arm_size=0.6;   v.player_arm_length=0.2;     v.player_Leg_size=0.15;   v.player_Leg_length=-0.2",
+              "й­Ѓжў§ж–ЇеЎ”": "v.player_size_YS=2;    v.player_root_size=0.6;   v.player_root_width=0.5;   v.player_root_seat=0.15;    v.player_head_size=-0.5;   v.player_head_width=-0.2;    v.player_arm_size=1;   v.player_arm_length=-0.25;   v.player_Leg_size=0.2;    v.player_Leg_length=-0.1",
+              "е°Џе­©ж–ЇеЎ”": "v.player_size_YS=3;    v.player_root_size=-0.4;  v.player_root_width=0;     v.player_root_seat=-0.3;    v.player_head_size=0.25;    v.player_head_width=0;       v.player_arm_size=0.1;   v.player_arm_length=-0.2;    v.player_Leg_size=0;      v.player_Leg_length=-0.4",
+              "tank": "v.player_size_YS=4;        v.player_root_size=1;     v.player_root_width=0.7;   v.player_root_seat=-0.45;    v.player_head_size=-0.75;   v.player_head_width=-0.25;   v.player_arm_size=1.8;   v.player_arm_length=-0.25;   v.player_Leg_size=0.2;    v.player_Leg_length=-0.4"
+            }
+          }
+        ]
+      },
+      {
+        "id": "иЎЁжѓ…й…ЌзЅ®",
+        "name": "иЎЁжѓ…й…ЌзЅ®",
+        "config_forms": [
+          {
+            "type": "radio",
+            "title": "зњјйѓЁиЎЁжѓ…",
+            "description": "зњјйѓЁиЎЁжѓ…",
+            "value": "v.roaming.eye",
+            "labels": {
+              "ж­Јеёё": "v.roaming.eye=0",
+              "й№їеј№зњј": "v.roaming.eye=1",
+              "е“­е“­зњј": "v.roaming.eye=2",
+              "йњ‡жѓЉзњј": "v.roaming.eye=3"
+            }
+          },
+          {
+            "type": "radio",
+            "title": "и„ёйѓЁиЎЁжѓ…",
+            "description": "и„ёйѓЁиЎЁжѓ…",
+            "value": "v.roaming.face",
+            "labels": {
+              "ж— ": "v.roaming.face=0",
+              "й»‘и„ё": "v.roaming.face=1",
+              "ж— иЇ­": "v.roaming.face=2",
+              "е‘†": "v.roaming.face=3"
+            }
+          },
+          {
+            "type": "radio",
+            "title": "еґйѓЁиЎЁжѓ…",
+            "description": "еґйѓЁиЎЁжѓ…",
+            "value": "v.roaming.mouth",
+            "labels": {
+              "йњІйЅїз¬‘": "v.roaming.mouth=0",
+              "ж— иЎЁжѓ…": "v.roaming.mouth=1",
+              "зЊ«еґз¬‘": "v.roaming.mouth=2",
+              "е“­е“­еґ": "v.roaming.mouth=3",
+              "йњ‡жѓЉеґ": "v.roaming.mouth=4",
+              "жѓЉжЃђеґ": "v.roaming.mouth=5",
+              "е‚»з¬‘": "v.roaming.mouth=6",
+              "й›Ње°Џй¬ј": "v.roaming.mouth=7",
+              "йљѕйЃ“иЇґ": "v.roaming.mouth=8",
+              "е‚»з¬‘2": "v.roaming.mouth=9",
+              "е¤ёеј ": "v.roaming.mouth=10"
+            }
+          }
+        ]
+      },
+      {
+        "id": "mouth_config",
+        "name": "и‡Єе®љд№‰еґе·ґ/иЂіжњµ",
+        "config_forms": [
+          {
+            "type": "range",
+            "title": "еґе·ґж—‹иЅ¬",
+            "description": "",
+            "value": "v.player_mouth_r",
+            "step": 1,
+            "min": -90,
+            "max": 90
+          },
+          {
+            "type": "range",
+            "title": "еґе·ґдЅЌзЅ®_X",
+            "description": "",
+            "value": "v.player_mouth_v_x",
+            "step": 1,
+            "min": -20,
+            "max": 20
+          },
+          {
+            "type": "range",
+            "title": "еґе·ґдЅЌзЅ®_Y",
+            "description": "",
+            "value": "v.player_mouth_v_y",
+            "step": 1,
+            "min": -30,
+            "max": 30
+          },
+          {
+            "type": "range",
+            "title": "еґе·ґзј©ж”ѕ_X",
+            "description": "",
+            "value": "v.player_mouth_s_x",
+            "step": 1,
+            "min": -10,
+            "max": 20
+          },
+          {
+            "type": "range",
+            "title": "еґе·ґзј©ж”ѕ_Y",
+            "description": "",
+            "value": "v.player_mouth_s_y",
+            "step": 1,
+            "min": -10,
+            "max": 20
+          },
+          {
+            "type": "radio",
+            "title": "й‡ЌзЅ®еґе·ґ",
+            "description": "",
+            "value": "",
+            "labels": {
+              "й‡ЌзЅ®": "v.player_mouth_r=0;v.player_mouth_v_x=0;v.player_mouth_v_y=0;v.player_mouth_s_x=0;v.player_mouth_s_y=0"
+            }
+          },
+          {
+            "type": "range",
+            "title": "иЂіжњµж—‹иЅ¬",
+            "description": "",
+            "value": "v.player_ear_z",
+            "step": 1,
+            "min": -30,
+            "max": 60
+          }
+        ]
+      },
+      {
+        "id": "kuojian",
+        "name": "В§9йѓЁзЅІй”е‰‘ењ°й›·",
+        "config_forms": [
+          {
+            "type": "radio",
+            "title": "й‡ЌзЅ®ж‰Ђжњ‰й”е‰‘",
+            "description": "й‡ЌзЅ®ж‰Ђжњ‰й”е‰‘",
+            "value": "",
+            "labels": {
+              "з‚№е‡»й‡ЌзЅ®": "v.kuojianall=0;v.kuojian1=0;v.kuojian2=0;v.kuojian3=0;v.kuojian4=0;v.kuojian5=0;"
+            }
+          }
+        ]
+      }
+    ],
+    "preview_animation": "gui",
+    "default_texture": "texture",
+    "free": false,
+    "render_layers_first": false,
+    "disable_preview_rotation": true,
+    "all_cutout": false
+  }
+}

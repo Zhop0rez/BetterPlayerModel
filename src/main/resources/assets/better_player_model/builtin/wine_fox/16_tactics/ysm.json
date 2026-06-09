@@ -1,0 +1,149 @@
+﻿{
+	"spec": 2,
+	"metadata": {
+		"name": "ж€жњЇй…’з‹ђ",
+		"tips": "ж€жњЇећ‹й…’з‹ђпј€Tactics Foxпј‰пјЊдє¦ж€–иЂ…еЏ«е№Іе‘й…’з‹ђ\nжќҐе€°дє†дёЌе†ЌжµЃиЎЊе‰‘дёЋй­”жі•зљ„зЋ°д»ЈпјЊй…’з‹ђдЅњдёєжџђз»„з»‡дё‹е±ћеї«еЏЌйѓЁйџзљ„\nзІѕи‹±е№Іе‘пјЊе…¶ж“…й•їењЁж•ЊдєєжЌ®з‚№е†…йѓЁиї›иЎЊзЄЃиї›дЅњж€вЂ¦вЂ¦пј€зј–дёЌеЉЁе“©\nз¬¬дёЂдёЄysmдЅње“ЃпјЊдёЉи‰ІжЇ”иѕѓзІ—зі™пјЊеЉЁз”»ж–№йќўж­ЈењЁж…ўж…ўе®Ње–„\nж”№жЁЎи‡Єж–°з‰€жќђиґЁй…’з‹ђ2.6\nеЅ“е‰Ќз‰€жњ¬1.5",
+		"license": {
+			"type": "CC BY-NC-SA 4.0"
+		},
+		"authors": [
+			{
+				"name": "ж±Ѕж°ґеј№зЏ Pixel",
+				"role": "дєЊе€›ж”№жЁЎ",
+				"avatar": "avatar/qsdz.png",
+				"contact": {
+					"Bilibili": "https://space.bilibili.com/504391451"
+				},
+				"comment": "е°Џе‰§ењєе№ґж›ґдё­ing"
+			},
+			{
+				"name": "е®ЊзѕЋе†»з»“",
+				"role": "жЁЎећ‹еЋџдЅњ",
+				"avatar": "avatar/wmdj.jpg",
+				"contact": {
+					"Afdian": "https://afdian.com/a/6TGESILA",
+					"Bilibili": "https://space.bilibili.com/17798027"
+				},
+				"comment": "OwO"
+			},
+			{
+				"name": "жџе±‘жµ·ићє",
+				"role": "еЉЁз”»еЋџдЅњ",
+				"avatar": "avatar/hl.png",
+				"contact": {
+					"Afdian": "https://afdian.com/a/lucia2048",
+					"Bilibili": "https://space.bilibili.com/14975572"
+				},
+				"comment": "жј‚жіЉдєЋзѕ¤жџд№‹дё­"
+			}
+		],
+		"link": {
+			"home": "https://modrinth.com/mod/yes-steve-model",
+			"donate": "https://afdian.com/a/ysmmod"
+		}
+	},
+	"properties": {
+		"extra_animation": {
+			"extra0": "#extra_config",
+			"extra1": "ж‰“ж‹›е‘ј",
+			"extra2": "еЌ•ж‰‹еЏ‰и…°",
+			"extra3": "Get Down",
+			"extra4": "д№±и€ћ",
+			"extra5": "еЌ–иђЊ",
+			"extra6": "еѕЎз¬”ж‘‡",
+			"extra7": "и€ћи№€"
+		},
+		"extra_animation_buttons": [
+			{
+				"id": "extra_config",
+				"name": "йЃЃењ°пј€",
+				"config_forms": [
+					{
+						"type": "checkbox",
+						"title": "жћЄпј€еЌ дЅЌпј‰",
+						"description": "",
+						"value": "v.roaming.gun"
+					},
+					{
+						"type": "checkbox",
+						"title": "жЉ¤з›®й•њ",
+						"description": "",
+						"value": "v.roaming.humujing"
+					}
+				]
+			}
+		],
+		"preview_animation": "gui",
+		"disable_preview_rotation": true,
+		"free": true,
+		"gui_foreground": "textures/gui/foreground.png",
+		"height_scale": 0.7,
+		"width_scale": 0.7,
+		"render_layers_first": false,
+		"all_cutout": false,
+		"gui_no_lighting": false
+	},
+	"files": {
+		"player": {
+			"model": {
+				"main": "models/main.json",
+				"arm": "models/arm.json"
+			},
+			"animation": {
+				"main": "animations/main.animation.json",
+				"extra": "animations/extra.animation.json",
+				"tac": "animations/tac.animation.json",
+				"carryon": "animations/carryon.animation.json",
+				"tlm": "animations/tlm.animation.json",
+				"fp_arm": "animations/fp.arm.animation.json"
+			},
+			"animation_controllers": ["controller/wine_fox.animation_controllers.json"],
+			"texture": [
+				{
+					"uv": "textures/tactics.png"
+				}
+			]
+		},
+		"projectiles": [
+			{
+				"model": "models/arrow.json",
+				"animation": "animations/arrow.animation.json",
+				"texture": {
+					"uv": "textures/arrow.png"
+				},
+				"match": ["minecraft:arrow"]
+			},
+			{
+				"model": "models/trident.json",
+				"texture": {
+					"uv": "textures/trident.png"
+				},
+				"match": ["minecraft:trident"]
+			}
+		],
+		"vehicles": [
+			{
+				"model": "models/horse.json",
+				"texture": {
+					"uv": "textures/horse.png"
+				},
+				"animation": "animations/vehicle/horse.animation.json",
+				"match": ["minecraft:horse"]
+			},
+			{
+				"model": "models/minecart.json",
+				"texture": {
+					"uv": "textures/minecart.png"
+				},
+				"match": ["minecraft:minecart"]
+			},
+			{
+				"model": "models/boat.json",
+				"texture": {
+					"uv": "textures/boat.png"
+				},
+				"match": ["minecraft:boat"]
+			}
+		]
+	}
+}
