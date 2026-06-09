@@ -2,11 +2,13 @@ package com.elfmcys.yesstevemodel.client.model;
 
 import com.elfmcys.yesstevemodel.YesSteveModel;
 import com.elfmcys.yesstevemodel.client.ClientModelInfo;
+import com.elfmcys.yesstevemodel.client.ClientModelManager;
 import com.elfmcys.yesstevemodel.client.gui.metadata.ModelDisplayAssets;
 import com.elfmcys.yesstevemodel.client.gui.metadata.LazyModelDisplayAssets;
 import com.elfmcys.yesstevemodel.model.format.ServerModelInfo;
 import com.elfmcys.yesstevemodel.resource.YSMBinaryDeserializer;
 import com.elfmcys.yesstevemodel.resource.YSMClientMapper;
+import com.elfmcys.yesstevemodel.resource.YSMFolderDeserializer;
 import com.elfmcys.yesstevemodel.resource.pojo.RawYsmModel;
 import rip.ysm.security.YsmCrypt;
 import net.minecraft.client.renderer.texture.AbstractTexture;
@@ -24,6 +26,8 @@ public class LazyModelAssembly extends ModelAssembly {
     private final byte[] clientKey;
     private final boolean isAuth;
     private final LazyModelDisplayAssets lazyTextureRegistry;
+    private final boolean isLocal;
+    private final boolean isLocalDirectory;
 
     private ModelAssembly resolved;
     private boolean isResolving = false;
@@ -34,7 +38,20 @@ public class LazyModelAssembly extends ModelAssembly {
         this.cachedFile = cachedFile;
         this.clientKey = clientKey != null ? clientKey.clone() : null;
         this.isAuth = isAuth;
+        this.isLocal = false;
+        this.isLocalDirectory = false;
         this.lazyTextureRegistry = new LazyModelDisplayAssets(this, isAuth);
+    }
+
+    public LazyModelAssembly(String modelId, File cachedFile, boolean isLocalDirectory) {
+        super(null, null, null, null, null, null, null);
+        this.modelId = modelId;
+        this.cachedFile = cachedFile;
+        this.clientKey = null;
+        this.isAuth = false;
+        this.isLocal = true;
+        this.isLocalDirectory = isLocalDirectory;
+        this.lazyTextureRegistry = new LazyModelDisplayAssets(this, false);
     }
 
     public boolean isResolved() {
@@ -53,33 +70,66 @@ public class LazyModelAssembly extends ModelAssembly {
             YesSteveModel.LOGGER.info("[YSM] Lazily loading model: " + modelId);
             long start = System.currentTimeMillis();
             
-            byte[] fileBytes = Files.readAllBytes(cachedFile.toPath());
-            byte[] decompressed = YsmCrypt.read(fileBytes, clientKey);
-            
             RawYsmModel rawModel;
-            try (YSMBinaryDeserializer deserializer = new YSMBinaryDeserializer(decompressed, 32)) {
-                rawModel = deserializer.deserializeKeepOpen();
-                
-                rawModel.footer.version = deserializer.getReader().readVarInt();
-                rawModel.footer.unkInt1 = deserializer.getReader().readVarInt();
-                if (rawModel.footer.unkInt1 != 0) {
-                    rawModel.footer.rand = deserializer.getReader().readString();
+            if (isLocal) {
+                if (isLocalDirectory) {
+                    try (YSMFolderDeserializer deserializer = new YSMFolderDeserializer(cachedFile.toPath())) {
+                        rawModel = deserializer.deserialize();
+                    }
+                } else {
+                    byte[] fileBytes = Files.readAllBytes(cachedFile.toPath());
+                    rawModel = ClientModelManager.parseImportModel(cachedFile.getName(), fileBytes);
                 }
-                rawModel.footer.time = deserializer.getReader().readVarLong();
-                if (rawModel.footer.unkInt1 != 0) {
-                    rawModel.footer.extra = deserializer.getReader().readString();
-                    rawModel.footer.unkInt2 = deserializer.getReader().readVarInt();
+            } else {
+                byte[] fileBytes = Files.readAllBytes(cachedFile.toPath());
+                byte[] decompressed = YsmCrypt.read(fileBytes, clientKey);
+                try (YSMBinaryDeserializer deserializer = new YSMBinaryDeserializer(decompressed, 32)) {
+                    rawModel = deserializer.deserializeKeepOpen();
+                    
+                    rawModel.footer.version = deserializer.getReader().readVarInt();
+                    rawModel.footer.unkInt1 = deserializer.getReader().readVarInt();
+                    if (rawModel.footer.unkInt1 != 0) {
+                        rawModel.footer.rand = deserializer.getReader().readString();
+                    }
+                    rawModel.footer.time = deserializer.getReader().readVarLong();
+                    if (rawModel.footer.unkInt1 != 0) {
+                        rawModel.footer.extra = deserializer.getReader().readString();
+                        rawModel.footer.unkInt2 = deserializer.getReader().readVarInt();
+                    }
                 }
             }
             
             ClientModelInfo parsedBundle = YSMClientMapper.buildParsedBundle(rawModel, modelId);
             resolved = ModelAssemblyFactory.buildAssembly(parsedBundle, false, isAuth);
+            ClientModelManager.touchModel(modelId);
             
             long duration = System.currentTimeMillis() - start;
             YesSteveModel.LOGGER.info("[YSM] Successfully resolved lazy model: " + modelId + " in " + duration + " ms");
         } catch (Exception e) {
             YesSteveModel.LOGGER.error("[YSM] Failed to lazily resolve model: " + modelId, e);
-            resolved = new ModelAssembly(null, java.util.Collections.emptyMap(), java.util.Collections.emptyMap(), null, null, null, java.util.Collections.emptyList());
+            ModelAssembly defaultModel = ClientModelManager.getModelAssemblyMap().get("default");
+            if (defaultModel != null) {
+                resolved = defaultModel;
+            } else {
+                resolved = new ModelAssembly(
+                    null,
+                    java.util.Collections.emptyMap(),
+                    java.util.Collections.emptyMap(),
+                    null,
+                    new ServerModelInfo(
+                        null,
+                        new com.elfmcys.yesstevemodel.resource.models.ModelProperties(1.0f, 1.0f, "", "idle", new com.elfmcys.yesstevemodel.util.data.OrderedStringMap<>(new String[0], new String[0]), new com.elfmcys.yesstevemodel.client.gui.custom.ExtraAnimationButtons[0], new com.elfmcys.yesstevemodel.util.data.StringMapPair[0], true, false, false),
+                        new com.elfmcys.yesstevemodel.resource.models.MainModelInfo(0, 0, 0),
+                        65535,
+                        "",
+                        "",
+                        0L,
+                        ""
+                    ),
+                    new ModelDisplayAssets(null, false, null, null),
+                    java.util.Collections.emptyList()
+                );
+            }
         } finally {
             isResolving = false;
         }

@@ -473,6 +473,7 @@ public final class ServerModelManager {
 
         if (data == null || data.remaining() == 0) {
             syncStates.remove(uuid);
+            deliveredModelIds.remove(uuid);
             return;
         }
 
@@ -1354,16 +1355,23 @@ public final class ServerModelManager {
             Component errorMessage = reloadResult.getErrorMessage();
             return UploadFinishResult.reject(uploadId, (byte) 8, errorMessage == null ? "Imported model scan failed" : errorMessage.getString());
         }
-        if (!reloadResult.getModelDefinitions().containsKey(state.modelId)) {
+        String matchedModelId = null;
+        for (String loadedId : reloadResult.getModelDefinitions().keySet()) {
+            if (loadedId.equalsIgnoreCase(state.modelId)) {
+                matchedModelId = loadedId;
+                break;
+            }
+        }
+        if (matchedModelId == null) {
             YesSteveModel.LOGGER.warn("[YSM] Imported model was written but not visible after scan: modelId={} file={} type={} rawSha256={} contentHash={}",
                     state.modelId, state.fileName, state.importKind, actualSha256, rawModel.properties.sha256);
             return UploadFinishResult.reject(uploadId, (byte) 8, "Imported model is not visible after scan");
         }
 
-        YesSteveModel.LOGGER.info("[YSM] Imported model '{}' from {} as {}", state.modelId, sender.getScoreboardName(), state.importKind);
-        syncImportedModelToOtherPlayers(sender, state.modelId);
+        YesSteveModel.LOGGER.info("[YSM] Imported model '{}' from {} as {}", matchedModelId, sender.getScoreboardName(), state.importKind);
+        syncImportedModelToOtherPlayers(sender, matchedModelId);
         long[] hashes = YsmCrypt.calculateModelHashes(rawModel.properties.sha256, serverKey);
-        return new UploadFinishResult(uploadId, (byte) 0, state.modelId, hashes[0], hashes[1], "");
+        return new UploadFinishResult(uploadId, (byte) 0, matchedModelId, hashes[0], hashes[1], "");
     }
 
     private static ModelLoadResult reloadModelsAfterImport() {

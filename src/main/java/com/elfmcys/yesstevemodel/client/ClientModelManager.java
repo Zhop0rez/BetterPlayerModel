@@ -316,9 +316,11 @@ public class ClientModelManager {
                     previousModelIds.add(modelId);
                     updatedModelIds.add(modelId);
                     isModelReadyList.add(isAuth);
+                    incrementSyncProgress();
                 } else {
                     LazyModelAssembly lazyAssembly = new LazyModelAssembly(modelId, cachedFile, clientKey, isAuth);
                     pendingModelQueue.add(Pair.of(lazyAssembly, modelId));
+                    incrementSyncProgress();
                 }
             } else {
                 YesSteveModel.LOGGER.info("[YSM] Cache MISS or Invalid: " + ctx.uuid + " -> Requesting...");
@@ -490,6 +492,7 @@ public class ClientModelManager {
                     LazyModelAssembly lazyAssembly = new LazyModelAssembly(ctx.modelId, outFile, clientKey, ctx.isAuth);
                     pendingModelQueue.add(Pair.of(lazyAssembly, ctx.modelId));
                     touchModel(ctx.modelId);
+                    incrementSyncProgress();
                 } catch (Exception e) {
                     YesSteveModel.LOGGER.error("[YSM] Failed to save/parse downloaded model: " + ctx.modelId, e);
                 } finally {
@@ -555,6 +558,7 @@ public class ClientModelManager {
         lastKey = null;
         serverKey = null;
         clientKey = null;
+        serverConnection = null;
 
         modelPhraseExecutor.getQueue().clear();
 
@@ -958,7 +962,7 @@ public class ClientModelManager {
         }
     }
 
-    private static RawYsmModel parseImportModel(String fileName, byte[] data) throws Exception {
+    public static RawYsmModel parseImportModel(String fileName, byte[] data) throws Exception {
         String lower = fileName == null ? "" : fileName.toLowerCase(Locale.ROOT);
         if (lower.endsWith(".ysm")) {
             return parseYsmImport(data, fileName);
@@ -972,7 +976,7 @@ public class ClientModelManager {
         throw new IllegalArgumentException("Unsupported model import type: " + fileName);
     }
 
-    private static RawYsmModel parseYsmImport(byte[] data, String source) throws Exception {
+    public static RawYsmModel parseYsmImport(byte[] data, String source) throws Exception {
         int ysmCryptoVersion = YesModelUtils.getYsmCryptoVersion(data);
         if (ysmCryptoVersion == 1 || ysmCryptoVersion == 2) {
             try (YSMFolderDeserializer deserializer = new YSMFolderDeserializer(YesModelUtils.input(data))) {
@@ -991,7 +995,7 @@ public class ClientModelManager {
         }
     }
 
-    private static RawYsmModel parseZipImport(byte[] data) throws Exception {
+    public static RawYsmModel parseZipImport(byte[] data) throws Exception {
         Path temp = Files.createTempFile("ysm-local-import-", ".zip");
         try {
             Files.write(temp, data);
@@ -1021,7 +1025,7 @@ public class ClientModelManager {
                 try {
                     if (YSMFolderDeserializer.isModelFolder(dir)) {
                         String modelId = normalizeLocalModelId(baseDir.relativize(dir).toString());
-                        if (loadLocalModelFolder(modelId, dir)) {
+                        if (registerLocalModelLazy(modelId, dir.toFile(), true)) {
                             localModelSources.put(modelId, new LocalModelSource(dir.toAbsolutePath().normalize(), FileTypeUtil.getFinalPathSegment(modelId) + ".zip", true));
                             loadedAny[0] = true;
                         }
@@ -1042,13 +1046,9 @@ public class ClientModelManager {
                 }
                 try {
                     String modelId = stripImportExtension(normalizeLocalModelId(baseDir.relativize(file).toString()));
-                    byte[] data = readLimitedFileBytes(file, MAX_SERVER_MODEL_BYTES);
-                    ModelMemoryProfiler.logBytes("local-folder-read", modelId, data);
-                    RawYsmModel rawModel = parseImportModel(fileName, data);
-                    data = null;
-                    if (loadLocalModel(modelId, rawModel)) {
-                        localModelSources.put(modelId, new LocalModelSource(file.toAbsolutePath().normalize(), fileName, false));
-                        loadedAny[0] = true;
+                    if (registerLocalModelLazy(modelId, file.toFile(), false)) {
+                         localModelSources.put(modelId, new LocalModelSource(file.toAbsolutePath().normalize(), fileName, false));
+                         loadedAny[0] = true;
                     }
                 } catch (Exception e) {
                     YesSteveModel.LOGGER.error("[YSM] Failed to load local model file: {}", file, e);
@@ -1057,6 +1057,23 @@ public class ClientModelManager {
             }
         });
         return loadedAny[0];
+    }
+
+    private static boolean registerLocalModelLazy(String modelId, File file, boolean isDirectory) {
+        if (modelId == null || modelId.isBlank()) {
+            return false;
+        }
+        if (knownServerModelIds.contains(modelId)) {
+            localOnlyModelIds.remove(modelId);
+            localModelSources.remove(modelId);
+            return false;
+        }
+        localOnlyModelIds.add(modelId);
+        touchModel(modelId);
+        runPendingModelCallback();
+        LazyModelAssembly lazyAssembly = new LazyModelAssembly(modelId, file, isDirectory);
+        pendingModelQueue.add(Pair.of(lazyAssembly, modelId));
+        return true;
     }
 
     private static boolean loadLocalModelFolder(String modelId, Path dir) throws Exception {
@@ -1191,6 +1208,11 @@ public class ClientModelManager {
                 return false;
             }
         }
+        incrementSyncProgress();
+        return parsedBundle != null;
+    }
+
+    public static void incrementSyncProgress() {
         ((Executor) Minecraft.getInstance()).execute(() -> {
             if (syncState.currentState == SyncState.SYNCING) {
                 syncState.syncedModels++;
@@ -1203,7 +1225,6 @@ public class ClientModelManager {
                 });
             }
         });
-        return parsedBundle != null;
     }
 
     private static void onSyncComplete() {
@@ -1266,30 +1287,47 @@ public class ClientModelManager {
         if (assembly == null) {
             return;
         }
+        if (assembly == modelAssemblyMap.get("default")) {
+            return;
+        }
         if (!RenderSystem.isOnRenderThread()) {
             ((Executor) Minecraft.getInstance()).execute(() -> releaseModelAssembly(assembly));
             return;
         }
-        for (AbstractTexture tex : assembly.getTextures()) {
-            UploadManager.removeTexture(tex);
-            tex.close();
+        if (assembly.getTextures() != null) {
+            for (AbstractTexture tex : assembly.getTextures()) {
+                if (tex != null) {
+                    UploadManager.removeTexture(tex);
+                    tex.close();
+                }
+            }
         }
-        for (Map.Entry<Identifier, ProjectileModelBundle> entry : assembly.getProjectileModels().entrySet()) {
-            entry.getValue().getModel().freeNativeCache();
+        if (assembly.getProjectileModels() != null) {
+            for (Map.Entry<Identifier, ProjectileModelBundle> entry : assembly.getProjectileModels().entrySet()) {
+                if (entry != null && entry.getValue() != null && entry.getValue().getModel() != null) {
+                    entry.getValue().getModel().freeNativeCache();
+                }
+            }
         }
-        for (Map.Entry<Identifier, VehicleModelBundle> entry : assembly.getVehicleModels().entrySet()) {
-            entry.getValue().getModel().freeNativeCache();
+        if (assembly.getVehicleModels() != null) {
+            for (Map.Entry<Identifier, VehicleModelBundle> entry : assembly.getVehicleModels().entrySet()) {
+                if (entry != null && entry.getValue() != null && entry.getValue().getModel() != null) {
+                    entry.getValue().getModel().freeNativeCache();
+                }
+            }
         }
-        assembly.getAnimationBundle().getMainModel().freeNativeCache();
-        assembly.getAnimationBundle().getArmModel().freeNativeCache();
+        if (assembly.getAnimationBundle() != null) {
+            if (assembly.getAnimationBundle().getMainModel() != null) {
+                assembly.getAnimationBundle().getMainModel().freeNativeCache();
+            }
+            if (assembly.getAnimationBundle().getArmModel() != null) {
+                assembly.getAnimationBundle().getArmModel().freeNativeCache();
+            }
+        }
         ModelMemoryProfiler.log("assembly-released", null);
     }
 
     public static void trimUnusedGpuCaches() {
-        int maxCachedGpuModels = safeInt(GeneralConfig.MAX_CACHED_GPU_MODELS, 0);
-        if (maxCachedGpuModels <= 0 || modelAssemblyMap.size() <= maxCachedGpuModels) {
-            return;
-        }
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.screen != null) {
             return;
@@ -1297,19 +1335,43 @@ public class ClientModelManager {
         long now = System.currentTimeMillis();
         long ttlMillis = safeInt(GeneralConfig.UNUSED_MODEL_TTL_SECONDS, 300) * 1000L;
         Set<String> protectedModels = collectProtectedModelIds(minecraft);
-        modelAssemblyMap.entrySet().stream()
-                .filter(entry -> canTrimGpuCache(entry.getKey(), protectedModels, now, ttlMillis))
-                .sorted(Comparator.comparingLong(entry -> modelLastUsedAt.getOrDefault(entry.getKey(), 0L)))
-                .limit(Math.max(1, modelAssemblyMap.size() - maxCachedGpuModels))
-                .forEach(entry -> trimGpuCache(entry.getKey(), entry.getValue()));
-    }
 
-    private static boolean canTrimGpuCache(String modelId, Set<String> protectedModels, long now, long ttlMillis) {
-        if (modelId == null || "default".equals(modelId) || protectedModels.contains(modelId) || gpuCacheTrimmedModels.contains(modelId)) {
-            return false;
+        // 1. Identify active (resolved and untrimmed) models
+        List<Map.Entry<String, ModelAssembly>> activeModels = modelAssemblyMap.entrySet().stream()
+                .filter(entry -> !entry.getKey().equals("default"))
+                .filter(entry -> !protectedModels.contains(entry.getKey()))
+                .filter(entry -> !gpuCacheTrimmedModels.contains(entry.getKey()))
+                .filter(entry -> !(entry.getValue() instanceof com.elfmcys.yesstevemodel.client.model.LazyModelAssembly lazy) || lazy.isResolved())
+                .toList();
+
+        // 2. Trim expired models (always trim them regardless of cache size limits)
+        List<Map.Entry<String, ModelAssembly>> expiredModels = activeModels.stream()
+                .filter(entry -> {
+                    long lastUsed = modelLastUsedAt.getOrDefault(entry.getKey(), 0L);
+                    return lastUsed > 0L && now - lastUsed >= ttlMillis;
+                })
+                .toList();
+
+        for (Map.Entry<String, ModelAssembly> entry : expiredModels) {
+            trimGpuCache(entry.getKey(), entry.getValue());
         }
-        long lastUsed = modelLastUsedAt.getOrDefault(modelId, 0L);
-        return lastUsed > 0L && now - lastUsed >= ttlMillis;
+
+        // 3. If a maximum cache size is set, enforce it by trimming the oldest remaining active models
+        int maxCachedGpuModels = safeInt(GeneralConfig.MAX_CACHED_GPU_MODELS, 0);
+        if (maxCachedGpuModels > 0) {
+            List<Map.Entry<String, ModelAssembly>> remainingActive = activeModels.stream()
+                    .filter(entry -> !gpuCacheTrimmedModels.contains(entry.getKey()))
+                    .sorted(Comparator.comparingLong(entry -> modelLastUsedAt.getOrDefault(entry.getKey(), 0L)))
+                    .toList();
+
+            if (remainingActive.size() > maxCachedGpuModels) {
+                int toTrimCount = remainingActive.size() - maxCachedGpuModels;
+                for (int i = 0; i < toTrimCount; i++) {
+                    Map.Entry<String, ModelAssembly> entry = remainingActive.get(i);
+                    trimGpuCache(entry.getKey(), entry.getValue());
+                }
+            }
+        }
     }
 
     private static Set<String> collectProtectedModelIds(Minecraft minecraft) {
@@ -1351,7 +1413,7 @@ public class ClientModelManager {
         ModelMemoryProfiler.log("gpu-cache-trimmed", modelId);
     }
 
-    private static void touchModel(String modelId) {
+    public static void touchModel(String modelId) {
         if (modelId != null && !modelId.isBlank()) {
             modelLastUsedAt.put(modelId, System.currentTimeMillis());
             gpuCacheTrimmedModels.remove(modelId);

@@ -282,6 +282,12 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
         if (str2.startsWith(TAG_SEARCH_PREFIX)) {
             return true;
         }
+        if (str.toLowerCase(Locale.ENGLISH).contains(str2)) {
+            return false;
+        }
+        if (modelAssembly instanceof com.elfmcys.yesstevemodel.client.model.LazyModelAssembly lazy && !lazy.isResolved()) {
+            return true;
+        }
         if (str2.startsWith(AUTHOR_SEARCH_PREFIX)) {
             String strSubstring = str2.substring(AUTHOR_SEARCH_PREFIX.length());
             Metadata metadata2 = modelAssembly.getModelData().getExtraInfo();
@@ -289,9 +295,6 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
                 return matchesAuthorSearch(modelAssembly, strSubstring, metadata2);
             }
             return true;
-        }
-        if (str.toLowerCase(Locale.ENGLISH).contains(str2)) {
-            return false;
         }
         Metadata metadata3 = modelAssembly.getModelData().getExtraInfo();
         if (metadata3 != null) {
