@@ -96,3 +96,7 @@ loom {
     }
 }
 
+tasks.register('runTestParser', JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.elfmcys.yesstevemodel.client.TestParser'
+}
