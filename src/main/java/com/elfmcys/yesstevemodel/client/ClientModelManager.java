@@ -5,6 +5,7 @@ import com.elfmcys.yesstevemodel.YesSteveModel;
 import com.elfmcys.yesstevemodel.capability.ModelInfoCapability;
 import com.elfmcys.yesstevemodel.client.gui.IGuiWidget;
 import com.elfmcys.yesstevemodel.client.model.ModelAssembly;
+import com.elfmcys.yesstevemodel.client.model.LazyModelAssembly;
 import com.elfmcys.yesstevemodel.client.model.ModelAssemblyFactory;
 import com.elfmcys.yesstevemodel.client.model.ProjectileModelBundle;
 import com.elfmcys.yesstevemodel.client.model.VehicleModelBundle;
@@ -316,22 +317,8 @@ public class ClientModelManager {
                     updatedModelIds.add(modelId);
                     isModelReadyList.add(isAuth);
                 } else {
-                    // йЌ›ж€’и…‘зј‚ж’із“Ё
-                    modelPhraseExecutor.submit(() -> {
-                        if (clientKey == null) return;
-                        try {
-                            byte[] fileBytes = readLimitedFileBytes(cachedFile.toPath(), MAX_SERVER_MODEL_BYTES);
-                            ModelMemoryProfiler.logBytes("cache-read", modelId, fileBytes);
-                            byte[] decompressed = YsmCrypt.read(fileBytes, clientKey);
-                            ModelMemoryProfiler.logBytes("cache-decrypted", modelId, decompressed);
-                            fileBytes = null;
-                            parseAndLoadModel(decompressed, modelId, isAuth);
-                            decompressed = null;
-                            ModelMemoryProfiler.log("cache-parsed", modelId);
-                        } catch (Exception e) {
-                            YesSteveModel.LOGGER.error("[YSM] Failed to parse and load cached model: " + modelId, e);
-                        }
-                    });
+                    LazyModelAssembly lazyAssembly = new LazyModelAssembly(modelId, cachedFile, clientKey, isAuth);
+                    pendingModelQueue.add(Pair.of(lazyAssembly, modelId));
                 }
             } else {
                 YesSteveModel.LOGGER.info("[YSM] Cache MISS or Invalid: " + ctx.uuid + " -> Requesting...");
@@ -500,13 +487,9 @@ public class ClientModelManager {
                     }
 
                     YesSteveModel.LOGGER.info("[YSM] Downloaded & Cached: " + outFile.getAbsolutePath());
-                    byte[] decompressed = YsmCrypt.read(cachedFileData, clientKey);
-                    ModelMemoryProfiler.logBytes("download-decrypted", ctx.modelId, decompressed);
-                    cachedFileData = null;
-
-                    parseAndLoadModel(decompressed, ctx.modelId, ctx.isAuth);
-                    decompressed = null;
-                    ModelMemoryProfiler.log("download-parsed", ctx.modelId);
+                    LazyModelAssembly lazyAssembly = new LazyModelAssembly(ctx.modelId, outFile, clientKey, ctx.isAuth);
+                    pendingModelQueue.add(Pair.of(lazyAssembly, ctx.modelId));
+                    touchModel(ctx.modelId);
                 } catch (Exception e) {
                     YesSteveModel.LOGGER.error("[YSM] Failed to save/parse downloaded model: " + ctx.modelId, e);
                 } finally {
