@@ -1290,6 +1290,9 @@ public class ClientModelManager {
         if (assembly == modelAssemblyMap.get("default")) {
             return;
         }
+        if (assembly instanceof LazyModelAssembly lazy && !lazy.isResolved()) {
+            return;
+        }
         if (!RenderSystem.isOnRenderThread()) {
             ((Executor) Minecraft.getInstance()).execute(() -> releaseModelAssembly(assembly));
             return;
