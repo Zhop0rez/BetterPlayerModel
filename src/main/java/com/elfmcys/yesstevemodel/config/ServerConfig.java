@@ -11,6 +11,8 @@ public class ServerConfig {
 
     public static ModConfigSpec.IntValue BANDWIDTH_LIMIT;
 
+    public static ModConfigSpec.IntValue PLAYER_BANDWIDTH_LIMIT;
+
     public static ModConfigSpec.IntValue PLAYER_SYNC_TIMEOUT;
 
     public static ModConfigSpec.BooleanValue LOW_BANDWIDTH_USAGE;
@@ -58,6 +60,8 @@ public class ServerConfig {
         THREAD_COUNT = builder.defineInRange("ThreadCount", 0, 0, Math.max(2, Runtime.getRuntime().availableProcessors() - 1));
         builder.comment("Bandwidth limitation during distributing models to players.(In Mbps)");
         BANDWIDTH_LIMIT = builder.defineInRange("BandwidthLimit", 100, 1, 999);
+        builder.comment("Bandwidth limitation per player during distributing models.(In Mbps)");
+        PLAYER_BANDWIDTH_LIMIT = builder.defineInRange("PlayerBandwidthLimit", 5, 1, 999);
         builder.comment("Timeout for players to respond to synchronization. Value not greater than 10 means AUTO.(In seconds)");
         PLAYER_SYNC_TIMEOUT = builder.defineInRange("PlayerSyncTimeout", 0, 0, 120);
         builder.comment("Suppress network synchronization of partial features to reduce bandwidth usage");
