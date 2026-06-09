@@ -19,8 +19,13 @@ public class YSMByteBuf implements AutoCloseable {
 
     // ж¶€иІ»ећѓењѕж•ёж“љй ­йѓЁпјЊйІж­ўи®ЂеЇ«е‡єе•ЏйЎЊ
     public int skipGarbageHeader() {
+        if (buf.readableBytes() < 1) return 0;
         int garbageLen = buf.readByte() & 0x7F;
-        buf.skipBytes(1);
+        if (buf.readableBytes() < garbageLen + 1) {
+            buf.readerIndex(buf.writerIndex()); // skip everything
+            return garbageLen;
+        }
+        buf.skipBytes(1); // skip 0x00
         buf.skipBytes(garbageLen);
         return garbageLen;
     }

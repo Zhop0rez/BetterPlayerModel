@@ -191,24 +191,61 @@ public class ClientModelManager {
             byte[] packetBytes = new byte[data.remaining()];
             data.get(packetBytes);
 
-            byte[] decrypted;
-            if (syncStep == 1) {
-                decrypted = YsmCrypt.decrypt(packetBytes, YsmCrypt.publicKey);
-                System.out.println(Arrays.toString(decrypted));
-                if (decrypted != null) handlePacket01(decrypted);
-            } else if (syncStep == 2) {
-                decrypted = YsmCrypt.decrypt(packetBytes, lastKey);
-                if (decrypted != null) {
-                    try (YSMByteBuf buf = new YSMByteBuf(Unpooled.wrappedBuffer(decrypted))) {
-                        handlePacket03(buf);
-                    }
+            boolean processed = false;
+            
+            // Try lastKey (for Packet03)
+            if (lastKey != null) {
+                byte[] d = YsmCrypt.decrypt(packetBytes.clone(), lastKey);
+                if (d != null && d.length > 0) {
+                    try (YSMByteBuf buf = new YSMByteBuf(Unpooled.wrappedBuffer(d))) {
+                        buf.getRawBuf().markReaderIndex();
+                        buf.skipGarbageHeader();
+                        if (buf.getRawBuf().readableBytes() >= 1) {
+                            int type = buf.readVarInt();
+                            if (type == 3) {
+                                buf.getRawBuf().resetReaderIndex();
+                                handlePacket03(buf);
+                                processed = true;
+                            }
+                        }
+                    } catch (Exception ignored) {}
                 }
-            } else if (syncStep == 3) {
-                decrypted = YsmCrypt.decrypt(packetBytes, key1);
-                if (decrypted != null) {
-                    try (YSMByteBuf buf = new YSMByteBuf(Unpooled.wrappedBuffer(decrypted))) {
-                        handlePacket05(buf);
-                    }
+            }
+
+            // Try key1 (for Packet05)
+            if (!processed && key1 != null) {
+                byte[] d = YsmCrypt.decrypt(packetBytes.clone(), key1);
+                if (d != null && d.length > 0) {
+                    try (YSMByteBuf buf = new YSMByteBuf(Unpooled.wrappedBuffer(d))) {
+                        buf.getRawBuf().markReaderIndex();
+                        buf.skipGarbageHeader();
+                        if (buf.getRawBuf().readableBytes() >= 1) {
+                            int type = buf.readVarInt();
+                            if (type == 5) {
+                                buf.getRawBuf().resetReaderIndex();
+                                handlePacket05(buf);
+                                processed = true;
+                            }
+                        }
+                    } catch (Exception ignored) {}
+                }
+            }
+            
+            // Try publicKey (for Packet01)
+            if (!processed) {
+                byte[] d = YsmCrypt.decrypt(packetBytes.clone(), YsmCrypt.publicKey);
+                if (d != null && d.length > 0) {
+                    try (YSMByteBuf buf = new YSMByteBuf(Unpooled.wrappedBuffer(d))) {
+                        buf.getRawBuf().markReaderIndex();
+                        buf.skipGarbageHeader();
+                        if (buf.getRawBuf().readableBytes() >= 1) {
+                            int type = buf.readVarInt();
+                            if (type == 1) {
+                                handlePacket01(d);
+                                processed = true;
+                            }
+                        }
+                    } catch (Exception ignored) {}
                 }
             }
         } catch (Exception e) {

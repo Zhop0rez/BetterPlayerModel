@@ -909,45 +909,53 @@ public final class ServerModelManager {
                 if (currentServer == null) return;
 
                 for (UUID uuid : uuids) {
+                    PlayerSyncState state;
+                    boolean shouldSendPacket01 = false;
                     synchronized (syncStates) {
-                        PlayerSyncState state = syncStates.get(uuid);
-                        if (state != null) {
-                            if (System.currentTimeMillis() - state.lastActiveMs > 15000) {
-                                syncStates.remove(uuid);
-                            } else {
-                                continue;
-                            }
+                        state = syncStates.get(uuid);
+                        if (state == null) {
+                            state = new PlayerSyncState();
+                            syncStates.put(uuid, state);
+                            shouldSendPacket01 = true;
                         }
+
+                        if (modelOverride != null) {
+                            state.allowedModels.addAll(modelOverride);
+                        } else if (shouldSendPacket01) {
+                            state.allowedModels.addAll(CACHE_NAME_INFO.values());
+                        }
+                        state.partialSync = modelOverride != null || state.partialSync;
                     }
 
-                    int garbageLen = 16 + theRandom.nextInt(48);
-                    byte[] garbage = new byte[garbageLen];
-                    theRandom.nextBytes(garbage);
+                    if (shouldSendPacket01) {
+                        int garbageLen = 16 + theRandom.nextInt(48);
+                        byte[] garbage = new byte[garbageLen];
+                        theRandom.nextBytes(garbage);
 
-                    try (YSMByteBuf outBuf = new YSMByteBuf(Unpooled.buffer())) {
-                        outBuf.writeGarbageHeader(garbageLen, garbage);
-                        outBuf.writeByte((byte) 0x01);
-                        YsmCrypt.EncryptedPacket result = YsmCrypt.encrypt(outBuf.toArray(), YsmCrypt.publicKey, true);
-                        
-                        PlayerSyncState state;
-                        synchronized (syncStates) {
-                            state = syncStates.computeIfAbsent(uuid, k -> new PlayerSyncState());
-                            state.allowedModels.clear();
-                            if (modelOverride != null) {
-                                state.allowedModels.addAll(modelOverride);
-                            } else {
-                                state.allowedModels.addAll(CACHE_NAME_INFO.values());
+                        try (YSMByteBuf outBuf = new YSMByteBuf(Unpooled.buffer())) {
+                            outBuf.writeGarbageHeader(garbageLen, garbage);
+                            outBuf.writeByte((byte) 0x01);
+                            YsmCrypt.EncryptedPacket result = YsmCrypt.encrypt(outBuf.toArray(), YsmCrypt.publicKey, true);
+                            
+                            synchronized (syncStates) {
+                                state.step = 1;
+                                state.key1 = result.nextKey();
+                                state.lastActiveMs = System.currentTimeMillis();
                             }
-                            state.partialSync = modelOverride != null;
-                            state.step = 1;
-                            state.key1 = result.nextKey();
-                            state.lastActiveMs = System.currentTimeMillis();
-                        }
 
-                        if (sendModelData(uuid, ByteBuffer.wrap(result.data()), new PendingTransfer())) {
-                            Set<String> delivered = deliveredModelIds.computeIfAbsent(uuid, ignored -> ConcurrentHashMap.newKeySet());
-                            for (ServerModelData model : state.allowedModels) {
-                                delivered.add(model.getModelId());
+                            if (sendModelData(uuid, ByteBuffer.wrap(result.data()), new PendingTransfer())) {
+                                Set<String> delivered = deliveredModelIds.computeIfAbsent(uuid, ignored -> ConcurrentHashMap.newKeySet());
+                                for (ServerModelData model : state.allowedModels) {
+                                    delivered.add(model.getModelId());
+                                }
+                            }
+                        }
+                    } else {
+                        // Already synced or in progress. 
+                        // If modelOverride is present, and we are at step >= 2, we can push Packet03!
+                        if (modelOverride != null && state.step >= 2) {
+                            synchronized (syncStates) {
+                                sendPacket03(uuid, state);
                             }
                         }
                     }
@@ -1095,9 +1103,6 @@ public final class ServerModelManager {
                 YesSteveModel.LOGGER.error("Failed to send model chunks to " + uuid, e);
             } finally {
                 threadLimiter.release();
-                synchronized (syncStates) {
-                    syncStates.remove(uuid);
-                }
             }
         });
     }
