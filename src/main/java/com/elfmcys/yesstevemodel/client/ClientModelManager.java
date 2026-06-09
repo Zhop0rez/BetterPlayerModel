@@ -193,45 +193,47 @@ public class ClientModelManager {
 
             boolean processed = false;
             
-            // Try lastKey (for Packet03)
-            if (lastKey != null) {
-                byte[] d = YsmCrypt.decrypt(packetBytes.clone(), lastKey);
-                if (d != null && d.length > 0) {
-                    try (YSMByteBuf buf = new YSMByteBuf(Unpooled.wrappedBuffer(d))) {
-                        buf.getRawBuf().markReaderIndex();
-                        buf.skipGarbageHeader();
-                        if (buf.getRawBuf().readableBytes() >= 1) {
-                            int type = buf.readVarInt();
-                            if (type == 3) {
-                                buf.getRawBuf().resetReaderIndex();
-                                handlePacket03(buf);
-                                processed = true;
+            if (syncStep == 3) {
+                // Expecting Packet 05 (chunks)
+                if (key1 != null) {
+                    byte[] d = YsmCrypt.decrypt(packetBytes.clone(), key1);
+                    if (d != null && d.length > 0) {
+                        try (YSMByteBuf buf = new YSMByteBuf(Unpooled.wrappedBuffer(d))) {
+                            buf.getRawBuf().markReaderIndex();
+                            buf.skipGarbageHeader();
+                            if (buf.getRawBuf().readableBytes() >= 1) {
+                                int type = buf.readVarInt();
+                                if (type == 5) {
+                                    buf.getRawBuf().resetReaderIndex();
+                                    handlePacket05(buf);
+                                    processed = true;
+                                }
                             }
-                        }
-                    } catch (Exception ignored) {}
+                        } catch (Exception ignored) {}
+                    }
+                }
+            } else if (syncStep == 2) {
+                // Expecting Packet 03 (Catalog)
+                if (lastKey != null) {
+                    byte[] d = YsmCrypt.decrypt(packetBytes.clone(), lastKey);
+                    if (d != null && d.length > 0) {
+                        try (YSMByteBuf buf = new YSMByteBuf(Unpooled.wrappedBuffer(d))) {
+                            buf.getRawBuf().markReaderIndex();
+                            buf.skipGarbageHeader();
+                            if (buf.getRawBuf().readableBytes() >= 1) {
+                                int type = buf.readVarInt();
+                                if (type == 3) {
+                                    buf.getRawBuf().resetReaderIndex();
+                                    handlePacket03(buf);
+                                    processed = true;
+                                }
+                            }
+                        } catch (Exception ignored) {}
+                    }
                 }
             }
 
-            // Try key1 (for Packet05)
-            if (!processed && key1 != null) {
-                byte[] d = YsmCrypt.decrypt(packetBytes.clone(), key1);
-                if (d != null && d.length > 0) {
-                    try (YSMByteBuf buf = new YSMByteBuf(Unpooled.wrappedBuffer(d))) {
-                        buf.getRawBuf().markReaderIndex();
-                        buf.skipGarbageHeader();
-                        if (buf.getRawBuf().readableBytes() >= 1) {
-                            int type = buf.readVarInt();
-                            if (type == 5) {
-                                buf.getRawBuf().resetReaderIndex();
-                                handlePacket05(buf);
-                                processed = true;
-                            }
-                        }
-                    } catch (Exception ignored) {}
-                }
-            }
-            
-            // Try publicKey (for Packet01)
+            // Fallback: Always check if the server is resetting the connection (Packet 01)
             if (!processed) {
                 byte[] d = YsmCrypt.decrypt(packetBytes.clone(), YsmCrypt.publicKey);
                 if (d != null && d.length > 0) {
