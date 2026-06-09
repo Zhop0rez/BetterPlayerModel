@@ -11,7 +11,7 @@ public final class YSMThreadPool {
         return thread;
     });
 
-    private static final ThreadPoolExecutor SYNC_EXECUTOR = new ThreadPoolExecutor(2, 4, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), runnable -> {
+    private static final ThreadPoolExecutor SYNC_EXECUTOR = new ThreadPoolExecutor(32, 32, 30, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), runnable -> {
         Thread thread = new Thread(runnable, "YSM Sync");
         thread.setPriority(7);
         thread.setDaemon(true);

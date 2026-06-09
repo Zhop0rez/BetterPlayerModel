@@ -133,10 +133,6 @@ public final class ServerModelManager {
         if (!limitsInitialized) {
             try {
                 int mbps = ServerConfig.BANDWIDTH_LIMIT.get();
-                MinecraftServer server = GameInstance.getServer();
-                if (server != null && !server.isDedicatedServer()) {
-                    mbps = Math.max(mbps, 500);
-                }
                 double bytesPerSec = Math.max(1.0, mbps * 131072.0);
                 bandwidthLimiter = RateLimiter.create(bytesPerSec);
 
@@ -1589,6 +1585,7 @@ public final class ServerModelManager {
 
     public static void syncModelToPlayer(UUID uuid) {
         nativeSendModelData(uuid, null);
+        uploadStates.entrySet().removeIf(entry -> entry.getValue().owner.equals(uuid));
     }
 
     private static Connection getPlayerConnection(UUID uuid) {
