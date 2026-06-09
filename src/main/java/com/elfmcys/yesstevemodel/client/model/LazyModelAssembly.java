@@ -175,4 +175,8 @@ public class LazyModelAssembly extends ModelAssembly {
     public String getDisplayName(String str) {
         return resolve().getDisplayName(str);
     }
+
+    public synchronized void unresolve() {
+        this.resolved = null;
+    }
 }
