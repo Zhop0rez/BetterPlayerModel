@@ -845,7 +845,7 @@ public class ClientModelManager {
 
     public static void startSync(Connection connection, ByteBuffer byteBuffer) {
         serverConnection = connection;
-        processServerData(byteBuffer);
+        modelPhraseExecutor.submit(() -> processServerData(byteBuffer));
     }
 
     public static void onSyncConnected() {

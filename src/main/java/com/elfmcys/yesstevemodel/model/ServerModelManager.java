@@ -133,6 +133,10 @@ public final class ServerModelManager {
         if (!limitsInitialized) {
             try {
                 int mbps = ServerConfig.BANDWIDTH_LIMIT.get();
+                MinecraftServer server = GameInstance.getServer();
+                if (server != null && !server.isDedicatedServer()) {
+                    mbps = Math.max(mbps, 500);
+                }
                 double bytesPerSec = Math.max(1.0, mbps * 131072.0);
                 bandwidthLimiter = RateLimiter.create(bytesPerSec);
 
@@ -1067,7 +1071,9 @@ public final class ServerModelManager {
                             outBuf.getRawBuf().writeBytes(fileData, offset, length);
                             YsmCrypt.EncryptedPacket result = YsmCrypt.encrypt(outBuf.toArray(), state.key1, false);
 
-//                            bandwidthLimiter.acquire(result.data().length); //TODO
+                            if (bandwidthLimiter != null) {
+                                bandwidthLimiter.acquire(result.data().length);
+                            }
 
 
                             // Stream chunks
