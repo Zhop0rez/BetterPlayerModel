@@ -15,9 +15,7 @@ public final class PlayerLogoutEvent {
             if (!YesSteveModel.isAvailable()) {
                 return;
             }
-            if (NetworkHandler.isPlayerConnected(player)) {
-                ServerModelManager.syncModelToPlayer(player.getUUID());
-            }
+            ServerModelManager.syncModelToPlayer(player.getUUID());
         });
     }
 }

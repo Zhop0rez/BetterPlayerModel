@@ -907,15 +907,25 @@ public final class ServerModelManager {
                 if (currentServer == null) return;
 
                 for (UUID uuid : uuids) {
-                    PlayerSyncState state = syncStates.computeIfAbsent(uuid, k -> new PlayerSyncState());
-                    state.allowedModels.clear();
-                    if (modelOverride != null) {
-                        state.allowedModels.addAll(modelOverride);
-                    } else {
-                        state.allowedModels.addAll(CACHE_NAME_INFO.values());
+                    synchronized (syncStates) {
+                        PlayerSyncState state = syncStates.get(uuid);
+                        if (state != null && modelOverride != null) {
+                            continue;
+                        }
                     }
-                    state.partialSync = modelOverride != null;
-                    state.step = 1;
+
+                    PlayerSyncState state;
+                    synchronized (syncStates) {
+                        state = syncStates.computeIfAbsent(uuid, k -> new PlayerSyncState());
+                        state.allowedModels.clear();
+                        if (modelOverride != null) {
+                            state.allowedModels.addAll(modelOverride);
+                        } else {
+                            state.allowedModels.addAll(CACHE_NAME_INFO.values());
+                        }
+                        state.partialSync = modelOverride != null;
+                        state.step = 1;
+                    }
 
                     // HandshakePing
 //                    byte[] garbage = new byte[16 + SECURE_RANDOM_S.nextInt(48)];
@@ -2008,7 +2018,7 @@ public final class ServerModelManager {
         if (current == null || !Files.exists(current)) return;
         if (Files.isDirectory(current)) {
             if (YSMFolderDeserializer.isModelFolder(current)) {
-                String modelId = baseDir.relativize(current).toString().replace('\\', '/');
+                String modelId = baseDir.relativize(current).toString().replace('\\', '/').toLowerCase(Locale.ROOT);
                 tasks.add(new ScanTask(current, true, isAuth, modelId));
             } else {
                 try (Stream<Path> stream = Files.list(current)) {
@@ -2019,7 +2029,7 @@ public final class ServerModelManager {
             String fileName = current.getFileName().toString();
             ImportKind importKind = importKindFromFileName(fileName);
             if (importKind != ImportKind.UNKNOWN && importKind != ImportKind.SEVEN_ZIP) {
-                String modelId = stripImportExtension(baseDir.relativize(current).toString().replace('\\', '/'));
+                String modelId = stripImportExtension(baseDir.relativize(current).toString().replace('\\', '/')).toLowerCase(Locale.ROOT);
                 tasks.add(new ScanTask(current, false, isAuth, modelId));
             }
         }

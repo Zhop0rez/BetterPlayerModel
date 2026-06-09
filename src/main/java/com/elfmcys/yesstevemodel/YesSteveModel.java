@@ -28,7 +28,11 @@ public class YesSteveModel {
 
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
-    public static final Gson GSON = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create();
+    public static final Gson GSON = new GsonBuilder()
+            .disableHtmlEscaping()
+            .setPrettyPrinting()
+            .registerTypeHierarchyAdapter(com.elfmcys.yesstevemodel.util.data.OrderedStringMap.class, new com.elfmcys.yesstevemodel.util.data.OrderedStringMapAdapter())
+            .create();
 
     private YesSteveModel() {
     }
