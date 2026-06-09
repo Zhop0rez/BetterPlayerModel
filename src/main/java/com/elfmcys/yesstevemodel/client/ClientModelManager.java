@@ -1402,14 +1402,10 @@ public class ClientModelManager {
             ((Executor) Minecraft.getInstance()).execute(() -> trimGpuCache(modelId, assembly));
             return;
         }
-        for (Map.Entry<Identifier, ProjectileModelBundle> entry : assembly.getProjectileModels().entrySet()) {
-            entry.getValue().getModel().freeNativeCache();
+        releaseModelAssembly(assembly);
+        if (assembly instanceof LazyModelAssembly lazy) {
+            lazy.unresolve();
         }
-        for (Map.Entry<Identifier, VehicleModelBundle> entry : assembly.getVehicleModels().entrySet()) {
-            entry.getValue().getModel().freeNativeCache();
-        }
-        assembly.getAnimationBundle().getMainModel().freeNativeCache();
-        assembly.getAnimationBundle().getArmModel().freeNativeCache();
         ModelMemoryProfiler.log("gpu-cache-trimmed", modelId);
     }
 
