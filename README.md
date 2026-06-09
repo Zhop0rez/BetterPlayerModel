@@ -11,7 +11,7 @@ Better Player Model is designed to bring Bedrock Edition's animation capabilitie
 *   **Universal Format Support:** Full compatibility with Blockbench (.json) and encrypted Yes_Steve_Model (.ysm) files.
 *   **YSM Parser Integration:** Built-in engine based on OpenYSM technology to decrypt and unpack legacy .ysm models.
 *   **Bedrock Animation Engine:** Comprehensive MoLang implementation supporting standard queries (q.), variables (v.), and complex mathematical expressions.
-*   **Optimized Performance:** Specifically tuned for Fabric 1.21.11 to ensure minimal impact on frame rates during bone transformations and rendering.
+*   **Optimized Performance:** Specifically tuned for Fabric to ensure minimal impact on frame rates during bone transformations and rendering.
 *   **Multiplayer Synchronization:** Optional server-side component to synchronize custom models and animations between clients.
 
 ## Demonstration
