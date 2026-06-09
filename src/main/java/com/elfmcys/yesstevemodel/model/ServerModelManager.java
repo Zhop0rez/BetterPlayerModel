@@ -1113,7 +1113,7 @@ public final class ServerModelManager {
                             // Stream chunks
                             boolean success = sendModelData(uuid, ByteBuffer.wrap(result.data()), transfer);
                             if (success) {
-                                YesSteveModel.LOGGER.info("[YSM-NET] SERVER: Sent chunk {}/{} ({} bytes) of model '{}' to player {}.", offset + length, totalSize, result.data().length, fileName, getPlayerName(uuid));
+                                YesSteveModel.LOGGER.debug("[YSM-NET] SERVER: Sent chunk {}/{} ({} bytes) of model '{}' to player {}.", offset + length, totalSize, result.data().length, fileName, getPlayerName(uuid));
                                 offset += length;
                             } else {
                                 try { Thread.sleep(5); } catch (InterruptedException e) {}
