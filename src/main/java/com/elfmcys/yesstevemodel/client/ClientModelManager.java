@@ -508,7 +508,7 @@ public class ClientModelManager {
 
         buf.getRawBuf().readBytes(ctx.fileBuffer, chunkOffset, chunkLength);
         ctx.bytesReceived += chunkLength;
-        YesSteveModel.LOGGER.info("[YSM-NET] CLIENT: Received model chunk offset {}/{} ({} bytes) for model '{}' (hash: {})", chunkOffset, totalSize, chunkLength, ctx.modelId, uuid);
+        YesSteveModel.LOGGER.debug("[YSM-NET] CLIENT: Received model chunk offset {}/{} ({} bytes) for model '{}' (hash: {})", chunkOffset, totalSize, chunkLength, ctx.modelId, uuid);
 
         if (ctx.bytesReceived >= totalSize) {
             byte[] fileBuffer = ctx.fileBuffer;
