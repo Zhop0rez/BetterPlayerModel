@@ -457,8 +457,9 @@ public final class ServerModelManager {
         int step = 0;
         boolean partialSync = false;
         List<ServerModelData> allowedModels = new ArrayList<>();
+        long lastActiveMs = System.currentTimeMillis();
 
-        // TODO: жњЄжќҐеЏЇеџєдєЋUUIDжЊЃд№…еЊ–пјЊиї™й‡Њз›®е‰ЌжЇЏж¬ЎеЉ е…Ґз”џж€ђе›єе®љclientKey
+        // TODO: 未来可基于UUID持久化，这里目前每次加入生成固定clientKey
         PlayerSyncState() {new Random(114514).nextBytes(clientKey);}
     }
 
@@ -477,17 +478,20 @@ public final class ServerModelManager {
             PlayerSyncState state = syncStates.get(uuid);
             if (state == null) return;
 
+
+
             try {
+                state.lastActiveMs = System.currentTimeMillis();
                 byte[] packetBytes = new byte[data.remaining()];
                 data.get(packetBytes);
                 System.out.println("Server Handle packet, step=" + state.step + ", length=" + packetBytes.length);
 
                 if (state.step == 1) {
-                    // з­‰еѕ…Pong
+                    // 等待Pong
                     byte[] decrypted = YsmCrypt.decrypt(packetBytes, state.key1);
                     if (decrypted == null || decrypted.length < 56) return;
 
-                    // е®ўж€¶з«Їз”џж€ђзљ„еЇ†й‘°
+                    // 客户端生成的密钥
                     state.clientNextKey = Arrays.copyOfRange(decrypted, decrypted.length - 56, decrypted.length);
                     byte[] payload = Arrays.copyOfRange(decrypted, 0, decrypted.length - 56);
 
@@ -907,8 +911,12 @@ public final class ServerModelManager {
                 for (UUID uuid : uuids) {
                     synchronized (syncStates) {
                         PlayerSyncState state = syncStates.get(uuid);
-                        if (state != null && modelOverride != null) {
-                            continue;
+                        if (state != null) {
+                            if (System.currentTimeMillis() - state.lastActiveMs > 15000) {
+                                syncStates.remove(uuid);
+                            } else {
+                                continue;
+                            }
                         }
                     }
 
@@ -933,6 +941,7 @@ public final class ServerModelManager {
                             state.partialSync = modelOverride != null;
                             state.step = 1;
                             state.key1 = result.nextKey();
+                            state.lastActiveMs = System.currentTimeMillis();
                         }
 
                         if (sendModelData(uuid, ByteBuffer.wrap(result.data()), new PendingTransfer())) {
@@ -1086,6 +1095,9 @@ public final class ServerModelManager {
                 YesSteveModel.LOGGER.error("Failed to send model chunks to " + uuid, e);
             } finally {
                 threadLimiter.release();
+                synchronized (syncStates) {
+                    syncStates.remove(uuid);
+                }
             }
         });
     }
