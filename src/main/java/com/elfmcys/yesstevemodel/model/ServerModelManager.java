@@ -457,8 +457,9 @@ public final class ServerModelManager {
         int step = 0;
         boolean partialSync = false;
         List<ServerModelData> allowedModels = new ArrayList<>();
+        long lastActiveMs = System.currentTimeMillis();
 
-        // TODO: жњЄжќҐеЏЇеџєдєЋUUIDжЊЃд№…еЊ–пјЊиї™й‡Њз›®е‰ЌжЇЏж¬ЎеЉ е…Ґз”џж€ђе›єе®љclientKey
+        // TODO: 未来可基于UUID持久化，这里目前每次加入生成固定clientKey
         PlayerSyncState() {new Random(114514).nextBytes(clientKey);}
     }
 
@@ -467,56 +468,62 @@ public final class ServerModelManager {
             data.flip();
         }
 
-        if (data == null || data.remaining() == 0) {
-            syncStates.remove(uuid);
-            deliveredModelIds.remove(uuid);
-            return;
-        }
+        synchronized (syncStates) {
+            if (data == null || data.remaining() == 0) {
+                syncStates.remove(uuid);
+                deliveredModelIds.remove(uuid);
+                return;
+            }
 
-        PlayerSyncState state = syncStates.get(uuid);
-        if (state == null) return;
+            PlayerSyncState state = syncStates.get(uuid);
+            if (state == null) return;
 
-        try {
-            byte[] packetBytes = new byte[data.remaining()];
-            data.get(packetBytes);
-            System.out.println("Server Handle packet, step=" + state.step + ", length=" + packetBytes.length);
+            try {
+                state.lastActiveMs = System.currentTimeMillis();
+                byte[] packetBytes = new byte[data.remaining()];
+                data.get(packetBytes);
+                System.out.println("Server Handle packet, step=" + state.step + ", length=" + packetBytes.length);
 
-            if (state.step == 1) {
-                // з­‰еѕ…Pong
-                byte[] decrypted = YsmCrypt.decrypt(packetBytes, state.key1);
-                if (decrypted == null || decrypted.length < 56) return;
+                if (state.step == 1) {
+                    // з­‰еѕ…Pong
+                    byte[] decrypted = YsmCrypt.decrypt(packetBytes, state.key1);
+                    if (decrypted == null || decrypted.length < 56) return;
 
-                // е®ўж€¶з«Їз”џж€ђзљ„еЇ†й‘°
-                state.clientNextKey = Arrays.copyOfRange(decrypted, decrypted.length - 56, decrypted.length);
-                byte[] payload = Arrays.copyOfRange(decrypted, 0, decrypted.length - 56);
+                    // е®ўж€¶з«Їз”џж€ђзљ„еЇ†й‘°
+                    state.clientNextKey = Arrays.copyOfRange(decrypted, decrypted.length - 56, decrypted.length);
+                    byte[] payload = Arrays.copyOfRange(decrypted, 0, decrypted.length - 56);
 
-                try (YSMByteBuf buf = new YSMByteBuf(Unpooled.wrappedBuffer(payload))) {
-                    buf.skipGarbageHeader();
-                    if (buf.getRawBuf().readByte() != 0x02) return;
-                }
-
-                // з™јйЂЃеЏЇз”ЁжЁЎећ‹
-                state.step = 2;
-                sendPacket03(uuid, state);
-            } else if (state.step == 2) {
-                byte[] decrypted = YsmCrypt.decrypt(packetBytes, state.key1);
-                if (decrypted == null) return;
-
-                try (YSMByteBuf buf = new YSMByteBuf(Unpooled.wrappedBuffer(decrypted))) {
-                    buf.skipGarbageHeader();
-                    if (buf.getRawBuf().readByte() != 0x04) return;
-
-                    int numRequests = buf.readVarInt();
-                    List<long[]> requestedHashes = new ArrayList<>();
-                    for (int i = 0; i < numRequests; i++) {
-                        requestedHashes.add(new long[]{buf.readVarLong(), buf.readVarLong()});
+                    try (YSMByteBuf buf = new YSMByteBuf(Unpooled.wrappedBuffer(payload))) {
+                        buf.skipGarbageHeader();
+                        if (buf.getRawBuf().readByte() != 0x02) return;
                     }
-                    state.step = 3;
-                    sendPacket05(uuid, state, requestedHashes);
+
+                    // з™јйЂЃеЏЇз”ЁжЁЎећ‹
+                    state.step = 2;
+                    sendPacket03(uuid, state);
+                } else if (state.step == 2) {
+                    byte[] decrypted = YsmCrypt.decrypt(packetBytes, state.key1);
+                    if (decrypted == null) return;
+
+                    try (YSMByteBuf buf = new YSMByteBuf(Unpooled.wrappedBuffer(decrypted))) {
+                        buf.skipGarbageHeader();
+                        if (buf.getRawBuf().readByte() != 0x04) return;
+
+                        int numRequests = buf.readVarInt();
+                        List<long[]> requestedHashes = new ArrayList<>();
+                        for (int i = 0; i < numRequests; i++) {
+                            requestedHashes.add(new long[]{buf.readVarLong(), buf.readVarLong()});
+                        }
+                        state.step = 3;
+                        sendPacket05(uuid, state, requestedHashes);
+                    }
+                }
+            } catch (Exception e) {
+                YesSteveModel.LOGGER.error("[YSM] Server sync error for " + uuid, e);
+                synchronized (syncStates) {
+                    syncStates.remove(uuid);
                 }
             }
-        } catch (Exception e) {
-            YesSteveModel.LOGGER.error("[YSM] Server sync error for " + uuid, e);
         }
     }
 
@@ -905,8 +912,12 @@ public final class ServerModelManager {
                 for (UUID uuid : uuids) {
                     synchronized (syncStates) {
                         PlayerSyncState state = syncStates.get(uuid);
-                        if (state != null && modelOverride != null) {
-                            continue;
+                        if (state != null) {
+                            if (System.currentTimeMillis() - state.lastActiveMs > 15000) {
+                                syncStates.remove(uuid);
+                            } else {
+                                continue;
+                            }
                         }
                     }
 
@@ -921,6 +932,7 @@ public final class ServerModelManager {
                         }
                         state.partialSync = modelOverride != null;
                         state.step = 1;
+                        state.lastActiveMs = System.currentTimeMillis();
                     }
 
                     // HandshakePing
@@ -1097,6 +1109,9 @@ public final class ServerModelManager {
                 YesSteveModel.LOGGER.error("Failed to send model chunks to " + uuid, e);
             } finally {
                 threadLimiter.release();
+                synchronized (syncStates) {
+                    syncStates.remove(uuid);
+                }
             }
         });
     }
