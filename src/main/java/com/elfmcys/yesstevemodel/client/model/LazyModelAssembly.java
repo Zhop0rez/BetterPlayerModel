@@ -108,7 +108,7 @@ public class LazyModelAssembly extends ModelAssembly {
         } catch (Exception e) {
             YesSteveModel.LOGGER.error("[YSM] Failed to lazily resolve model: " + modelId, e);
             ModelAssembly defaultModel = ClientModelManager.getModelAssemblyMap().get("default");
-            if (defaultModel != null) {
+            if (defaultModel != null && defaultModel != this && !(defaultModel instanceof LazyModelAssembly)) {
                 resolved = defaultModel;
             } else {
                 resolved = new ModelAssembly(
