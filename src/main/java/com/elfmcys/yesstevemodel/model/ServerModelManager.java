@@ -458,9 +458,19 @@ public final class ServerModelManager {
         boolean partialSync = false;
         List<ServerModelData> allowedModels = new ArrayList<>();
         long lastActiveMs = System.currentTimeMillis();
+        RateLimiter playerBandwidthLimiter;
 
         // TODO: 未来可基于UUID持久化，这里目前每次加入生成固定clientKey
-        PlayerSyncState() {new Random(114514).nextBytes(clientKey);}
+        PlayerSyncState() {
+            new Random(114514).nextBytes(clientKey);
+            try {
+                int mbps = ServerConfig.PLAYER_BANDWIDTH_LIMIT.get();
+                double bytesPerSec = Math.max(1.0, mbps * 131072.0);
+                this.playerBandwidthLimiter = RateLimiter.create(bytesPerSec);
+            } catch (Exception e) {
+                this.playerBandwidthLimiter = RateLimiter.create(5 * 131072.0);
+            }
+        }
     }
 
     public static void nativeSendModelData(UUID uuid, @Nullable ByteBuffer data) {
@@ -1094,6 +1104,9 @@ public final class ServerModelManager {
 
                             if (bandwidthLimiter != null) {
                                 bandwidthLimiter.acquire(result.data().length);
+                            }
+                            if (state.playerBandwidthLimiter != null) {
+                                state.playerBandwidthLimiter.acquire(result.data().length);
                             }
 
 
