@@ -35,6 +35,14 @@ public class ServerModelData {
         return this.modelId;
     }
 
+    public Object[] getProjectiles() {
+        return this.projectiles;
+    }
+
+    public Object[] getVehicles() {
+        return this.vehicles;
+    }
+
     public ServerAnimationInfo getModelInfo() {
         return this.serverAnimationInfo;
     }

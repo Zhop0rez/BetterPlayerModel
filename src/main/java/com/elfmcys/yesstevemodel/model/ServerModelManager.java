@@ -279,6 +279,7 @@ public final class ServerModelManager {
         }
 
         serverKey = serverKeyBytes;
+        loadMetadataCache();
         nativeLoadModels(null);
     }
 
@@ -520,9 +521,9 @@ public final class ServerModelManager {
 
     public static boolean nativeLoadModels(Object callback) {
         try {
-            Map<String, ServerModelData> loadedModels = new LinkedHashMap<>();
-            Set<String> authIds = new HashSet<>();
-            Set<String> validCacheFiles = new HashSet<>();
+            Map<String, ServerModelData> loadedModels = Collections.synchronizedMap(new LinkedHashMap<>());
+            Set<String> authIds = Collections.synchronizedSet(new HashSet<>());
+            Set<String> validCacheFiles = Collections.synchronizedSet(new HashSet<>());
 
             packs.clear();
             scanDirectoryPacks(BUILT);
@@ -544,6 +545,7 @@ public final class ServerModelManager {
             AUTH_MODELS = authIds;
 
             onModelLoadComplete(result, callback);
+            saveMetadataCache();
             return true;
         } catch (Exception e) {
             YesSteveModel.LOGGER.error("[YSM] Model loading failed", e);
@@ -554,74 +556,109 @@ public final class ServerModelManager {
     private static void scanDirectoryModels(Path baseDir, Path cacheDir, Map<String, ServerModelData> loaded, Set<String> authIds, Set<String> validCaches, boolean isAuth) {
         if (baseDir == null || !Files.isDirectory(baseDir)) return;
 
-        try {
-            Files.walkFileTree(baseDir, new SimpleFileVisitor<>() {
-                @Override
-                public @NotNull FileVisitResult preVisitDirectory(@NotNull Path dir, @NotNull BasicFileAttributes attrs) {
-                    if (dir.equals(baseDir)) {
-                        return FileVisitResult.CONTINUE;
+        List<ScanTask> tasks = new ArrayList<>();
+        gatherTasks(baseDir, baseDir, tasks, isAuth);
+
+        tasks.parallelStream().forEach(task -> {
+            try {
+                if (task.isDir) {
+                    long[] fingerprint = getDirectoryFingerprint(task.path);
+                    long dirSize = fingerprint[0];
+                    long dirLastModified = fingerprint[1];
+                    String cacheKey = baseDir.getFileName().toString() + ":" + baseDir.relativize(task.path).toString().replace('\\', '/');
+
+                    ModelCacheEntry cacheEntry;
+                    synchronized (metadataCache) {
+                        cacheEntry = metadataCache.get(cacheKey);
                     }
-
-                    try {
-                        if (YSMFolderDeserializer.isModelFolder(dir)) {
-                            String modelId = baseDir.relativize(dir).toString().replace('\\', '/');
-
-                            RawYsmModel rawModel = null;
-                            try (YSMFolderDeserializer deserializer = new YSMFolderDeserializer(dir)) {
-                                rawModel = deserializer.deserialize();
-                            } catch (Exception e) {
-                                YesSteveModel.LOGGER.error("Failed to load model at: " + dir, e);
+                    if (cacheEntry != null && cacheEntry.fileSize == dirSize && cacheEntry.lastModified == dirLastModified) {
+                        Path cacheFile = cacheDir.resolve(cacheEntry.cacheFileName);
+                        if (Files.exists(cacheFile)) {
+                            ServerModelData data = fromCachedData(cacheEntry.cachedData);
+                            if (data != null) {
+                                loaded.put(task.modelId, data);
+                                if (isAuth) authIds.add(task.modelId);
+                                validCaches.add(cacheEntry.cacheFileName);
+                                return;
                             }
-
-                            if (rawModel != null) {
-                                try {
-                                    ServerModelData data = processAndCacheModel(modelId, rawModel, cacheDir, isAuth, validCaches);
-                                    rawModel = null;
-                                    if (data != null) {
-                                        loaded.put(modelId, data);
-                                        if (isAuth) authIds.add(modelId);
-                                    }
-                                } catch (Exception e) {
-                                    YesSteveModel.LOGGER.error("Failed to process model at: " + dir, e);
-                                }
-                            }
-
-                            return FileVisitResult.SKIP_SUBTREE;
                         }
+                    }
+
+                    RawYsmModel rawModel = null;
+                    try (YSMFolderDeserializer deserializer = new YSMFolderDeserializer(task.path)) {
+                        rawModel = deserializer.deserialize();
                     } catch (Exception e) {
-                        YesSteveModel.LOGGER.error("Error checking directory: " + dir, e);
+                        YesSteveModel.LOGGER.error("Failed to load model at: " + task.path, e);
                     }
 
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public @NotNull FileVisitResult visitFile(@NotNull Path file, @NotNull BasicFileAttributes attrs) {
-                    ImportKind importKind = importKindFromFileName(file.getFileName().toString());
-                    if (importKind == ImportKind.UNKNOWN) return FileVisitResult.CONTINUE;
-                    if (importKind == ImportKind.SEVEN_ZIP) {
-                        YesSteveModel.LOGGER.warn("[YSM] Skipping unsupported 7z model archive: {}", file);
-                        return FileVisitResult.CONTINUE;
-                    }
-
-                    try {
-                        String modelId = stripImportExtension(baseDir.relativize(file).toString().replace('\\', '/'));
-                        byte[] raw = readModelFileBytes(file);
-                        RawYsmModel rawModel = parseUploadedModel(raw, file.toString(), importKind);
-                        ServerModelData data = processAndCacheModel(modelId, rawModel, cacheDir, isAuth, validCaches);
+                    if (rawModel != null) {
+                        ServerModelData data = processAndCacheModel(task.modelId, rawModel, cacheDir, isAuth, validCaches);
                         if (data != null) {
-                            loaded.put(modelId, data);
-                            if (isAuth) authIds.add(modelId);
+                            loaded.put(task.modelId, data);
+                            if (isAuth) authIds.add(task.modelId);
+
+                            long[] hashes = YsmCrypt.calculateModelHashes(rawModel.properties.sha256, serverKey);
+                            String cacheFileName = String.format("%016x%016x", hashes[0], hashes[1]);
+
+                            ModelCacheEntry newEntry = new ModelCacheEntry();
+                            newEntry.fileSize = dirSize;
+                            newEntry.lastModified = dirLastModified;
+                            newEntry.cacheFileName = cacheFileName;
+                            newEntry.cachedData = toCachedData(data);
+                            synchronized (metadataCache) {
+                                metadataCache.put(cacheKey, newEntry);
+                                cacheModified = true;
+                            }
                         }
-                    } catch (Exception e) {
-                        YesSteveModel.LOGGER.error("Failed to load imported model at: " + file, e);
                     }
-                    return FileVisitResult.CONTINUE;
+                } else {
+                    ImportKind importKind = importKindFromFileName(task.path.getFileName().toString());
+                    long fileSize = Files.size(task.path);
+                    long lastModified = Files.getLastModifiedTime(task.path).toMillis();
+                    String cacheKey = baseDir.getFileName().toString() + ":" + baseDir.relativize(task.path).toString().replace('\\', '/');
+
+                    ModelCacheEntry cacheEntry;
+                    synchronized (metadataCache) {
+                        cacheEntry = metadataCache.get(cacheKey);
+                    }
+                    if (cacheEntry != null && cacheEntry.fileSize == fileSize && cacheEntry.lastModified == lastModified) {
+                        Path cacheFile = cacheDir.resolve(cacheEntry.cacheFileName);
+                        if (Files.exists(cacheFile)) {
+                            ServerModelData data = fromCachedData(cacheEntry.cachedData);
+                            if (data != null) {
+                                loaded.put(task.modelId, data);
+                                if (isAuth) authIds.add(task.modelId);
+                                validCaches.add(cacheEntry.cacheFileName);
+                                return;
+                            }
+                        }
+                    }
+
+                    byte[] raw = readModelFileBytes(task.path);
+                    RawYsmModel rawModel = parseUploadedModel(raw, task.path.toString(), importKind);
+                    ServerModelData data = processAndCacheModel(task.modelId, rawModel, cacheDir, isAuth, validCaches);
+                    if (data != null) {
+                        loaded.put(task.modelId, data);
+                        if (isAuth) authIds.add(task.modelId);
+
+                        long[] hashes = YsmCrypt.calculateModelHashes(rawModel.properties.sha256, serverKey);
+                        String cacheFileName = String.format("%016x%016x", hashes[0], hashes[1]);
+
+                        ModelCacheEntry newEntry = new ModelCacheEntry();
+                        newEntry.fileSize = fileSize;
+                        newEntry.lastModified = lastModified;
+                        newEntry.cacheFileName = cacheFileName;
+                        newEntry.cachedData = toCachedData(data);
+                        synchronized (metadataCache) {
+                            metadataCache.put(cacheKey, newEntry);
+                            cacheModified = true;
+                        }
+                    }
                 }
-            });
-        } catch (IOException e) {
-            YesSteveModel.LOGGER.error("Failed to walk directory tree: " + baseDir, e);
-        }
+            } catch (Exception e) {
+                YesSteveModel.LOGGER.error("Failed to load model at: " + task.path, e);
+            }
+        });
     }
 
     private static void scanDirectoryPacks(Path baseDir) {
@@ -1777,5 +1814,200 @@ public final class ServerModelManager {
         ZIP,
         SEVEN_ZIP,
         UNKNOWN
+    }
+
+    // --- METADATA CACHE OPTIMIZATION ---
+    private static final Path METADATA_CACHE_FILE = CACHE.resolve("server_metadata_cache.json");
+    private static final Map<String, ModelCacheEntry> metadataCache = new HashMap<>();
+    private static boolean cacheModified = false;
+
+    public static class ModelCacheEntry {
+        public long fileSize;
+        public long lastModified;
+        public String cacheFileName;
+        public CachedModelData cachedData;
+    }
+
+    public static class MetadataCacheWrapper {
+        public String serverKeyBase64;
+        public Map<String, ModelCacheEntry> entries = new HashMap<>();
+    }
+
+    public static class CachedModelData {
+        public String modelId;
+        public Map<String, String[]> animMap;
+        public String[] texArr;
+        public String[][] projectiles;
+        public String[][] vehicles;
+        public boolean isCustomSkinModel;
+        public boolean isAuth;
+
+        // ServerModelInfo fields
+        public com.elfmcys.yesstevemodel.resource.models.Metadata metadata;
+        public com.elfmcys.yesstevemodel.resource.models.ModelProperties modelProperties;
+        public com.elfmcys.yesstevemodel.resource.models.MainModelInfo mainModelInfo;
+        public int formatVersion;
+        public String modelHash;
+        public String extra;
+        public long timestamp;
+        public String rand;
+    }
+
+    private static void loadMetadataCache() {
+        metadataCache.clear();
+        if (Files.exists(METADATA_CACHE_FILE)) {
+            try {
+                String jsonStr = Files.readString(METADATA_CACHE_FILE, StandardCharsets.UTF_8);
+                MetadataCacheWrapper wrapper = YesSteveModel.GSON.fromJson(jsonStr, MetadataCacheWrapper.class);
+                String currentKeyBase64 = Base64.getEncoder().encodeToString(serverKey);
+                if (wrapper != null && currentKeyBase64.equals(wrapper.serverKeyBase64)) {
+                    metadataCache.putAll(wrapper.entries);
+                } else {
+                    YesSteveModel.LOGGER.warn("[YSM] Server key mismatch or cache empty, invalidating server model metadata cache.");
+                }
+            } catch (Exception e) {
+                YesSteveModel.LOGGER.warn("[YSM] Failed to load server metadata cache, rebuilding...", e);
+            }
+        }
+    }
+
+    private static void saveMetadataCache() {
+        if (!cacheModified) return;
+        try {
+            MetadataCacheWrapper wrapper = new MetadataCacheWrapper();
+            wrapper.serverKeyBase64 = Base64.getEncoder().encodeToString(serverKey);
+            wrapper.entries = metadataCache;
+            String jsonStr = YesSteveModel.GSON.toJson(wrapper);
+            Files.writeString(METADATA_CACHE_FILE, jsonStr, StandardCharsets.UTF_8);
+            cacheModified = false;
+        } catch (Exception e) {
+            YesSteveModel.LOGGER.error("[YSM] Failed to save server metadata cache", e);
+        }
+    }
+
+    private static CachedModelData toCachedData(ServerModelData data) {
+        CachedModelData cached = new CachedModelData();
+        cached.modelId = data.getModelId();
+
+        Map<String, String[]> animMap = new HashMap<>();
+        for (Map.Entry<String, Set<String>> e : data.getModelInfo().getAnimations().entrySet()) {
+            animMap.put(e.getKey(), e.getValue().toArray(new String[0]));
+        }
+        cached.animMap = animMap;
+        cached.texArr = data.getModelInfo().getTextures().toArray(new String[0]);
+
+        // projectiles
+        Object[] projs = data.getProjectiles();
+        if (projs != null) {
+            cached.projectiles = new String[projs.length][];
+            for (int i = 0; i < projs.length; i++) {
+                cached.projectiles[i] = (String[]) projs[i];
+            }
+        } else {
+            cached.projectiles = new String[0][];
+        }
+
+        // vehicles
+        Object[] vehs = data.getVehicles();
+        if (vehs != null) {
+            cached.vehicles = new String[vehs.length][];
+            for (int i = 0; i < vehs.length; i++) {
+                cached.vehicles[i] = (String[]) vehs[i];
+            }
+        } else {
+            cached.vehicles = new String[0][];
+        }
+
+        cached.isCustomSkinModel = data.isCustomSkinModel();
+        cached.isAuth = data.isAuth();
+
+        ServerModelInfo info = data.getLoadedModelData();
+        cached.metadata = info.getExtraInfo();
+        cached.modelProperties = info.getModelProperties();
+        cached.mainModelInfo = info.getMainModelInfo();
+        cached.formatVersion = info.getFormatVersion();
+        cached.modelHash = info.getModelHash();
+        cached.extra = info.getExtra();
+        cached.timestamp = info.getTimestamp();
+        cached.rand = info.getRand();
+
+        return cached;
+    }
+
+    private static ServerModelData fromCachedData(CachedModelData cached) {
+        ServerAnimationInfo animInfo = new ServerAnimationInfo(cached.animMap, cached.texArr);
+        ServerModelInfo info = new ServerModelInfo(
+            cached.metadata,
+            cached.modelProperties,
+            cached.mainModelInfo,
+            cached.formatVersion,
+            cached.modelHash,
+            cached.extra,
+            cached.timestamp,
+            cached.rand
+        );
+        return new ServerModelData(
+            cached.modelId,
+            animInfo,
+            cached.projectiles,
+            cached.vehicles,
+            info,
+            cached.isCustomSkinModel,
+            cached.isAuth
+        );
+    }
+
+    private static long[] getDirectoryFingerprint(Path dir) {
+        long[] result = new long[]{0L, 0L}; // [totalSize, maxLastModified]
+        try (Stream<Path> stream = Files.walk(dir)) {
+            stream.forEach(p -> {
+                try {
+                    BasicFileAttributes attrs = Files.readAttributes(p, BasicFileAttributes.class);
+                    if (attrs.isRegularFile()) {
+                        result[0] += attrs.size();
+                        long lastMod = attrs.lastModifiedTime().toMillis();
+                        if (lastMod > result[1]) {
+                            result[1] = lastMod;
+                        }
+                    }
+                } catch (IOException ignored) {}
+            });
+        } catch (IOException ignored) {}
+        return result;
+    }
+
+    private static class ScanTask {
+        final Path path;
+        final boolean isDir;
+        final boolean isAuth;
+        final String modelId;
+
+        ScanTask(Path path, boolean isDir, boolean isAuth, String modelId) {
+            this.path = path;
+            this.isDir = isDir;
+            this.isAuth = isAuth;
+            this.modelId = modelId;
+        }
+    }
+
+    private static void gatherTasks(Path baseDir, Path current, List<ScanTask> tasks, boolean isAuth) {
+        if (current == null || !Files.exists(current)) return;
+        if (Files.isDirectory(current)) {
+            if (YSMFolderDeserializer.isModelFolder(current)) {
+                String modelId = baseDir.relativize(current).toString().replace('\\', '/');
+                tasks.add(new ScanTask(current, true, isAuth, modelId));
+            } else {
+                try (Stream<Path> stream = Files.list(current)) {
+                    stream.forEach(p -> gatherTasks(baseDir, p, tasks, isAuth));
+                } catch (IOException ignored) {}
+            }
+        } else {
+            String fileName = current.getFileName().toString();
+            ImportKind importKind = importKindFromFileName(fileName);
+            if (importKind != ImportKind.UNKNOWN && importKind != ImportKind.SEVEN_ZIP) {
+                String modelId = stripImportExtension(baseDir.relativize(current).toString().replace('\\', '/'));
+                tasks.add(new ScanTask(current, false, isAuth, modelId));
+            }
+        }
     }
 }
