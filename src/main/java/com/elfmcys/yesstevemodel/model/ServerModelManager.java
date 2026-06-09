@@ -500,6 +500,8 @@ public final class ServerModelManager {
                         if (buf.getRawBuf().readByte() != 0x02) return;
                     }
 
+                    YesSteveModel.LOGGER.info("[YSM-NET] SERVER: Received Packet 02 (Pong) from player {}. Handshake step 1 complete, client next key exchanged. Decrypted packet length: {}", getPlayerName(uuid), packetBytes.length);
+
                     // з™јйЂЃеЏЇз”ЁжЁЎећ‹
                     state.step = 2;
                     sendPacket03(uuid, state);
@@ -516,6 +518,7 @@ public final class ServerModelManager {
                         for (int i = 0; i < numRequests; i++) {
                             requestedHashes.add(new long[]{buf.readVarLong(), buf.readVarLong()});
                         }
+                        YesSteveModel.LOGGER.info("[YSM-NET] SERVER: Received Packet 04 from player {}. Player requested {} models for download. Proceeding to send Packet 05.", getPlayerName(uuid), numRequests);
                         state.step = 3;
                         sendPacket05(uuid, state, requestedHashes);
                     }
@@ -943,6 +946,8 @@ public final class ServerModelManager {
                                 state.lastActiveMs = System.currentTimeMillis();
                             }
 
+                            YesSteveModel.LOGGER.info("[YSM-NET] SERVER: Initiating model sync handshake with player {}. Sending Packet 01 (Public Key Exchange). Size: {} bytes.", getPlayerName(uuid), result.data().length);
+
                             if (sendModelData(uuid, ByteBuffer.wrap(result.data()), new PendingTransfer())) {
                                 Set<String> delivered = deliveredModelIds.computeIfAbsent(uuid, ignored -> ConcurrentHashMap.newKeySet());
                                 for (ServerModelData model : state.allowedModels) {
@@ -1037,6 +1042,7 @@ public final class ServerModelManager {
             outBuf.writeVarInt(0);  // \0
 
             YsmCrypt.EncryptedPacket result = YsmCrypt.encrypt(outBuf.toArray(), state.clientNextKey, false);
+            YesSteveModel.LOGGER.info("[YSM-NET] SERVER: Sending Packet 03 (Catalog) to player {}. Catalog contains {} allowed models, {} packs. Total encrypted packet size: {} bytes.", getPlayerName(uuid), state.allowedModels.size(), packs.size(), result.data().length);
             sendModelData(uuid, ByteBuffer.wrap(result.data()), new PendingTransfer());
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -1063,6 +1069,8 @@ public final class ServerModelManager {
                     int maxChunkSize = 30720;
                     int chunkCount = (totalSize + maxChunkSize - 1) / maxChunkSize;
                     int chunkSize = (totalSize + chunkCount - 1) / chunkCount;
+
+                    YesSteveModel.LOGGER.info("[YSM-NET] SERVER: Sending model file '{}' (hash: {}) to player {}. Total size: {} bytes, chunks: {}, chunk size: {} bytes.", fileName, hash1 + "_" + hash2, getPlayerName(uuid), totalSize, chunkCount, chunkSize);
 
                     int offset = 0;
 
@@ -1092,12 +1100,14 @@ public final class ServerModelManager {
                             // Stream chunks
                             boolean success = sendModelData(uuid, ByteBuffer.wrap(result.data()), transfer);
                             if (success) {
+                                YesSteveModel.LOGGER.info("[YSM-NET] SERVER: Sent chunk {}/{} ({} bytes) of model '{}' to player {}.", offset + length, totalSize, result.data().length, fileName, getPlayerName(uuid));
                                 offset += length;
                             } else {
                                 try { Thread.sleep(5); } catch (InterruptedException e) {}
                             }
                         }
                     }
+                    YesSteveModel.LOGGER.info("[YSM-NET] SERVER: Finished sending all chunks of model '{}' to player {}.", fileName, getPlayerName(uuid));
                 }
             } catch (Exception e) {
                 YesSteveModel.LOGGER.error("Failed to send model chunks to " + uuid, e);
@@ -1253,6 +1263,7 @@ public final class ServerModelManager {
 
             ModelUploadState state = new ModelUploadState(uploadId, sender.getUUID(), modelId, fileName, importKind, totalBytes, sha256.toLowerCase(Locale.ROOT));
             uploadStates.put(uploadId, state);
+            YesSteveModel.LOGGER.info("[YSM-NET] SERVER: Player '{}' (UUID {}) initiated upload for model ID '{}', file: '{}', total bytes: {}, upload ID: {}", sender.getScoreboardName(), sender.getUUID(), modelId, fileName, totalBytes, uploadId);
             return new UploadStartResult(uploadId, (byte) 0, UPLOAD_CHUNK_SIZE, maxBytes, getModelUploadChunksPerTick(), "");
         }
     }
@@ -1301,6 +1312,7 @@ public final class ServerModelManager {
         }
         System.arraycopy(data, 0, state.data, offset, data.length);
         state.receivedBytes += data.length;
+        YesSteveModel.LOGGER.info("[YSM-NET] SERVER: Received chunk offset {}/{} ({} bytes) from player '{}' for upload ID {}.", offset, state.data.length, data.length, sender.getScoreboardName(), uploadId);
     }
 
     public static UploadFinishResult finishModelUpload(ServerPlayer sender, long uploadId) {
@@ -1308,6 +1320,7 @@ public final class ServerModelManager {
         if (state == null || sender == null || !state.owner.equals(sender.getUUID())) {
             return UploadFinishResult.reject(uploadId, (byte) 4, "Session expired");
         }
+        YesSteveModel.LOGGER.info("[YSM-NET] SERVER: Player '{}' requested upload completion for upload ID {}. Verifying hash...", sender.getScoreboardName(), uploadId);
         if (state.failed) {
             return UploadFinishResult.reject(uploadId, (byte) 5, "Incomplete upload");
         }
@@ -1603,6 +1616,17 @@ public final class ServerModelManager {
     public static void syncModelToPlayer(UUID uuid) {
         nativeSendModelData(uuid, null);
         uploadStates.entrySet().removeIf(entry -> entry.getValue().owner.equals(uuid));
+    }
+
+    private static String getPlayerName(UUID uuid) {
+        net.minecraft.server.MinecraftServer currentServer = dev.architectury.utils.GameInstance.getServer();
+        if (currentServer != null) {
+            ServerPlayer player = currentServer.getPlayerList().getPlayer(uuid);
+            if (player != null) {
+                return player.getScoreboardName();
+            }
+        }
+        return "Unknown (" + uuid + ")";
     }
 
     private static Connection getPlayerConnection(UUID uuid) {
