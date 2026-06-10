@@ -30,6 +30,7 @@ import rip.ysm.gui.components.BooleanOptionRow;
 import rip.ysm.gui.components.RadioOptionRow;
 import rip.ysm.gui.components.SliderOptionRow;
 import rip.ysm.gui.components.groups.IdentifiedGroup;
+import rip.ysm.gui.components.buttons.FooterButton;
 import rip.ysm.gui.molang.MolangOption;
 
 import java.util.ArrayList;
@@ -108,6 +109,8 @@ public class ModelSettingsScreen extends OptionScreen {
         undoBtn.active = false;
         saveBtn.setMessage(Component.translatable("gui.better_player_model.config.done"));
         saveBtn.setX(panelRight - saveBtn.getWidth());
+        FooterButton resetBtn = new FooterButton(panelLeft, panelBottom - 56, 70, 20, Component.translatable("gui.better_player_model.config.reset"), this::onReset);
+        addRenderableWidget(resetBtn);
         previewLeft = panelRight - previewWidth();
         previewTop = rowAreaTop;
         previewRight = panelRight;
@@ -119,6 +122,28 @@ public class ModelSettingsScreen extends OptionScreen {
                     break;
                 }
             }
+        }
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private void onReset() {
+        for (OptionGroup g : groups) {
+            for (OptionRow<?> row : g.getRows()) {
+                Option<?> opt = row.getOption();
+                if (opt != null) {
+                    if (opt.get() instanceof Boolean) {
+                        ((Option<Boolean>) opt).setPending(false);
+                    } else if (opt.get() instanceof Double) {
+                        ((Option<Double>) opt).setPending(0.0);
+                    } else if (opt.get() instanceof Integer) {
+                        ((Option<Integer>) opt).setPending(0);
+                    }
+                    row.refresh();
+                }
+            }
+        }
+        if (activeGroup != null) {
+            selectGroup(activeGroup);
         }
     }
 

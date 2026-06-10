@@ -111,6 +111,8 @@
   "gui.better_player_model.config.cancel.desc": "",
   "gui.better_player_model.config.undo": "Undo",
   "gui.better_player_model.config.undo.desc": "",
+  "gui.better_player_model.config.reset": "Reset",
+  "gui.better_player_model.config.reset.desc": "",
   "gui.better_player_model.config.disable_self_model.desc": "Hide your own custom YSM model. Uses the vanilla Steve model instead.",
   "gui.better_player_model.config.disable_other_model.desc": "Hide other players' custom YSM models.",
   "gui.better_player_model.config.disable_self_hands.desc": "Hide custom hand model in first person view.",

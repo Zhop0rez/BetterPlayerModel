@@ -17,12 +17,17 @@ import org.spongepowered.asm.mixin.Unique;
 import rip.ysm.api.item.ToolActionBridge;
 
 public class CustomFishingHookRenderer {
-    public static boolean tryRenderCustomHook(FishingHook fishingHook, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+    public static boolean tryRenderCustomHook(FishingHook fishingHook, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, net.minecraft.client.renderer.SubmitNodeCollector collector, int packedLight) {
         return ProjectileCapability.get(fishingHook).map(cap -> {
             if (cap.isModelInitialized() && cap.isModelReady()) {
                 fishingHook.setXRot(0.0f);
                 fishingHook.xRotO = 0.0f;
-                RendererManager.getProjectileRenderer().render(cap, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+                SubmitRenderContext.set(collector);
+                try {
+                    RendererManager.getProjectileRenderer().render(cap, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+                } finally {
+                    SubmitRenderContext.set(null);
+                }
                 Player playerOwner = fishingHook.getPlayerOwner();
                 if (playerOwner != null) {
                     poseStack.pushPose();

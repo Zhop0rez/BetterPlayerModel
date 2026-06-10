@@ -39,6 +39,18 @@ import org.apache.commons.lang3.tuple.Pair;
 import rip.ysm.api.client.KeyMappingFactory;
 import rip.ysm.gpu.BlurStack;
 import rip.ysm.gpu.Pie;
+import com.elfmcys.yesstevemodel.client.gui.custom.AbstractConfig;
+import com.elfmcys.yesstevemodel.client.gui.custom.configs.CheckboxConfig;
+import com.elfmcys.yesstevemodel.client.gui.custom.configs.RadioConfig;
+import com.elfmcys.yesstevemodel.client.gui.custom.configs.RangeConfig;
+import com.elfmcys.yesstevemodel.geckolib3.resource.GeckoLibCache;
+import com.elfmcys.yesstevemodel.config.ServerConfig;
+import com.elfmcys.yesstevemodel.molang.parser.ParseException;
+import com.elfmcys.yesstevemodel.network.message.C2SRequestExecuteMolangPacket;
+import net.minecraft.client.gui.components.Button;
+import com.elfmcys.yesstevemodel.molang.runtime.Struct;
+import com.elfmcys.yesstevemodel.client.animation.molang.struct.RoamingStruct;
+import java.util.ArrayList;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -97,6 +109,52 @@ public class ModernAnimationRouletteScreen extends Screen {
         this.centerX = this.width / 2;
         this.centerY = this.height / 2;
         if (currentNavEntry.getRight() >= pageCount()) currentNavEntry.setValue(0);
+        addRenderableWidget(Button.builder(Component.translatable("gui.better_player_model.config.reset"), b -> this.onReset())
+                .bounds(this.centerX - 50, this.centerY + 122, 100, 20).build());
+    }
+
+    private void onReset() {
+        for (ExtraAnimationButtons cfgGroup : renderGroups.values()) {
+            for (AbstractConfig form : cfgGroup.getConfigForms()) {
+                String expr = null;
+                if (form instanceof CheckboxConfig cfg) {
+                    expr = cfg.getValue() + "=0";
+                } else if (form instanceof RangeConfig cfg) {
+                    expr = cfg.getValue() + "=0.0";
+                } else if (form instanceof RadioConfig cfg) {
+                    OrderedStringMap<String, String> labels = cfg.getLabels();
+                    if (labels.size() > 0) {
+                        expr = labels.getValueAt(0);
+                    }
+                }
+                if (expr != null) {
+                    try {
+                        this.animatableModel.executeExpression(GeckoLibCache.parseSimpleExpression(expr), true, false, null);
+                        if (!GeckoLibCache.isRoamingVariableAssignment(expr) && NetworkHandler.isClientConnected() && !ServerConfig.LOW_BANDWIDTH_USAGE.get().booleanValue()) {
+                            NetworkHandler.sendToServer(new C2SRequestExecuteMolangPacket(expr, this.animatableModel.getEntity().getId()));
+                        }
+                    } catch (ParseException e) {
+                        YesSteveModel.LOGGER.error(e);
+                    }
+                }
+            }
+        }
+        if (this.animatableModel instanceof PlayerCapability cap) {
+            Struct container = cap.getServerVarContainer();
+            if (container instanceof RoamingStruct roamingStruct) {
+                List<String> vars = new ArrayList<>();
+                roamingStruct.forEachVar(vars::add);
+                for (String var : vars) {
+                    String expr = "v.roaming." + var + "=0";
+                    try {
+                        this.animatableModel.executeExpression(GeckoLibCache.parseSimpleExpression(expr), true, false, null);
+                    } catch (ParseException e) {
+                        YesSteveModel.LOGGER.error(e);
+                    }
+                }
+            }
+        }
+        playClick();
     }
 
     private int pageCount() {

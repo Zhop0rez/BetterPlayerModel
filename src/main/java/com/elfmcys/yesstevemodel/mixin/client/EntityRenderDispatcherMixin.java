@@ -68,13 +68,13 @@ public class EntityRenderDispatcherMixin {
         if (entity instanceof Projectile projectile) {
             if (!GeneralConfig.DISABLE_PROJECTILE_MODEL.get()) {
                 if (projectile instanceof FishingHook fishingHook) {
-                    boolean shouldRenderVanilla = CustomFishingHookRenderer.tryRenderCustomHook(fishingHook, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+                    boolean shouldRenderVanilla = CustomFishingHookRenderer.tryRenderCustomHook(fishingHook, entityYaw, partialTick, poseStack, bufferSource, collector, packedLight);
                     if (!shouldRenderVanilla) {
                         bufferSource.endBatch();
                     }
                     return shouldRenderVanilla;
                 }
-                boolean shouldRenderVanilla = CustomProjectileRenderer.renderProjectile(projectile, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+                boolean shouldRenderVanilla = CustomProjectileRenderer.renderProjectile(projectile, entityYaw, partialTick, poseStack, bufferSource, collector, packedLight);
                 if (!shouldRenderVanilla) {
                     bufferSource.endBatch();
                 }
@@ -83,7 +83,7 @@ public class EntityRenderDispatcherMixin {
         }
         if (!GeneralConfig.DISABLE_VEHICLE_MODEL.get().booleanValue()) {
             ModelPreviewRenderer.renderVehicleModel(entity, poseStack, partialTick);
-            boolean shouldRenderVanilla = CustomVehicleRenderer.renderVehicle(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+            boolean shouldRenderVanilla = CustomVehicleRenderer.renderVehicle(entity, entityYaw, partialTick, poseStack, bufferSource, collector, packedLight);
             if (!shouldRenderVanilla) {
                 bufferSource.endBatch();
             }

@@ -12,13 +12,18 @@ import net.minecraft.world.phys.Vec3;
 import rip.ysm.api.entity.EntityDataBridge;
 
 public class CustomVehicleRenderer {
-    public static boolean renderVehicle(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+    public static boolean renderVehicle(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, net.minecraft.client.renderer.SubmitNodeCollector collector, int packedLight) {
         if (GeckoVehicleEntity.usesVanillaRenderer(entity)) {
             return true;
         }
         return VehicleCapability.get(entity).map(cap -> {
             if (cap.isModelInitialized() && cap.isModelReady()) {
-                RendererManager.getVehicleRenderer().renderEntity(cap, getBodyRotation(entity, entityYaw, partialTick), partialTick, poseStack, bufferSource, packedLight);
+                SubmitRenderContext.set(collector);
+                try {
+                    RendererManager.getVehicleRenderer().renderEntity(cap, getBodyRotation(entity, entityYaw, partialTick), partialTick, poseStack, bufferSource, packedLight);
+                } finally {
+                    SubmitRenderContext.set(null);
+                }
                 return false;
             }
             return true;
