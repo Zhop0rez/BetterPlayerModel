@@ -47,6 +47,19 @@ public final class CapabilityEvent {
         PlayerEvent.PLAYER_QUIT.register(CapabilityEvent::onPlayerQuit);
         EntityEvent.ADD.register(CapabilityEvent::onEntityAdd);
         TickEvent.SERVER_POST.register(CapabilityEvent::onServerTick);
+        net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents.START_TRACKING.register((trackedEntity, player) -> {
+            if (!YesSteveModel.isAvailable()) {
+                return;
+            }
+            if (trackedEntity instanceof Projectile projectile) {
+                ProjectileModelCapability.get(projectile).ifPresent(projectileModelCap -> {
+                    if (projectileModelCap.isInitialized()) {
+                        S2CSyncProjectileModelPacket packet = new S2CSyncProjectileModelPacket(projectile.getId(), projectileModelCap);
+                        NetworkHandler.sendToClientPlayer(packet, player);
+                    }
+                });
+            }
+        });
     }
 
     private static void onPlayerCloned(ServerPlayer oldPlayer, ServerPlayer newPlayer, boolean wasDeath) {

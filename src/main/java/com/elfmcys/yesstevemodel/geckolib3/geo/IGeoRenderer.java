@@ -1,6 +1,7 @@
 package com.elfmcys.yesstevemodel.geckolib3.geo;
 
 import com.elfmcys.yesstevemodel.client.entity.GeckoVehicleEntity;
+import com.elfmcys.yesstevemodel.client.entity.GeckoProjectileEntity;
 import com.elfmcys.yesstevemodel.geckolib3.core.AnimatableEntity;
 import com.elfmcys.yesstevemodel.geckolib3.core.util.Color;
 import com.elfmcys.yesstevemodel.geckolib3.geo.animated.AnimatedGeoModel;
@@ -35,7 +36,7 @@ public interface IGeoRenderer<T extends AnimatableEntity<?>> {
             vertexConsumer = bufferSource.getBuffer(renderType);
         }
         animatable.resetAnimationState();
-        boolean allowDirectGpuRenderer = !(animatable instanceof GeckoVehicleEntity);
+        boolean allowDirectGpuRenderer = !(animatable instanceof GeckoVehicleEntity) && !(animatable instanceof GeckoProjectileEntity);
         NativeModelRenderer.renderMesh(vertexConsumer, poseStack.last(), model.getGeoModel(), model.getMatrixData(), model.getAbsPivotData(), i, 0, i2, i3, f2, f3, f4, f5, textureLocation, allowDirectGpuRenderer);
         setCurrentModelRenderCycle(EModelRenderCycle.REPEATED);
     }

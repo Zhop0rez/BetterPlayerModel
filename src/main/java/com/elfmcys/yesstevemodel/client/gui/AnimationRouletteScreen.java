@@ -28,6 +28,8 @@ import com.elfmcys.yesstevemodel.network.NetworkHandler;
 import com.elfmcys.yesstevemodel.network.message.C2SPlayAnimationPacket;
 import com.elfmcys.yesstevemodel.network.message.C2SRequestExecuteMolangPacket;
 import com.elfmcys.yesstevemodel.util.data.OrderedStringMap;
+import com.elfmcys.yesstevemodel.molang.runtime.Struct;
+import com.elfmcys.yesstevemodel.client.animation.molang.struct.RoamingStruct;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -210,6 +212,9 @@ public class AnimationRouletteScreen extends Screen {
         addRenderableWidget(new FlatColorButton(this.centerX + 125, this.centerY - 70, 145, 22, Component.translatable("gui.better_player_model.model.return"), button5 -> {
             navigateBack();
         }));
+        addRenderableWidget(new FlatColorButton(this.centerX + 125, this.centerY + 115, 145, 20, Component.translatable("gui.better_player_model.config.reset"), buttonReset -> {
+            onReset();
+        }));
         if (this.currentConfigGroup != null) {
             this.scrollUpButton = new FlatColorButton(this.centerX + 242, this.centerY - 46, 28, 60, Component.literal("в–І"), button6 -> {
                 scrollConfigUp(50);
@@ -237,6 +242,41 @@ public class AnimationRouletteScreen extends Screen {
                 renderConfigFormItem(config, iArr, iArr2);
             }
         }
+    }
+
+    private void onReset() {
+        for (ExtraAnimationButtons cfgGroup : this.renderGroups.values()) {
+            for (AbstractConfig form : cfgGroup.getConfigForms()) {
+                String expr = null;
+                if (form instanceof CheckboxConfig cfg) {
+                    expr = cfg.getValue() + "=0";
+                } else if (form instanceof RangeConfig cfg) {
+                    expr = cfg.getValue() + "=0.0";
+                } else if (form instanceof RadioConfig cfg) {
+                    OrderedStringMap<String, String> labels = cfg.getLabels();
+                    if (labels.size() > 0) {
+                        expr = labels.getValueAt(0);
+                    }
+                }
+                if (expr != null) {
+                    executeExpression(expr, null);
+                    if (!GeckoLibCache.isRoamingVariableAssignment(expr) && NetworkHandler.isClientConnected() && !ServerConfig.LOW_BANDWIDTH_USAGE.get().booleanValue()) {
+                        NetworkHandler.sendToServer(new C2SRequestExecuteMolangPacket(expr, this.animatableModel.getEntity().getId()));
+                    }
+                }
+            }
+        }
+        if (this.animatableModel instanceof PlayerCapability cap) {
+            Struct container = cap.getServerVarContainer();
+            if (container instanceof RoamingStruct roamingStruct) {
+                List<String> vars = new ArrayList<>();
+                roamingStruct.forEachVar(vars::add);
+                for (String var : vars) {
+                    executeExpression("v.roaming." + var + "=0", null);
+                }
+            }
+        }
+        init();
     }
 
     private void renderConfigFormItem(AbstractConfig abstractConfig, int[] iArr, int[] iArr2) {

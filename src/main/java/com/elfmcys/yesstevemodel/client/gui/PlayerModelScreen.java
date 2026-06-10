@@ -8,6 +8,7 @@ import com.elfmcys.yesstevemodel.capability.StarModelsCapability;
 import com.elfmcys.yesstevemodel.client.ClientModelManager;
 import com.elfmcys.yesstevemodel.client.entity.PlayerPreviewEntity;
 import com.elfmcys.yesstevemodel.client.gui.button.*;
+import com.elfmcys.yesstevemodel.client.renderer.ModelPreviewRenderer;
 import com.elfmcys.yesstevemodel.client.input.PlayerModelToggleKey;
 import com.elfmcys.yesstevemodel.client.model.ModelAssembly;
 import com.elfmcys.yesstevemodel.config.GeneralConfig;
@@ -343,21 +344,21 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
                     }
                 });
             }
-        })).setTooltipText("gui.yes_steve_model.model.info");
+        })).setTooltipText("gui.better_player_model.model.info");
         addRenderableWidget(new IconButton(this.guiLeft + 28, this.guiTop + 5, 79, 20, 32, 16, button2 -> {
             if (Minecraft.getInstance().player != null) {
                 PlayerCapability.get(Minecraft.getInstance().player).ifPresent(cap -> {
                     Minecraft.getInstance().setScreen(createTextureScreen(this, cap.getModelId(), cap.getModelAssembly()));
                 });
             }
-        }).setTooltipText("gui.yes_steve_model.model.texture"));
+        }).setTooltipText("gui.better_player_model.model.texture"));
         addRenderableWidget(new ModIconButton(this.guiLeft + 110, this.guiTop + 5));
         if (StringUtils.isNotBlank(currentPath)) {
             addRenderableWidget(new IconButton(this.guiLeft + 110, this.guiTop + 27, 20, 20, 0, 32, button3 -> {
                 navigateUp();
             }).setTooltipText("gui.back"));
         }
-        addRenderableWidget(Checkbox.builder(Component.translatable("gui.yes_steve_model.show_model_id_first"), font).pos(this.guiLeft + 5, this.guiTop - 22).maxWidth(20).selected(GeneralConfig.SHOW_MODEL_ID_FIRST.get()).onValueChange((c, v) -> {
+        addRenderableWidget(Checkbox.builder(Component.translatable("gui.better_player_model.show_model_id_first"), font).pos(this.guiLeft + 5, this.guiTop - 18).maxWidth(125).selected(GeneralConfig.SHOW_MODEL_ID_FIRST.get()).onValueChange((c, v) -> {
             GeneralConfig.SHOW_MODEL_ID_FIRST.set(v);
             GeneralConfig.SHOW_MODEL_ID_FIRST.save();
         }).build());
@@ -367,24 +368,24 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
                 resetCurrentPage();
                 init();
             }
-        }).setTooltipText("gui.yes_steve_model.all_models"));
+        }).setTooltipText("gui.better_player_model.all_models"));
         addRenderableWidget(new IconButton(this.guiLeft + 308, this.guiTop + 5, 18, 18, 48, 0, button5 -> {
             if (this.category != Category.AUTH) {
                 this.category = Category.AUTH;
                 resetCurrentPage();
                 init();
             }
-        }).setTooltipText("gui.yes_steve_model.auth_models"));
+        }).setTooltipText("gui.better_player_model.auth_models"));
         addRenderableWidget(new IconButton(this.guiLeft + 288, this.guiTop + 5, 18, 18, 0, 0, button6 -> {
             if (this.category != Category.STAR) {
                 this.category = Category.STAR;
                 resetCurrentPage();
                 init();
             }
-        }).setTooltipText("gui.yes_steve_model.star_models"));
+        }).setTooltipText("gui.better_player_model.star_models"));
         addRenderableWidget(new IconButton(this.guiLeft + 397, this.guiTop + 5, 18, 18, 16, 16, button7 -> {
             Minecraft.getInstance().setScreen(new ExtraPlayerConfigScreen(this));
-        }).setTooltipText("gui.yes_steve_model.config"));
+        }).setTooltipText("gui.better_player_model.config"));
         boolean canUpload = ClientModelManager.isAllowUpload() && ClientModelManager.isOysmServer();
         IconButton uploadButton = new IconButton(this.guiLeft + 377, this.guiTop + 5, 18, 18, 0, 16, button8 -> {
             Minecraft.getInstance().setScreen(new ModelUploadScreen(this));
@@ -394,15 +395,15 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
         addRenderableWidget(uploadButton);
         addRenderableWidget(new IconButton(this.guiLeft + 357, this.guiTop + 5, 18, 18, 80, 0, button9 -> {
             Minecraft.getInstance().setScreen(new OpenModelFolderScreen(this));
-        }).setTooltipText("gui.yes_steve_model.open_model_folder.open"));
-        addRenderableWidget(new FlatColorButton(this.guiLeft + 198, this.guiTop + 215, 52, 14, Component.translatable("gui.yes_steve_model.pre_page"), button10 -> {
+        }).setTooltipText("gui.better_player_model.open_model_folder.open"));
+        addRenderableWidget(new FlatColorButton(this.guiLeft + 198, this.guiTop + 215, 52, 14, Component.translatable("gui.better_player_model.pre_page"), button10 -> {
             int currentPage = getCurrentPage();
             if (currentPage > 0) {
                 setCurrentPage(currentPage - 1);
                 init();
             }
         }));
-        addRenderableWidget(new FlatColorButton(this.guiLeft + 308, this.guiTop + 215, 52, 14, Component.translatable("gui.yes_steve_model.next_page"), button11 -> {
+        addRenderableWidget(new FlatColorButton(this.guiLeft + 308, this.guiTop + 215, 52, 14, Component.translatable("gui.better_player_model.next_page"), button11 -> {
             int currentPage = getCurrentPage();
             if (currentPage < this.maxPage) {
                 setCurrentPage(currentPage + 1);
@@ -451,7 +452,7 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
         this.searchBox.render(guiGraphics, mouseX, mouseY, partialTick);
         renderModelPreview(guiGraphics, mouseX, mouseY, partialTick);
         if (this.searchBox.getValue().isEmpty() && !this.searchBox.isFocused()) {
-            guiGraphics.drawString(this.font, Component.translatable("gui.yes_steve_model.search").withStyle(ChatFormatting.ITALIC), this.guiLeft + 148, this.guiTop + 10, 7829367);
+            guiGraphics.drawString(this.font, Component.translatable("gui.better_player_model.search").withStyle(ChatFormatting.ITALIC), this.guiLeft + 148, this.guiTop + 10, 7829367);
         }
         String str = String.format("%d/%d", getCurrentPage() + 1, Integer.valueOf(this.maxPage + 1));
         Font font = this.font;
@@ -495,7 +496,7 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
             ((PackIconButton) renderable6).renderDescription(guiGraphics, this, mouseX, mouseY);
         });
         if (this.searchBox.isHovered()) {
-            MutableComponent mutableComponentWithStyle = Component.translatable("gui.yes_steve_model.search.tip").withStyle(ChatFormatting.GRAY);
+            MutableComponent mutableComponentWithStyle = Component.translatable("gui.better_player_model.search.tip").withStyle(ChatFormatting.GRAY);
             guiGraphics.pose().pushPose();
             guiGraphics.pose().translate(0.0f, 0.0f, 4000.0f);
             guiGraphics.renderTooltip(this.font, this.font.split(mutableComponentWithStyle, 320), mouseX, mouseY);
@@ -508,17 +509,17 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
         ClientModelManager.SyncStatus currentState = ClientModelManager.getSyncStatus();
         switch (currentState.getCurrentState()) {
             case WAITING:
-                mutableComponentLiteral = Component.translatable("gui.yes_steve_model.sync_hint.waiting");
+                mutableComponentLiteral = Component.translatable("gui.better_player_model.sync_hint.waiting");
                 break;
             case LOADING:
-                mutableComponentLiteral = Component.translatable("gui.yes_steve_model.sync_hint.loading");
+                mutableComponentLiteral = Component.translatable("gui.better_player_model.sync_hint.loading");
                 break;
             case PREPARING:
-                mutableComponentLiteral = Component.translatable("gui.yes_steve_model.sync_hint.preparing");
+                mutableComponentLiteral = Component.translatable("gui.better_player_model.sync_hint.preparing");
                 break;
             case SYNCING:
                 if (currentState.getSyncedModels() == 0) {
-                    mutableComponentLiteral = Component.translatable("gui.yes_steve_model.sync_hint.syncing");
+                    mutableComponentLiteral = Component.translatable("gui.better_player_model.sync_hint.syncing");
                     break;
                 } else {
                     mutableComponentLiteral = Component.literal(String.format("%s/%s", currentState.getSyncedModels(), currentState.getTotalModels()));
@@ -536,13 +537,18 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
     public void renderModelPreview(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         LocalPlayer localPlayer = Minecraft.getInstance().player;
         if (localPlayer != null) {
-            double guiScale = Minecraft.getInstance().getWindow().getGuiScale();
-            RenderSystem.enableScissor((int) ((this.guiLeft + 5) * guiScale), (int) (Minecraft.getInstance().getWindow().getHeight() - ((this.guiTop + 200) * guiScale)), (int) (125.0d * guiScale), (int) (171.0d * guiScale));
-            guiGraphics.pose().pushPose();
-            guiGraphics.pose().translate(0.0f, 0.0f, 100.0f);
-            InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, this.guiLeft + 67, this.guiTop + 190, 70, (this.guiLeft + 67) - mouseX, ((this.guiTop + 180) - 95) - mouseY, 1.0f, 1.0f, 1.0f, localPlayer);
-            guiGraphics.pose().popPose();
-            RenderSystem.disableScissor();
+            int previewLeft = this.guiLeft + 5;
+            int previewTop = this.guiTop + 29;
+            int previewRight = this.guiLeft + 130;
+            int previewBottom = this.guiTop + 200;
+            if (!ModelPreviewRenderer.renderCustomLocalPlayerPreview(guiGraphics, localPlayer, previewLeft, previewTop, previewRight, previewBottom, (previewLeft + previewRight) * 0.5f, previewTop + 150.0f, 70.0f, 200.0f, partialTick, false)) {
+                guiGraphics.enableScissor(previewLeft, previewTop, previewRight, previewBottom);
+                try {
+                    InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, previewLeft, previewTop, previewRight, previewBottom, 70, (float) mouseX, (float) mouseY, 1.0f, localPlayer);
+                } finally {
+                    guiGraphics.disableScissor();
+                }
+            }
             PlayerCapability.get(localPlayer).ifPresent(cap -> {
                 List<FormattedCharSequence> listSplit = this.font.split(FormattedText.of(ClientModelManager.getModelContext(cap.getModelId()).map(it -> {
                     Metadata metadata2 = it.getModelData().getExtraInfo();
