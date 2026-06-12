@@ -1,0 +1,21 @@
+﻿{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.elfmcys.yesstevemodel.mixin",
+  "plugin": "com.elfmcys.yesstevemodel.mixin.plugin.MixinTweaker",
+  "compatibilityLevel": "JAVA_21",
+  "refmap": "better_player_model.refmap.json",
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "client": [
+    "client.ArrowEntityAccessor", "client.BufferSourceMixin", "client.ClientPacketListenerMixin",
+    "client.EntityRenderDispatcherAccessor", "client.EntityRenderDispatcherMixin",
+    "client.FishingHookAccessor", "client.InventoryScreenMixin", "client.LivingEntityAccessor",
+    "client.LivingRendererMixin", "client.MinecraftAccessor", "client.PauseScreenMixin", "client.ScreenAccessor",
+    "client.ThrowableItemProjectileAccessor", "client.WorldRendererMixin", "client.EntityRidingAccessor"
+  ],
+  "mixins": [
+    "AbstractArrowEntityMixin", "ConnectionAccessor", "ProjectileEntityMixin", "ServerCommonPacketListenerImplAccessor", "ServerPlayerMixin"
+  ]
+}

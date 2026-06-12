@@ -1,0 +1,60 @@
+package com.elfmcys.yesstevemodel.client.input;
+
+import com.elfmcys.yesstevemodel.YesSteveModel;
+import com.elfmcys.yesstevemodel.client.ClientMessages;
+import com.elfmcys.yesstevemodel.client.gui.ExtraPlayerConfigScreen;
+import com.elfmcys.yesstevemodel.client.gui.PlayerModelScreen;
+import com.elfmcys.yesstevemodel.config.ServerConfig;
+import com.elfmcys.yesstevemodel.network.NetworkHandler;
+import com.elfmcys.yesstevemodel.util.InputUtil;
+import com.mojang.blaze3d.platform.InputConstants;
+import dev.architectury.event.EventResult;
+import dev.architectury.event.events.client.ClientRawInputEvent;
+import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
+import rip.ysm.api.PlatformAPI;
+import rip.ysm.api.client.KeyMappingFactory;
+
+public final class PlayerModelToggleKey {
+
+    public static final KeyMapping KEY_MAPPING = KeyMappingFactory.createInGameAlt("key.better_player_model.player_model.desc", InputConstants.Type.KEYSYM, 89, "key.category.better_player_model");
+
+    private PlayerModelToggleKey() {
+    }
+
+    public static void register() {
+        if (PlatformAPI.isServer()) {
+            return;
+        }
+        ClientRawInputEvent.KEY_PRESSED.register((client, action, event) -> {
+            return onKeyInput(action, event.key(), event.scancode()) ? EventResult.interruptFalse() : EventResult.pass();
+        });
+    }
+
+    private static boolean onKeyInput(int action, int keyCode, int scanCode) {
+        if (action != 1 || !InputUtil.isKeyPressed(keyCode, scanCode, KEY_MAPPING)) {
+            return false;
+        }
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.screen instanceof PlayerModelScreen screen) {
+            if (screen.shouldCloseWithToggleKey()) {
+                screen.onClose();
+                return true;
+            }
+            return false;
+        }
+        if (!InputUtil.isPlayerReady()) {
+            return false;
+        }
+        if (!YesSteveModel.isAvailable()) {
+            ClientMessages.sendUnavailableMessage();
+            return true;
+        }
+        if (NetworkHandler.isClientConnected() && !ServerConfig.CAN_SWITCH_MODEL.get()) {
+            minecraft.setScreen(new ExtraPlayerConfigScreen(null));
+        } else {
+            minecraft.setScreen(new PlayerModelScreen());
+        }
+        return true;
+    }
+}

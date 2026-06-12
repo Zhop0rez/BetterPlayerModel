@@ -1,0 +1,170 @@
+package com.elfmcys.yesstevemodel.config;
+
+import net.minecraftforge.common.ForgeConfigSpec;
+
+public class GeneralConfig {
+
+    public static ForgeConfigSpec.BooleanValue DISCLAIMER_SHOW;
+
+    public static ForgeConfigSpec.BooleanValue PRINT_ANIMATION_ROULETTE_MSG;
+
+    public static ForgeConfigSpec.BooleanValue DISABLE_SELF_MODEL;
+
+    public static ForgeConfigSpec.BooleanValue DISABLE_OTHER_MODEL;
+
+    public static ForgeConfigSpec.BooleanValue DISABLE_SELF_HANDS;
+
+    public static ForgeConfigSpec.BooleanValue DISABLE_PROJECTILE_MODEL;
+
+    public static ForgeConfigSpec.BooleanValue DISABLE_VEHICLE_MODEL;
+
+    public static ForgeConfigSpec.BooleanValue DISABLE_EXTERNAL_FP_ANIM;
+
+    public static ForgeConfigSpec.BooleanValue USE_COMPATIBILITY_RENDERER;
+
+    public static ForgeConfigSpec.DoubleValue SOUND_VOLUME;
+
+    public static ForgeConfigSpec.BooleanValue SHOW_MODEL_ID_FIRST;
+
+    public static ForgeConfigSpec.BooleanValue SOPHISTICATEDBACKPACK;
+
+    public static ForgeConfigSpec.BooleanValue PARCOOL;
+
+    public static ForgeConfigSpec.BooleanValue USE_GPU_RENDERER;
+
+    public static ForgeConfigSpec.BooleanValue MODEL_MEMORY_PROFILER;
+
+    public static ForgeConfigSpec.BooleanValue ANIMATION_FRAME_PROFILER;
+
+    public static ForgeConfigSpec.BooleanValue ANIMATION_DEBUG_LOG;
+
+    public static ForgeConfigSpec.BooleanValue EXPERIMENTAL_FALLBACK_ELYTRA_WITHOUT_LOCATOR;
+
+    public static ForgeConfigSpec.BooleanValue EXPERIMENTAL_ENABLE_ELYTRA_FOR_DEFAULT_AND_MISC_MODELS;
+
+    public static ForgeConfigSpec.BooleanValue WARN_REPEATED_ANIMATION_EVALUATION;
+
+    public static ForgeConfigSpec.BooleanValue RELEASE_TEXTURE_BYTES_AFTER_UPLOAD;
+
+    public static ForgeConfigSpec.BooleanValue RESOURCE_STATION_MONITOR_LOG;
+
+    public static ForgeConfigSpec.IntValue MAX_CACHED_GPU_MODELS;
+
+    public static ForgeConfigSpec.IntValue UNUSED_MODEL_TTL_SECONDS;
+
+    public static ForgeConfigSpec.BooleanValue DISABLE_MODEL_GLOW_IN_SHADERPACK;
+
+    public static ForgeConfigSpec.EnumValue<RouletteSettingsMode> ROULETTE_SETTINGS_MODE;
+
+    public static ForgeConfigSpec.EnumValue<RouletteMode> ROULETTE_MODE;
+
+    public static ForgeConfigSpec.BooleanValue BLUR_GUI;
+
+    public static ForgeConfigSpec.EnumValue<TextureScreenMode> TEXTURE_SCREEN_MODE;
+
+    public static ForgeConfigSpec.EnumValue<ModelInfoScreenMode> MODEL_INFO_SCREEN_MODE;
+
+    public enum RouletteSettingsMode {
+        MODERN,
+        CLASSIC
+    }
+
+    public enum RouletteMode {
+        MODERN,
+        CLASSIC
+    }
+
+    public enum TextureScreenMode {
+        MODERN,
+        CLASSIC
+    }
+
+    public enum ModelInfoScreenMode {
+        MODERN,
+        CLASSIC
+    }
+
+    public static boolean safeGet(ForgeConfigSpec.BooleanValue value) {
+        return safeGet(value, false);
+    }
+
+    public static boolean safeGet(ForgeConfigSpec.BooleanValue value, boolean fallback) {
+        try { return value == null ? fallback : value.get(); } catch (IllegalStateException e) { return fallback; }
+    }
+
+    public static boolean effectiveModernRoulette() {
+        if (ROULETTE_MODE == null || ROULETTE_SETTINGS_MODE == null) return false;
+        return ROULETTE_MODE.get() == RouletteMode.MODERN && ROULETTE_SETTINGS_MODE.get() == RouletteSettingsMode.MODERN;
+    }
+
+    public static ForgeConfigSpec buildSpec() {
+        ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
+        defineGeneral(builder);
+        ExtraPlayerRenderConfig.define(builder);
+        LoadingStateConfig.define(builder);
+        return builder.build();
+    }
+
+    public static void defineGeneral(ForgeConfigSpec.Builder builder) {
+        builder.push("general");
+        builder.comment("Whether to display disclaimer GUI");
+        DISCLAIMER_SHOW = builder.define("DisclaimerShow", false);
+        builder.comment("Whether to print animation roulette play message");
+        PRINT_ANIMATION_ROULETTE_MSG = builder.define("PrintAnimationRouletteMsg", false);
+        builder.comment("Prevents rendering of self player's model");
+        DISABLE_SELF_MODEL = builder.define("DisableSelfModel", false);
+        builder.comment("Prevents rendering of other player's model");
+        DISABLE_OTHER_MODEL = builder.define("DisableOtherModel", false);
+        builder.comment("Prevents rendering of self player's hand");
+        DISABLE_SELF_HANDS = builder.define("DisableSelfHands", false);
+        builder.comment("Prevents rendering of projectile model");
+        DISABLE_PROJECTILE_MODEL = builder.define("DisableProjectileModel", false);
+        builder.comment("Prevents rendering of vehicle model");
+        DISABLE_VEHICLE_MODEL = builder.define("DisableVehicleModel", false);
+        builder.comment("Disable first person animation from other mods.");
+        DISABLE_EXTERNAL_FP_ANIM = builder.define("DisableExternalFirstPersonAnim", false);
+        builder.comment("If rendering errors occur, try turning on this.");
+        USE_COMPATIBILITY_RENDERER = builder.define("UseCompatibilityRenderer", true);
+        builder.comment("Test renderer.");
+        USE_GPU_RENDERER = builder.define("UseGpuRenderer", false);
+        builder.comment("Render ysmGlow bones with normal entity lighting while a shader pack is active.");
+        DISABLE_MODEL_GLOW_IN_SHADERPACK = builder.define("DisableModelGlowInShaderpack", true);
+        ROULETTE_SETTINGS_MODE = builder.defineEnum("RouletteSettingsMode", RouletteSettingsMode.MODERN);
+        ROULETTE_MODE = builder.defineEnum("RouletteMode", RouletteMode.CLASSIC);
+        BLUR_GUI = builder.define("BlurGui", false);
+        TEXTURE_SCREEN_MODE = builder.defineEnum("TextureScreenMode", TextureScreenMode.MODERN);
+        MODEL_INFO_SCREEN_MODE = builder.defineEnum("ModelInfoScreenMode", ModelInfoScreenMode.MODERN);
+        builder.comment("The amount of volume when the animation is played.");
+        SOUND_VOLUME = builder.defineInRange("SoundVolume", 100.0d, 0.0d, 100.0d);
+        builder.comment("Whether to display model ID first in the model selection screen, instead of the model name filled in by the model author.");
+        SHOW_MODEL_ID_FIRST = builder.define("ShowModelIdFirst", false);
+        builder.pop();
+        builder.push("Integration");
+        SOPHISTICATEDBACKPACK = builder.define("SophisticatedBackpack", true);
+        PARCOOL = builder.define("Parcool", true);
+        builder.pop();
+        builder.push("ExperimentalTesting");
+        builder.comment("Log model loading memory checkpoints. Intended for diagnostics only.");
+        MODEL_MEMORY_PROFILER = builder.define("ModelMemoryProfiler", false);
+        builder.comment("Collect animation timing/evaluation diagnostics. Intended for diagnostics only.");
+        ANIMATION_FRAME_PROFILER = builder.define("AnimationFrameProfiler", false);
+        builder.comment("Print one [YSM-ANIM] line for each animation evaluation when AnimationFrameProfiler is enabled.");
+        ANIMATION_DEBUG_LOG = builder.define("AnimationDebugLog", false);
+        builder.comment("Allow fallback elytra rendering for models without ElytraLocator. Experimental and may not align perfectly.");
+        EXPERIMENTAL_FALLBACK_ELYTRA_WITHOUT_LOCATOR = builder.define("ExperimentalFallbackElytraWithoutLocator", false);
+        builder.comment("Re-enable elytra rendering for default and misc built-in models, plus models whose ElytraLocator is nested under an Elytra display bone.");
+        EXPERIMENTAL_ENABLE_ELYTRA_FOR_DEFAULT_AND_MISC_MODELS = builder.define("ExperimentalEnableElytraForDefaultAndMiscModels", false);
+        builder.comment("Warn when the same entity evaluates animation more than once in the same render frame.");
+        WARN_REPEATED_ANIMATION_EVALUATION = builder.define("WarnRepeatedAnimationEvaluation", true);
+        builder.comment("Release original texture byte arrays after successful GPU upload. Disable if resource reloads need to re-decode outer textures.");
+        RELEASE_TEXTURE_BYTES_AFTER_UPLOAD = builder.define("ReleaseTextureBytesAfterUpload", false);
+        builder.comment("Print detailed [YSM-RESOURCE] logs for resource station listing, HTTP, preview, and download diagnostics.");
+        RESOURCE_STATION_MONITOR_LOG = builder.define("ResourceStationMonitorLog", false);
+        builder.comment("Maximum client models allowed to keep GPU/native render caches. 0 disables LRU unloading.");
+        MAX_CACHED_GPU_MODELS = builder.defineInRange("MaxCachedGpuModels", 0, 0, 512);
+        builder.comment("Minimum idle time before an unused client model GPU/native cache can be unloaded by LRU.");
+        UNUSED_MODEL_TTL_SECONDS = builder.defineInRange("UnusedModelTtlSeconds", 300, 30, 86400);
+        builder.pop();
+    }
+}
+

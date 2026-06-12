@@ -1,0 +1,115 @@
+plugins {
+	id 'fabric-loom' version '1.6-SNAPSHOT'
+	id 'maven-publish'
+}
+
+version = '1.0.6.1-fabric-1.20.1'
+group = 'rip.ysm'
+
+base {
+	archivesName = 'better-player-model'
+}
+
+repositories {
+    flatDir { dirs 'libs' }
+
+    maven { url 'https://bmclapi2.bangbang93.com/maven/' }
+
+    maven { url "https://maven.quiltmc.org/repository/release" }
+	maven { url "https://maven.terraformersmc.com/releases/" }
+    maven { url "https://maven.architectury.dev/" }
+    maven { url "https://jitpack.io" }
+    maven { url "https://maven.ladysnake.org/releases" }
+    maven { url "https://www.cursemaven.com" }
+    maven { url "https://libraries.minecraft.net/" }
+    maven { url "https://maven.fabricmc.net/" }
+    mavenCentral()
+}
+
+def ccaVersion = "5.3.0"
+
+dependencies {
+	minecraft "com.mojang:minecraft:1.20.1"
+	mappings loom.layered() {
+        officialMojangMappings()
+    }
+    
+	modImplementation "net.fabricmc:fabric-loader:0.15.11"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:0.92.2+1.20.1"
+    
+    modImplementation "dev.architectury:architectury-fabric:9.2.14"
+    include "dev.architectury:architectury-fabric:9.2.14"
+    implementation "dev.architectury:architectury-injectables:1.0.11"
+    
+    modImplementation "dev.onyxstudios.cardinal-components-api:cardinal-components-api:${ccaVersion}"
+    include "dev.onyxstudios.cardinal-components-api:cardinal-components-api:${ccaVersion}"
+    include "dev.onyxstudios.cardinal-components-api:cardinal-components-base:${ccaVersion}"
+    include "dev.onyxstudios.cardinal-components-api:cardinal-components-block:${ccaVersion}"
+    include "dev.onyxstudios.cardinal-components-api:cardinal-components-chunk:${ccaVersion}"
+    include "dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${ccaVersion}"
+    include "dev.onyxstudios.cardinal-components-api:cardinal-components-item:${ccaVersion}"
+    include "dev.onyxstudios.cardinal-components-api:cardinal-components-level:${ccaVersion}"
+    include "dev.onyxstudios.cardinal-components-api:cardinal-components-scoreboard:${ccaVersion}"
+    include "dev.onyxstudios.cardinal-components-api:cardinal-components-world:${ccaVersion}"
+    modImplementation "curse.maven:forge-config-api-port-547434:7260491"
+    include "curse.maven:forge-config-api-port-547434:7260491"
+    implementation "com.electronwill.night-config:core:3.6.7"
+    include "com.electronwill.night-config:core:3.6.7"
+    implementation "com.electronwill.night-config:toml:3.6.7"
+    include "com.electronwill.night-config:toml:3.6.7"
+    modCompileOnly "com.terraformersmc:modmenu:7.2.2"
+    
+    implementation "com.github.TartaricAlkaline:ImageStream:-SNAPSHOT"
+    include "com.github.TartaricAlkaline:ImageStream:-SNAPSHOT"
+
+    implementation "com.github.luben:zstd-jni:1.5.5-11"
+    include "com.github.luben:zstd-jni:1.5.5-11"
+
+    implementation 'net.java.dev.jna:jna:5.14.0'
+    include 'net.java.dev.jna:jna:5.14.0'
+    
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 17
+    it.options.encoding = "UTF-8"
+    it.exclude("net/minecraft/**")
+    it.exclude("net/fabricmc/**")
+    it.exclude("com/mojang/**")
+    it.exclude("dev/architectury/**")
+}
+
+java {
+	withSourcesJar()
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
+}
+
+tasks.withType(Jar).configureEach {
+    exclude("net/minecraft/**")
+    exclude("net/fabricmc/**")
+    exclude("com/mojang/**")
+    exclude("dev/architectury/**")
+    exclude("net/irisshaders/**")
+}
+
+loom {
+    mixin {
+        useLegacyMixinAp = true
+        defaultRefmapName = "better_player_model.refmap.json"
+    }
+}
+
+tasks.register('runTestParser', JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.elfmcys.yesstevemodel.client.TestParser'
+}
+
+
+
+
+
+
+
+

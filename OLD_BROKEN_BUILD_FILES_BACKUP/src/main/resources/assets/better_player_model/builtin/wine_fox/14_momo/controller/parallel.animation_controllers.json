@@ -1,0 +1,289 @@
+﻿{
+	"format_version": "1.19.0",
+	"animation_controllers": {
+		"player.pre_parallel_0": {
+			"states": {
+				"default": {
+					"animations": ["pre_parallel0", "pre_parallel1", "pre_parallel2", "pre_parallel3", "pre_parallel4", "pre_parallel5", "pre_parallel6", "pre_parallel7"]
+				}
+			}
+		},
+		"player.pre_parallel_1": {},
+		"player.pre_parallel_2": {},
+		"player.pre_parallel_3": {},
+		"player.pre_parallel_4": {},
+		"player.pre_parallel_5": {},
+		"player.pre_parallel_6": {},
+		"player.pre_parallel_7": {},
+		"player.parallel_0": {
+			"states": {
+				"default": {
+					"animations": ["parallel0", "parallel2", "parallel3", "parallel1", "parallel4", "parallel5", "parallel6", "parallel7"]
+				}
+			}
+		},
+		"player.parallel_4": {
+			"states": {
+				"default": {
+					"animations": ["state"],
+					"transitions": [
+						{"е…Ёиї›еЋ»дє†": "(v.z_d==1?1:0)&&v.z_cs"},
+						{"еЏЄйњІдёЄе¤ґ": "(v.z_d==2?1:0)&&v.z_cs"},
+						{"е‡єжќҐдє†": "(v.z_d==0?1:0)&&v.z_cs"}
+					]
+				},
+				"е…Ёиї›еЋ»дє†": {
+					"animations": ["пј€е…Ёиї›еЋ»дє†пј‰з‹ђз‹ђй’»ењ°еЉЁз”»"],
+					"on_exit": ["v.z_cs=0;"],
+					"transitions": [
+						{"default": "q.all_animations_finished"}
+					],
+					"blend_transition": 0.05
+				},
+				"еЏЄйњІдёЄе¤ґ": {
+					"animations": ["пј€еЏЄй’»дє†дёЄе¤ґпј‰з‹ђз‹ђй’»ењ°еЉЁз”»"],
+					"on_exit": ["v.z_cs=0;"],
+					"transitions": [
+						{"default": "q.all_animations_finished"}
+					],
+					"blend_transition": 0.05
+				},
+				"е‡єжќҐдє†": {
+					"animations": ["пј€е‡єжќҐдє†пј‰з‹ђз‹ђй’»ењ°еЉЁз”»"],
+					"on_exit": ["v.z_cs=0;"],
+					"transitions": [
+						{"default": "q.all_animations_finished"}
+					],
+					"blend_transition": 0.05
+				}
+			}
+		},
+		"player.parallel_5": {
+			"states": {
+				"default": {
+					"animations": ["state"],
+					"transitions": [
+						{"жњ«ењ°зѓ›ж”»е‡»еЉЁз”»": "v.swing_hand&&v.roaming.end_rod"}
+					]
+				},
+				"жњ«ењ°зѓ›ж”»е‡»еЉЁз”»": {
+					"animations": [" huhu_end_rod"],
+					"on_entry": ["v.swing_hand=0;"],
+					"sound_effects": [
+						{"effect": ""}
+					],
+					"transitions": [
+						{"default": "q.all_animations_finished"}
+					]
+				}
+			}
+		},
+		"player.parallel_6": {},
+		"player.parallel_7": {},
+		"player.parallel_2": {
+			"states": {
+				"default": {
+					"animations": ["state"],
+					"transitions": [
+						{"doobleеЉЁз”»еѕЄзЋЇ1": "v.dooble"}
+					],
+					"blend_transition": 0.05
+				},
+				"doobleеЉЁз”»еѕЄзЋЇ1": {
+					"animations": ["dooble_cycle"],
+					"transitions": [
+						{"doobleеЉЁз”»еѕЄзЋЇ 2": "q.all_animations_finished"},
+						{"default": "1-v.dooble||query.is_swimming"},
+						{"doobleеѕЄзЋЇ1-1": "v.dooble_switch"}
+					]
+				},
+				"doobleеЉЁз”»еѕЄзЋЇ 2": {
+					"animations": ["dooble_cycle"],
+					"transitions": [
+						{"doobleеЉЁз”»еѕЄзЋЇ1": "q.all_animations_finished"},
+						{"default": "1-v.dooble||query.is_swimming"},
+						{"doobleеѕЄзЋЇ1-1": "v.dooble_switch"}
+					]
+				},
+				"doobleеѕЄзЋЇ1-1": {
+					"animations": ["dooble_cycle_1"],
+					"transitions": [
+						{"doobleеѕЄзЋЇ1-2": "q.all_animations_finished"},
+						{"default": "1-v.dooble||query.is_swimming"},
+						{"doobleеЉЁз”»еѕЄзЋЇ1": "1-v.dooble_switch"}
+					]
+				},
+				"doobleеѕЄзЋЇ1-2": {
+					"animations": ["dooble_cycle_1"],
+					"transitions": [
+						{"doobleеѕЄзЋЇ1-1": "q.all_animations_finished"},
+						{"default": "1-v.dooble||query.is_swimming"},
+						{"doobleеЉЁз”»еѕЄзЋЇ1": "1-v.dooble_switch"}
+					]
+				}
+			}
+		},
+		"player.parallel_3": {
+			"states": {
+				"дё‰д»ЅеЌ–йњё2": {
+					"animations": ["ctrl:sanfenmaiba"],
+					"transitions": [
+						{"дё‰д»Ѕйє¦йњё1": "q.all_animations_finished"},
+						{"default": "1-v.sf_m_b"}
+					]
+				},
+				"дё‰д»Ѕйє¦йњё1": {
+					"animations": ["ctrl:sanfenmaiba"],
+					"transitions": [
+						{"дё‰д»ЅеЌ–йњё2": "q.all_animations_finished"},
+						{"default": "1-v.sf_m_b"}
+					]
+				},
+				"default": {
+					"animations": ["state"],
+					"transitions": [
+						{"з‹ђз‹ђж‘‡2-1": "(v.owo==5?1:0)&&(v.huhuyao==4?1:0)"},
+						{"дё‰д»Ѕйє¦йњё1": "v.sf_m_b"},
+						{"з‹ђз‹ђеЌ•еѕЄзЋЇ1-1": "(v.owo>0?1:0)&&(v.huhuyao==3?1:0)(v.huhuyao==3?1:0)"},
+						{"з‹ђз‹ђеЌ•еѕЄзЋЇ2-1": "(v.owo>0?1:0)&&(v.huhuyao==2?1:0)"},
+						{"з‹ђз‹ђеЌ•еѕЄзЋЇ3-1": "(v.owo>0?1:0)&&(v.huhuyao==1?1:0)"}
+					]
+				},
+				"з‹ђз‹ђж‘‡2-1": {
+					"animations": ["з‹ђз‹ђж‘‡2"],
+					"transitions": [
+						{"з‹ђз‹ђж‘‡2-2": "q.all_animations_finished"},
+						{"з‹ђз‹ђж‘‡1-1": "v.owo==21?1:0"},
+						{"з‹ђз‹ђж‘‡3-1": "v.owo==23?1:0"},
+						{"default": "v.owo==0?1:0"}
+					]
+				},
+				"з‹ђз‹ђж‘‡2-2": {
+					"animations": ["з‹ђз‹ђж‘‡2"],
+					"transitions": [
+						{"з‹ђз‹ђж‘‡2-1": "q.all_animations_finished"},
+						{"з‹ђз‹ђж‘‡1-1": "v.owo==21?1:0"},
+						{"з‹ђз‹ђж‘‡3-1": "v.owo==23?1:0"},
+						{"default": "v.owo==0?1:0"}
+					]
+				},
+				"з‹ђз‹ђж‘‡1-1": {
+					"animations": ["з‹ђз‹ђж‘‡1"],
+					"transitions": [
+						{"з‹ђз‹ђж‘‡1-2": "q.all_animations_finished"},
+						{"з‹ђз‹ђж‘‡2-1": "v.owo==12?1:0"},
+						{"з‹ђз‹ђж‘‡3-1": "v.owo==13?1:0"},
+						{"default": "v.owo==0?1:0"}
+					]
+				},
+				"з‹ђз‹ђж‘‡1-2": {
+					"animations": ["з‹ђз‹ђж‘‡1"],
+					"transitions": [
+						{"з‹ђз‹ђж‘‡1-1": "q.all_animations_finished"},
+						{"з‹ђз‹ђж‘‡2-1": "v.owo==12?1:0"},
+						{"з‹ђз‹ђж‘‡3-1": "v.owo==13?1:0"},
+						{"default": "v.owo==0?1:0"}
+					]
+				},
+				"з‹ђз‹ђж‘‡3-1": {
+					"animations": ["з‹ђз‹ђж‘‡3"],
+					"transitions": [
+						{"з‹ђз‹ђж‘‡3-2": "q.all_animations_finished"},
+						{"з‹ђз‹ђж‘‡1-1": "v.owo==31?1:0"},
+						{"з‹ђз‹ђж‘‡2-1": "v.owo==32?1:0"},
+						{"default": "v.owo==0?1:0"}
+					]
+				},
+				"з‹ђз‹ђж‘‡3-2": {
+					"animations": ["з‹ђз‹ђж‘‡3"],
+					"transitions": [
+						{"з‹ђз‹ђж‘‡3-1": "q.all_animations_finished"},
+						{"з‹ђз‹ђж‘‡1-1": "v.owo==31?1:0"},
+						{"з‹ђз‹ђж‘‡2-1": "v.owo==32?1:0"},
+						{"default": "v.owo==0?1:0"}
+					]
+				},
+				"з‹ђз‹ђеЌ•еѕЄзЋЇ1-1": {
+					"animations": ["з‹ђз‹ђж‘‡1"],
+					"transitions": [
+						{"з‹ђз‹ђеЌ•еѕЄзЋЇ1-2": "q.all_animations_finished"},
+						{"default": "v.owo==0?1:0"}
+					]
+				},
+				"з‹ђз‹ђеЌ•еѕЄзЋЇ1-2": {
+					"animations": ["з‹ђз‹ђж‘‡1"],
+					"transitions": [
+						{"з‹ђз‹ђеЌ•еѕЄзЋЇ1-1": "q.all_animations_finished"},
+						{"default": "v.owo==0?1:0"}
+					]
+				},
+				"з‹ђз‹ђеЌ•еѕЄзЋЇ2-1": {
+					"animations": ["з‹ђз‹ђж‘‡2"],
+					"transitions": [
+						{"з‹ђз‹ђеЌ•еѕЄзЋЇ2-2": "q.all_animations_finished"},
+						{"default": "v.owo==0?1:0"}
+					]
+				},
+				"з‹ђз‹ђеЌ•еѕЄзЋЇ2-2": {
+					"animations": ["з‹ђз‹ђж‘‡2"],
+					"transitions": [
+						{"з‹ђз‹ђеЌ•еѕЄзЋЇ2-1": "q.all_animations_finished"},
+						{"default": "v.owo==0?1:0"}
+					]
+				},
+				"з‹ђз‹ђеЌ•еѕЄзЋЇ3-1": {
+					"animations": ["з‹ђз‹ђж‘‡3"],
+					"transitions": [
+						{"з‹ђз‹ђеЌ•еѕЄзЋЇ3-2": "q.all_animations_finished"},
+						{"default": "v.owo==0?1:0"}
+					]
+				},
+				"з‹ђз‹ђеЌ•еѕЄзЋЇ3-2": {
+					"animations": ["з‹ђз‹ђж‘‡3"],
+					"transitions": [
+						{"з‹ђз‹ђеЌ•еѕЄзЋЇ3-1": "q.all_animations_finished"},
+						{"default": "v.owo==0?1:0"}
+					]
+				}
+			}
+		},
+		"player.parallel_1": {
+			"states": {
+				"default": {
+					"animations": ["state"],
+					"transitions": [
+						{"еђѓ1": "q.is_eating"}
+					]
+				},
+				"еђѓ1": {
+					"animations": [
+						{"use_mainhand:pre_eat": "v.main_eat"},
+						{"use_offhand:pre_eat": "1-v.main_eat"}
+					],
+					"on_entry": ["v.eat=ysm.food_level;"],
+					"transitions": [
+						{"еђѓ2": "q.all_animations_finished"},
+						{"еђѓеђЋ": "!q.is_eating"}
+					]
+				},
+				"еђѓ2": {
+					"animations": [
+						{"use_mainhand:pre_eat2": "v.main_eat"},
+						{"use_offhand:pre_eat2": "1-v.main_eat"}
+					],
+					"transitions": [
+						{"еђѓеђЋ": "!q.is_eating"}
+					]
+				},
+				"еђѓеђЋ": {
+					"animations": [
+						{"use:eat_after": "(ysm.food_level>=20&&(ysm.food_level-v.eat)>0)?1:0"}
+					],
+					"transitions": [
+						{"default": "q.all_animations_finished"}
+					]
+				}
+			}
+		}
+	}
+}
