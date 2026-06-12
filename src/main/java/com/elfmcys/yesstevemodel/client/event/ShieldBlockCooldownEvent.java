@@ -16,7 +16,7 @@ public class ShieldBlockCooldownEvent {
 
     public static void onLivingTick(LivingEntity entity) {
         if (EntityDataBridge.getPersistentData(entity).contains(TAG_KEY)) {
-            int i = EntityDataBridge.getPersistentData(entity).getInt(TAG_KEY).orElse(0);
+            int i = EntityDataBridge.getPersistentData(entity).getInt(TAG_KEY);
             if (i > 0) {
                 EntityDataBridge.getPersistentData(entity).putInt(TAG_KEY, i - 1);
             } else {

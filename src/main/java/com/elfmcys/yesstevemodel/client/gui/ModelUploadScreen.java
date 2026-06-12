@@ -360,12 +360,12 @@ public class ModelUploadScreen extends Screen implements ModelUploadSession.List
         MutableComponent sub = Component.translatable("gui.better_player_model.import.standalone_only").withStyle(ChatFormatting.GRAY);
         int cx = this.width / 2;
         int cy = this.height / 2;
-        guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(cx, cy - 14);
-        guiGraphics.pose().scale(2.0f, 2.0f);
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate((float)cx, (float)(cy - 14), 0.0f);
+        guiGraphics.pose().scale(2.0f, 2.0f, 1.0f);
         int mw = this.font.width(main);
         guiGraphics.drawString(this.font, main, -mw / 2, 0, 0xFFFFFFFF);
-        guiGraphics.pose().popMatrix();
+        guiGraphics.pose().popPose();
         int sw = this.font.width(sub);
         guiGraphics.drawString(this.font, sub, cx - sw / 2, cy + 22, 0xFFAAAAAA);
         if (ModelUploadSession.hasServerLimits()) {

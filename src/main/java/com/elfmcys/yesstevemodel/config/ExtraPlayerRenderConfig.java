@@ -1,20 +1,20 @@
 package com.elfmcys.yesstevemodel.config;
 
-import net.neoforged.neoforge.common.ModConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 public class ExtraPlayerRenderConfig {
 
-    public static ModConfigSpec.BooleanValue DISABLE_PLAYER_RENDER;
+    public static ForgeConfigSpec.BooleanValue DISABLE_PLAYER_RENDER;
 
-    public static ModConfigSpec.IntValue PLAYER_POS_X;
+    public static ForgeConfigSpec.IntValue PLAYER_POS_X;
 
-    public static ModConfigSpec.IntValue PLAYER_POS_Y;
+    public static ForgeConfigSpec.IntValue PLAYER_POS_Y;
 
-    public static ModConfigSpec.DoubleValue PLAYER_SCALE;
+    public static ForgeConfigSpec.DoubleValue PLAYER_SCALE;
 
-    public static ModConfigSpec.DoubleValue PLAYER_YAW_OFFSET;
+    public static ForgeConfigSpec.DoubleValue PLAYER_YAW_OFFSET;
 
-    public static void define(ModConfigSpec.Builder builder) {
+    public static void define(ForgeConfigSpec.Builder builder) {
         builder.push("extra_player_render");
         builder.comment("Whether to display player");
         DISABLE_PLAYER_RENDER = builder.define("DisablePlayerRender", false);

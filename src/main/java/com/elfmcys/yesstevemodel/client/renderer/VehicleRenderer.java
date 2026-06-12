@@ -6,16 +6,15 @@ import com.elfmcys.yesstevemodel.geckolib3.geo.GeoEntityRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.state.EntityRenderState;
+
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
 public class VehicleRenderer extends GeoEntityRenderer<Entity, GeckoVehicleEntity> {
-    @Override
-    public EntityRenderState createRenderState() { return new EntityRenderState(); }
+    public Object createRenderState() { return new Object(); }
 
     public VehicleRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -32,7 +31,7 @@ public class VehicleRenderer extends GeoEntityRenderer<Entity, GeckoVehicleEntit
     }
 
     @NotNull
-    public Identifier getTextureLocation(Entity entity) {
+    public ResourceLocation getTextureLocation(Entity entity) {
         return VehicleCapability.get(entity).map((cap) -> cap.getTextureLocation()).orElse(MissingTextureAtlasSprite.getLocation());
     }
 }

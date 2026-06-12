@@ -4,7 +4,7 @@ import com.elfmcys.yesstevemodel.client.entity.CustomPlayerEntity;
 import dev.architectury.event.Event;
 import dev.architectury.event.EventFactory;
 import dev.architectury.event.EventResult;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +28,7 @@ public class SpecialPlayerRenderEvent {
     private final String modelId;
 
     @Nullable
-    private Identifier textureLocation;
+    private ResourceLocation textureLocation;
 
     public SpecialPlayerRenderEvent() {
         this.player = null;
@@ -55,11 +55,11 @@ public class SpecialPlayerRenderEvent {
     }
 
     @Nullable
-    public Identifier getTextureLocation() {
+    public ResourceLocation getTextureLocation() {
         return this.textureLocation;
     }
 
-    public void setTextureLocation(@Nullable Identifier Identifier) {
-        this.textureLocation = Identifier;
+    public void setTextureLocation(@Nullable ResourceLocation ResourceLocation) {
+        this.textureLocation = ResourceLocation;
     }
 }

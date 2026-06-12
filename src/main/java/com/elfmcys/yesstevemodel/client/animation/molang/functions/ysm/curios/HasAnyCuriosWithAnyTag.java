@@ -7,7 +7,7 @@ import com.elfmcys.yesstevemodel.molang.runtime.ExecutionContext;
 import com.elfmcys.yesstevemodel.util.ThreadLocalItemTagSets;
 import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
@@ -23,7 +23,7 @@ public class HasAnyCuriosWithAnyTag extends LivingEntityFunction {
         ReferenceArrayList<TagKey<Item>> referenceArrayList = ThreadLocalItemTagSets.TAG_KEY_LIST.get();
         referenceArrayList.size(arguments.size() - 1);
         for (int i = 1; i < arguments.size(); i++) {
-            Identifier tag = arguments.getResourceLocation(context, i);
+            ResourceLocation tag = arguments.getResourceLocation(context, i);
             if (tag == null) {
                 return null;
             }

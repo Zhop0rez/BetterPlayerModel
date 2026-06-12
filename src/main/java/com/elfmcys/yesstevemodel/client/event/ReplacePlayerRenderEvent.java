@@ -9,7 +9,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.entity.player.Player;
 import rip.ysm.compat.firstperson.FirstPersonCompat;
 import rip.ysm.compat.playeranimator.PlayerAnimatorCompat;
@@ -24,12 +24,12 @@ public class ReplacePlayerRenderEvent {
         return onRenderPlayerPre(entity, entity.getYRot(), partialTick, poseStack, bufferSource, null, packedLight);
     }
 
-    public static boolean onRenderPlayerPre(Player entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, SubmitNodeCollector collector, int packedLight) {
+    public static boolean onRenderPlayerPre(Player entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, MultiBufferSource collector, int packedLight) {
         if (!YesSteveModel.isAvailable()) {
             return false;
         }
         LocalPlayer localPlayer = Minecraft.getInstance().player;
-        if (entity.equals(localPlayer) && GeneralConfig.safeGet(GeneralConfig.DISABLE_SELF_MODEL)) {
+        if (entity.equals(localPlayer) && GeneralConfig.safeGet(GeneralConfig.DISABLE_SELF_MODEL) && !com.elfmcys.yesstevemodel.client.renderer.ModelPreviewRenderer.isPreview()) {
             return false;
         }
         if ((!entity.equals(localPlayer) && GeneralConfig.safeGet(GeneralConfig.DISABLE_OTHER_MODEL)) || entity.isSpectator()) {

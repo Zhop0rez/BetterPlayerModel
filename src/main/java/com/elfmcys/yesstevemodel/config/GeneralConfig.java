@@ -1,68 +1,68 @@
 package com.elfmcys.yesstevemodel.config;
 
-import net.neoforged.neoforge.common.ModConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 public class GeneralConfig {
 
-    public static ModConfigSpec.BooleanValue DISCLAIMER_SHOW;
+    public static ForgeConfigSpec.BooleanValue DISCLAIMER_SHOW;
 
-    public static ModConfigSpec.BooleanValue PRINT_ANIMATION_ROULETTE_MSG;
+    public static ForgeConfigSpec.BooleanValue PRINT_ANIMATION_ROULETTE_MSG;
 
-    public static ModConfigSpec.BooleanValue DISABLE_SELF_MODEL;
+    public static ForgeConfigSpec.BooleanValue DISABLE_SELF_MODEL;
 
-    public static ModConfigSpec.BooleanValue DISABLE_OTHER_MODEL;
+    public static ForgeConfigSpec.BooleanValue DISABLE_OTHER_MODEL;
 
-    public static ModConfigSpec.BooleanValue DISABLE_SELF_HANDS;
+    public static ForgeConfigSpec.BooleanValue DISABLE_SELF_HANDS;
 
-    public static ModConfigSpec.BooleanValue DISABLE_PROJECTILE_MODEL;
+    public static ForgeConfigSpec.BooleanValue DISABLE_PROJECTILE_MODEL;
 
-    public static ModConfigSpec.BooleanValue DISABLE_VEHICLE_MODEL;
+    public static ForgeConfigSpec.BooleanValue DISABLE_VEHICLE_MODEL;
 
-    public static ModConfigSpec.BooleanValue DISABLE_EXTERNAL_FP_ANIM;
+    public static ForgeConfigSpec.BooleanValue DISABLE_EXTERNAL_FP_ANIM;
 
-    public static ModConfigSpec.BooleanValue USE_COMPATIBILITY_RENDERER;
+    public static ForgeConfigSpec.BooleanValue USE_COMPATIBILITY_RENDERER;
 
-    public static ModConfigSpec.DoubleValue SOUND_VOLUME;
+    public static ForgeConfigSpec.DoubleValue SOUND_VOLUME;
 
-    public static ModConfigSpec.BooleanValue SHOW_MODEL_ID_FIRST;
+    public static ForgeConfigSpec.BooleanValue SHOW_MODEL_ID_FIRST;
 
-    public static ModConfigSpec.BooleanValue SOPHISTICATEDBACKPACK;
+    public static ForgeConfigSpec.BooleanValue SOPHISTICATEDBACKPACK;
 
-    public static ModConfigSpec.BooleanValue PARCOOL;
+    public static ForgeConfigSpec.BooleanValue PARCOOL;
 
-    public static ModConfigSpec.BooleanValue USE_GPU_RENDERER;
+    public static ForgeConfigSpec.BooleanValue USE_GPU_RENDERER;
 
-    public static ModConfigSpec.BooleanValue MODEL_MEMORY_PROFILER;
+    public static ForgeConfigSpec.BooleanValue MODEL_MEMORY_PROFILER;
 
-    public static ModConfigSpec.BooleanValue ANIMATION_FRAME_PROFILER;
+    public static ForgeConfigSpec.BooleanValue ANIMATION_FRAME_PROFILER;
 
-    public static ModConfigSpec.BooleanValue ANIMATION_DEBUG_LOG;
+    public static ForgeConfigSpec.BooleanValue ANIMATION_DEBUG_LOG;
 
-    public static ModConfigSpec.BooleanValue EXPERIMENTAL_FALLBACK_ELYTRA_WITHOUT_LOCATOR;
+    public static ForgeConfigSpec.BooleanValue EXPERIMENTAL_FALLBACK_ELYTRA_WITHOUT_LOCATOR;
 
-    public static ModConfigSpec.BooleanValue EXPERIMENTAL_ENABLE_ELYTRA_FOR_DEFAULT_AND_MISC_MODELS;
+    public static ForgeConfigSpec.BooleanValue EXPERIMENTAL_ENABLE_ELYTRA_FOR_DEFAULT_AND_MISC_MODELS;
 
-    public static ModConfigSpec.BooleanValue WARN_REPEATED_ANIMATION_EVALUATION;
+    public static ForgeConfigSpec.BooleanValue WARN_REPEATED_ANIMATION_EVALUATION;
 
-    public static ModConfigSpec.BooleanValue RELEASE_TEXTURE_BYTES_AFTER_UPLOAD;
+    public static ForgeConfigSpec.BooleanValue RELEASE_TEXTURE_BYTES_AFTER_UPLOAD;
 
-    public static ModConfigSpec.BooleanValue RESOURCE_STATION_MONITOR_LOG;
+    public static ForgeConfigSpec.BooleanValue RESOURCE_STATION_MONITOR_LOG;
 
-    public static ModConfigSpec.IntValue MAX_CACHED_GPU_MODELS;
+    public static ForgeConfigSpec.IntValue MAX_CACHED_GPU_MODELS;
 
-    public static ModConfigSpec.IntValue UNUSED_MODEL_TTL_SECONDS;
+    public static ForgeConfigSpec.IntValue UNUSED_MODEL_TTL_SECONDS;
 
-    public static ModConfigSpec.BooleanValue DISABLE_MODEL_GLOW_IN_SHADERPACK;
+    public static ForgeConfigSpec.BooleanValue DISABLE_MODEL_GLOW_IN_SHADERPACK;
 
-    public static ModConfigSpec.EnumValue<RouletteSettingsMode> ROULETTE_SETTINGS_MODE;
+    public static ForgeConfigSpec.EnumValue<RouletteSettingsMode> ROULETTE_SETTINGS_MODE;
 
-    public static ModConfigSpec.EnumValue<RouletteMode> ROULETTE_MODE;
+    public static ForgeConfigSpec.EnumValue<RouletteMode> ROULETTE_MODE;
 
-    public static ModConfigSpec.BooleanValue BLUR_GUI;
+    public static ForgeConfigSpec.BooleanValue BLUR_GUI;
 
-    public static ModConfigSpec.EnumValue<TextureScreenMode> TEXTURE_SCREEN_MODE;
+    public static ForgeConfigSpec.EnumValue<TextureScreenMode> TEXTURE_SCREEN_MODE;
 
-    public static ModConfigSpec.EnumValue<ModelInfoScreenMode> MODEL_INFO_SCREEN_MODE;
+    public static ForgeConfigSpec.EnumValue<ModelInfoScreenMode> MODEL_INFO_SCREEN_MODE;
 
     public enum RouletteSettingsMode {
         MODERN,
@@ -84,11 +84,11 @@ public class GeneralConfig {
         CLASSIC
     }
 
-    public static boolean safeGet(ModConfigSpec.BooleanValue value) {
+    public static boolean safeGet(ForgeConfigSpec.BooleanValue value) {
         return safeGet(value, false);
     }
 
-    public static boolean safeGet(ModConfigSpec.BooleanValue value, boolean fallback) {
+    public static boolean safeGet(ForgeConfigSpec.BooleanValue value, boolean fallback) {
         try { return value == null ? fallback : value.get(); } catch (IllegalStateException e) { return fallback; }
     }
 
@@ -97,15 +97,15 @@ public class GeneralConfig {
         return ROULETTE_MODE.get() == RouletteMode.MODERN && ROULETTE_SETTINGS_MODE.get() == RouletteSettingsMode.MODERN;
     }
 
-    public static ModConfigSpec buildSpec() {
-        ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
+    public static ForgeConfigSpec buildSpec() {
+        ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
         defineGeneral(builder);
         ExtraPlayerRenderConfig.define(builder);
         LoadingStateConfig.define(builder);
         return builder.build();
     }
 
-    public static void defineGeneral(ModConfigSpec.Builder builder) {
+    public static void defineGeneral(ForgeConfigSpec.Builder builder) {
         builder.push("general");
         builder.comment("Whether to display disclaimer GUI");
         DISCLAIMER_SHOW = builder.define("DisclaimerShow", false);

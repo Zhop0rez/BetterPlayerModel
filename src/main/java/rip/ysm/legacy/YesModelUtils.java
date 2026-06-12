@@ -4,7 +4,7 @@ import com.elfmcys.yesstevemodel.util.DigestUtil;
 import com.google.common.collect.Maps;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.bytes.ByteArrays;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -64,7 +64,7 @@ public final class YesModelUtils {
 
     public static Map<String, byte[]> input(File ysmFile) throws IOException {
         String fileName = removeExtension(ysmFile.getName());
-        if (!Identifier.isValidPath(fileName)) {
+        if (!fileName.matches("^[a-z0-9_.-]+$")) {
             return Collections.emptyMap();
         }
         byte[] data = FileUtils.readFileToByteArray(ysmFile);

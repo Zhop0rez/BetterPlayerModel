@@ -7,8 +7,8 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.input.CharacterEvent;
-import net.minecraft.client.input.MouseButtonEvent;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFW;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.FormattedCharSequence;
@@ -64,10 +64,10 @@ public class ExtraPlayerRenderScreen extends Screen {
         }
         MutableComponent mutableComponentTranslatable = Component.translatable("gui.better_player_model.hide_or_show");
         int iWidth = this.font.width(mutableComponentTranslatable) + 24;
-        addRenderableWidget(Checkbox.builder(mutableComponentTranslatable, font).pos((this.width - iWidth) / 2, this.height + i).maxWidth(iWidth).selected(ExtraPlayerRenderConfig.DISABLE_PLAYER_RENDER.get().booleanValue()).onValueChange((c, v) -> {
-            ExtraPlayerRenderConfig.DISABLE_PLAYER_RENDER.set(v);
+        addRenderableWidget(new Checkbox((this.width - iWidth) / 2, this.height + i, iWidth, 20, mutableComponentTranslatable, ExtraPlayerRenderConfig.DISABLE_PLAYER_RENDER.get().booleanValue(), false) { @Override public void onPress() { super.onPress(); ExtraPlayerRenderConfig.DISABLE_PLAYER_RENDER.set(this.selected());
+            
             ExtraPlayerRenderConfig.DISABLE_PLAYER_RENDER.save();
-        }).build());
+        } });
     }
 
     @Override
@@ -77,8 +77,8 @@ public class ExtraPlayerRenderScreen extends Screen {
         int boxTop = this.mouseStartY;
         int boxRight = (int) (boxLeft + (this.rotationX));
         int boxBottom = (int) (boxTop + (this.rotationX * 2.0f));
-        guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(0.0f, 0.0f);
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0.0f, 0.0f, 0.0f);
         guiGraphics.vLine((this.width / 2) - 1, -2, this.height + 2, -1610612737);
         guiGraphics.hLine(-2, this.width + 2, (this.height / 2) - 1, -1610612737);
         guiGraphics.vLine(10, -2, this.height + 2, -1610612737);
@@ -97,7 +97,7 @@ public class ExtraPlayerRenderScreen extends Screen {
             guiGraphics.drawString(this.font, formattedCharSequence, (this.width - 15) - this.font.width(formattedCharSequence), tipY, TEXT_COLOR);
             tipY += 10;
         }
-        guiGraphics.pose().popMatrix();
+        guiGraphics.pose().popPose();
         if (Minecraft.getInstance().player != null && !ExtraPlayerRenderConfig.DISABLE_PLAYER_RENDER.get().booleanValue()) {
             ModelPreviewRenderer.renderPlayerOverlay(guiGraphics, Minecraft.getInstance().player, this.mouseStartX, this.mouseStartY, this.rotationX, this.rotationY, -500, partialTick, false);
         }
@@ -105,34 +105,34 @@ public class ExtraPlayerRenderScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean flag) {
-        boolean inLeftHandleX = ((double) (this.mouseStartX - this.offsetX)) < event.x() && event.x() < ((double) (this.mouseStartX + this.offsetX));
-        boolean inLeftHandleY = ((double) (this.mouseStartY - this.offsetX)) < event.y() && event.y() < ((double) (this.mouseStartY + this.offsetX));
-        if (event.button() == 0 && inLeftHandleX && inLeftHandleY) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        boolean inLeftHandleX = ((double) (this.mouseStartX - this.offsetX)) < mouseX && mouseX < ((double) (this.mouseStartX + this.offsetX));
+        boolean inLeftHandleY = ((double) (this.mouseStartY - this.offsetX)) < mouseY && mouseY < ((double) (this.mouseStartY + this.offsetX));
+        if (button == 0 && inLeftHandleX && inLeftHandleY) {
             this.isDragging = true;
         }
         int rightHandleX = (int) (this.mouseStartX + (this.rotationX));
         int rightHandleY = (int) (this.mouseStartY + (this.rotationX * 2.0f));
-        boolean inRightHandleX = ((double) (rightHandleX - this.offsetX)) < event.x() && event.x() < ((double) (rightHandleX + this.offsetX));
-        boolean inRightHandleY = ((double) (rightHandleY - this.offsetX)) < event.y() && event.y() < ((double) (rightHandleY + this.offsetX));
-        if (event.button() == 0 && inRightHandleX && inRightHandleY) {
+        boolean inRightHandleX = ((double) (rightHandleX - this.offsetX)) < mouseX && mouseX < ((double) (rightHandleX + this.offsetX));
+        boolean inRightHandleY = ((double) (rightHandleY - this.offsetX)) < mouseY && mouseY < ((double) (rightHandleY + this.offsetX));
+        if (button == 0 && inRightHandleX && inRightHandleY) {
             this.isRightDragging = true;
         }
-        return super.mouseClicked(event, flag);
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
-    public boolean mouseReleased(MouseButtonEvent event) {
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
         this.isDragging = false;
         this.isRightDragging = false;
-        return super.mouseReleased(event);
+        return super.mouseReleased(mouseX, mouseY, button);
     }
 
     @Override
-    public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
-        double mouseX = event.x();
-        double mouseY = event.y();
-        int button = event.button();
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        
+        
+        
         if (this.isRightDragging) {
             this.rotationX = Mth.clamp((float) Math.min(mouseX - this.mouseStartX, (mouseY - this.mouseStartY) / 2.0d), 8.0f, 360.0f);
             return true;
@@ -146,15 +146,15 @@ public class ExtraPlayerRenderScreen extends Screen {
             this.rotationY += (float) (dragX * 2.0d);
             return true;
         }
-        return super.mouseDragged(event, dragX, dragY);
+        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
     }
 
     @Override
-    public boolean charTyped(CharacterEvent event) {
-        if (Character.toLowerCase(event.codepoint()) == RESET_KEY && Minecraft.getInstance().hasAltDown()) {
+    public boolean charTyped(char codePoint, int modifiers) {
+        if (Character.toLowerCase(codePoint) == RESET_KEY && hasAltDown()) {
             resetTransform();
         }
-        return super.charTyped(event);
+        return super.charTyped(codePoint, modifiers);
     }
 
     private void resetTransform() {

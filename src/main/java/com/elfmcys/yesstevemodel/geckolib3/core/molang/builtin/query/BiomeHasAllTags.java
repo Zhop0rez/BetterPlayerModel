@@ -5,7 +5,7 @@ import com.elfmcys.yesstevemodel.geckolib3.core.molang.context.IContext;
 import com.elfmcys.yesstevemodel.geckolib3.core.molang.funciton.entity.EntityFunction;
 import com.elfmcys.yesstevemodel.molang.runtime.ExecutionContext;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.biome.Biome;
@@ -17,7 +17,7 @@ public class BiomeHasAllTags extends EntityFunction {
         Holder<Biome> biome = entity.level().getBiome(entity.blockPosition());
 
         for (int i = 0; i < arguments.size(); i++) {
-            Identifier id = arguments.getResourceLocation(context, i);
+            ResourceLocation id = arguments.getResourceLocation(context, i);
             if (id == null) {
                 return null;
             }

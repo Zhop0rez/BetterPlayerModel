@@ -9,7 +9,7 @@ import it.unimi.dsi.fastutil.objects.ObjectListIterator;
 import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 import net.minecraft.client.Minecraft;
 import java.util.concurrent.Executor;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import org.jetbrains.annotations.Nullable;
 
@@ -24,7 +24,7 @@ public class AudioPlayerManager {
     public boolean playSound(AnimatableEntity<?> entity, int soundId, String soundName, boolean forceReplace, @Nullable Consumer<YSMTickableSoundInstance> callback) {
         YSMTickableSoundInstance soundInstance;
         if (soundName.contains(":")) {
-            Identifier resourceLocationTryParse = Identifier.tryParse(soundName);
+            ResourceLocation resourceLocationTryParse = ResourceLocation.tryParse(soundName);
             if (resourceLocationTryParse != null) {
                 soundInstance = new YSMTickableSoundInstance(SoundEvent.createVariableRangeEvent(resourceLocationTryParse), entity.getEntity());
             } else {

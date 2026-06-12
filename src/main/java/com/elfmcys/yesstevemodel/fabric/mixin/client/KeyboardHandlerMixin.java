@@ -4,7 +4,6 @@ import dev.architectury.event.EventResult;
 import dev.architectury.event.events.client.ClientRawInputEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.KeyboardHandler;
-import net.minecraft.client.input.KeyEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -14,9 +13,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class KeyboardHandlerMixin {
 
     @Inject(method = "keyPress", at = @At("HEAD"), cancellable = true)
-    private void ysm$fireKeyPress(long window, int action, KeyEvent event, CallbackInfo ci) {
+    private void ysm$fireKeyPress(long window, int key, int scanCode, int action, int modifiers, CallbackInfo ci) {
         Minecraft client = Minecraft.getInstance();
-        EventResult result = ClientRawInputEvent.KEY_PRESSED.invoker().keyPressed(client, action, event);
+        EventResult result = ClientRawInputEvent.KEY_PRESSED.invoker().keyPressed(client, key, scanCode, action, modifiers);
         if (result.isFalse()) {
             ci.cancel();
         }

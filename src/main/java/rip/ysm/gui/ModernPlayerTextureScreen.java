@@ -15,10 +15,10 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.input.MouseButtonEvent;
+import org.lwjgl.glfw.GLFW;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import rip.ysm.gui.components.AnimationRow;
 import rip.ysm.gui.components.TextureGrid;
@@ -35,7 +35,7 @@ import java.util.Map;
 
 public class ModernPlayerTextureScreen extends OptionScreen {
 
-    private static final Identifier ICON_TEXTURE = Identifier.fromNamespaceAndPath(YesSteveModel.MOD_ID, "texture/icon.png");
+    private static final ResourceLocation ICON_TEXTURE = new ResourceLocation(YesSteveModel.MOD_ID, "texture/icon.png");
     private static final List<String> CATEGORY_ORDER = List.of("_textures", "main", "extra", "arm", "fp_arm", "tac", "carryon", "parcool", "swem", "slashblade", "tlm", "immersive_melodies", "irons_spell_books", "arrow");
 
     public final ModelAssembly renderContext;
@@ -236,7 +236,7 @@ public class ModernPlayerTextureScreen extends OptionScreen {
         g.fill(btn.x, btn.y, btn.x + btn.size, btn.y + btn.size, bg);
         int ix = btn.x + (btn.size - 16) / 2;
         int iy = btn.y + (btn.size - 16) / 2;
-        g.blit(ICON_TEXTURE, ix, iy, ix + 16, iy + 16, btn.u / 256.0f, (btn.u + 16) / 256.0f, btn.v / 256.0f, (btn.v + 16) / 256.0f);
+        g.blit(ICON_TEXTURE, ix, iy, btn.u, btn.v, 16, 16);
     }
 
     @Override
@@ -323,61 +323,60 @@ public class ModernPlayerTextureScreen extends OptionScreen {
             modelHolder.initModelWithTexture(modelId, cap.getCurrentTextureName());
             float cx = (previewLeft + previewRight) / 2.0f + offsetX;
             float cy = previewTop + (previewBottom - previewTop) * 0.65f + offsetY;
-            ModelPreviewRenderer.renderEntityPreview(g, previewLeft, previewTop, previewRight, previewBottom, cx, cy, zoom, pitch, yaw, Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false), modelHolder, RendererManager.getPlayerRenderer(), showGround);
+            ModelPreviewRenderer.renderEntityPreview(g, previewLeft, previewTop, previewRight, previewBottom, cx, cy, zoom, pitch, yaw, Minecraft.getInstance().getFrameTime(), modelHolder, RendererManager.getPlayerRenderer(), showGround);
         });
         g.disableScissor();
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean flag) {
-        if (event.button() == 0) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (button == 0) {
             for (IconButton btn : icons) {
-                if (btn.contains(event.x(), event.y())) {
+                if (btn.contains(mouseX, mouseY)) {
                     btn.onPress.run();
                     return true;
                 }
             }
         }
-        if (isInPreview(event.x(), event.y())) {
+        if (isInPreview(mouseX, mouseY)) {
             draggingPreview = true;
-            draggingButton = event.button();
+            draggingButton = button;
             return true;
         }
-        return super.mouseClicked(event, flag);
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
-    public boolean mouseReleased(MouseButtonEvent event) {
-        if (draggingPreview && event.button() == draggingButton) {
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (draggingPreview && button == draggingButton) {
             draggingPreview = false;
             draggingButton = -1;
             return true;
         }
-        return super.mouseReleased(event);
+        return super.mouseReleased(mouseX, mouseY, button);
     }
 
     @Override
-    public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
-        if (draggingPreview && event.button() == draggingButton) {
-            if (event.button() == 0) {
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        if (draggingPreview && button == draggingButton) {
+            if (button == 0) {
                 yaw = (float) (yaw + dragX * 1.2);
                 pitch = Mth.clamp((float) (pitch - dragY * 0.8), -90.0f, 90.0f);
-            } else if (event.button() == 1) {
+            } else if (button == 1) {
                 offsetX = (float) (offsetX + dragX);
                 offsetY = (float) (offsetY + dragY);
             }
             return true;
         }
-        return super.mouseDragged(event, dragX, dragY);
+        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
     }
 
-    @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
         if (isInPreview(mouseX, mouseY)) {
             zoom = Mth.clamp((float) (zoom * (1.0 + scrollY * 0.1)), 18.0f, 360.0f);
             return true;
         }
-        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+        return super.mouseScrolled(mouseX, mouseY, scrollY);
     }
 
     private boolean isInPreview(double mouseX, double mouseY) {

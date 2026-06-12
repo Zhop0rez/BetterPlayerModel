@@ -15,7 +15,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 
 import java.nio.charset.StandardCharsets;
@@ -56,7 +56,7 @@ public class ResourceStationScreen extends Screen {
     private final PlayerModelScreen parentScreen;
     private ResourceStationConfig.State config;
     private final List<ModelRepoEntry> entries = new ArrayList<>();
-    private final Map<String, Identifier> previewTextures = new HashMap<>();
+    private final Map<String, ResourceLocation> previewTextures = new HashMap<>();
     private final Set<String> loadingPreviews = new HashSet<>();
     private EditBox urlBox;
     private EditBox searchBox;
@@ -468,7 +468,7 @@ public class ResourceStationScreen extends Screen {
             if (!this.active || error != null) {
                 return;
             }
-            Identifier id = Identifier.fromNamespaceAndPath(YesSteveModel.MOD_ID, "resource_station/" + sha1(entry.previewUrl()));
+            ResourceLocation id = new ResourceLocation(YesSteveModel.MOD_ID, "resource_station/" + sha1(entry.previewUrl()));
             OuterFileTexture texture = new OuterFileTexture(data);
             texture.doLoad();
             Minecraft.getInstance().getTextureManager().register(id, texture);
@@ -478,7 +478,7 @@ public class ResourceStationScreen extends Screen {
 
     @Override
     public void render(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        renderTransparentBackground(extractor);
+        renderBackground(extractor);
         extractor.fillGradient(this.guiLeft, this.guiTop, this.guiLeft + this.guiWidth, this.guiTop + this.guiHeight, -14540254, -14540254);
         int labelWidth = labelWidth() - 4;
         drawFirstLine(extractor, Component.translatable("gui.better_player_model.resource_station.url"), labelWidth, this.guiLeft + 10, this.guiTop + 12, 0xFFF3F3E0);
@@ -516,9 +516,9 @@ public class ResourceStationScreen extends Screen {
         int textLeft = entryLeft + 38;
         int textWidth = Math.max(40, entryRight - textLeft - 4);
         extractor.fillGradient(entryLeft, y - 2, entryRight, y + 28, -12369342, -12369342);
-        Identifier preview = entry.previewUrl() == null ? null : this.previewTextures.get(entry.previewUrl());
+        ResourceLocation preview = entry.previewUrl() == null ? null : this.previewTextures.get(entry.previewUrl());
         if (preview != null) {
-            extractor.blit(preview, entryLeft + 4, y + 1, entryLeft + 32, y + 29, 0f, 1f, 0f, 1f);
+            extractor.blit(preview, entryLeft + 4, y + 1, 0, 0, 28, 28, 28, 28);
         } else {
             extractor.fillGradient(entryLeft + 4, y + 1, entryLeft + 32, y + 29, -14540254, -14540254);
         }
@@ -642,9 +642,9 @@ public class ResourceStationScreen extends Screen {
     }
 
     @Override
-    public boolean charTyped(net.minecraft.client.input.CharacterEvent event) {
+    public boolean charTyped(char codePoint, int modifiers) {
         String search = this.searchBox.getValue();
-        boolean handled = this.urlBox.charTyped(event) || this.searchBox.charTyped(event) || super.charTyped(event);
+        boolean handled = this.urlBox.charTyped(codePoint, modifiers) || this.searchBox.charTyped(codePoint, modifiers) || super.charTyped(codePoint, modifiers);
         if (!Objects.equals(search, this.searchBox.getValue())) {
             this.page = 0;
             init();
@@ -653,9 +653,9 @@ public class ResourceStationScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(net.minecraft.client.input.KeyEvent event) {
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         String search = this.searchBox.getValue();
-        boolean handled = this.urlBox.keyPressed(event) || this.searchBox.keyPressed(event) || super.keyPressed(event);
+        boolean handled = this.urlBox.keyPressed(keyCode, scanCode, modifiers) || this.searchBox.keyPressed(keyCode, scanCode, modifiers) || super.keyPressed(keyCode, scanCode, modifiers);
         if (!Objects.equals(search, this.searchBox.getValue())) {
             this.page = 0;
             init();
@@ -664,16 +664,16 @@ public class ResourceStationScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent event, boolean flag) {
-        if (this.urlBox.mouseClicked(event, flag)) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (this.urlBox.mouseClicked(mouseX, mouseY, button)) {
             setFocused(this.urlBox);
             return true;
         }
-        if (this.searchBox.mouseClicked(event, flag)) {
+        if (this.searchBox.mouseClicked(mouseX, mouseY, button)) {
             setFocused(this.searchBox);
             return true;
         }
-        return super.mouseClicked(event, flag);
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     private static String rootMessage(Throwable throwable) {

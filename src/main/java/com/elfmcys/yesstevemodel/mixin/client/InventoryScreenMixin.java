@@ -11,13 +11,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin({InventoryScreen.class})
 public class InventoryScreenMixin {
-    @Inject(at = {@At("HEAD")}, method = {"renderEntityInInventoryFollowsMouse(Lnet/minecraft/client/gui/GuiGraphics;IIIIIFFFLnet/minecraft/world/entity/LivingEntity;)V"})
-    private static void renderEntityInInventoryPre(GuiGraphics extractor, int x, int y, int scale, int xDiff, int yDiff, float f1, float f2, float f3, LivingEntity entity, CallbackInfo ci) {
+    @Inject(at = {@At("HEAD")}, method = {"renderEntityInInventoryFollowsMouse(Lnet/minecraft/client/gui/GuiGraphics;IIIFFLnet/minecraft/world/entity/LivingEntity;)V"})
+    private static void renderEntityInInventoryPre(GuiGraphics extractor, int x, int y, int scale, float f1, float f2, LivingEntity entity, CallbackInfo ci) {
         ModelPreviewRenderer.setPreviewMode(true);
     }
 
-    @Inject(at = {@At("RETURN")}, method = {"renderEntityInInventoryFollowsMouse(Lnet/minecraft/client/gui/GuiGraphics;IIIIIFFFLnet/minecraft/world/entity/LivingEntity;)V"})
-    private static void renderEntityInInventoryPost(GuiGraphics extractor, int x, int y, int scale, int xDiff, int yDiff, float f1, float f2, float f3, LivingEntity entity, CallbackInfo ci) {
+    @Inject(at = {@At("RETURN")}, method = {"renderEntityInInventoryFollowsMouse(Lnet/minecraft/client/gui/GuiGraphics;IIIFFLnet/minecraft/world/entity/LivingEntity;)V"})
+    private static void renderEntityInInventoryPost(GuiGraphics extractor, int x, int y, int scale, float f1, float f2, LivingEntity entity, CallbackInfo ci) {
         ModelPreviewRenderer.setPreviewMode(false);
     }
 }

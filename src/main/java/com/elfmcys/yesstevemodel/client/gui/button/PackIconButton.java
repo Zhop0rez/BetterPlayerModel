@@ -5,7 +5,7 @@ import com.elfmcys.yesstevemodel.client.texture.OuterFileTexture;
 import com.elfmcys.yesstevemodel.resource.models.ModelPackData;
 import com.elfmcys.yesstevemodel.client.gui.ModelMetadataPresenter;
 import com.elfmcys.yesstevemodel.util.FileTypeUtil;
-import com.mojang.blaze3d.opengl.GlStateManager;
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -13,7 +13,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import org.apache.commons.lang3.StringUtils;
 
@@ -22,7 +22,7 @@ import java.util.List;
 
 public class PackIconButton extends Button {
 
-    private static final Identifier default_pack_icon = Identifier.fromNamespaceAndPath(YesSteveModel.MOD_ID, "texture/default_pack_icon.png");
+    private static final ResourceLocation default_pack_icon = new ResourceLocation(YesSteveModel.MOD_ID, "texture/default_pack_icon.png");
 
     private final ModelPackData packData;
 
@@ -32,16 +32,16 @@ public class PackIconButton extends Button {
     }
 
     @Override
-    protected void renderContents(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
+    public void renderWidget(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
         GuiGraphics guiGraphics = extractor;
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
         guiGraphics.fillGradient(getX(), getY(), getX() + this.width, getY() + this.height, -6598176, -6598176);
-        Identifier location = FileTypeUtil.getPackIconLocation(this.packData.getPath());
+        ResourceLocation location = FileTypeUtil.getPackIconLocation(this.packData.getPath());
         GlStateManager._enableBlend();
         GlStateManager._blendFuncSeparate(770, 771, 1, 0);
-        Identifier iconLocation = getReadyIconLocation(minecraft, location, this.packData.getTexture());
-        guiGraphics.blit(iconLocation, getX(), getY(), getX() + this.width, getY() + this.height, 0.0f, 1.0f, 0.0f, 1.0f);
+        ResourceLocation iconLocation = getReadyIconLocation(minecraft, location, this.packData.getTexture());
+        guiGraphics.blit(iconLocation, getX(), getY(), 0, 0, this.width, this.height, this.width, this.height);
         GlStateManager._disableBlend();
         guiGraphics.fillGradient(getX(), getY() + this.height - 24, getX() + this.width, getY() + this.height, 0xAA000000, 0xAA000000);
         List listSplit = font.split(getMessage(), 45);
@@ -66,12 +66,12 @@ public class PackIconButton extends Button {
         }
         List<Component> listSingletonList = Collections.singletonList(Component.literal(str));
         if (isHovered()) {
-            guiGraphics.pose().pushMatrix();
-            guiGraphics.pose().translate(0.0f, 0.0f);
-            guiGraphics.setComponentTooltipForNextFrame(Minecraft.getInstance().font, listSingletonList, mouseX, mouseY);
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(0.0f, 0.0f, 0.0f);
+            guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, listSingletonList, mouseX, mouseY);
 /*             GuiGraphics.renderComponentTooltip(Minecraft.getInstance().font, listSingletonList, mouseX, mouseY);
  */
-            guiGraphics.pose().popMatrix();
+            guiGraphics.pose().popPose();
         }
     }
 
@@ -83,7 +83,7 @@ public class PackIconButton extends Button {
         guiGraphics.drawString(font, formattedCharSequence, centerX - (font.width(formattedCharSequence) / 2), y, color, true);
     }
 
-    private static Identifier getReadyIconLocation(Minecraft minecraft, Identifier location, OuterFileTexture packIconTexture) {
+    private static ResourceLocation getReadyIconLocation(Minecraft minecraft, ResourceLocation location, OuterFileTexture packIconTexture) {
         if (packIconTexture == null) {
             return default_pack_icon;
         }
@@ -103,7 +103,7 @@ public class PackIconButton extends Button {
 
     private static boolean hasTextureView(AbstractTexture texture) {
         try {
-            texture.getTextureView();
+            
             return true;
         } catch (RuntimeException ignored) {
             return false;

@@ -137,11 +137,11 @@ public class PlayerStateSynchronizer {
         }
     }
 
-    public void syncEffectAdded(ServerPlayer serverPlayer, Holder<MobEffect> effect, int amplifier) {
+    public void syncEffectAdded(ServerPlayer serverPlayer, MobEffect effect, int amplifier) {
         getOrCreateSyncMessage(serverPlayer, true).addEffect(effect, amplifier);
     }
 
-    public void syncEffectRemoved(ServerPlayer serverPlayer, Holder<MobEffect> effect) {
+    public void syncEffectRemoved(ServerPlayer serverPlayer, MobEffect effect) {
         getOrCreateSyncMessage(serverPlayer, true).removeEffect(effect);
     }
 
@@ -178,7 +178,7 @@ public class PlayerStateSynchronizer {
             MobEffectInstance instance = activeEffects.iterator().next();
             message.setEffects(Object2ByteMaps.singleton(instance.getEffect(), (byte) (instance.getAmplifier() + 1)));
         } else {
-            Holder<MobEffect>[] effectIds = new Holder[activeEffects.size()];
+            MobEffect[] effectIds = new MobEffect[activeEffects.size()];
             byte[] amplifiers = new byte[activeEffects.size()];
             int i = 0;
             for (MobEffectInstance instance : activeEffects) {

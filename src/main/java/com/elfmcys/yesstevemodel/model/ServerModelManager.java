@@ -6,7 +6,7 @@ import com.elfmcys.yesstevemodel.capability.ModelInfoCapability;
 import com.elfmcys.yesstevemodel.client.ExportResult;
 import com.elfmcys.yesstevemodel.config.ServerConfig;
 import com.elfmcys.yesstevemodel.mixin.ConnectionAccessor;
-import com.elfmcys.yesstevemodel.mixin.ServerCommonPacketListenerImplAccessor;
+import com.elfmcys.yesstevemodel.mixin.ServerGamePacketListenerImplAccessor;
 import com.elfmcys.yesstevemodel.model.format.ServerAnimationInfo;
 import com.elfmcys.yesstevemodel.model.format.ServerModelData;
 import com.elfmcys.yesstevemodel.model.format.ServerModelInfo;
@@ -77,7 +77,7 @@ public final class ServerModelManager {
     private static final long MAX_ACTIVE_UPLOAD_BYTES_HARD_CAP = 512L * 1024L * 1024L;
     private static final long MAX_MODEL_FILE_BYTES = 512L * 1024L * 1024L;
     private static final long MAX_PACK_ICON_BYTES = 4L * 1024L * 1024L;
-    private static final Pattern MODEL_ID_PATTERN = Pattern.compile("[a-z0-9_./-]+");
+    private static final Pattern MODEL_ID_PATTERN = Pattern.compile("[a-z0-9_./()\\-\\[\\] ]+");
     private static final String EXT_YSM = ".ysm";
     private static final String EXT_ZIP = ".zip";
     private static final String EXT_7Z = ".7z";
@@ -515,7 +515,7 @@ public final class ServerModelManager {
                     // з™јйЂЃеЏЇз”ЁжЁЎећ‹
                     state.step = 2;
                     sendPacket03(uuid, state);
-                } else if (state.step == 2) {
+                } else if (state.step == 2 || state.step == 3) {
                     byte[] decrypted = YsmCrypt.decrypt(packetBytes, state.key1);
                     if (decrypted == null) return;
 
@@ -970,7 +970,12 @@ public final class ServerModelManager {
                         // If modelOverride is present, and we are at step >= 2, we can push Packet03!
                         if (modelOverride != null && state.step >= 2) {
                             synchronized (syncStates) {
+                                state.step = 2;
                                 sendPacket03(uuid, state);
+                                Set<String> delivered = deliveredModelIds.computeIfAbsent(uuid, ignored -> ConcurrentHashMap.newKeySet());
+                                for (ServerModelData model : modelOverride) {
+                                    delivered.add(model.getModelId());
+                                }
                             }
                         }
                     }
@@ -1652,7 +1657,7 @@ public final class ServerModelManager {
         if (!serverGamePacketListenerImpl.isAcceptingMessages() || !serverGamePacketListenerImpl.getClass().equals(ServerGamePacketListenerImpl.class)) {
             return null;
         }
-        return ((ServerCommonPacketListenerImplAccessor) serverGamePacketListenerImpl).ysm$getConnection();
+        return ((ServerGamePacketListenerImplAccessor) serverGamePacketListenerImpl).ysm$getConnection();
     }
 
     private static boolean sendModelData(UUID uuid, ByteBuffer byteBuffer, PendingTransfer pendingTransfer) {

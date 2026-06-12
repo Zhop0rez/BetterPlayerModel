@@ -12,11 +12,11 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.input.InputWithModifiers;
+import org.lwjgl.glfw.GLFW;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 
 import java.util.List;
@@ -27,7 +27,7 @@ public class AuthorButton extends Button {
 
     private final ModelAssembly modelAssembly;
 
-    private final Identifier Identifier;
+    private final ResourceLocation ResourceLocation;
 
     private final int authorIndex;
 
@@ -37,13 +37,13 @@ public class AuthorButton extends Button {
 
     private final Screen parentScreen;
 
-    public AuthorButton(int x, int y, AuthorInfo authorInfo, ModelAssembly modelAssembly, Identifier Identifier, int authorIndex, Screen screen) {
+    public AuthorButton(int x, int y, AuthorInfo authorInfo, ModelAssembly modelAssembly, ResourceLocation ResourceLocation, int authorIndex, Screen screen) {
         super(x, y, 70, 130, Component.empty(), button -> {
         }, DEFAULT_NARRATION);
         this.selectedContactIndex = -1;
         this.authorInfo = authorInfo;
         this.modelAssembly = modelAssembly;
-        this.Identifier = Identifier;
+        this.ResourceLocation = ResourceLocation;
         this.authorIndex = authorIndex;
         this.componentList = Lists.newArrayList();
         if (this.authorInfo != null) {
@@ -62,10 +62,10 @@ public class AuthorButton extends Button {
     }
 
     @Override
-    protected void renderContents(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
+    public void renderWidget(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
         GuiGraphics guiGraphics = extractor;
         Font font = Minecraft.getInstance().font;
-        if (this.authorInfo == null || this.modelAssembly == null || this.Identifier == null) {
+        if (this.authorInfo == null || this.modelAssembly == null || this.ResourceLocation == null) {
             guiGraphics.fillGradient(getX(), getY(), getX() + this.width, getY() + this.height, -1891417534, -1891417534);
             guiGraphics.drawCenteredString(font, Component.literal("......"), getX() + (this.width / 2), getY() + (this.height / 2), opaque(ChatFormatting.GRAY));
             return;
@@ -75,7 +75,7 @@ public class AuthorButton extends Button {
         } else {
             guiGraphics.fillGradient(getX(), getY(), getX() + this.width, getY() + this.height, -1891417534, -1891417534);
         }
-        guiGraphics.blit(this.Identifier, getX() + 3, getY() + 3, getX() + 67, getY() + 67, 0.0f, 1.0f, 0.0f, 1.0f);
+        guiGraphics.blit(this.ResourceLocation, getX() + 3, getY() + 3, 0, 0, 64, 64, 64, 64);
         String str = ModelMetadataPresenter.getLocalizedModelString(this.modelAssembly, "metadata.authors.%d.name".formatted(this.authorIndex), this.authorInfo.getName());
         String str2 = ModelMetadataPresenter.getLocalizedModelString(this.modelAssembly, "metadata.authors.%d.role".formatted(this.authorIndex), this.authorInfo.getRole());
         String str3 = ModelMetadataPresenter.getLocalizedModelString(this.modelAssembly, "metadata.authors.%d.comment".formatted(this.authorIndex), this.authorInfo.getComment());
@@ -113,7 +113,7 @@ public class AuthorButton extends Button {
 
     public void refreshContactComponents(GuiGraphics guiGraphics, Screen screen, int mouseX, int mouseY) {
         if (this.isHovered && !this.componentList.isEmpty()) {
-            guiGraphics.setComponentTooltipForNextFrame(Minecraft.getInstance().font, this.componentList, mouseX, mouseY);
+            guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, this.componentList, mouseX, mouseY);
 /*             GuiGraphics.renderComponentTooltip(Minecraft.getInstance().font, this.componentList, mouseX, mouseY);
  */
         } else if (this.selectedContactIndex != -1) {
@@ -123,8 +123,8 @@ public class AuthorButton extends Button {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double delta, double dy) {
-        if (delta > 0.0d) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double dy) {
+        if (dy > 0.0d) {
             if (this.selectedContactIndex > 0) {
                 this.selectedContactIndex--;
                 renderTooltip(false);
@@ -132,7 +132,7 @@ public class AuthorButton extends Button {
             }
             return true;
         }
-        if (delta < 0.0d) {
+        if (dy < 0.0d) {
             if (this.selectedContactIndex < this.componentList.size() - 2) {
                 this.selectedContactIndex++;
                 renderTooltip(false);
@@ -140,7 +140,7 @@ public class AuthorButton extends Button {
             }
             return true;
         }
-        return super.mouseScrolled(mouseX, mouseY, delta, dy);
+        return super.mouseScrolled(mouseX, mouseY, dy);
     }
 
     private void renderTooltip(boolean copied) {
@@ -161,7 +161,7 @@ public class AuthorButton extends Button {
     }
 
     @Override
-    public void onPress(InputWithModifiers modifiers) {
+    public void onPress() {
         String link;
         if (this.authorInfo == null) {
             return;

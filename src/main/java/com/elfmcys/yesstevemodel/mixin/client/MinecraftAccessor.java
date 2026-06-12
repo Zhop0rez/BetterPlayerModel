@@ -1,7 +1,6 @@
 package com.elfmcys.yesstevemodel.mixin.client;
 
 import net.minecraft.client.renderer.RenderBuffers;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientPacketListener;
@@ -22,5 +21,4 @@ public interface MinecraftAccessor {
     @Invoker("getResourceManager") ResourceManager ysm$getResourceManager();
     @Invoker("getConnection") ClientPacketListener ysm$getConnection();
     @Invoker("renderBuffers") RenderBuffers ysm$renderBuffers();
-    @Invoker("getDeltaTracker") DeltaTracker ysm$getDeltaTracker();
 }

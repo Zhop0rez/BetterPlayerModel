@@ -2,7 +2,7 @@ package rip.ysm.gui.components;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.input.MouseButtonEvent;
+import org.lwjgl.glfw.GLFW;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import rip.ysm.gui.Option;
@@ -55,19 +55,19 @@ public class SliderOptionRow extends OptionRow<Double> {
     }
 
     @Override
-    public void onClick(MouseButtonEvent event, boolean flag) {
-        if (isMouseOverControl(event.x(), event.y())) {
+    public void onClick(double mouseX, double mouseY) {
+        if (isMouseOverControl(mouseX, mouseY)) {
             dragging = true;
-            updateFromMouse(event.x());
+            updateFromMouse(mouseX);
         }
     }
 
     @Override
-    protected void onDrag(MouseButtonEvent event, double dx, double dy) {
-        if (dragging) updateFromMouse(event.x());
+    protected void onDrag(double mouseX, double mouseY, double dragX, double dragY) {
+        if (dragging) updateFromMouse(mouseX);
     }
 
-    // MC 26.x: onRelease signature changed
+    @Override
     public void onRelease(double mouseX, double mouseY) {
         dragging = false;
     }

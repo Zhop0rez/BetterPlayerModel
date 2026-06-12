@@ -37,11 +37,11 @@ public class NativeModelRenderer {
         renderMesh(buffer, pose, model, boneParams, stateBuffer, textureIndex, renderPartMask, packedLight, packedOverlay, red, green, blue, alpha, null);
     }
 
-    public static void renderMesh(VertexConsumer buffer, PoseStack.Pose pose, GeoModel model, float[] boneParams, float[] stateBuffer, int textureIndex, int renderPartMask, int packedLight, int packedOverlay, float red, float green, float blue, float alpha, net.minecraft.resources.Identifier textureLocation) {
+    public static void renderMesh(VertexConsumer buffer, PoseStack.Pose pose, GeoModel model, float[] boneParams, float[] stateBuffer, int textureIndex, int renderPartMask, int packedLight, int packedOverlay, float red, float green, float blue, float alpha, net.minecraft.resources.ResourceLocation textureLocation) {
         renderMesh(buffer, pose, model, boneParams, stateBuffer, textureIndex, renderPartMask, packedLight, packedOverlay, red, green, blue, alpha, textureLocation, true);
     }
 
-    public static void renderMesh(VertexConsumer buffer, PoseStack.Pose pose, GeoModel model, float[] boneParams, float[] stateBuffer, int textureIndex, int renderPartMask, int packedLight, int packedOverlay, float red, float green, float blue, float alpha, net.minecraft.resources.Identifier textureLocation, boolean allowDirectGpuRenderer) {
+    public static void renderMesh(VertexConsumer buffer, PoseStack.Pose pose, GeoModel model, float[] boneParams, float[] stateBuffer, int textureIndex, int renderPartMask, int packedLight, int packedOverlay, float red, float green, float blue, float alpha, net.minecraft.resources.ResourceLocation textureLocation, boolean allowDirectGpuRenderer) {
         OculusCompat.updatePBRState();
         projectionModelViewMatrix.identity();
         boolean isPreview = ModelPreviewRenderer.isPreview() || ModelPreviewRenderer.isExtraPlayer();
@@ -194,13 +194,17 @@ public class NativeModelRenderer {
             globalNormalMat.set(rootNormalMC).mul(localNormalMat);
 
             int currentPackedLight = bone.glow && !disableGlow ? FULL_BRIGHT_LIGHT : packedLight;
+            boolean isPreviewMode = com.elfmcys.yesstevemodel.client.renderer.ModelPreviewRenderer.isPreview();
 
             for (GeoModel.BakedCube cube : bone.cubes) {
                 for (GeoModel.BakedQuad quad : cube.quads) {
                     tempNorm.set(quad.normal).mul(globalNormalMat).normalize();
+                    if (isPreviewMode) {
+                        tempNorm.set(0.0f, 1.0f, 0.0f);
+                    }
                     for (int v = 0; v < 4; v++) {
                         tempPos.set(quad.positions[v].x(), quad.positions[v].y(), quad.positions[v].z(), 1.0f).mul(globalBoneMat);
-                        vertexConsumer.addVertex(tempPos.x(), tempPos.y(), tempPos.z(), ((int)(a * 255) << 24) | ((int)(r * 255) << 16) | ((int)(g * 255) << 8) | (int)(b * 255), quad.uvs[v].x(), quad.uvs[v].y(), packedOverlay, currentPackedLight, tempNorm.x(), tempNorm.y(), tempNorm.z());
+                        vertexConsumer.vertex(tempPos.x(), tempPos.y(), tempPos.z()).color(r, g, b, a).uv(quad.uvs[v].x(), quad.uvs[v].y()).overlayCoords(packedOverlay).uv2(currentPackedLight).normal(tempNorm.x(), tempNorm.y(), tempNorm.z()).endVertex();
                     }
                 }
             }
@@ -296,13 +300,7 @@ public class NativeModelRenderer {
         int fIdx = 0, iIdx = 0;
         for (int n = 0; n < vertexCount; n++) {
             int packedColor = ((int)(f.get(fIdx + 6) * 255) << 24) | ((int)(f.get(fIdx + 3) * 255) << 16) | ((int)(f.get(fIdx + 4) * 255) << 8) | (int)(f.get(fIdx + 5) * 255);
-            vc.addVertex(
-                    f.get(fIdx),     f.get(fIdx + 1), f.get(fIdx + 2),
-                    packedColor,
-                    f.get(fIdx + 7), f.get(fIdx + 8),
-                    in.get(iIdx),    in.get(iIdx + 1),
-                    f.get(fIdx + 9), f.get(fIdx + 10), f.get(fIdx + 11)
-            );
+            vc.vertex(f.get(fIdx), f.get(fIdx + 1), f.get(fIdx + 2)).color(((int)(f.get(fIdx + 3) * 255)), ((int)(f.get(fIdx + 4) * 255)), ((int)(f.get(fIdx + 5) * 255)), ((int)(f.get(fIdx + 6) * 255))).uv(f.get(fIdx + 7), f.get(fIdx + 8)).overlayCoords(in.get(iIdx)).uv2(in.get(iIdx + 1)).normal(f.get(fIdx + 9), f.get(fIdx + 10), f.get(fIdx + 11)).endVertex();
             fIdx += 12;
             iIdx += 2;
         }

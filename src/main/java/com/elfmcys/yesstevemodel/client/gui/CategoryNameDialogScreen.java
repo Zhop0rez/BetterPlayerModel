@@ -34,7 +34,7 @@ public class CategoryNameDialogScreen extends Screen {
         this.nameBox = new EditBox(this.font, this.guiLeft + 20, this.guiTop + 32, 220, 18, this.prompt);
         this.nameBox.setValue(this.initialValue);
         this.nameBox.setFocused(true);
-        this.nameBox.moveCursorToEnd(false);
+        this.nameBox.setCursorPosition(this.nameBox.getValue().length());
         addWidget(this.nameBox);
         addRenderableWidget(new FlatColorButton(this.guiLeft + 52, this.guiTop + 62, 64, 18, Component.translatable("gui.better_player_model.model_select.confirm"), button -> confirm()));
         addRenderableWidget(new FlatColorButton(this.guiLeft + 144, this.guiTop + 62, 64, 18, Component.translatable("gui.better_player_model.config.cancel"), button -> Minecraft.getInstance().setScreen(this.parent)));
@@ -47,7 +47,7 @@ public class CategoryNameDialogScreen extends Screen {
 
     @Override
     public void render(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        renderTransparentBackground(extractor);
+        renderBackground(extractor);
         extractor.fillGradient(this.guiLeft, this.guiTop, this.guiLeft + 260, this.guiTop + 92, -14540254, -14540254);
         extractor.drawString(this.font, this.prompt, this.guiLeft + 20, this.guiTop + 14, 0xFFF3F3E0);
         this.nameBox.render(extractor, mouseX, mouseY, partialTick);
@@ -55,25 +55,25 @@ public class CategoryNameDialogScreen extends Screen {
     }
 
     @Override
-    public boolean charTyped(net.minecraft.client.input.CharacterEvent event) {
-        return this.nameBox.charTyped(event) || super.charTyped(event);
+    public boolean charTyped(char codePoint, int modifiers) {
+        return this.nameBox.charTyped(codePoint, modifiers) || super.charTyped(codePoint, modifiers);
     }
 
     @Override
-    public boolean keyPressed(net.minecraft.client.input.KeyEvent event) {
-        if (event.key() == 257 || event.key() == 335) {
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == 257 || keyCode == 335) {
             confirm();
             return true;
         }
-        return this.nameBox.keyPressed(event) || super.keyPressed(event);
+        return this.nameBox.keyPressed(keyCode, scanCode, modifiers) || super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override
-    public boolean mouseClicked(net.minecraft.client.input.MouseButtonEvent event, boolean flag) {
-        if (this.nameBox.mouseClicked(event, flag)) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (this.nameBox.mouseClicked(mouseX, mouseY, button)) {
             setFocused(this.nameBox);
             return true;
         }
-        return super.mouseClicked(event, flag);
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 }

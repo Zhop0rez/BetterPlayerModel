@@ -33,14 +33,14 @@ public class FlatColorButton extends Button {
 
     public void renderTooltip(GuiGraphics guiGraphics, Screen screen, int mouseX, int mouseY) {
         if (this.isHovered && this.tooltip != null) {
-            guiGraphics.setComponentTooltipForNextFrame(Minecraft.getInstance().font, this.tooltip, mouseX, mouseY);
+            guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, this.tooltip, mouseX, mouseY);
 /*             GuiGraphics.renderComponentTooltip(Minecraft.getInstance().font, this.tooltip, mouseX, mouseY);
  */
         }
     }
 
     @Override
-    protected void renderContents(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
+    public void renderWidget(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
         GuiGraphics guiGraphics = extractor;
         Font font = Minecraft.getInstance().font;
         if (this.selected) {

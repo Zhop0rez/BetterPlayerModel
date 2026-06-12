@@ -9,19 +9,19 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.enchantment.ItemEnchantments;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 
 public class DumpEquippedItem extends LivingEntityFunction {
     @Override
     public Object eval(ExecutionContext<IContext<LivingEntity>> context, ArgumentCollection arguments) {
         EquipmentSlot slot;
-        Identifier key;
+        ResourceLocation key;
         if (!context.entity().isDebugMode() || (slot = MolangUtils.parseSlotType(context.entity(), arguments.getAsString(context, 0))) == null) {
             return null;
         }
@@ -34,11 +34,11 @@ public class DumpEquippedItem extends LivingEntityFunction {
         java.util.Collections.<TagKey<?>>emptyList().forEach(tagKey -> {
             context.entity().logWarningComponent(Component.literal("Tag ").append(ComponentUtils.copyOnClickText(tagKey.registry().toString())));
         });
-        ItemEnchantments enchantments = stack.getEnchantments();
+        java.util.Map<net.minecraft.world.item.enchantment.Enchantment, Integer> enchantments = net.minecraft.world.item.enchantment.EnchantmentHelper.getEnchantments(stack);
         for (var entry : enchantments.entrySet()) {
-            Holder<Enchantment> enchantment = entry.getKey();
-            int level = entry.getIntValue();
-            context.entity().logWarningComponent(Component.literal("Enchantment: display ").append(ComponentUtils.copyOnClickText(Enchantment.getFullname(enchantment, level).getString(99))).append(Component.literal("  name ").append(ComponentUtils.copyOnClickText(enchantment.unwrapKey().map(k -> k.registry().toString()).orElse("unknown")))));
+            Enchantment enchantment = entry.getKey();
+            int level = entry.getValue();
+            context.entity().logWarningComponent(Component.literal("Enchantment: display ").append(ComponentUtils.copyOnClickText(enchantment.getFullname(level).getString(99))).append(Component.literal("  name ").append(ComponentUtils.copyOnClickText(net.minecraft.core.registries.BuiltInRegistries.ENCHANTMENT.getKey(enchantment).toString()))));
         }
         return null;
     }

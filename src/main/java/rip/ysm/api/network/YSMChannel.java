@@ -2,7 +2,7 @@ package rip.ysm.api.network;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -15,7 +15,7 @@ public final class YSMChannel {
     private YSMChannel() {
     }
 
-    public static void init(Identifier channelId, String version) {
+    public static void init(ResourceLocation channelId, String version) {
         rip.ysm.api.network.fabric.YSMChannelImpl.init(channelId, version);
     }
 

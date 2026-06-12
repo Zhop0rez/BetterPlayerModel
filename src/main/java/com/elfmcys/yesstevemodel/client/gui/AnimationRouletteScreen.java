@@ -31,7 +31,7 @@ import com.elfmcys.yesstevemodel.util.data.OrderedStringMap;
 import com.elfmcys.yesstevemodel.molang.runtime.Struct;
 import com.elfmcys.yesstevemodel.client.animation.molang.struct.RoamingStruct;
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.opengl.GlStateManager;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
@@ -39,8 +39,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.input.KeyEvent;
-import net.minecraft.client.input.MouseButtonEvent;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFW;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -435,15 +435,15 @@ public class AnimationRouletteScreen extends Screen {
         } else {
             scrolledMouseY = mouseY + this.configScrollOffset;
         }
-        guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(0.0f, -this.configScrollOffset);
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0.0f, -this.configScrollOffset, 0.0f);
         for (Renderable renderable2 : ((ScreenAccessor) this).ysm$getRenderables()) {
             if (renderable2 instanceof ISpecialWidget) {
                 // MC 26.x: render is protected in AbstractWidget
                 // ((net.minecraft.client.gui.components.AbstractWidget) renderable2).render(extractor, mouseX, scrolledMouseY, partialTick);
             }
         }
-        guiGraphics.pose().popMatrix();
+        guiGraphics.pose().popPose();
         guiGraphics.disableScissor();
         renderHoverTooltip(guiGraphics, mouseX, scrolledMouseY);
     }
@@ -452,7 +452,7 @@ public class AnimationRouletteScreen extends Screen {
         if (-1 < this.hoveredIndex && this.hoveredIndex < this.currentProperties.size()) {
             String str = ModelMetadataPresenter.getLocalizedModelString(this.renderContext, "properties.extra_animation.%s.desc".formatted(this.currentProperties.getKeyAt(this.hoveredIndex)), StringPool.EMPTY);
             if (StringUtils.isNotBlank(str)) {
-                guiGraphics.setTooltipForNextFrame(this.font, this.font.split(Component.literal(str), 240), mouseX, mouseY);
+                guiGraphics.renderTooltip(this.font, this.font.split(Component.literal(str), 240), mouseX, mouseY);
 /*                 GuiGraphics.renderTooltip(this.font, this.font.split(Component.literal(str), 240), mouseX, mouseY);
  */
             }
@@ -473,7 +473,7 @@ public class AnimationRouletteScreen extends Screen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
         if (scrollY < 0.0d) {
             if (mouseX < this.centerX + 110) {
                 nextPage();
@@ -512,7 +512,7 @@ public class AnimationRouletteScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean flag) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (-1 < this.hoveredIndex && this.hoveredIndex < this.currentProperties.size()) {
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0f));
             String str = this.currentProperties.getKeyAt(this.hoveredIndex);
@@ -534,13 +534,13 @@ public class AnimationRouletteScreen extends Screen {
             }
         }
         for (GuiEventListener guiEventListener : children()) {
-            double scrolledMouseY = event.y();
+            double scrolledMouseY = mouseY;
             if (guiEventListener instanceof ISpecialWidget) {
-                scrolledMouseY = event.y() + this.configScrollOffset;
+                scrolledMouseY = mouseY + this.configScrollOffset;
             }
-            if (guiEventListener.mouseClicked(new MouseButtonEvent(event.x(), scrolledMouseY, event.buttonInfo()), flag)) {
+            if (guiEventListener.mouseClicked(mouseX, scrolledMouseY, button)) {
                 setFocused(guiEventListener);
-                if (event.button() == 0) {
+                if (button == 0) {
                     setDragging(true);
                     return true;
                 }
@@ -551,12 +551,12 @@ public class AnimationRouletteScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(KeyEvent event) {
-        if (KeyMappingFactory.isActiveAndMatches(AnimationRouletteKey.KEY_ROULETTE, event.key(), event.scancode())) {
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (KeyMappingFactory.isActiveAndMatches(AnimationRouletteKey.KEY_ROULETTE, keyCode, scanCode)) {
             onClose();
             return true;
         }
-        return super.keyPressed(event);
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     private void showConfigGroup(String str) {
@@ -696,7 +696,7 @@ public class AnimationRouletteScreen extends Screen {
         GlStateManager._blendFuncSeparate(770, 771, 1, 0);
         // RenderSystem.setShader(GameRenderer::getPositionColorShader);
         Tesselator tesselator = Tesselator.getInstance();
-        BufferBuilder builder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+        BufferBuilder builder = tesselator.getBuilder(); builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
         Matrix4f matrix4fPose = poseStack.last().pose();
         float pointerAngle = (float) Mth.atan2(mouseY - this.centerY, mouseX - this.centerX);
         if (pointerAngle < 0.0f) {
@@ -728,7 +728,7 @@ public class AnimationRouletteScreen extends Screen {
         if (!hoveredConfig) {
             this.hoveredConfigIndex = -1;
         }
-        builder.buildOrThrow().close();
+        tesselator.end();
         GlStateManager._disableBlend();
     }
 

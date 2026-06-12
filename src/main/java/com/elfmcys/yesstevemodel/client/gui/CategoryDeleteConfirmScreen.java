@@ -39,7 +39,7 @@ public class CategoryDeleteConfirmScreen extends Screen {
 
     @Override
     public void render(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        renderTransparentBackground(extractor);
+        renderBackground(extractor);
         extractor.fillGradient(this.guiLeft, this.guiTop, this.guiLeft + 300, this.guiTop + 100, -14540254, -14540254);
         extractor.drawString(this.font, Component.translatable("gui.better_player_model.model_select.delete_category_confirm", this.category), this.guiLeft + 20, this.guiTop + 16, 0xFFF3F3E0);
         extractor.drawString(this.font, Component.translatable("gui.better_player_model.model_select.delete_category_hint"), this.guiLeft + 20, this.guiTop + 34, 0xFFAAAAAA);

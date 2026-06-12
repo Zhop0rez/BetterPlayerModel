@@ -4,7 +4,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -14,7 +14,7 @@ public class ConditionPassenger {
 
     private static final String EMPTY = "";
 
-    private final ObjectOpenHashSet<Identifier> idTest = new ObjectOpenHashSet<>();
+    private final ObjectOpenHashSet<ResourceLocation> idTest = new ObjectOpenHashSet<>();
 
     private final ReferenceArrayList<TagKey<EntityType<?>>> tagTest = new ReferenceArrayList<>();
 
@@ -32,7 +32,7 @@ public class ConditionPassenger {
             return;
         }
         String strSubstring = name.substring(preSize);
-        Identifier id = ConditionResourceUtil.parseIdentifier(strSubstring);
+        ResourceLocation id = ConditionResourceUtil.parseIdentifier(strSubstring);
         if (id == null) {
             return;
         }
@@ -58,7 +58,7 @@ public class ConditionPassenger {
     }
 
     private String doIdTest(Entity entity) {
-        Identifier key;
+        ResourceLocation key;
         if (!this.idTest.isEmpty() && (key = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType())) != null && this.idTest.contains(key)) {
             return this.idPre + key;
         }

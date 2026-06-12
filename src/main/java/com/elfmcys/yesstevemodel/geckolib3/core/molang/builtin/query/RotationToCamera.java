@@ -15,9 +15,9 @@ public class RotationToCamera extends ContextFunction<Object> {
         }
         Camera mainCamera = Minecraft.getInstance().gameRenderer.getMainCamera();
         if (args == 0) {
-            return mainCamera.xRot();
+            return mainCamera.getXRot();
         }
-        return mainCamera.yRot();
+        return mainCamera.getYRot();
     }
 
     @Override

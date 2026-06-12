@@ -1,13 +1,10 @@
 package rip.ysm.api.network.fabric.client;
 
-import com.elfmcys.yesstevemodel.mixin.client.MinecraftAccessor;
+import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientPacketListener;
-import net.minecraft.network.Connection;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
-import rip.ysm.api.network.fabric.YSMPayload;
+import rip.ysm.api.network.fabric.YSMChannelImpl;
 
 public final class YSMChannelClientImpl {
 
@@ -15,28 +12,20 @@ public final class YSMChannelClientImpl {
     }
 
     public static void init() {
-        ClientPlayNetworking.registerGlobalReceiver(YSMPayload.TYPE, (payload, context) -> {
-            Minecraft client = context.client();
-            ClientPacketListener listener = ((MinecraftAccessor) client).ysm$getConnection();
-            Connection connection = listener != null ? listener.getConnection() : null;
-            if (connection == null && client.player != null) {
-                connection = client.player.connection.getConnection();
-            }
-            if (connection == null) {
-                return;
-            }
-            rip.ysm.api.network.fabric.YSMChannelImpl.dispatch(
-                    payload.buf(),
-                    new ClientPacketContext(client, connection)
-            );
+        ClientPlayNetworking.registerGlobalReceiver(YSMChannelImpl.channelId, (client, handler, buf, responseSender) -> {
+            FriendlyByteBuf copy = new FriendlyByteBuf(Unpooled.buffer(buf.readableBytes()));
+            buf.readBytes(copy);
+            client.execute(() -> {
+                YSMChannelImpl.dispatch(copy, new ClientPacketContext(client, handler.getConnection()));
+            });
         });
     }
 
     public static void sendToServer(FriendlyByteBuf buf) {
-        ClientPlayNetworking.send(new YSMPayload(buf));
+        ClientPlayNetworking.send(YSMChannelImpl.channelId, buf);
     }
 
     public static Packet<?> toServerboundPacket(FriendlyByteBuf buf) {
-        return new net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket(new YSMPayload(buf));
+        return ClientPlayNetworking.createC2SPacket(YSMChannelImpl.channelId, buf);
     }
 }

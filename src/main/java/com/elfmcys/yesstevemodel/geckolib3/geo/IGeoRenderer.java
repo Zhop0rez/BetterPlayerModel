@@ -11,10 +11,10 @@ import com.elfmcys.yesstevemodel.geckolib3.util.IRenderCycle;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.resources.Identifier;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,14 +36,13 @@ public interface IGeoRenderer<T extends AnimatableEntity<?>> {
         renderWithBoneAndRenderType(model, animatable, partialTick, renderType, poseStack, bufferSource, i, vertexConsumer, i2, i3, f2, f3, f4, f5, animatable.getTextureLocation());
     }
 
-    default void renderWithBoneAndRenderType(AnimatedGeoModel model, T animatable, float partialTick, RenderType renderType, PoseStack poseStack, @Nullable MultiBufferSource bufferSource, int i, @Nullable VertexConsumer vertexConsumer, int i2, int i3, float f2, float f3, float f4, float f5, Identifier textureLocation) {
-        SubmitNodeCollector collector = SubmitRenderContext.get();
+    default void renderWithBoneAndRenderType(AnimatedGeoModel model, T animatable, float partialTick, RenderType renderType, PoseStack poseStack, @Nullable MultiBufferSource bufferSource, int i, @Nullable VertexConsumer vertexConsumer, int i2, int i3, float f2, float f3, float f4, float f5, ResourceLocation textureLocation) {
+        MultiBufferSource collector = SubmitRenderContext.get();
         if (collector != null && vertexConsumer == null) {
             animatable.resetAnimationState();
             float[] matrixData = Arrays.copyOf(model.getMatrixData(), model.getMatrixData().length);
             float[] absPivotData = Arrays.copyOf(model.getAbsPivotData(), model.getAbsPivotData().length);
-            collector.submitCustomGeometry(poseStack, renderType, (pose, buffer) ->
-                    NativeModelRenderer.renderMesh(buffer, pose, model.getGeoModel(), matrixData, absPivotData, i, 0, i2, i3, f2, f3, f4, f5, textureLocation, false));
+            NativeModelRenderer.renderMesh(collector.getBuffer(renderType), poseStack.last(), model.getGeoModel(), matrixData, absPivotData, i, 0, i2, i3, f2, f3, f4, f5, textureLocation, false);
             setCurrentModelRenderCycle(EModelRenderCycle.REPEATED);
             return;
         }
@@ -72,15 +71,15 @@ public interface IGeoRenderer<T extends AnimatableEntity<?>> {
     }
 
     @Nullable
-    default RenderType getRenderType(Identifier Identifier, boolean z, boolean z2, boolean z3) {
+    default RenderType getRenderType(ResourceLocation ResourceLocation, boolean z, boolean z2, boolean z3) {
         if (z) {
             if (z3) {
-                return RenderTypes.entityTranslucent(Identifier);
+                return RenderType.entityTranslucent(ResourceLocation);
             }
-            return RenderTypes.entityCutout(Identifier);
+            return RenderType.entityCutout(ResourceLocation);
         }
         if (z2) {
-            return RenderTypes.outline(Identifier);
+            return RenderType.outline(ResourceLocation);
         }
         return null;
     }
@@ -97,3 +96,4 @@ public interface IGeoRenderer<T extends AnimatableEntity<?>> {
     default void setCurrentModelRenderCycle(IRenderCycle cycle) {
     }
 }
+

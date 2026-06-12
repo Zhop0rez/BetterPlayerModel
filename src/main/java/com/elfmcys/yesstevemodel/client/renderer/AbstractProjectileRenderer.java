@@ -11,19 +11,19 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.state.EntityRenderState;
+
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.entity.projectile.arrow.ThrownTrident;
+import net.minecraft.world.entity.projectile.ThrownTrident;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import com.mojang.math.Axis;
 
-public abstract class AbstractProjectileRenderer<TEntity extends Projectile, T extends AnimatableEntity<TEntity>> extends EntityRenderer<TEntity, EntityRenderState> implements IGeoRenderer<T> {
+public abstract class AbstractProjectileRenderer<TEntity extends Projectile, T extends AnimatableEntity<TEntity>> extends EntityRenderer<TEntity> implements IGeoRenderer<T> {
 
     public Matrix4f modelViewMatrix;
 
@@ -55,12 +55,15 @@ public abstract class AbstractProjectileRenderer<TEntity extends Projectile, T e
                 this.modelViewMatrix = new Matrix4f(poseStack.last().pose());
                 setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
                 poseStack.pushPose();
-                poseStack.mulPose(Axis.YP.rotationDegrees(projectile.getYRot(partialTick) - 90.0f));
-                float xRot = projectile.getXRot(partialTick);
+                poseStack.mulPose(Axis.YP.rotationDegrees(net.minecraft.util.Mth.lerp(partialTick, projectile.yRotO, projectile.getYRot()) - 90.0f));
+                float xRot = net.minecraft.util.Mth.lerp(partialTick, projectile.xRotO, projectile.getXRot());
                 if (projectile instanceof ThrownTrident) {
                     xRot += 90.0f;
                 }
                 poseStack.mulPose(Axis.ZP.rotationDegrees(xRot));
+                float width = animatable.getHeightScale();
+                float height = animatable.getWidthScale();
+                poseStack.scale(width, height, width);
                 renderWithBoneAndRenderType(model, animatable, partialTick, renderType, poseStack, bufferSource, 0, null, packedLight, getPackedLight(projectile, 0.0f), color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f, color.getAlpha() / 255.0f);
                 poseStack.popPose();
             }
@@ -100,3 +103,4 @@ public abstract class AbstractProjectileRenderer<TEntity extends Projectile, T e
         return this.bufferSource;
     }
 }
+

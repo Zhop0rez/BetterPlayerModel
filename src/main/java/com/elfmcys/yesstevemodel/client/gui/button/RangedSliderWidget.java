@@ -5,14 +5,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.lwjgl.glfw.GLFW;
 
 import java.text.DecimalFormat;
 
 public class RangedSliderWidget extends AbstractSliderButton {
-    protected static final Identifier SLIDER_LOCATION = Identifier.fromNamespaceAndPath("minecraft", "textures/gui/slider.png");
+    protected static final ResourceLocation SLIDER_LOCATION = new ResourceLocation("minecraft", "textures/gui/slider.png");
 
     protected Component prefix;
     protected Component suffix;
@@ -70,14 +70,14 @@ public class RangedSliderWidget extends AbstractSliderButton {
     }
 
     @Override
-    public void onClick(net.minecraft.client.input.MouseButtonEvent event, boolean flag) {
-        this.setValueFromMouse(event.x());
+    public void onClick(double mouseX, double mouseY) {
+        this.setValueFromMouse(mouseX);
     }
 
     @Override
-    protected void onDrag(net.minecraft.client.input.MouseButtonEvent event, double dragX, double dragY) {
-        super.onDrag(event, dragX, dragY);
-        this.setValueFromMouse(event.x());
+    public void onDrag(double mouseX, double mouseY, double dragX, double dragY) {
+        super.onDrag(mouseX, mouseY, dragX, dragY);
+        this.setValueFromMouse(mouseX);
     }
 
     @Override
@@ -91,9 +91,9 @@ public class RangedSliderWidget extends AbstractSliderButton {
     }
 
     @Override
-    public boolean keyPressed(net.minecraft.client.input.KeyEvent event) {
-        boolean flag = event.key() == GLFW.GLFW_KEY_LEFT;
-        if (flag || event.key() == GLFW.GLFW_KEY_RIGHT) {
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        boolean flag = keyCode == GLFW.GLFW_KEY_LEFT;
+        if (flag || keyCode == GLFW.GLFW_KEY_RIGHT) {
             if (this.minValue > this.maxValue) flag = !flag;
             float f = flag ? -1F : 1F;
             if (stepSize <= 0D) this.setSliderValue(this.value + (f / (this.width - 8)));
@@ -158,7 +158,7 @@ public class RangedSliderWidget extends AbstractSliderButton {
     }
 
     //https://github.com/MinecraftForge/MinecraftForge/blob/26.1.2/src/main/java/net/minecraftforge/client/extensions/IForgeGuiGraphics.java#L71
-    protected void blitWithBorder(GuiGraphics guiGraphics, Identifier texture, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight, int topBorder, int bottomBorder, int leftBorder, int rightBorder) {
+    protected void blitWithBorder(GuiGraphics guiGraphics, ResourceLocation texture, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight, int topBorder, int bottomBorder, int leftBorder, int rightBorder) {
         int fillerWidth = textureWidth - leftBorder - rightBorder;
         int fillerHeight = textureHeight - topBorder - bottomBorder;
         int canvasWidth = width - leftBorder - rightBorder;
@@ -191,7 +191,7 @@ public class RangedSliderWidget extends AbstractSliderButton {
         }
     }
 
-    private static void blitRegion(GuiGraphics guiGraphics, Identifier texture, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight) {
-        guiGraphics.blit(texture, x, y, x + width, y + height, u / (float) textureWidth, (u + width) / (float) textureWidth, v / (float) textureHeight, (v + height) / (float) textureHeight);
+    private static void blitRegion(GuiGraphics guiGraphics, ResourceLocation texture, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight) {
+        guiGraphics.blit(texture, x, y, (float)u, (float)v, width, height, textureWidth, textureHeight);
     }
 }

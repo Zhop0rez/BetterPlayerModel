@@ -38,9 +38,9 @@ import java.util.concurrent.Executor;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.common.ModConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.message.StringFormattedMessage;
@@ -193,7 +193,7 @@ public class ClientModelManager {
 
             boolean processed = false;
             
-            if (syncStep == 3) {
+            if (syncStep == 3 || syncStep == 1) {
                 // Expecting Packet 05 (chunks)
                 if (key1 != null) {
                     byte[] d = YsmCrypt.decrypt(packetBytes.clone(), key1);
@@ -212,7 +212,8 @@ public class ClientModelManager {
                         } catch (Exception ignored) {}
                     }
                 }
-            } else if (syncStep == 2) {
+            }
+            if (!processed && (syncStep == 1 || syncStep == 2 || syncStep == 3)) {
                 // Expecting Packet 03 (Catalog)
                 if (lastKey != null) {
                     byte[] d = YsmCrypt.decrypt(packetBytes.clone(), lastKey);
@@ -295,6 +296,7 @@ public class ClientModelManager {
     private static final List<ModelHash> cachedModelHashes = new ArrayList<>();
 
     private static void handlePacket03(YSMByteBuf buf) throws Exception {
+        flushPendingModels();
         buf.skipGarbageHeader();
         int type = buf.readVarInt(); // expect 3
         long folderHash = buf.readVarLong();
@@ -340,7 +342,10 @@ public class ClientModelManager {
             int version = buf.readVarInt(); // зЂµйЂ›з°¬йЏ‚е›¦ж¬ўжѕ¶и§„ж№­йЌ”зЉІз‘йђЁе‹¬ДЃйЌЁе¬¶зґќж¶“?5535
 
             ServerModelContext ctx = new ServerModelContext(hash1, hash2, modelId, isAuth, isCustomSkinModel, version);
-            serverModels.put(ctx.uuid, ctx);
+            ServerModelContext existing = serverModels.putIfAbsent(ctx.uuid, ctx);
+            if (existing != null) {
+                ctx = existing;
+            }
             validServerModelIds.add(modelId);
             knownServerModelIds.add(modelId);
             localOnlyModelIds.remove(modelId);
@@ -363,9 +368,21 @@ public class ClientModelManager {
                     pendingModelQueue.add(Pair.of(lazyAssembly, modelId));
                     incrementSyncProgress();
                 }
+            } else if (ctx.fileBuffer != null) {
+                YesSteveModel.LOGGER.info("[YSM] Model is already downloading: " + ctx.uuid + " -> Skipping request.");
             } else {
                 YesSteveModel.LOGGER.info("[YSM] Cache MISS or Invalid: " + ctx.uuid + " -> Requesting...");
-                modelsToRequest.add(mHash);
+                if (((MinecraftAccessor) Minecraft.getInstance()).ysm$isLocalServer()) {
+                    YesSteveModel.LOGGER.info("[YSM] Skipping request for {} as it is a local server.", modelId);
+                    if (alreadyInMemory) {
+                        previousModelIds.add(modelId);
+                        updatedModelIds.add(modelId);
+                        isModelReadyList.add(isAuth);
+                    }
+                    incrementSyncProgress();
+                } else {
+                    modelsToRequest.add(mHash);
+                }
             }
         }
 
@@ -443,32 +460,35 @@ public class ClientModelManager {
         }
 
         syncStep = 3;
-        pendingModelsCount.set(modelsToRequest.size());
-
-        int garbageLen = 16 + SECURE_RANDOM.nextInt(48);
-        byte[] garbage = new byte[garbageLen];
-        SECURE_RANDOM.nextBytes(garbage);
-
-        try (YSMByteBuf outBuf = new YSMByteBuf(Unpooled.buffer())) {
-            outBuf.writeGarbageHeader(garbageLen, garbage);
-            outBuf.getRawBuf().writeByte(0x04);
-
-            outBuf.writeVarInt(modelsToRequest.size());
-            for (ModelHash h : modelsToRequest) {
-                outBuf.writeVarLong(h.hash1);
-                outBuf.writeVarLong(h.hash2);
+        
+        if (modelsToRequest.isEmpty()) {
+            if (pendingModelsCount.get() == 0) {
+                modelPhraseExecutor.submit(() -> {
+                    YesSteveModel.LOGGER.info("[YSM-NET] CLIENT: All models loaded from local cache. Handshake complete!");
+                    onSyncComplete();
+                });
             }
+        } else {
+            pendingModelsCount.addAndGet(modelsToRequest.size());
+            
+            int garbageLen = 16 + SECURE_RANDOM.nextInt(48);
+            byte[] garbage = new byte[garbageLen];
+            SECURE_RANDOM.nextBytes(garbage);
 
-            YsmCrypt.EncryptedPacket result = YsmCrypt.encrypt(outBuf.toArray(), key1, false);
-            YesSteveModel.LOGGER.info("[YSM-NET] CLIENT: Cache validation complete. Hits: {}, Misses: {}. Sending Packet 04 to request {} models. Size: {} bytes.", unkSize - modelsToRequest.size(), modelsToRequest.size(), modelsToRequest.size(), result.data().length);
-            sendModelFile(ByteBuffer.wrap(result.data()));
-        }
+            try (YSMByteBuf outBuf = new YSMByteBuf(Unpooled.buffer())) {
+                outBuf.writeGarbageHeader(garbageLen, garbage);
+                outBuf.getRawBuf().writeByte(0x04);
 
-        if (pendingModelsCount.get() == 0) {
-            modelPhraseExecutor.submit(() -> {
-                YesSteveModel.LOGGER.info("[YSM-NET] CLIENT: All models loaded from local cache. Handshake complete!");
-                onSyncComplete();
-            });
+                outBuf.writeVarInt(modelsToRequest.size());
+                for (ModelHash h : modelsToRequest) {
+                    outBuf.writeVarLong(h.hash1);
+                    outBuf.writeVarLong(h.hash2);
+                }
+
+                YsmCrypt.EncryptedPacket result = YsmCrypt.encrypt(outBuf.toArray(), key1, false);
+                YesSteveModel.LOGGER.info("[YSM-NET] CLIENT: Cache validation complete. Hits: {}, Misses: {}. Sending Packet 04 to request {} models. Size: {} bytes.", unkSize - modelsToRequest.size(), modelsToRequest.size(), modelsToRequest.size(), result.data().length);
+                sendModelFile(ByteBuffer.wrap(result.data()));
+            }
         }
     }
 
@@ -616,7 +636,7 @@ public class ClientModelManager {
         if (oldPreviews != null && !oldPreviews.isEmpty()) {
             for (ModelPackData preview : oldPreviews.values()) {
                 if (preview.getTexture() != null) {
-                    Identifier loc = FileTypeUtil.getPackIconLocation(preview.getPath());
+                    ResourceLocation loc = FileTypeUtil.getPackIconLocation(preview.getPath());
                     ((Executor) Minecraft.getInstance()).execute(() -> {
                         ((MinecraftAccessor) Minecraft.getInstance()).ysm$getTextureManager().release(loc);
                     });
@@ -827,7 +847,7 @@ public class ClientModelManager {
         return null;
     }
 
-    public static Identifier getDefaultTexture() {
+    public static ResourceLocation getDefaultTexture() {
         return defaultTexture.getResourceLocation().get();
     }
 
@@ -897,7 +917,7 @@ public class ClientModelManager {
 
     public static void onSyncConnected() {
         if (((MinecraftAccessor) Minecraft.getInstance()).ysm$isLocalServer()) {
-            syncState.setState(SyncState.LOADING);
+            syncState.setState(SyncState.IDLE);
         } else {
             syncState.setState(SyncState.IDLE);
         }
@@ -932,7 +952,7 @@ public class ClientModelManager {
             newPackMap.put(packData.getPath(), packData);
                 OuterFileTexture iconTexture = packData.getTexture();
                 if (iconTexture != null) {
-                    Identifier location2 = FileTypeUtil.getPackIconLocation(packData.getPath());
+                    ResourceLocation location2 = FileTypeUtil.getPackIconLocation(packData.getPath());
                     ((Executor) Minecraft.getInstance()).execute(() -> {
                         iconTexture.doLoad();
                         ((MinecraftAccessor) Minecraft.getInstance()).ysm$getTextureManager().register(location2, iconTexture);
@@ -942,7 +962,7 @@ public class ClientModelManager {
 
         for (ModelPackData packData : modelPackMap.values()) {
             if (!newPackMap.containsKey(packData.getPath()) && packData.getTexture() != null) {
-                Identifier location = FileTypeUtil.getPackIconLocation(packData.getPath());
+                ResourceLocation location = FileTypeUtil.getPackIconLocation(packData.getPath());
                 ((Executor) Minecraft.getInstance()).execute(() -> ((MinecraftAccessor) Minecraft.getInstance()).ysm$getTextureManager().release(location));
             }
         }
@@ -1349,14 +1369,14 @@ public class ClientModelManager {
             }
         }
         if (assembly.getProjectileModels() != null) {
-            for (Map.Entry<Identifier, ProjectileModelBundle> entry : assembly.getProjectileModels().entrySet()) {
+            for (Map.Entry<ResourceLocation, ProjectileModelBundle> entry : assembly.getProjectileModels().entrySet()) {
                 if (entry != null && entry.getValue() != null && entry.getValue().getModel() != null) {
                     entry.getValue().getModel().freeNativeCache();
                 }
             }
         }
         if (assembly.getVehicleModels() != null) {
-            for (Map.Entry<Identifier, VehicleModelBundle> entry : assembly.getVehicleModels().entrySet()) {
+            for (Map.Entry<ResourceLocation, VehicleModelBundle> entry : assembly.getVehicleModels().entrySet()) {
                 if (entry != null && entry.getValue() != null && entry.getValue().getModel() != null) {
                     entry.getValue().getModel().freeNativeCache();
                 }
@@ -1474,7 +1494,7 @@ public class ClientModelManager {
         }
     }
 
-    private static int safeInt(ModConfigSpec.IntValue value, int fallback) {
+    private static int safeInt(ForgeConfigSpec.IntValue value, int fallback) {
         try {
             return value == null ? fallback : value.get();
         } catch (IllegalStateException e) {

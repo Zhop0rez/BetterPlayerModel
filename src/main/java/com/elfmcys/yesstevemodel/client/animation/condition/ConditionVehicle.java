@@ -4,23 +4,23 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
-import net.minecraft.world.entity.vehicle.boat.AbstractChestBoat;
+import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.entity.vehicle.ChestBoat;
 
 public class ConditionVehicle {
 
     private static final String EMPTY = "";
 
-    private static final Identifier LEGACY_BOAT_ID = Identifier.fromNamespaceAndPath("minecraft", "boat");
+    private static final ResourceLocation LEGACY_BOAT_ID = new ResourceLocation("minecraft", "boat");
 
-    private static final Identifier LEGACY_CHEST_BOAT_ID = Identifier.fromNamespaceAndPath("minecraft", "chest_boat");
+    private static final ResourceLocation LEGACY_CHEST_BOAT_ID = new ResourceLocation("minecraft", "chest_boat");
 
-    private final ObjectOpenHashSet<Identifier> idTest = new ObjectOpenHashSet<>();
+    private final ObjectOpenHashSet<ResourceLocation> idTest = new ObjectOpenHashSet<>();
 
     private final ReferenceArrayList<TagKey<EntityType<?>>> tagTest = new ReferenceArrayList<>();
 
@@ -38,7 +38,7 @@ public class ConditionVehicle {
             return;
         }
         String strSubstring = name.substring(preSize);
-        Identifier id = ConditionResourceUtil.parseIdentifier(strSubstring);
+        ResourceLocation id = ConditionResourceUtil.parseIdentifier(strSubstring);
         if (id == null) {
             return;
         }
@@ -64,28 +64,28 @@ public class ConditionVehicle {
     }
 
     private String doIdTest(Entity entity) {
-        Identifier key;
+        ResourceLocation key;
         if (!this.idTest.isEmpty()) {
             key = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType());
             if (key != null && this.idTest.contains(key)) {
                 return this.idPre + key;
             }
-            Identifier legacyBoatKey = getLegacyBoatKey(entity);
+            ResourceLocation legacyBoatKey = getLegacyBoatKey(entity);
             if (legacyBoatKey != null && this.idTest.contains(legacyBoatKey)) {
                 return this.idPre + legacyBoatKey;
             }
-            if (entity instanceof AbstractChestBoat && this.idTest.contains(LEGACY_BOAT_ID)) {
+            if (entity instanceof ChestBoat && this.idTest.contains(LEGACY_BOAT_ID)) {
                 return this.idPre + LEGACY_BOAT_ID;
             }
         }
         return EMPTY;
     }
 
-    private static Identifier getLegacyBoatKey(Entity entity) {
-        if (!(entity instanceof AbstractBoat)) {
+    private static ResourceLocation getLegacyBoatKey(Entity entity) {
+        if (!(entity instanceof Boat)) {
             return null;
         }
-        return entity instanceof AbstractChestBoat ? LEGACY_CHEST_BOAT_ID : LEGACY_BOAT_ID;
+        return entity instanceof ChestBoat ? LEGACY_CHEST_BOAT_ID : LEGACY_BOAT_ID;
     }
 
     private String doTagTest(Entity entity) {

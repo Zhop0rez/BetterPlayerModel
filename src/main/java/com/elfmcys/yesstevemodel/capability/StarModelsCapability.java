@@ -59,7 +59,7 @@ public class StarModelsCapability {
         this.starModels.clear();
         Iterator<Tag> it = listTag.iterator();
         while (it.hasNext()) {
-            it.next().asString().ifPresent(this.starModels::add);
+            this.starModels.add(it.next().getAsString());
         }
     }
 }

@@ -10,3 +10,12 @@ bin/
 .classpath
 .settings/
 .DS_Store
+*.ps1
+*.py
+*.txt
+*.log
+scratch.java
+Test.java
+cca_versions.xml
+libs/
+run/

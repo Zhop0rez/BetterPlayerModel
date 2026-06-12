@@ -28,22 +28,22 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.animal.parrot.Parrot;
+import net.minecraft.world.entity.animal.Parrot;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.arrow.Arrow;
+import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.entity.projectile.FishingHook;
-import net.minecraft.world.entity.projectile.arrow.SpectralArrow;
-import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableItemProjectile;
-import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
-import net.minecraft.world.entity.vehicle.boat.AbstractChestBoat;
-import net.minecraft.world.entity.vehicle.boat.ChestRaft;
-import net.minecraft.world.entity.vehicle.boat.Raft;
+import net.minecraft.world.entity.projectile.SpectralArrow;
+import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
+import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.entity.vehicle.ChestBoat;
+import net.minecraft.world.entity.vehicle.ChestBoat;
+import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -121,10 +121,10 @@ public class YSMBinding extends ContextBinding {
         entityVar("frozen_ticks", ctx -> ctx.entity().getTicksFrozen());
         entityVar("air_supply", ctx -> ctx.entity().getAirSupply());
         entityVar("delta_movement_length", ctx -> ctx.entity().getDeltaMovement().length());
-        entityVar("boat_left_paddle", ctx -> getBoatPaddleState(ctx, AbstractBoat.PADDLE_LEFT));
-        entityVar("boat_right_paddle", ctx -> getBoatPaddleState(ctx, AbstractBoat.PADDLE_RIGHT));
-        entityVar("boat_left_rowing_time", ctx -> getBoatRowingTime(ctx, AbstractBoat.PADDLE_LEFT));
-        entityVar("boat_right_rowing_time", ctx -> getBoatRowingTime(ctx, AbstractBoat.PADDLE_RIGHT));
+        entityVar("boat_left_paddle", ctx -> getBoatPaddleState(ctx, Boat.PADDLE_LEFT));
+        entityVar("boat_right_paddle", ctx -> getBoatPaddleState(ctx, Boat.PADDLE_RIGHT));
+        entityVar("boat_left_rowing_time", ctx -> getBoatRowingTime(ctx, Boat.PADDLE_LEFT));
+        entityVar("boat_right_rowing_time", ctx -> getBoatRowingTime(ctx, Boat.PADDLE_RIGHT));
         entityVar("boat_is_chest", YSMBinding::isBoatChest);
         entityVar("boat_is_raft", YSMBinding::isBoatRaft);
         entityVar("boat_body_offset_y", YSMBinding::getBoatBodyOffsetY);
@@ -270,14 +270,14 @@ public class YSMBinding extends ContextBinding {
             if (blockHitResult.getType() == HitResult.Type.MISS || (clientLevel = Minecraft.getInstance().level) == null) {
                 return StringPool.EMPTY;
             }
-            Identifier key = BuiltInRegistries.BLOCK.getKey(clientLevel.getBlockState(blockHitResult.getBlockPos()).getBlock());
+            ResourceLocation key = BuiltInRegistries.BLOCK.getKey(clientLevel.getBlockState(blockHitResult.getBlockPos()).getBlock());
             if (key != null) {
                 return key.toString();
             }
             return StringPool.EMPTY;
         }
         if (hitResult instanceof EntityHitResult) {
-            Identifier key2 = BuiltInRegistries.ENTITY_TYPE.getKey(((EntityHitResult) hitResult).getEntity().getType());
+            ResourceLocation key2 = BuiltInRegistries.ENTITY_TYPE.getKey(((EntityHitResult) hitResult).getEntity().getType());
             if (key2 != null) {
                 return key2.toString();
             }
@@ -301,7 +301,7 @@ public class YSMBinding extends ContextBinding {
     }
 
     private static String getHookedEntityType(IContext<FishingHook> context) {
-        Identifier key;
+        ResourceLocation key;
         Entity entity = ((FishingHookAccessor) context.entity()).getHookedIn();
         if (entity != null && (key = BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType())) != null) {
             return key.toString();
@@ -312,7 +312,7 @@ public class YSMBinding extends ContextBinding {
     private static String getThrowableItemId(IContext<ThrowableItemProjectile> context) {
         ThrowableItemProjectile throwableItemProjectile = context.entity();
         if (throwableItemProjectile instanceof ThrowableItemProjectileAccessor accessor) {
-            Identifier key = BuiltInRegistries.ITEM.getKey(accessor.invokeGetDefaultItem());
+            ResourceLocation key = BuiltInRegistries.ITEM.getKey(accessor.invokeGetDefaultItem());
             if (key != null) {
                 return key.toString();
             }
@@ -329,12 +329,12 @@ public class YSMBinding extends ContextBinding {
     }
 
     private static boolean getBoatPaddleState(IContext<Entity> context, int paddle) {
-        AbstractBoat boat = getBoat(context.entity());
+        Boat boat = getBoat(context.entity());
         return boat != null && boat.getPaddleState(paddle);
     }
 
     private static float getBoatRowingTime(IContext<Entity> context, int paddle) {
-        AbstractBoat boat = getBoat(context.entity());
+        Boat boat = getBoat(context.entity());
         if (boat == null) {
             return 0.0f;
         }
@@ -342,54 +342,54 @@ public class YSMBinding extends ContextBinding {
     }
 
     private static double getElytraRotX(IContext<LivingEntity> context) {
-        return Math.toDegrees(context.entity().elytraAnimationState.getRotX(context.animationEvent().getPartialTick()));
+        return Math.toDegrees(0.0);
     }
 
     private static double getElytraRotY(IContext<LivingEntity> context) {
-        return Math.toDegrees(context.entity().elytraAnimationState.getRotY(context.animationEvent().getPartialTick()));
+        return Math.toDegrees(0.0);
     }
 
     private static double getElytraRotZ(IContext<LivingEntity> context) {
-        return Math.toDegrees(context.entity().elytraAnimationState.getRotZ(context.animationEvent().getPartialTick()));
+        return Math.toDegrees(0.0);
     }
 
     private static boolean isBoatChest(IContext<Entity> context) {
-        return getBoat(context.entity()) instanceof AbstractChestBoat;
+        return getBoat(context.entity()) instanceof ChestBoat;
     }
 
     private static boolean isBoatRaft(IContext<Entity> context) {
-        AbstractBoat boat = getBoat(context.entity());
-        return boat instanceof Raft || boat instanceof ChestRaft;
+        Boat boat = getBoat(context.entity());
+        return boat.getVariant() == net.minecraft.world.entity.vehicle.Boat.Type.BAMBOO;
     }
 
     private static float getBoatBodyOffsetY(IContext<Entity> context) {
-        AbstractBoat boat = getBoat(context.entity());
-        return boat instanceof Raft || boat instanceof ChestRaft ? BOAT_RAFT_BODY_Y_OFFSET : BOAT_DEFAULT_BODY_Y_OFFSET;
+        Boat boat = getBoat(context.entity());
+        return boat.getVariant() == net.minecraft.world.entity.vehicle.Boat.Type.BAMBOO ? BOAT_RAFT_BODY_Y_OFFSET : BOAT_DEFAULT_BODY_Y_OFFSET;
     }
 
     private static float getBoatBodyOffsetZ(IContext<Entity> context) {
-        AbstractBoat boat = getBoat(context.entity());
-        if (boat instanceof AbstractChestBoat) {
+        Boat boat = getBoat(context.entity());
+        if (boat instanceof ChestBoat) {
             return BOAT_CHEST_BODY_Z_OFFSET;
         }
         return 0.0f;
     }
 
     private static float getBoatPaddleScale(IContext<Entity> context) {
-        AbstractBoat boat = getBoat(context.entity());
-        return boat instanceof Raft || boat instanceof ChestRaft ? BOAT_RAFT_PADDLE_SCALE : BOAT_DEFAULT_PADDLE_SCALE;
+        Boat boat = getBoat(context.entity());
+        return boat.getVariant() == net.minecraft.world.entity.vehicle.Boat.Type.BAMBOO ? BOAT_RAFT_PADDLE_SCALE : BOAT_DEFAULT_PADDLE_SCALE;
     }
 
     private static float getBoatChestPassengerOffset(IContext<Entity> context) {
         return -getBoatBodyOffsetZ(context);
     }
 
-    private static AbstractBoat getBoat(Entity entity) {
-        if (entity instanceof AbstractBoat boat) {
+    private static Boat getBoat(Entity entity) {
+        if (entity instanceof Boat boat) {
             return boat;
         }
         Entity vehicle = entity.getVehicle();
-        return vehicle instanceof AbstractBoat boat ? boat : null;
+        return vehicle instanceof Boat boat ? boat : null;
     }
 
     private static float getXxa(IContext<LivingEntity> context) {
@@ -488,7 +488,7 @@ public class YSMBinding extends ContextBinding {
         if (livingEntityMo327xaffeef43 instanceof Player) {
             return "player";
         }
-        Identifier key = BuiltInRegistries.ENTITY_TYPE.getKey(livingEntityMo327xaffeef43.getType());
+        ResourceLocation key = BuiltInRegistries.ENTITY_TYPE.getKey(livingEntityMo327xaffeef43.getType());
         if (key == null) {
             return StringPool.EMPTY;
         }
@@ -551,7 +551,7 @@ public class YSMBinding extends ContextBinding {
         if (!context.isDebugMode()) {
             return null;
         }
-        if (context.entity() instanceof net.minecraft.world.entity.projectile.arrow.Arrow) {
+        if (context.entity() instanceof net.minecraft.world.entity.projectile.Arrow) {
             activeEffects = ((ArrowEntityAccessor) (Object) context.entity()).getEffects();
         } else if (context.entity() instanceof LivingEntity) {
             activeEffects = ((LivingEntity) context.entity()).getActiveEffects();
@@ -559,7 +559,7 @@ public class YSMBinding extends ContextBinding {
             return null;
         }
         for (MobEffectInstance mobEffectInstance : activeEffects) {
-            context.logWarningComponent(Component.literal("Effect: display ").append(ComponentUtils.copyOnClickText(mobEffectInstance.getEffect().value().getDisplayName().getString(99))).append(Component.literal("  name ").append(ComponentUtils.copyOnClickText(BuiltInRegistries.MOB_EFFECT.getKey(mobEffectInstance.getEffect().value()).toString()))).append("  lv=").append(String.valueOf(mobEffectInstance.getAmplifier() + 1)));
+            context.logWarningComponent(Component.literal("Effect: display ").append(ComponentUtils.copyOnClickText(mobEffectInstance.getEffect().getDisplayName().getString(99))).append(Component.literal("  name ").append(ComponentUtils.copyOnClickText(BuiltInRegistries.MOB_EFFECT.getKey(mobEffectInstance.getEffect()).toString()))).append("  lv=").append(String.valueOf(mobEffectInstance.getAmplifier() + 1)));
         }
         return null;
     }
@@ -584,11 +584,12 @@ public class YSMBinding extends ContextBinding {
     }
 
     public static String getShoulderParrotVariant(Player player, boolean leftShoulder) {
-        Parrot.Variant variant = (leftShoulder ? player.getShoulderParrotLeft() : player.getShoulderParrotRight()).orElse(null);
-        return variant != null ? variant.name().toLowerCase(Locale.ENGLISH) : "empty";
+        Object variant = null; // parrot variant not supported in 1.20.1
+        return "empty";
     }
 
     private static boolean hasShoulderParrot(Player player, boolean leftShoulder) {
-        return (leftShoulder ? player.getShoulderParrotLeft() : player.getShoulderParrotRight()).isPresent();
+        return !(leftShoulder ? player.getShoulderEntityLeft() : player.getShoulderEntityRight()).isEmpty();
     }
 }
+

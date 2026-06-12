@@ -29,7 +29,7 @@ import com.elfmcys.yesstevemodel.util.log.ILogger;
 import com.google.common.collect.Maps;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceMap;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -100,7 +100,7 @@ public abstract class AnimatableEntity<TEntity extends Entity> {
     public interface AnimationControllerVisitor extends Consumer<Consumer<IAnimationController<?>>> {
     }
 
-    public abstract Identifier getTextureLocation();
+    public abstract ResourceLocation getTextureLocation();
 
     public abstract boolean isModelReady();
 

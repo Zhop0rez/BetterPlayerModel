@@ -32,7 +32,7 @@ public class S2CSyncPlayerStatePacket {
 
     public boolean isFlying;
 
-    public Object2ByteMap<Holder<MobEffect>> effectAmplifiers;
+    public Object2ByteMap<MobEffect> effectAmplifiers;
 
     public int experienceLevel;
 
@@ -87,7 +87,7 @@ public class S2CSyncPlayerStatePacket {
         return this;
     }
 
-    public S2CSyncPlayerStatePacket addEffect(Holder<MobEffect> effect, int amplifier) {
+    public S2CSyncPlayerStatePacket addEffect(MobEffect effect, int amplifier) {
         this.flags = (short) (this.flags | 4);
         if (this.effectAmplifiers == null) {
             this.effectAmplifiers = Object2ByteMaps.singleton(effect, (byte) amplifier);
@@ -100,13 +100,13 @@ public class S2CSyncPlayerStatePacket {
         return this;
     }
 
-    public S2CSyncPlayerStatePacket setEffects(Object2ByteMap<Holder<MobEffect>> effects) {
+    public S2CSyncPlayerStatePacket setEffects(Object2ByteMap<MobEffect> effects) {
         this.flags = (short) (this.flags | 4);
         this.effectAmplifiers = effects;
         return this;
     }
 
-    public S2CSyncPlayerStatePacket removeEffect(Holder<MobEffect> effect) {
+    public S2CSyncPlayerStatePacket removeEffect(MobEffect effect) {
         addEffect(effect, 0);
         return this;
     }
@@ -186,7 +186,7 @@ public class S2CSyncPlayerStatePacket {
         if ((flags & 4) != 0) {
             buffer.writeVarInt(message.effectAmplifiers.size());
             Object2ByteMaps.fastForEach(message.effectAmplifiers, entry -> {
-                buffer.writeVarInt(BuiltInRegistries.MOB_EFFECT.getId(entry.getKey().value()));
+                buffer.writeVarInt(BuiltInRegistries.MOB_EFFECT.getId(entry.getKey()));
                 buffer.writeByte(entry.getByteValue());
             });
         }
@@ -241,12 +241,12 @@ public class S2CSyncPlayerStatePacket {
             if (effectCount == 0) {
                 message.effectAmplifiers = Object2ByteMaps.emptyMap();
             } else if (effectCount == 1) {
-                message.effectAmplifiers = Object2ByteMaps.singleton(BuiltInRegistries.MOB_EFFECT.wrapAsHolder(buffer.readById(BuiltInRegistries.MOB_EFFECT::byId)), buffer.readByte());
+                message.effectAmplifiers = Object2ByteMaps.singleton(buffer.readById(BuiltInRegistries.MOB_EFFECT), buffer.readByte());
             } else {
-                Holder<MobEffect>[] effects = new Holder[effectCount];
+                MobEffect[] effects = new MobEffect[effectCount];
                 byte[] amplifiers = new byte[effectCount];
                 for (int i = 0; i < effectCount; i++) {
-                    effects[i] = BuiltInRegistries.MOB_EFFECT.wrapAsHolder(buffer.readById(BuiltInRegistries.MOB_EFFECT::byId));
+                    effects[i] = buffer.readById(BuiltInRegistries.MOB_EFFECT);
                     amplifiers[i] = buffer.readByte();
                 }
                 message.effectAmplifiers = new Object2ByteArrayMap<>(effects, amplifiers);

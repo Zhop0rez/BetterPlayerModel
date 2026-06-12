@@ -19,7 +19,7 @@ import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +28,7 @@ import java.util.*;
 
 public class ModelInfoScreen extends Screen {
 
-    private static final Identifier DEFAULT_AVATAR = Identifier.fromNamespaceAndPath(YesSteveModel.MOD_ID, "texture/default_avatar.png");
+    private static final ResourceLocation DEFAULT_AVATAR = new ResourceLocation(YesSteveModel.MOD_ID, "texture/default_avatar.png");
 
     private static final Map<String, Component> URL_LABELS = ImmutableMap.of("home", Component.translatable("gui.better_player_model.url.home"), "donate", Component.translatable("gui.better_player_model.url.donate"));
 
@@ -64,7 +64,7 @@ public class ModelInfoScreen extends Screen {
         for (int i = 0; i < authorInfo.size(); i++) {
             OuterFileTexture avatar = avatars.get(authorInfo.get(i).getName());
             if (avatar != null) {
-                textureManager.register(Identifier.fromNamespaceAndPath(YesSteveModel.MOD_ID, "avatars/" + i), avatar);
+                textureManager.register(new ResourceLocation(YesSteveModel.MOD_ID, "avatars/" + i), avatar);
                 this.textureList.add(UploadManager.getOrCreateLocatable(avatar, true));
             } else {
                 this.textureList.add(null);
@@ -136,7 +136,7 @@ public class ModelInfoScreen extends Screen {
     @Override
     public void render(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
         GuiGraphics guiGraphics = extractor;
-        renderTransparentBackground(extractor);
+        renderBackground(extractor);
         guiGraphics.fillGradient(this.guiLeft + 25, this.guiTop + 150, this.guiLeft + 305, this.guiTop + 220, -1889838245, -1889838245);
         Metadata metadata2 = this.modelData.getExtraInfo();
         if (metadata2 != null) {

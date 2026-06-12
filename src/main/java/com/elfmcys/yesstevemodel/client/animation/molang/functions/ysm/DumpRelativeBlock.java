@@ -7,7 +7,7 @@ import com.elfmcys.yesstevemodel.molang.runtime.ExecutionContext;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.state.BlockState;
@@ -16,7 +16,7 @@ public class DumpRelativeBlock extends EntityFunction {
     @Override
     public Object eval(ExecutionContext<IContext<Entity>> context, ArgumentCollection arguments) {
         BlockState blockState;
-        Identifier key;
+        ResourceLocation key;
         if (!context.entity().isDebugMode() || (blockState = MolangUtils.getRelativeBlockState(context, arguments)) == null || (key = BuiltInRegistries.BLOCK.getKey(blockState.getBlock())) == null) {
             return null;
         }

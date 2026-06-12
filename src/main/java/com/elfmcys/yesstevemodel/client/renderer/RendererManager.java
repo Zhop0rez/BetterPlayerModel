@@ -6,7 +6,7 @@ import dev.architectury.registry.ReloadListenerRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
@@ -31,7 +31,7 @@ public class RendererManager {
             return;
         }
         ResourceManagerReloadListener listener = resourceManager -> resetRenderers();
-        ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, listener, Identifier.fromNamespaceAndPath(YesSteveModel.MOD_ID, "renderer_manager"));
+        ReloadListenerRegistry.register(PackType.CLIENT_RESOURCES, listener, new ResourceLocation(YesSteveModel.MOD_ID, "renderer_manager"));
     }
 
     private static void resetRenderers() {
@@ -49,15 +49,12 @@ public class RendererManager {
         EntityRenderDispatcherAccessor accessor = (EntityRenderDispatcherAccessor) entityRenderDispatcher;
         EntityRendererProvider.Context context = new EntityRendererProvider.Context(
                 entityRenderDispatcher,
-                accessor.ysm$getItemModelResolver(),
-                accessor.ysm$getMapRenderer(),
+                accessor.ysm$getItemRenderer(),
                 accessor.ysm$getBlockRenderDispatcher(),
+                accessor.ysm$getItemInHandRenderer(),
                 resourceManager,
-                accessor.ysm$getEntityModels().get(),
-                accessor.ysm$getEquipmentAssets(),
-                accessor.ysm$getAtlasManager(),
-                accessor.ysm$getFont(),
-                accessor.ysm$getPlayerSkinRenderCache()
+                accessor.ysm$getEntityModels(),
+                accessor.ysm$getFont()
         );
         playerRenderer = new CustomPlayerRenderer(context);
         projectileRenderer = new ProjectileRenderer(context);

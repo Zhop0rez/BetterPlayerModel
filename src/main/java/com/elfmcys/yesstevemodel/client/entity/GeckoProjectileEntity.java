@@ -9,7 +9,7 @@ import com.elfmcys.yesstevemodel.client.model.ModelAssembly;
 import com.elfmcys.yesstevemodel.client.model.ProjectileModelBundle;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.projectile.Projectile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,7 +46,7 @@ public class GeckoProjectileEntity extends GeoEntity<Projectile> {
     }
 
     @Nullable
-    private Identifier getEntityTypeId() {
+    private ResourceLocation getEntityTypeId() {
         return BuiltInRegistries.ENTITY_TYPE.getKey(this.entity.getType());
     }
 
@@ -63,7 +63,7 @@ public class GeckoProjectileEntity extends GeoEntity<Projectile> {
 
     @Override
     @NotNull
-    public Identifier getTextureLocation() {
+    public ResourceLocation getTextureLocation() {
         return ((ProjectileModelWrapper) getRenderShape()).textureLocatable.getResourceLocation().orElseGet(MissingTextureAtlasSprite::getLocation);
     }
 

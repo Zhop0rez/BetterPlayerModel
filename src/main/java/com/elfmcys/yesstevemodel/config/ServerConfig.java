@@ -1,45 +1,45 @@
 package com.elfmcys.yesstevemodel.config;
 
 import com.google.common.collect.Lists;
-import net.neoforged.neoforge.common.ModConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.List;
 
 public class ServerConfig {
 
-    public static ModConfigSpec.IntValue THREAD_COUNT;
+    public static ForgeConfigSpec.IntValue THREAD_COUNT;
 
-    public static ModConfigSpec.IntValue BANDWIDTH_LIMIT;
+    public static ForgeConfigSpec.IntValue BANDWIDTH_LIMIT;
 
-    public static ModConfigSpec.IntValue PLAYER_BANDWIDTH_LIMIT;
+    public static ForgeConfigSpec.IntValue PLAYER_BANDWIDTH_LIMIT;
 
-    public static ModConfigSpec.IntValue PLAYER_SYNC_TIMEOUT;
+    public static ForgeConfigSpec.IntValue PLAYER_SYNC_TIMEOUT;
 
-    public static ModConfigSpec.BooleanValue LOW_BANDWIDTH_USAGE;
+    public static ForgeConfigSpec.BooleanValue LOW_BANDWIDTH_USAGE;
 
-    public static ModConfigSpec.BooleanValue CAN_SWITCH_MODEL;
+    public static ForgeConfigSpec.BooleanValue CAN_SWITCH_MODEL;
 
-    public static ModConfigSpec.BooleanValue ALLOW_MODEL_UPLOAD;
+    public static ForgeConfigSpec.BooleanValue ALLOW_MODEL_UPLOAD;
 
-    public static ModConfigSpec.IntValue MODEL_UPLOAD_MAX_MB;
+    public static ForgeConfigSpec.IntValue MODEL_UPLOAD_MAX_MB;
 
-    public static ModConfigSpec.IntValue MODEL_UPLOAD_CHUNKS_PER_TICK;
+    public static ForgeConfigSpec.IntValue MODEL_UPLOAD_CHUNKS_PER_TICK;
 
-    public static ModConfigSpec.ConfigValue<String> DEFAULT_MODEL_ID;
+    public static ForgeConfigSpec.ConfigValue<String> DEFAULT_MODEL_ID;
 
-    public static ModConfigSpec.ConfigValue<String> DEFAULT_MODEL_TEXTURE;
+    public static ForgeConfigSpec.ConfigValue<String> DEFAULT_MODEL_TEXTURE;
 
-    public static ModConfigSpec.IntValue ACCEPT_SOUND_FX;
+    public static ForgeConfigSpec.IntValue ACCEPT_SOUND_FX;
 
-    public static ModConfigSpec.ConfigValue<List<String>> CLIENT_NOT_DISPLAY_MODELS;
+    public static ForgeConfigSpec.ConfigValue<List<String>> CLIENT_NOT_DISPLAY_MODELS;
 
-    public static ModConfigSpec buildSpec() {
-        ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
+    public static ForgeConfigSpec buildSpec() {
+        ForgeConfigSpec.Builder builder = new ForgeConfigSpec.Builder();
         defineOptions(builder);
         return builder.build();
     }
 
-    private static void defineOptions(ModConfigSpec.Builder builder) {
+    private static void defineOptions(ForgeConfigSpec.Builder builder) {
         builder.comment("The default model ID when a player first enters the game");
         DEFAULT_MODEL_ID = builder.define("DefaultModelId", "default");
         builder.comment("The default model texture when a player first enters the game");

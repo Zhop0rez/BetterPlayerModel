@@ -21,7 +21,7 @@ import com.elfmcys.yesstevemodel.util.data.OrderedStringMap;
 import it.unimi.dsi.fastutil.booleans.BooleanArrayList;
 import it.unimi.dsi.fastutil.booleans.BooleanList;
 import net.minecraft.client.renderer.texture.AbstractTexture;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -222,7 +222,7 @@ public abstract class LivingAnimatable<T extends LivingEntity> extends GeoEntity
 
     @Override
     @NotNull
-    public Identifier getTextureLocation() {
+    public ResourceLocation getTextureLocation() {
         return isModelReady() ? ((TexturedModelWrapper) getRenderShape()).currentTexture.getResourceLocation().get() : ClientModelManager.getDefaultTexture();
     }
 

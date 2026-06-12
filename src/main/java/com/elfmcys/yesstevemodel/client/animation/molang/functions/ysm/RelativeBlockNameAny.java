@@ -5,14 +5,14 @@ import com.elfmcys.yesstevemodel.geckolib3.core.molang.funciton.entity.EntityFun
 import com.elfmcys.yesstevemodel.geckolib3.util.MolangUtils;
 import com.elfmcys.yesstevemodel.molang.runtime.ExecutionContext;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class RelativeBlockNameAny extends EntityFunction {
     @Override
     public Object eval(ExecutionContext<IContext<Entity>> context, ArgumentCollection arguments) {
-        Identifier key;
+        ResourceLocation key;
         BlockState blockState = MolangUtils.getRelativeBlockState(context, arguments);
         if (blockState == null || (key = BuiltInRegistries.BLOCK.getKey(blockState.getBlock())) == null) {
             return null;

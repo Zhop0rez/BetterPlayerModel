@@ -23,7 +23,7 @@ import com.elfmcys.yesstevemodel.network.NetworkHandler;
 import com.elfmcys.yesstevemodel.network.message.C2SRequestSwitchModelPacket;
 import com.elfmcys.yesstevemodel.util.FileTypeUtil;
 import com.elfmcys.yesstevemodel.util.PlatformUtil;
-import com.mojang.blaze3d.opengl.GlStateManager;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import dev.architectury.utils.GameInstance;
@@ -33,12 +33,12 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.input.InputWithModifiers;
-import net.minecraft.client.input.MouseButtonEvent;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFW;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.FormattedCharSequence;
@@ -50,7 +50,7 @@ import java.util.Objects;
 
 public class ModelButton extends Button {
 
-    private static final Identifier ICON_TEXTURE = Identifier.fromNamespaceAndPath(YesSteveModel.MOD_ID, "texture/icon.png");
+    private static final ResourceLocation ICON_TEXTURE = new ResourceLocation(YesSteveModel.MOD_ID, "texture/icon.png");
 
     public final boolean isStarred;
 
@@ -147,7 +147,7 @@ public class ModelButton extends Button {
     }
 
     @Override
-    public void onPress(InputWithModifiers modifiers) {
+    public void onPress() {
         LocalPlayer localPlayer;
         if (!this.isStarred && (localPlayer = Minecraft.getInstance().player) != null) {
             PlayerCapability.get(localPlayer).ifPresent(cap -> {
@@ -271,14 +271,14 @@ public class ModelButton extends Button {
 
     private static boolean isShiftDown(Minecraft minecraft) {
         Window window = minecraft.getWindow();
-        return InputConstants.isKeyDown(window, InputConstants.KEY_LSHIFT)
-                || InputConstants.isKeyDown(window, InputConstants.KEY_RSHIFT);
+        return InputConstants.isKeyDown(window.getWindow(), InputConstants.KEY_LSHIFT)
+                || InputConstants.isKeyDown(window.getWindow(), InputConstants.KEY_RSHIFT);
     }
 
     public void renderTooltip(GuiGraphics guiGraphics, Screen screen, int mouseX, int mouseY) {
         if (isHovered()) {
-            guiGraphics.pose().pushMatrix();
-            guiGraphics.pose().translate(0.0f, 0.0f);
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(0.0f, 0.0f, 0.0f);
             Minecraft minecraft = Minecraft.getInstance();
             String selected = minecraft.getLanguageManager().getSelected();
             if (!Objects.equals(this.cachedLanguage, selected)) {
@@ -290,28 +290,28 @@ public class ModelButton extends Button {
                 if (this.detailedTooltipLines == null) {
                     this.detailedTooltipLines = ModelMetadataPresenter.buildModelTooltip(this.renderContext, selected, this.modelIdHolder.getModelId(), true);
                 }
-                guiGraphics.setComponentTooltipForNextFrame(minecraft.font, this.detailedTooltipLines, mouseX, mouseY);
+                guiGraphics.renderComponentTooltip(minecraft.font, this.detailedTooltipLines, mouseX, mouseY);
 /*                 GuiGraphics.renderComponentTooltip(Minecraft.getInstance().font, this.detailedTooltipLines, mouseX, mouseY);
  */
             } else {
                 if (this.tooltipLines == null) {
                     this.tooltipLines = ModelMetadataPresenter.buildModelTooltip(this.renderContext, selected, this.modelIdHolder.getModelId(), false);
                 }
-                guiGraphics.setComponentTooltipForNextFrame(minecraft.font, this.tooltipLines, mouseX, mouseY);
+                guiGraphics.renderComponentTooltip(minecraft.font, this.tooltipLines, mouseX, mouseY);
 /*                 GuiGraphics.renderComponentTooltip(Minecraft.getInstance().font, this.tooltipLines, mouseX, mouseY);
  */
             }
-            guiGraphics.pose().popMatrix();
+            guiGraphics.pose().popPose();
         }
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean flag) {
-        return !this.isStarred && super.mouseClicked(event, flag);
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        return !this.isStarred && super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
-    protected void renderContents(net.minecraft.client.gui.GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
+    public void renderWidget(net.minecraft.client.gui.GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
         GuiGraphics guiGraphics = extractor;
         ensurePreviewReady();
         AnimationTracker c0117x8455a741Mo1262xaffeef43 = this.modelIdHolder.getAnimationStateMachine();
@@ -336,7 +336,7 @@ public class ModelButton extends Button {
         if (this.backgroundTexture != null) {
             GlStateManager._enableBlend();
             GlStateManager._blendFuncSeparate(770, 771, 1, 0);
-            guiGraphics.blit(this.backgroundTexture.getResourceLocation().get(), x, y, x + this.width, y + this.height, 0.0f, 1.0f, 0.0f, 1.0f);
+            guiGraphics.blit(this.backgroundTexture.getResourceLocation().get(), x, y, 0, 0, this.width, this.height, this.width, this.height);
             GlStateManager._disableBlend();
         }
         int previewBottom = y + this.height - 20;
@@ -347,7 +347,7 @@ public class ModelButton extends Button {
         if (this.foregroundTexture != null) {
             GlStateManager._enableBlend();
             GlStateManager._blendFuncSeparate(770, 771, 1, 0);
-            guiGraphics.blit(this.foregroundTexture.getResourceLocation().get(), x, y, x + this.width, y + this.height, 0.0f, 1.0f, 0.0f, 1.0f);
+            guiGraphics.blit(this.foregroundTexture.getResourceLocation().get(), x, y, 0, 0, this.width, this.height, this.width, this.height);
             GlStateManager._disableBlend();
         }
         if (this.isStarred) {
@@ -370,7 +370,7 @@ public class ModelButton extends Button {
             StarModelsCapability.get(minecraft.player).ifPresent(cap -> {
                 if (cap.containsModel(this.modelIdHolder.getModelId())) {
                     int iconX = (x + this.width) - 14;
-                    guiGraphics.blit(ICON_TEXTURE, iconX, y, iconX + 16, y + 16, 0.0f, 16.0f / 256.0f, 0.0f, 16.0f / 256.0f);
+                    guiGraphics.blit(ICON_TEXTURE, iconX, y, 0, 0, 16, 16, 256, 256);
                 }
             });
         }

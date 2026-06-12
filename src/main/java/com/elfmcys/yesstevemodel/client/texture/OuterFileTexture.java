@@ -5,13 +5,10 @@ import com.elfmcys.yesstevemodel.util.ModelMemoryProfiler;
 import rip.ysm.compat.oculus.ShadersTextureType;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.textures.FilterMode;
-import com.mojang.blaze3d.textures.GpuTexture;
-import com.mojang.blaze3d.textures.GpuTextureView;
-import com.mojang.blaze3d.textures.TextureFormat;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceMaps;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import net.minecraft.client.renderer.texture.AbstractTexture;
+import com.mojang.blaze3d.platform.TextureUtil;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,12 +28,13 @@ public class OuterFileTexture extends AbstractTexture implements ITextureMap {
     }
 
     public void load(@NotNull ResourceManager resourceManager) {
+        this.uploaded = false;
         doLoad();
     }
 
     public void doLoad() {
         RenderSystem.assertOnRenderThread();
-        if (this.uploaded && this.textureView != null) {
+        if (this.uploaded && super.getId() != -1) {
             return;
         }
         NativeImage image = null;
@@ -55,36 +53,21 @@ public class OuterFileTexture extends AbstractTexture implements ITextureMap {
     }
 
     public boolean isLoaded() {
-        return this.uploaded && this.textureView != null;
+        return this.uploaded && super.getId() != -1;
     }
 
     @Override
-    public GpuTextureView getTextureView() {
+    public int getId() {
         if (!isLoaded() && RenderSystem.isOnRenderThread()) {
             doLoad();
         }
-        return super.getTextureView();
+        return super.getId();
     }
 
     private void uploadImage(NativeImage image) {
         try (image) {
-            int width = Math.max(1, image.getWidth());
-            int height = Math.max(1, image.getHeight());
-            if (this.texture != null || this.textureView != null || this.sampler != null) {
-                super.close();
-            }
-            var device = RenderSystem.getDevice();
-            this.texture = device.createTexture(
-                    () -> "YSM outer texture",
-                    GpuTexture.USAGE_TEXTURE_BINDING | GpuTexture.USAGE_COPY_DST,
-                    TextureFormat.RGBA8,
-                    width,
-                    height,
-                    1,
-                    1);
-            this.sampler = RenderSystem.getSamplerCache().getRepeat(FilterMode.NEAREST);
-            this.textureView = device.createTextureView(this.texture);
-            device.createCommandEncoder().writeToTexture(this.texture, image);
+            TextureUtil.prepareImage(super.getId(), image.getWidth(), image.getHeight());
+            image.upload(0, 0, 0, false);
             this.uploaded = true;
             ModelMemoryProfiler.log("texture-uploaded", null);
         }
@@ -92,7 +75,7 @@ public class OuterFileTexture extends AbstractTexture implements ITextureMap {
 
     private static NativeImage createFallbackImage() {
         NativeImage image = new NativeImage(1, 1, false);
-        image.setPixel(0, 0, 0xFFFF00FF);
+        image.setPixelRGBA(0, 0, 0xFFFF00FF);
         return image;
     }
 
@@ -102,5 +85,11 @@ public class OuterFileTexture extends AbstractTexture implements ITextureMap {
 
     public Map<ShadersTextureType, ? extends AbstractTexture> getSuffixTextures() {
         return this.suffixTextures;
+    }
+
+    @Override
+    public void close() {
+        super.close();
+        this.uploaded = false;
     }
 }

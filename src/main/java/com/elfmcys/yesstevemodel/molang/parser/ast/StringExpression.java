@@ -1,7 +1,7 @@
 package com.elfmcys.yesstevemodel.molang.parser.ast;
 
 import com.elfmcys.yesstevemodel.geckolib3.core.molang.util.StringPool;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,7 +14,7 @@ public final class StringExpression implements Expression {
 
     private final int path;
 
-    private Identifier cachedLocation;
+    private ResourceLocation cachedLocation;
 
     private EquipmentSlot cachedSlot;
 
@@ -44,12 +44,12 @@ public final class StringExpression implements Expression {
     }
 
     @Nullable
-    public Identifier getResourceLocation() {
+    public ResourceLocation getResourceLocation() {
         return this.cachedLocation;
     }
 
-    public void setResourceLocation(@Nullable Identifier Identifier) {
-        this.cachedLocation = Identifier;
+    public void setResourceLocation(@Nullable ResourceLocation ResourceLocation) {
+        this.cachedLocation = ResourceLocation;
     }
 
     @Nullable

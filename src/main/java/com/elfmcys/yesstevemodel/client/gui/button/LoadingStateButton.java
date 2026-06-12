@@ -4,7 +4,7 @@ import com.elfmcys.yesstevemodel.config.LoadingStateConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.input.InputWithModifiers;
+import org.lwjgl.glfw.GLFW;
 import net.minecraft.network.chat.Component;
 
 public class LoadingStateButton extends Button {
@@ -14,7 +14,7 @@ public class LoadingStateButton extends Button {
     }
 
     @Override
-    protected void renderContents(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
+    public void renderWidget(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
         GuiGraphics guiGraphics = extractor;
         guiGraphics.drawString(Minecraft.getInstance().font, Component.translatable("gui.better_player_model.config.loading_state_position"), getX() + 105, getY() + 6, 0xFFFFFFFF, false);
     }
@@ -24,7 +24,7 @@ public class LoadingStateButton extends Button {
     }
 
     @Override
-    public void onPress(InputWithModifiers modifiers) {
+    public void onPress() {
         LoadingStateConfig.Position stateConfig;
         switch (LoadingStateConfig.LOADING_STATE_POSITION.get()) {
             case TOP_LEFT:

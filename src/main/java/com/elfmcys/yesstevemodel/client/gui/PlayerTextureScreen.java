@@ -210,7 +210,7 @@ public class PlayerTextureScreen extends Screen {
         if (Minecraft.getInstance().player == null) {
             return;
         }
-        renderTransparentBackground(extractor);
+        renderBackground(extractor);
         guiGraphics.fillGradient(this.guiLeft, this.guiTop + 22, this.guiLeft + 90, this.guiTop + 235, -14540254, -14540254);
         guiGraphics.fillGradient(this.guiLeft + 93, this.guiTop, this.guiLeft + 299, this.guiTop + 235, -14540254, -14540254);
         guiGraphics.fillGradient(this.guiLeft + 302, this.guiTop, this.guiLeft + 420, this.guiTop + 235, -14540254, -14540254);
@@ -262,7 +262,7 @@ public class PlayerTextureScreen extends Screen {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
         if (this.minecraft == null) {
             return false;
         }
@@ -278,7 +278,7 @@ public class PlayerTextureScreen extends Screen {
                 return scrollTexturePage(scrollY);
             }
         }
-        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+        return super.mouseScrolled(mouseX, mouseY, scrollY);
     }
 
     private boolean scrollTexturePage(double delta) {

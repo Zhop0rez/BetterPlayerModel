@@ -1,21 +1,19 @@
 package rip.ysm.gpu;
 
 import com.elfmcys.yesstevemodel.geckolib3.geo.render.built.GeoModel;
-import com.mojang.blaze3d.opengl.GlSampler;
-import com.mojang.blaze3d.opengl.GlTexture;
-import com.mojang.blaze3d.opengl.GlTextureView;
-import com.mojang.blaze3d.opengl.GlStateManager;
+
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.textures.FilterMode;
-import com.mojang.blaze3d.textures.GpuSampler;
-import com.mojang.blaze3d.textures.GpuTextureView;
+
+
+
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -61,7 +59,7 @@ public final class GpuRenderPath {
             int packedLight,
             int packedOverlay,
             float r, float g, float b, float a,
-            Identifier textureLocation,
+            ResourceLocation textureLocation,
             boolean translucentTexture
     ) {
         if (!GpuCapability.isAvailable()) return false;
@@ -100,7 +98,7 @@ public final class GpuRenderPath {
         Minecraft mc = Minecraft.getInstance();
         AbstractTexture modelTex = mc.getTextureManager().getTexture(textureLocation);
         TextureBinding modelTexture = resolveTextureBinding(modelTex);
-        int modelSamplerId = resolveSamplerId(modelTex != null ? modelTex.getSampler() : null);
+        int modelSamplerId = (modelTex != null ? modelTex.getId() : 0);
         TextureBinding overlayTexture = resolveOverlayTexture(mc.gameRenderer.overlayTexture());
         int clampSamplerId = resolveClampSamplerId();
         TextureBinding lightmapTexture = resolveLightmapTexture(mc);
@@ -373,64 +371,34 @@ public final class GpuRenderPath {
             return TextureBinding.EMPTY;
         }
         try {
-            return resolveTextureBinding(texture.getTextureView());
+            return new TextureBinding(texture.getId(), 0, 1);
         } catch (RuntimeException ignored) {
             return TextureBinding.EMPTY;
         }
     }
 
-    private static TextureBinding resolveTextureBinding(GpuTextureView textureView) {
-        if (!(textureView instanceof GlTextureView glTextureView)) {
-            return TextureBinding.EMPTY;
-        }
-        try {
-            GlTexture glTexture = glTextureView.texture();
-            return new TextureBinding(glTexture.glId(), textureView.baseMipLevel(), textureView.mipLevels());
-        } catch (RuntimeException ignored) {
-            return TextureBinding.EMPTY;
-        }
+    private static TextureBinding resolveTextureBinding(Object textureView) {
+        return TextureBinding.EMPTY;
     }
 
     private static void bindTextureView(TextureBinding texture) {
         stateCache.bindTexture(texture);
     }
 
-    private static int resolveSamplerId(GpuSampler sampler) {
-        if (!(sampler instanceof GlSampler glSampler)) {
-            return 0;
-        }
-        try {
-            return glSampler.getId();
-        } catch (RuntimeException ignored) {
-            return 0;
-        }
+    private static int resolveSamplerId(Object sampler) {
+        return 0;
     }
 
     private static TextureBinding resolveOverlayTexture(OverlayTexture overlayTexture) {
-        if (overlayTexture == null) {
-            return TextureBinding.EMPTY;
-        }
-        try {
-            return resolveTextureBinding(overlayTexture.getTextureView());
-        } catch (RuntimeException ignored) {
-            return TextureBinding.EMPTY;
-        }
+        return TextureBinding.EMPTY;
     }
 
     private static TextureBinding resolveLightmapTexture(Minecraft mc) {
-        try {
-            return resolveTextureBinding(mc.gameRenderer.lightTexture().getTextureView());
-        } catch (RuntimeException ignored) {
-            return TextureBinding.EMPTY;
-        }
+        return TextureBinding.EMPTY;
     }
 
     private static int resolveClampSamplerId() {
-        try {
-            return resolveSamplerId(RenderSystem.getSamplerCache().getClampToEdge(FilterMode.NEAREST));
-        } catch (RuntimeException ignored) {
-            return 0;
-        }
+        return 0;
     }
 
     public static void disposeMesh(GeoModel model) {

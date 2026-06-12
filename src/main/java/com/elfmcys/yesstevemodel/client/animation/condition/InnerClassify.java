@@ -63,7 +63,7 @@ public class InnerClassify {
         if (itemStack.is(ItemTagsConstants.PIKE)) {
             return WeaponKind.LANCE;
         }
-        if (item == Items.MACE || itemStack.is(ItemTagsConstants.MACE)) {
+        if (itemStack.is(ItemTagsConstants.MACE)) {
             return WeaponKind.MACE;
         }
         return WeaponKind.NONE;

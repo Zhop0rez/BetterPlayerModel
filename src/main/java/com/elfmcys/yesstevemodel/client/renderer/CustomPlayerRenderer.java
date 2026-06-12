@@ -13,30 +13,26 @@ import com.elfmcys.yesstevemodel.event.api.SpecialPlayerRenderEvent;
 import com.elfmcys.yesstevemodel.geckolib3.geo.GeoReplacedEntityRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.player.PlayerModel;
+import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.MultiBufferSource;
+
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.scores.DisplaySlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.Scoreboard;
 import net.minecraft.world.scores.Team;
 import org.jetbrains.annotations.NotNull;
 
 public class CustomPlayerRenderer extends GeoReplacedEntityRenderer<Player, CustomPlayerEntity> {
-
-    private Identifier currentTexture;
-
-    @Override
-    public LivingEntityRenderState createRenderState() { return new LivingEntityRenderState(); }
+    
+    private ResourceLocation currentTexture;
 
     public CustomPlayerRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -50,7 +46,7 @@ public class CustomPlayerRenderer extends GeoReplacedEntityRenderer<Player, Cust
         render(player, entityYaw, partialTick, poseStack, bufferSource, null, packedLight);
     }
 
-    public void render(Player player, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, SubmitNodeCollector collector, int packedLight) {
+    public void render(Player player, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, MultiBufferSource collector, int packedLight) {
         PlayerCapability capability;
         if (SWarfareCompat.isPlayerAiming(player) || (capability = PlayerCapability.get(player).orElse(null)) == null) {
             return;
@@ -71,7 +67,7 @@ public class CustomPlayerRenderer extends GeoReplacedEntityRenderer<Player, Cust
     }
 
     @Override
-    public boolean shouldShowName(Player entity) {
+    public boolean shouldShowName(Entity entity) {
         Minecraft minecraft;
         LocalPlayer localPlayer;
         double dDistanceToSqr = Minecraft.getInstance().getEntityRenderDispatcher().distanceToSqr(entity);
@@ -102,14 +98,8 @@ public class CustomPlayerRenderer extends GeoReplacedEntityRenderer<Player, Cust
     }
 
     @NotNull
-    public Identifier getTextureLocation(Player player) {
+    public ResourceLocation getTextureLocation(Entity player) {
         return this.currentTexture == null ? PlayerCapability.get(player).map((cap) -> cap.getTextureLocation()).orElse(MissingTextureAtlasSprite.getLocation()) : this.currentTexture;
-    }
-
-    @NotNull
-    @Override
-    public Identifier getTextureLocation(LivingEntityRenderState renderState) {
-        return this.currentTexture == null ? MissingTextureAtlasSprite.getLocation() : this.currentTexture;
     }
 
     public void renderNameTag(Player player, Component component, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, float partialTick) {
@@ -123,7 +113,7 @@ public class CustomPlayerRenderer extends GeoReplacedEntityRenderer<Player, Cust
         if (Minecraft.getInstance().level != null) {
             scoreboard = Minecraft.getInstance().level.getScoreboard();
         }
-        if (dDistanceToSqr < 100.0d && scoreboard != null && (displayObjective = scoreboard.getDisplayObjective(DisplaySlot.LIST)) != null) {
+        if (dDistanceToSqr < 100.0d && scoreboard != null && (displayObjective = scoreboard.getDisplayObjective(1)) != null) {
             // super.renderNameTag changed params in MC 1.26.1.2
             poseStack.translate(0.0d, 0.25875d, 0.0d);
         }
@@ -138,7 +128,7 @@ public class CustomPlayerRenderer extends GeoReplacedEntityRenderer<Player, Cust
     }
 
     @Override
-    public void setupRotations(Player player, PoseStack poseStack, float ageInTicks, float rotationYaw, float partialTicks) {
+    public void setupRotations(LivingEntity player, PoseStack poseStack, float ageInTicks, float rotationYaw, float partialTicks) {
         super.setupRotations(player, poseStack, ageInTicks, rotationYaw, partialTicks);
         Entity vehicle = player.getVehicle();
         if (TouhouLittleMaidCompat.isSimplePlanesEntity(vehicle) || TouhouLittleMaidCompat.isImmersiveAircraftEntity(vehicle)) {
@@ -146,3 +136,4 @@ public class CustomPlayerRenderer extends GeoReplacedEntityRenderer<Player, Cust
         }
     }
 }
+

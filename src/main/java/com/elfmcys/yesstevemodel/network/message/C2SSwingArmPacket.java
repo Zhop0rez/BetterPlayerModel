@@ -44,7 +44,7 @@ public class C2SSwingArmPacket {
                 sender.swinging = true;
                 sender.swingingArm = interactionHand;
                 if (sender.level() instanceof ServerLevel serverLevel) {
-                    serverLevel.getChunkSource().sendToTrackingPlayers(sender, new ClientboundAnimatePacket(sender, interactionHand == InteractionHand.MAIN_HAND ? 0 : 3));
+                    serverLevel.getChunkSource().broadcast(sender, new ClientboundAnimatePacket(sender, interactionHand == InteractionHand.MAIN_HAND ? 0 : 3));
                 }
             }
         }
@@ -53,8 +53,8 @@ public class C2SSwingArmPacket {
         if (MobEffectUtil.hasDigSpeed(entity)) {
             return 6 - (1 + MobEffectUtil.getDigSpeedAmplification(entity));
         }
-        if (entity.hasEffect(MobEffects.MINING_FATIGUE)) {
-            return 6 + ((1 + entity.getEffect(MobEffects.MINING_FATIGUE).getAmplifier()) * 2);
+        if (entity.hasEffect(MobEffects.DIG_SLOWDOWN)) {
+            return 6 + ((1 + entity.getEffect(MobEffects.DIG_SLOWDOWN).getAmplifier()) * 2);
         }
         return 6;
     }

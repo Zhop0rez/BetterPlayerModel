@@ -23,7 +23,7 @@ public enum TokenKind {
     /** Error token, means that there was an error there */
     ERROR(Tag.HAS_VALUE),
 
-    /** Identifier token, has a string value of the identifier name */
+    /** ResourceLocation token, has a string value of the identifier name */
     IDENTIFIER(Tag.HAS_VALUE),
 
     /** String literal token, has a string value of its content */

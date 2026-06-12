@@ -7,12 +7,12 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
+import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.phys.Vec3;
 import rip.ysm.api.entity.EntityDataBridge;
 
 public class CustomVehicleRenderer {
-    public static boolean renderVehicle(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, net.minecraft.client.renderer.SubmitNodeCollector collector, int packedLight) {
+    public static boolean renderVehicle(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, net.minecraft.client.renderer.MultiBufferSource collector, int packedLight) {
         if (GeckoVehicleEntity.usesVanillaRenderer(entity)) {
             return true;
         }

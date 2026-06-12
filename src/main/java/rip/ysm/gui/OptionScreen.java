@@ -3,7 +3,7 @@ package rip.ysm.gui;
 import com.elfmcys.yesstevemodel.config.GeneralConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.input.MouseButtonEvent;
+import org.lwjgl.glfw.GLFW;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
@@ -270,7 +270,7 @@ public abstract class OptionScreen extends Screen {
     @Override
     public void render(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
         GuiGraphics g = extractor;
-        renderTransparentBackground(extractor);
+        renderBackground(extractor);
 
         renderPanelBackdrop(g);
 
@@ -318,24 +318,24 @@ public abstract class OptionScreen extends Screen {
                 adjTabMouseY = inTabArea ? mouseY + Math.round(tabScrollDisplay) : Integer.MIN_VALUE;
             }
             g.enableScissor(tabAreaLeft, tabAreaTop, tabAreaRight, tabAreaBottom);
-            g.pose().pushMatrix();
-            if (compactTabs) g.pose().translate(-tabScrollDisplay, 0);
-            else g.pose().translate(0, -tabScrollDisplay);
+            g.pose().pushPose();
+            if (compactTabs) g.pose().translate(-tabScrollDisplay, 0.0f, 0.0f);
+            else g.pose().translate(0.0f, -tabScrollDisplay, 0.0f);
             for (TabButton tb : tabButtons) {
                 tb.render(extractor, adjTabMouseX, adjTabMouseY, partialTick);
             }
-            g.pose().popMatrix();
+            g.pose().popPose();
             g.disableScissor();
             if (maxTabScroll > 0) renderTabScrollbar(g);
         }
 
         g.enableScissor(rowAreaLeft, rowAreaTop, rowAreaRight, rowAreaBottom);
-        g.pose().pushMatrix();
-        g.pose().translate(0, -rowScrollDisplay);
+        g.pose().pushPose();
+        g.pose().translate(0.0f, -rowScrollDisplay, 0.0f);
         for (OptionRow<?> row : activeRows) {
             row.render(extractor, mouseX, adjMouseY, partialTick);
         }
-        g.pose().popMatrix();
+        g.pose().popPose();
         g.disableScissor();
         if (maxRowScroll > 0) renderRowScrollbar(g);
 
@@ -458,9 +458,9 @@ public abstract class OptionScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean flag) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
         for (OptionRow<?> row : activeRows) {
-            if (row.isOverlayOpen() && row.overlayMouseClicked(event.x(), event.y(), event.button(), rowScrollDisplay)) {
+            if (row.isOverlayOpen() && row.overlayMouseClicked(mouseX, mouseY, button, rowScrollDisplay)) {
                 return true;
             }
         }
@@ -468,53 +468,53 @@ public abstract class OptionScreen extends Screen {
             if (row.isOverlayOpen()) row.closeOverlay();
         }
 
-        if (maxRowScroll > 0 && isOnRowScrollbar(event.x(), event.y())) {
+        if (maxRowScroll > 0 && isOnRowScrollbar(mouseX, mouseY)) {
             draggingRowScrollbar = true;
-            updateRowScrollFromMouse(event.y());
+            updateRowScrollFromMouse(mouseY);
             return true;
         }
-        if (maxTabScroll > 0 && isOnTabScrollbar(event.x(), event.y())) {
+        if (maxTabScroll > 0 && isOnTabScrollbar(mouseX, mouseY)) {
             draggingTabScrollbar = true;
-            updateTabScrollFromMouse(event.x(), event.y());
+            updateTabScrollFromMouse(mouseX, mouseY);
             return true;
         }
-        if (event.x() >= tabAreaLeft && event.x() < tabAreaRight && event.y() >= tabAreaTop && event.y() < tabAreaBottom) {
-            double adjX = compactTabs ? event.x() + tabScrollDisplay : event.x();
-            double adjY = compactTabs ? event.y() : event.y() + tabScrollDisplay;
+        if (mouseX >= tabAreaLeft && mouseX < tabAreaRight && mouseY >= tabAreaTop && mouseY < tabAreaBottom) {
+            double adjX = compactTabs ? mouseX + tabScrollDisplay : mouseX;
+            double adjY = compactTabs ? mouseY : mouseY + tabScrollDisplay;
             for (TabButton tb : tabButtons) {
-                if (tb.mouseClicked(new MouseButtonEvent(adjX, adjY, event.buttonInfo()), flag)) {
+                if (tb.mouseClicked(adjX, adjY, button)) {
                     return true;
                 }
             }
             return true;
         }
-        if (event.x() >= rowAreaLeft && event.x() < rowAreaRight && event.y() >= rowAreaTop && event.y() < rowAreaBottom) {
-            double adjY = event.y() + rowScrollDisplay;
+        if (mouseX >= rowAreaLeft && mouseX < rowAreaRight && mouseY >= rowAreaTop && mouseY < rowAreaBottom) {
+            double adjY = mouseY + rowScrollDisplay;
             for (OptionRow<?> row : activeRows) {
-                if (row.mouseClicked(new MouseButtonEvent(event.x(), adjY, event.buttonInfo()), flag)) {
+                if (row.mouseClicked(mouseX, adjY, button)) {
                     setFocused(row);
-                    if (event.button() == 0) setDragging(true);
+                    if (button == 0) setDragging(true);
                     return true;
                 }
             }
             return true;
         }
-        return super.mouseClicked(event, flag);
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
-    public boolean mouseDragged(MouseButtonEvent event, double dx, double dy) {
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dx, double dy) {
         if (draggingRowScrollbar) {
-            updateRowScrollFromMouse(event.y());
+            updateRowScrollFromMouse(mouseY);
             return true;
         }
         if (draggingTabScrollbar) {
-            updateTabScrollFromMouse(event.x(), event.y());
+            updateTabScrollFromMouse(mouseX, mouseY);
             return true;
         }
-        return super.mouseDragged(event, dx, dy);
+        return super.mouseDragged(mouseX, mouseY, button, dx, dy);
     }
 
-    public boolean mouseReleased(MouseButtonEvent event) {
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
         if (draggingRowScrollbar) {
             draggingRowScrollbar = false;
             return true;
@@ -523,11 +523,11 @@ public abstract class OptionScreen extends Screen {
             draggingTabScrollbar = false;
             return true;
         }
-        return super.mouseReleased(event);
+        return super.mouseReleased(mouseX, mouseY, button);
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
         double delta = scrollY;
         for (OptionRow<?> row : activeRows) {
             if (row.isOverlayOpen() && row.overlayMouseScrolled(mouseX, mouseY, delta, rowScrollDisplay)) {
@@ -542,7 +542,7 @@ public abstract class OptionScreen extends Screen {
             rowScrollOffset = Mth.clamp((int) (rowScrollOffset - delta * 20), 0, maxRowScroll);
             return true;
         }
-        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+        return super.mouseScrolled(mouseX, mouseY, scrollY);
     }
 
     private boolean isOnRowScrollbar(double mouseX, double mouseY) {

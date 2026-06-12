@@ -26,8 +26,8 @@ public final class PlayerModelToggleKey {
         if (PlatformAPI.isServer()) {
             return;
         }
-        ClientRawInputEvent.KEY_PRESSED.register((client, action, event) -> {
-            return onKeyInput(action, event.key(), event.scancode()) ? EventResult.interruptFalse() : EventResult.pass();
+        ClientRawInputEvent.KEY_PRESSED.register((client, keyCode, scanCode, action, modifiers) -> {
+            return onKeyInput(action, keyCode, scanCode) ? EventResult.interruptFalse() : EventResult.pass();
         });
     }
 

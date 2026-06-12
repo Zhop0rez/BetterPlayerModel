@@ -15,9 +15,9 @@ import dev.architectury.event.EventResult;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 
@@ -61,9 +61,9 @@ public class RenderFirstPlayerBackground {
             if (result.isFalse()) {
                 return;
             }
-            Identifier resourceLocationB_ = cap.getTextureLocation();
+            ResourceLocation resourceLocationB_ = cap.getTextureLocation();
             int textureIndex = cap.getTextureIndex();
-            VertexConsumer buffer = multiBufferSource.getBuffer(RenderTypes.entityCutout(resourceLocationB_));
+            VertexConsumer buffer = multiBufferSource.getBuffer(RenderType.entityCutout(resourceLocationB_));
             if (instance != null) {
                 poseStack.pushPose();
                 if (Minecraft.getInstance().options.bobView().get()) {

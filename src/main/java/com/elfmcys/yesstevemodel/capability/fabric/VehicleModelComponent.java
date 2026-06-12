@@ -1,11 +1,11 @@
 package com.elfmcys.yesstevemodel.capability.fabric;
 
 import com.elfmcys.yesstevemodel.capability.VehicleModelCapability;
-import org.ladysnake.cca.api.v3.component.Component;
+import dev.onyxstudios.cca.api.v3.component.Component;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.CompoundTag;
 
 public final class VehicleModelComponent implements Component {
 
@@ -17,23 +17,23 @@ public final class VehicleModelComponent implements Component {
         return capability;
     }
 
-    public void readFromNbt(CompoundTag tag, HolderLookup.Provider provider) {
-        tag.getCompound("VehicleModel").ifPresent(capability::deserializeNBT);
+    public void readFromNbt_internal(CompoundTag tag) {
+        if(tag.contains("VehicleModel", 10)) { capability.deserializeNBT(tag.getCompound("VehicleModel")); }
     }
 
-    public void writeToNbt(CompoundTag tag, HolderLookup.Provider provider) {
+    public void writeToNbt_internal(CompoundTag tag) {
         tag.put("VehicleModel", capability.serializeNBT());
     }
 
     @Override
-    public void writeData(ValueOutput output) {
+    public void writeToNbt(CompoundTag output) {
         CompoundTag tag = new CompoundTag();
-        writeToNbt(tag, null);
-        output.store(DATA_KEY, CompoundTag.CODEC, tag);
+        writeToNbt_internal(tag);
+        output.put(DATA_KEY, tag);
     }
 
     @Override
-    public void readData(ValueInput input) {
-        input.read(DATA_KEY, CompoundTag.CODEC).ifPresent(tag -> readFromNbt(tag, input.lookup()));
+    public void readFromNbt(CompoundTag input) {
+        if (input.contains(DATA_KEY, 10)) { readFromNbt_internal(input.getCompound(DATA_KEY)); }
     }
 }

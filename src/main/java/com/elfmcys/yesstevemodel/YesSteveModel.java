@@ -9,7 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.architectury.platform.Platform;
 import net.minecraft.network.chat.Component;
-import net.neoforged.fml.config.ModConfig;
+import net.minecraftforge.fml.config.ModConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import rip.ysm.api.PlatformAPI;
@@ -65,10 +65,7 @@ public class YesSteveModel {
         }
         ConfigRegistration.register(MOD_ID, ModConfig.Type.CLIENT, GeneralConfig.buildSpec());
         ConfigRegistration.register(MOD_ID, ModConfig.Type.SERVER, ServerConfig.buildSpec());
-        if (!PlatformAPI.isServer()) {
-            // MC 26.x: DeferredRegister.register now requires (String, Supplier) args
-            // ModSoundEvents.REGISTER.register("", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(MOD_ID, "")));
-        }
+        ModSoundEvents.REGISTER.register();
     }
 
     @Keep

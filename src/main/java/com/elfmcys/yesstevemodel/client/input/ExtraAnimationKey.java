@@ -49,8 +49,8 @@ public final class ExtraAnimationKey {
         if (PlatformAPI.isServer()) {
             return;
         }
-        ClientRawInputEvent.KEY_PRESSED.register((client, action, event) -> {
-            onKeyInput(action, event.key(), event.scancode());
+        ClientRawInputEvent.KEY_PRESSED.register((client, keyCode, scanCode, action, modifiers) -> {
+            onKeyInput(action, keyCode, scanCode);
             return EventResult.pass();
         });
     }

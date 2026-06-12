@@ -6,7 +6,7 @@ import com.google.common.collect.Sets;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
 
@@ -60,8 +60,8 @@ public final class FileTypeUtil {
         return lastSlashIndex >= 0 ? trimmedPath.substring(lastSlashIndex + 1) : trimmedPath;
     }
 
-    public static Identifier getPackIconLocation(String str) {
-        return Identifier.fromNamespaceAndPath(YesSteveModel.MOD_ID, "model_pack_icon/" + str.hashCode());
+    public static ResourceLocation getPackIconLocation(String str) {
+        return new ResourceLocation(YesSteveModel.MOD_ID, "model_pack_icon/" + str.hashCode());
     }
 
     /**
@@ -71,19 +71,19 @@ public final class FileTypeUtil {
      *  ],
      *  з”Ї?йђЁе‹¬ж§ёзЂ№з‚°з¶‹ Tag
      */
-    public static Set<Identifier> resolveEntityTypes(String[] strArr) {
-        HashSet<Identifier> hashSet = new HashSet<>();
+    public static Set<ResourceLocation> resolveEntityTypes(String[] strArr) {
+        HashSet<ResourceLocation> hashSet = new HashSet<>();
         for (String str : strArr) {
             if (str.startsWith("#")) {
-                Identifier id = Identifier.tryParse(str.substring(1));
+                ResourceLocation id = ResourceLocation.tryParse(str.substring(1));
                 if (id != null) {
                     TagKey<EntityType<?>> tagKey = TagKey.create(Registries.ENTITY_TYPE, id);
-                    BuiltInRegistries.ENTITY_TYPE.get(tagKey).ifPresent(holderSet ->
-                        holderSet.forEach(holder -> holder.unwrapKey().ifPresent(rk -> hashSet.add(rk.identifier())))
+                    BuiltInRegistries.ENTITY_TYPE.getTag(tagKey).ifPresent(holderSet ->
+                        holderSet.forEach(holder -> holder.unwrapKey().ifPresent(rk -> hashSet.add(rk.location())))
                     );
                 }
             } else {
-                Identifier id = Identifier.tryParse(str);
+                ResourceLocation id = ResourceLocation.tryParse(str);
                 if (id != null) {
                     hashSet.add(id);
                 }

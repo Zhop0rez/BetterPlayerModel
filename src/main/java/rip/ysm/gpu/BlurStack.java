@@ -1,6 +1,6 @@
 package rip.ysm.gpu;
 
-import com.mojang.blaze3d.opengl.GlStateManager;
+import com.mojang.blaze3d.platform.GlStateManager;
 
 import net.minecraft.client.gui.GuiGraphics;
 import org.joml.Matrix4f;

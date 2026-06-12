@@ -11,14 +11,14 @@ import com.elfmcys.yesstevemodel.network.message.C2SRequestExecuteMolangPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 import java.text.DecimalFormat;
 
 public class AnimationSlider extends RangedSliderWidget implements ISpecialWidget {
 
-    private static final Identifier ROULETTE_TEXTURE = Identifier.fromNamespaceAndPath(YesSteveModel.MOD_ID, "texture/roulette.png");
+    private static final ResourceLocation ROULETTE_TEXTURE = new ResourceLocation(YesSteveModel.MOD_ID, "texture/roulette.png");
 
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#.##");
 

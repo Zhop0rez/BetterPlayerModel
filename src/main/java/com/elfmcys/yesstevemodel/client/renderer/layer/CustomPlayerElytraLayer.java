@@ -9,15 +9,14 @@ import com.elfmcys.yesstevemodel.geckolib3.geo.animated.AnimatedGeoModel;
 import com.elfmcys.yesstevemodel.geckolib3.util.RenderUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import net.minecraft.client.model.object.equipment.ElytraModel;
+import net.minecraft.client.model.ElytraModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
@@ -33,13 +32,13 @@ public class CustomPlayerElytraLayer extends GeoLayerRenderer<CustomPlayerEntity
 
     private static final String RIGHT_WING_BONE_NAME = "RightWing";
 
-    private static final Identifier WINGS_LOCATION = Identifier.withDefaultNamespace("textures/entity/equipment/wings/elytra.png");
+    private static final ResourceLocation WINGS_LOCATION = new ResourceLocation("textures/entity/equipment/wings/elytra.png");
 
-    private final net.minecraft.client.model.object.equipment.ElytraModel elytraModel;
+    private final ElytraModel<LivingEntity> elytraModel;
 
     public CustomPlayerElytraLayer(EntityRendererProvider.Context context) {
         @SuppressWarnings({"rawtypes", "unchecked"})
-        net.minecraft.client.model.object.equipment.ElytraModel rawModel = new net.minecraft.client.model.object.equipment.ElytraModel(context.bakeLayer(ModelLayers.ELYTRA));
+        ElytraModel rawModel = new ElytraModel(context.bakeLayer(ModelLayers.ELYTRA));
         this.elytraModel = rawModel;
     }
 
@@ -51,7 +50,7 @@ public class CustomPlayerElytraLayer extends GeoLayerRenderer<CustomPlayerEntity
             return;
         }
         LivingEntity entity = entityLivingBaseIn.getEntity();
-        Identifier cloakTextureLocation = resolveElytraTexture(entity);
+        ResourceLocation cloakTextureLocation = resolveElytraTexture(entity);
         poseStack.pushPose();
         boolean hidden = false;
         if (renderMode == ElytraRenderMode.LOCATOR) {
@@ -60,22 +59,10 @@ public class CustomPlayerElytraLayer extends GeoLayerRenderer<CustomPlayerEntity
             poseStack.translate(0.0f, 0.0f, 0.125f);
         }
         if (!hidden) {
-            this.elytraModel.setupAnim(createElytraState(entity, partialTick, ageInTicks));
-            this.elytraModel.renderToBuffer(poseStack, bufferSource.getBuffer(RenderTypes.armorCutoutNoCull(cloakTextureLocation)), packedLightIn, OverlayTexture.NO_OVERLAY, -1);
+            this.elytraModel.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+            this.elytraModel.renderToBuffer(poseStack, bufferSource.getBuffer(RenderType.armorCutoutNoCull(cloakTextureLocation)), packedLightIn, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
         }
         poseStack.popPose();
-    }
-
-    private HumanoidRenderState createElytraState(LivingEntity entity, float partialTick, float ageInTicks) {
-        HumanoidRenderState state = new HumanoidRenderState();
-        state.ageInTicks = ageInTicks;
-        state.isBaby = entity.isBaby();
-        state.isCrouching = entity.isCrouching();
-        state.isFallFlying = entity.isFallFlying();
-        state.elytraRotX = entity.elytraAnimationState.getRotX(partialTick);
-        state.elytraRotY = entity.elytraAnimationState.getRotY(partialTick);
-        state.elytraRotZ = entity.elytraAnimationState.getRotZ(partialTick);
-        return state;
     }
 
     private boolean renderLocatorElytra(PoseStack poseStack, AnimatedGeoModel model) {
@@ -126,13 +113,13 @@ public class CustomPlayerElytraLayer extends GeoLayerRenderer<CustomPlayerEntity
         return !stack.isEmpty();
     }
 
-    private static Identifier resolveElytraTexture(LivingEntity entity) {
-        Identifier cloakTextureLocation = WINGS_LOCATION;
+    private static ResourceLocation resolveElytraTexture(LivingEntity entity) {
+        ResourceLocation cloakTextureLocation = WINGS_LOCATION;
         if (entity instanceof AbstractClientPlayer abstractClientPlayer) {
-            if (abstractClientPlayer.getSkin().elytra() != null) {
-                cloakTextureLocation = abstractClientPlayer.getSkin().elytra().texturePath();
-            } else if (abstractClientPlayer.getSkin().cape() != null) {
-                cloakTextureLocation = abstractClientPlayer.getSkin().cape().texturePath();
+            if (abstractClientPlayer.getElytraTextureLocation() != null) {
+                cloakTextureLocation = abstractClientPlayer.getElytraTextureLocation();
+            } else if (abstractClientPlayer.getCloakTextureLocation() != null) {
+                cloakTextureLocation = abstractClientPlayer.getCloakTextureLocation();
             }
         }
         return cloakTextureLocation;
@@ -198,3 +185,4 @@ public class CustomPlayerElytraLayer extends GeoLayerRenderer<CustomPlayerEntity
         FALLBACK
     }
 }
+

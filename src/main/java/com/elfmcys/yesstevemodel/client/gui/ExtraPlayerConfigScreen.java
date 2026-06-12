@@ -5,7 +5,7 @@ import com.elfmcys.yesstevemodel.config.GeneralConfig;
 import com.elfmcys.yesstevemodel.config.LoadingStateConfig;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.neoforged.neoforge.common.ModConfigSpec;
+import net.minecraftforge.common.ForgeConfigSpec;
 import org.jetbrains.annotations.Nullable;
 import rip.ysm.gui.Option;
 import rip.ysm.gui.OptionGroup;
@@ -68,7 +68,7 @@ public class ExtraPlayerConfigScreen extends OptionScreen {
         groups.add(misc);
     }
 
-    private static Option<Double> intOption(String key, ModConfigSpec.IntValue cfg) {
+    private static Option<Double> intOption(String key, ForgeConfigSpec.IntValue cfg) {
         return new Option<>(key, () -> cfg.get().doubleValue(), value -> {
             cfg.set(value == null ? 0 : value.intValue());
             cfg.save();

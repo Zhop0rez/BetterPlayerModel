@@ -3,7 +3,7 @@ package rip.ysm.gui.components;
 import com.elfmcys.yesstevemodel.YesSteveModel;
 import com.elfmcys.yesstevemodel.client.gui.ModelMetadataPresenter;
 import com.elfmcys.yesstevemodel.client.upload.IResourceLocatable;
-import net.minecraft.client.input.MouseButtonEvent;
+import org.lwjgl.glfw.GLFW;
 import com.elfmcys.yesstevemodel.resource.models.AuthorInfo;
 import com.elfmcys.yesstevemodel.util.data.OrderedStringMap;
 import net.minecraft.ChatFormatting;
@@ -11,7 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import org.apache.commons.lang3.StringUtils;
 import rip.ysm.gui.ModernModelInfoScreen;
@@ -20,7 +20,7 @@ import rip.ysm.gui.OptionRow;
 import java.util.List;
 
 public final class AuthorRow extends OptionRow<Object> {
-    private static final Identifier DEFAULT_AVATAR = Identifier.fromNamespaceAndPath(YesSteveModel.MOD_ID, "texture/default_avatar.png");
+    private static final ResourceLocation DEFAULT_AVATAR = new ResourceLocation(YesSteveModel.MOD_ID, "texture/default_avatar.png");
     private static final int AVATAR_SIZE = 48;
 
     private final ModernModelInfoScreen owner;
@@ -44,8 +44,8 @@ public final class AuthorRow extends OptionRow<Object> {
         g.fill(getX(), getY(), getX() + width, getY() + height, hover ? 0x90171717 : 0x90000000);
         int ax = getX() + 4;
         int ay = getY() + 4;
-        Identifier avatar = avatarLocatable != null ? avatarLocatable.getResourceLocation().orElse(DEFAULT_AVATAR) : DEFAULT_AVATAR;
-        g.blit(avatar, ax, ay, ax + AVATAR_SIZE, ay + AVATAR_SIZE, 0.0f, 1.0f, 0.0f, 1.0f);
+        ResourceLocation avatar = avatarLocatable != null ? avatarLocatable.getResourceLocation().orElse(DEFAULT_AVATAR) : DEFAULT_AVATAR;
+        g.blit(avatar, ax, ay, 0.0f, 0.0f, AVATAR_SIZE, AVATAR_SIZE, AVATAR_SIZE, AVATAR_SIZE);
 
         Font font = Minecraft.getInstance().font;
         String name = ModelMetadataPresenter.getLocalizedModelString(owner.renderContext, "metadata.authors.%d.name".formatted(authorIndex), author.getName());
@@ -93,7 +93,7 @@ public final class AuthorRow extends OptionRow<Object> {
     }
 
     @Override
-    public void onClick(MouseButtonEvent event, boolean flag) {
+    public void onClick(double mouseX, double mouseY) {
         if (hoveredContactIndex < 0) return;
         OrderedStringMap<String, String> contacts = author.getContact();
         if (contacts == null || hoveredContactIndex >= contacts.size()) return;

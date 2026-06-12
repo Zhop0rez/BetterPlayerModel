@@ -7,14 +7,14 @@ import com.elfmcys.yesstevemodel.network.NetworkHandler;
 import com.elfmcys.yesstevemodel.network.message.C2SSetStarModelPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.input.InputWithModifiers;
+import org.lwjgl.glfw.GLFW;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public class ModIconButton extends FlatColorButton {
 
-    private static final Identifier ICON_TEXTURE = Identifier.fromNamespaceAndPath(YesSteveModel.MOD_ID, "texture/icon.png");
+    private static final ResourceLocation ICON_TEXTURE = new ResourceLocation(YesSteveModel.MOD_ID, "texture/icon.png");
 
     public ModIconButton(int x, int y) {
         super(x, y, 20, 20, Component.empty(), button -> {
@@ -22,8 +22,8 @@ public class ModIconButton extends FlatColorButton {
     }
 
     @Override
-    protected void renderContents(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        super.renderContents(extractor, mouseX, mouseY, partialTick);
+    public void renderWidget(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
+        super.renderWidget(extractor, mouseX, mouseY, partialTick);
         GuiGraphics guiGraphics = extractor;
         int iconOffsetX = (this.width - 16) / 2;
         int iconOffsetY = (this.height - 16) / 2;
@@ -34,11 +34,11 @@ public class ModIconButton extends FlatColorButton {
                     if (cap2.containsModel(cap.getModelId())) {
                         int x = getX() + iconOffsetX;
                         int y = getY() + iconOffsetY;
-                        guiGraphics.blit(ICON_TEXTURE, x, y, x + 16, y + 16, 16.0f / 256.0f, 32.0f / 256.0f, 0.0f, 16.0f / 256.0f);
+                        guiGraphics.blit(ICON_TEXTURE, x, y, 16, 0, 16, 16, 256, 256);
                     } else {
                         int x = getX() + iconOffsetX;
                         int y = getY() + iconOffsetY;
-                        guiGraphics.blit(ICON_TEXTURE, x, y, x + 16, y + 16, 0.0f, 16.0f / 256.0f, 0.0f, 16.0f / 256.0f);
+                        guiGraphics.blit(ICON_TEXTURE, x, y, 0, 0, 16, 16, 256, 256);
                     }
                 });
             });
@@ -46,7 +46,7 @@ public class ModIconButton extends FlatColorButton {
     }
 
     @Override
-    public void onPress(InputWithModifiers modifiers) {
+    public void onPress() {
         LocalPlayer localPlayer = Minecraft.getInstance().player;
         if (localPlayer != null) {
             PlayerCapability.get(localPlayer).ifPresent(cap -> {

@@ -15,19 +15,19 @@ import com.elfmcys.yesstevemodel.network.NetworkHandler;
 import com.elfmcys.yesstevemodel.network.message.C2SPlayAnimationPacket;
 import com.elfmcys.yesstevemodel.util.data.OrderedStringMap;
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.opengl.GlStateManager;
+import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.input.KeyEvent;
-import net.minecraft.client.input.MouseButtonEvent;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFW;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
@@ -58,9 +58,9 @@ import java.util.Map;
 
 public class ModernAnimationRouletteScreen extends Screen {
 
-    private static final Identifier settingsIcon = Identifier.fromNamespaceAndPath(YesSteveModel.MOD_ID, "texture/settings.png");
-    private static final Identifier lockIcon = Identifier.fromNamespaceAndPath(YesSteveModel.MOD_ID, "texture/lock.png");
-    private static final Identifier unlockIcon = Identifier.fromNamespaceAndPath(YesSteveModel.MOD_ID, "texture/unlock.png");
+    private static final ResourceLocation settingsIcon = new ResourceLocation(YesSteveModel.MOD_ID, "texture/settings.png");
+    private static final ResourceLocation lockIcon = new ResourceLocation(YesSteveModel.MOD_ID, "texture/lock.png");
+    private static final ResourceLocation unlockIcon = new ResourceLocation(YesSteveModel.MOD_ID, "texture/unlock.png");
 
     private static final LinkedList<Pair<String, Integer>> navigationStack = Lists.newLinkedList();
     private static String lastModelId = StringPool.EMPTY;
@@ -265,7 +265,7 @@ public class ModernAnimationRouletteScreen extends Screen {
         GlStateManager._blendFuncSeparate(770, 771, 1, 0);
 /*         if (hover) g.setColor(1.0f, 1.0f, 0.6f, 1.0f);
  */
-        g.blit(settingsIcon, ix, iy, ix + 16, iy + 16, 0.0f, 1.0f, 0.0f, 1.0f);
+        g.blit(settingsIcon, ix, iy, 0.0f, 0.0f, 16, 16, 16, 16);
 /*         if (hover) g.setColor(1.0f, 1.0f, 1.0f, 1.0f);
  */
         GlStateManager._disableBlend();
@@ -323,10 +323,10 @@ public class ModernAnimationRouletteScreen extends Screen {
 
     private void renderCenter(GuiGraphics g) {
         if (animatableModel.getEntity() instanceof Player) {
-            Identifier tex = AnimationLockEvent.isLocked() ? lockIcon : unlockIcon;
+            ResourceLocation tex = AnimationLockEvent.isLocked() ? lockIcon : unlockIcon;
             GlStateManager._enableBlend();
             GlStateManager._blendFuncSeparate(770, 771, 1, 0);
-            g.blit(tex, centerX - 16, centerY - 16, centerX + 16, centerY + 16, 0.0f, 1.0f, 0.0f, 1.0f);
+            g.blit(tex, centerX - 16, centerY - 16, 0.0f, 0.0f, 32, 32, 32, 32);
             GlStateManager._disableBlend();
         } else {
             g.drawCenteredString(this.font, Component.translatable("gui.better_player_model.roulette.stop"), centerX, centerY - 4, 0xFFFFFFFF);
@@ -390,7 +390,7 @@ public class ModernAnimationRouletteScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean flag) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (hoveredPrev) {
             playClick();
             previousPage();
@@ -425,8 +425,8 @@ public class ModernAnimationRouletteScreen extends Screen {
             else playAnimation(key);
             return true;
         }
-        double cdx = event.x() - centerX;
-        double cdy = event.y() - centerY;
+        double cdx = mouseX - centerX;
+        double cdy = mouseY - centerY;
         if (cdx * cdx + cdy * cdy <= 22.0 * 22.0) {
             if (animatableModel.getEntity() instanceof Player) {
                 AnimationLockEvent.toggleLock();
@@ -436,7 +436,7 @@ public class ModernAnimationRouletteScreen extends Screen {
             }
             return true;
         }
-        return super.mouseClicked(event, flag);
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     private void navigateTo(int targetIndex) {
@@ -444,8 +444,7 @@ public class ModernAnimationRouletteScreen extends Screen {
         Minecraft.getInstance().setScreen(new ModernAnimationRouletteScreen(lastModelId, renderContext, animatableModel));
     }
 
-    @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
         if (scrollY < 0.0) nextPage(); else previousPage();
         return true;
     }
@@ -459,12 +458,12 @@ public class ModernAnimationRouletteScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(KeyEvent event) {
-        if (KeyMappingFactory.isActiveAndMatches(AnimationRouletteKey.KEY_ROULETTE, event.key(), event.scancode())) {
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (KeyMappingFactory.isActiveAndMatches(AnimationRouletteKey.KEY_ROULETTE, keyCode, scanCode)) {
             onClose();
             return true;
         }
-        return super.keyPressed(event);
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     private void navigateToSubmenu(String value) {

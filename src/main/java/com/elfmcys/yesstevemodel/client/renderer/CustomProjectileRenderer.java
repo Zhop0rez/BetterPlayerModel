@@ -3,11 +3,11 @@ package com.elfmcys.yesstevemodel.client.renderer;
 import com.elfmcys.yesstevemodel.capability.ProjectileCapability;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.entity.projectile.Projectile;
 
 public class CustomProjectileRenderer {
-    public static boolean renderProjectile(Projectile projectile, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, SubmitNodeCollector collector, int packedLight) {
+    public static boolean renderProjectile(Projectile projectile, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, MultiBufferSource collector, int packedLight) {
         return ProjectileCapability.get(projectile).map(cap -> {
             if (cap.isModelInitialized() && cap.isModelReady()) {
                 SubmitRenderContext.set(collector);

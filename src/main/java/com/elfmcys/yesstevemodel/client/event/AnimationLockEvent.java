@@ -10,7 +10,7 @@ import dev.architectury.event.EventResult;
 import dev.architectury.event.events.client.ClientRawInputEvent;
 import dev.architectury.event.events.client.ClientTickEvent;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.ClientInput;
+import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
 
 public class AnimationLockEvent {
@@ -21,9 +21,7 @@ public class AnimationLockEvent {
     }
 
     public static void register() {
-        ClientRawInputEvent.KEY_PRESSED.register((client, action, event) -> {
-            int keyCode = event.key();
-            int scanCode = event.scancode();
+        ClientRawInputEvent.KEY_PRESSED.register((client, keyCode, scanCode, action, modifiers) -> {
             if (YesSteveModel.isAvailable() && InputUtil.isPlayerReady() && action == 1 && InputUtil.isKeyPressed(keyCode, scanCode, AnimationRouletteKey.KEY_LOCK)) {
                 animationLocked = !animationLocked;
             }
@@ -47,8 +45,8 @@ public class AnimationLockEvent {
     }
 
     public static boolean isPlayerMoving(LocalPlayer localPlayer) {
-        ClientInput input = localPlayer.input;
-        return input != null && (isSignificantImpulse(input.getMoveVector().x) || isSignificantImpulse(input.getMoveVector().y) || input.keyPresses.jump() || input.keyPresses.shift());
+        Input input = localPlayer.input;
+        return input != null && (isSignificantImpulse(input.leftImpulse) || isSignificantImpulse(input.forwardImpulse) || input.jumping || input.shiftKeyDown);
     }
 
     private static boolean isSignificantImpulse(float impulse) {

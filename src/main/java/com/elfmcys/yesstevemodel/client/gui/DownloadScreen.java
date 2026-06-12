@@ -97,7 +97,7 @@ public class DownloadScreen extends Screen {
 
     @Override
     public void render(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        renderTransparentBackground(extractor);
+        renderBackground(extractor);
         ResourceDownloadManager.Snapshot snapshot = ResourceDownloadManager.snapshot();
         extractor.fillGradient(this.guiLeft, this.guiTop, this.guiLeft + this.guiWidth, this.guiTop + this.guiHeight, -14540254, -14540254);
         drawFirstLine(extractor, Component.translatable("gui.better_player_model.resource_station.download_page.title"), this.guiWidth - 24, this.guiLeft + 12, this.guiTop + (compactHeader() ? 53 : 31), 0xFFF3F3E0);

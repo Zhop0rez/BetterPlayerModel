@@ -18,14 +18,12 @@ public abstract class LivingEntityEffectMixin {
     @Inject(method = "onEffectAdded", at = @At("TAIL"))
     private void ysm$onEffectAdded(MobEffectInstance instance, Entity source, CallbackInfo ci) {
         LivingEntity self = (LivingEntity) (Object) this;
-        MobEffectEvent.onEffectAdded(self, instance.getEffect().value(), instance.getAmplifier());
+        MobEffectEvent.onEffectAdded(self, instance.getEffect(), instance.getAmplifier());
     }
 
-    @Inject(method = "onEffectsRemoved", at = @At("HEAD"))
-    private void ysm$onEffectsRemoved(Collection<MobEffectInstance> instances, CallbackInfo ci) {
+    @Inject(method = "onEffectRemoved", at = @At("HEAD"))
+    private void ysm$onEffectsRemoved(MobEffectInstance instance, CallbackInfo ci) {
         LivingEntity self = (LivingEntity) (Object) this;
-        for (MobEffectInstance instance : instances) {
-            MobEffectEvent.onEffectRemoved(self, instance.getEffect().value());
-        }
+        MobEffectEvent.onEffectRemoved(self, instance.getEffect());
     }
 }

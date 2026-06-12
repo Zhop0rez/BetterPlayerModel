@@ -1,17 +1,17 @@
 package rip.ysm.api.network.fabric;
 
 import com.elfmcys.yesstevemodel.YesSteveModel;
-import com.elfmcys.yesstevemodel.mixin.ServerCommonPacketListenerImplAccessor;
+
+import com.elfmcys.yesstevemodel.mixin.ServerGamePacketListenerImplAccessor;
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -30,25 +30,20 @@ public final class YSMChannelImpl {
     private static final Map<Integer, Codec<?>> CODECS_BY_ID = new HashMap<>();
     private static final Map<Class<?>, Integer> ID_BY_CLASS = new HashMap<>();
 
-    private static Identifier channelId;
+    public static ResourceLocation channelId;
     private static volatile MinecraftServer currentServer;
 
     private YSMChannelImpl() {
     }
 
-    public static void init(Identifier id, String version) {
+    public static void init(ResourceLocation id, String version) {
         channelId = id;
 
-        YSMPayload.initType(channelId);
-        PayloadTypeRegistry.playC2S().register(YSMPayload.TYPE, YSMPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(YSMPayload.TYPE, YSMPayload.CODEC);
-
-        ServerPlayNetworking.registerGlobalReceiver(YSMPayload.TYPE, (payload, context) ->
-                dispatch(payload.buf(), new ServerPacketContext(
-                        context.server(), context.player(),
-                        ((ServerCommonPacketListenerImplAccessor) context.player().connection).ysm$getConnection()
-                ))
-        );
+        ServerPlayNetworking.registerGlobalReceiver(channelId, (server, player, handler, buf, responseSender) -> {
+            FriendlyByteBuf copy = new FriendlyByteBuf(Unpooled.buffer(buf.readableBytes()));
+            buf.readBytes(copy);
+            server.execute(() -> dispatch(copy, new ServerPacketContext(server, player, ((ServerGamePacketListenerImplAccessor) handler).ysm$getConnection())));
+        });
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> currentServer = server);
         ServerLifecycleEvents.SERVER_STOPPING.register(server -> currentServer = null);
@@ -96,7 +91,7 @@ public final class YSMChannelImpl {
         if (!canSend(player)) {
             return;
         }
-        ServerPlayNetworking.send(player, new YSMPayload(encode(packet)));
+        ServerPlayNetworking.send(player, channelId, encode(packet));
     }
 
     public static void sendToAll(Object packet) {
@@ -125,7 +120,7 @@ public final class YSMChannelImpl {
     }
 
     public static Packet<?> toClientboundPacket(Object packet) {
-        return new net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket(new YSMPayload(encode(packet)));
+        return ServerPlayNetworking.createS2CPacket(channelId, encode(packet));
     }
 
     public static Packet<?> toServerboundPacket(Object packet) {
@@ -147,11 +142,6 @@ public final class YSMChannelImpl {
     }
 
     private static boolean canSend(ServerPlayer player) {
-        return player != null && YSMPayload.TYPE != null && ServerPlayNetworking.canSend(player, YSMPayload.TYPE);
-    }
-
-    private static void registerPayloadTypes() {
-        // MC 26.x Fabric API payload registration - uses direct send approach
-        // Payload type registration is handled by registerGlobalReceiver
+        return player != null && channelId != null && ServerPlayNetworking.canSend(player, channelId);
     }
 }

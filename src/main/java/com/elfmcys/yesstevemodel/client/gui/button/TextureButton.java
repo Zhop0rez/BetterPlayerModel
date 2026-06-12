@@ -12,7 +12,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.input.InputWithModifiers;
+import org.lwjgl.glfw.GLFW;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -34,7 +34,7 @@ public class TextureButton extends Button {
     }
 
     @Override
-    protected void renderContents(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
+    public void renderWidget(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
         GuiGraphics guiGraphics = extractor;
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
@@ -58,7 +58,7 @@ public class TextureButton extends Button {
     }
 
     @Override
-    public void onPress(InputWithModifiers modifiers) {
+    public void onPress() {
         LocalPlayer localPlayer = Minecraft.getInstance().player;
         if (localPlayer != null) {
             PlayerCapability.get(localPlayer).ifPresent(cap -> {

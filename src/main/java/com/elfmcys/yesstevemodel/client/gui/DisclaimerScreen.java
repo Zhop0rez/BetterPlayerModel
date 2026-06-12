@@ -32,7 +32,7 @@ public class DisclaimerScreen extends Screen {
         this.textHeight = (this.height - i) / 2;
         MutableComponent mutableComponentTranslatable = Component.translatable("gui.better_player_model.disclaimer.read");
         int iWidth = this.font.width(mutableComponentTranslatable);
-        this.checkbox = Checkbox.builder(mutableComponentTranslatable, font).pos((this.width - iWidth) / 2, (this.textHeight + i) - 50).maxWidth(iWidth).selected(!GeneralConfig.DISCLAIMER_SHOW.get().booleanValue()).build();
+        this.checkbox = new Checkbox((this.width - iWidth) / 2, (this.textHeight + i) - 50, iWidth, 20, mutableComponentTranslatable, !GeneralConfig.DISCLAIMER_SHOW.get().booleanValue(), false);
         addRenderableWidget(this.checkbox);
         addRenderableWidget(new Button.Builder(Component.translatable("gui.better_player_model.disclaimer.close"), button -> {
             if (this.checkbox.selected()) {
@@ -48,7 +48,7 @@ public class DisclaimerScreen extends Screen {
     @Override
     public void render(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
         GuiGraphics guiGraphics = extractor;
-        renderTransparentBackground(extractor);
+        renderBackground(extractor);
 /*         GuiGraphics.drawWordWrap(this.font, Component.translatable("gui.better_player_model.disclaimer.text"), this.textY, this.textHeight, 400, -1);
  */
         super.render(extractor, mouseX, mouseY, partialTick);

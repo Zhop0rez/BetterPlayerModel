@@ -1,15 +1,15 @@
 package com.elfmcys.yesstevemodel.client.renderer;
 
-import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.MultiBufferSource;
 
 public final class SubmitRenderContext {
 
-    private static final ThreadLocal<SubmitNodeCollector> CURRENT = new ThreadLocal<>();
+    private static final ThreadLocal<MultiBufferSource> CURRENT = new ThreadLocal<>();
 
     private SubmitRenderContext() {
     }
 
-    public static void set(SubmitNodeCollector collector) {
+    public static void set(MultiBufferSource collector) {
         if (collector == null) {
             CURRENT.remove();
         } else {
@@ -17,7 +17,7 @@ public final class SubmitRenderContext {
         }
     }
 
-    public static SubmitNodeCollector get() {
+    public static MultiBufferSource get() {
         return CURRENT.get();
     }
 }

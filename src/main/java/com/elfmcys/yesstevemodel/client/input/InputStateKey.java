@@ -22,12 +22,12 @@ public class InputStateKey {
         if (PlatformAPI.isServer()) {
             return;
         }
-        ClientRawInputEvent.KEY_PRESSED.register((client, action, event) -> {
-            onKeyInput(event.key(), action);
+        ClientRawInputEvent.KEY_PRESSED.register((client, keyCode, scanCode, action, modifiers) -> {
+            onKeyInput(keyCode, action);
             return EventResult.pass();
         });
-        ClientRawInputEvent.MOUSE_CLICKED_PRE.register((client, info, action) -> {
-            onMouseInput(info.button(), action);
+        ClientRawInputEvent.MOUSE_CLICKED_PRE.register((client, button, action, modifiers) -> {
+            onMouseInput(button, action);
             return EventResult.pass();
         });
     }

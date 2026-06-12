@@ -4,11 +4,11 @@ import com.elfmcys.yesstevemodel.YesSteveModel;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public class IconButton extends FlatColorButton {
 
-    private static final Identifier ICON_TEXTURE = Identifier.fromNamespaceAndPath(YesSteveModel.MOD_ID, "texture/icon.png");
+    private static final ResourceLocation ICON_TEXTURE = new ResourceLocation(YesSteveModel.MOD_ID, "texture/icon.png");
 
     private final int iconU;
 
@@ -21,13 +21,13 @@ public class IconButton extends FlatColorButton {
     }
 
     @Override
-    protected void renderContents(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        super.renderContents(extractor, mouseX, mouseY, partialTick);
+    public void renderWidget(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
+        super.renderWidget(extractor, mouseX, mouseY, partialTick);
         GuiGraphics guiGraphics = extractor;
         int iconOffsetX = (this.width - 16) / 2;
         int iconOffsetY = (this.height - 16) / 2;
         int x = getX() + iconOffsetX;
         int y = getY() + iconOffsetY;
-        guiGraphics.blit(ICON_TEXTURE, x, y, x + 16, y + 16, this.iconU / 256.0f, (this.iconU + 16) / 256.0f, this.iconV / 256.0f, (this.iconV + 16) / 256.0f);
+        guiGraphics.blit(ICON_TEXTURE, x, y, this.iconU, this.iconV, 16, 16, 256, 256);
     }
 }

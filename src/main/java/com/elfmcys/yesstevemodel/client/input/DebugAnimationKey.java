@@ -21,9 +21,9 @@ public final class DebugAnimationKey {
         if (PlatformAPI.isServer()) {
             return;
         }
-        ClientRawInputEvent.KEY_PRESSED.register((client, action, event) -> {
-            int keyCode = event.key();
-            int scanCode = event.scancode();
+        ClientRawInputEvent.KEY_PRESSED.register((client, keyCode, scanCode, action, modifiers) -> {
+            
+            
             if (YesSteveModel.isAvailable() && InputUtil.isPlayerReady() && action == 1 && InputUtil.isKeyPressed(keyCode, scanCode, KEY_MAPPING)) {
                 if (!AnimationDebugOverlay.isDebugActive()) {
                     AnimationDebugOverlay.tryUpdateFromHitResult();

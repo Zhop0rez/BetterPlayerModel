@@ -3,12 +3,12 @@ package com.elfmcys.yesstevemodel.network;
 import com.elfmcys.yesstevemodel.YesSteveModel;
 import com.elfmcys.yesstevemodel.client.ClientNetworkState;
 import com.elfmcys.yesstevemodel.mixin.ConnectionAccessor;
-import com.elfmcys.yesstevemodel.mixin.ServerCommonPacketListenerImplAccessor;
+import com.elfmcys.yesstevemodel.mixin.ServerGamePacketListenerImplAccessor;
 import com.elfmcys.yesstevemodel.network.message.*;
 import io.netty.util.AttributeKey;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -21,7 +21,7 @@ public final class NetworkHandler {
 
     public static final String VERSION = "2.6.0";
 
-    public static final Identifier CHANNEL_ID = Identifier.fromNamespaceAndPath(YesSteveModel.MOD_ID, VERSION.replace('.', '_'));
+    public static final ResourceLocation CHANNEL_ID = new ResourceLocation(YesSteveModel.MOD_ID, VERSION.replace('.', '_'));
 
     private static final AttributeKey<String> CHANNEL_VERSION_KEY = AttributeKey.valueOf("better_player_model_channel_version");
 
@@ -40,7 +40,7 @@ public final class NetworkHandler {
     }
 
     public static boolean isPlayerConnected(ServerPlayer serverPlayer) {
-        return serverPlayer.connection != null && isConnectionValid(((ServerCommonPacketListenerImplAccessor) serverPlayer.connection).ysm$getConnection());
+        return serverPlayer.connection != null && isConnectionValid(((ServerGamePacketListenerImplAccessor) serverPlayer.connection).ysm$getConnection());
     }
 
     public static boolean isClientConnected() {

@@ -78,7 +78,7 @@ public class ParticleEffectUtil {
 
     private static void spawnParticles(Entity entity, String particleId, Vector3d offset, Vector3d delta, double speed, int count, int lifetime, boolean isAbsolute, RandomSource random) throws ExecutionException, CommandSyntaxException {
         ParticleOptions particleOptions = particleCache.get(particleId, () -> {
-            return ParticleArgument.readParticle(new StringReader(particleId), entity.level().registryAccess());
+            return ParticleArgument.readParticle(new com.mojang.brigadier.StringReader(particleId), net.minecraft.core.registries.BuiltInRegistries.PARTICLE_TYPE.asLookup());
         });
 
         if (particleOptions == null) {

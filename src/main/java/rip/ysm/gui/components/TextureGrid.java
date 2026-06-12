@@ -10,7 +10,7 @@ import com.elfmcys.yesstevemodel.network.NetworkHandler;
 import com.elfmcys.yesstevemodel.network.message.C2SRequestSwitchModelPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.input.MouseButtonEvent;
+import org.lwjgl.glfw.GLFW;
 import net.minecraft.network.chat.Component;
 import rip.ysm.gui.ModernPlayerTextureScreen;
 import rip.ysm.gui.OptionRow;
@@ -142,9 +142,9 @@ public final class TextureGrid extends OptionRow<Object> {
     }
 
     @Override
-    public void onClick(MouseButtonEvent event, boolean flag) {
-        double mouseX = event.x();
-        double mouseY = event.y();
+    public void onClick(double mouseX, double mouseY) {
+        
+        
         int c = cols();
         int slotW = TEX_BTN_W + TEX_GAP;
         int slotH = TEX_BTN_H + TEX_GAP;

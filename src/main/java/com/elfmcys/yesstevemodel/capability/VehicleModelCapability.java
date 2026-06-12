@@ -55,13 +55,13 @@ public class VehicleModelCapability {
     }
 
     public void deserializeNBT(CompoundTag compoundTag) {
-        this.ownerModelId = compoundTag.getString("owner_model_id").orElse("");
-        this.initialized = compoundTag.getBoolean("initialized").orElse(false);
+        this.ownerModelId = compoundTag.getString("owner_model_id");
+        this.initialized = compoundTag.getBoolean("initialized");
         this.molangVars.clear();
-        CompoundTag compound = compoundTag.getCompound("molang_vars_server_bound").orElse(null);
+        CompoundTag compound = compoundTag.getCompound("molang_vars_server_bound");
         if (compound != null) {
-            for (String str : compound.keySet()) {
-                this.molangVars.put(str, compound.getFloat(str).orElse(0f));
+            for (String str : compound.getAllKeys()) {
+                this.molangVars.put(str, compound.getFloat(str));
             }
         }
     }

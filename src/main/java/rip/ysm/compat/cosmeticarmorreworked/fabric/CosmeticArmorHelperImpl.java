@@ -1,6 +1,5 @@
 package rip.ysm.compat.cosmeticarmorreworked.fabric;
 
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -16,6 +15,6 @@ public final class CosmeticArmorHelperImpl {
 
     public static ItemStack getElytraItem(LivingEntity livingEntity) {
         ItemStack chest = livingEntity.getItemBySlot(EquipmentSlot.CHEST);
-        return chest.has(DataComponents.GLIDER) ? chest : ItemStack.EMPTY;
+        return chest.is(net.minecraft.world.item.Items.ELYTRA) ? chest : ItemStack.EMPTY;
     }
 }

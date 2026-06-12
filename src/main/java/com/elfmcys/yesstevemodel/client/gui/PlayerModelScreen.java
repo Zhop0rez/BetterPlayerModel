@@ -34,9 +34,9 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.input.KeyEvent;
-import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.client.input.CharacterEvent;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFW;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -348,7 +348,7 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
         this.searchBox.setValue(value);
         this.searchBox.setTextColor(0xFFF3F3E0);
         this.searchBox.setFocused(zIsFocused);
-        this.searchBox.moveCursorToEnd(false);
+        this.searchBox.setCursorPosition(this.searchBox.getValue().length());
         addWidget(this.searchBox);
         addRenderableWidget(new IconButton(this.guiLeft + 5, this.guiTop + 5, 20, 20, 80, 16, button -> {
             if (Minecraft.getInstance().player != null) {
@@ -373,10 +373,10 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
                 navigateUp();
             }).setTooltipText("gui.back"));
         }
-        addRenderableWidget(Checkbox.builder(Component.translatable("gui.better_player_model.show_model_id_first"), font).pos(this.guiLeft + 5, this.guiTop - 18).maxWidth(125).selected(GeneralConfig.SHOW_MODEL_ID_FIRST.get()).onValueChange((c, v) -> {
-            GeneralConfig.SHOW_MODEL_ID_FIRST.set(v);
+        addRenderableWidget(new Checkbox(this.guiLeft + 5, this.guiTop - 18, 125, 20, Component.translatable("gui.better_player_model.show_model_id_first"), GeneralConfig.SHOW_MODEL_ID_FIRST.get(), false) { @Override public void onPress() { super.onPress(); GeneralConfig.SHOW_MODEL_ID_FIRST.set(this.selected());
+            
             GeneralConfig.SHOW_MODEL_ID_FIRST.save();
-        }).build());
+        } });
         FlatColorButton selectButton = new FlatColorButton(this.guiLeft + 132, this.guiTop - 18, 44, 14, Component.translatable("gui.better_player_model.model_select.select"), button -> {
             this.selectionMode = !this.selectionMode;
             if (!this.selectionMode) {
@@ -493,7 +493,7 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
     @Override
     public void render(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
         GuiGraphics guiGraphics = extractor;
-        renderTransparentBackground(extractor);
+        renderBackground(extractor);
         guiGraphics.fillGradient(this.guiLeft, this.guiTop, this.guiLeft + 135, this.guiTop + 235, -14540254, -14540254);
         guiGraphics.fillGradient(this.guiLeft + 138, this.guiTop, this.guiLeft + 420, this.guiTop + 235, -14540254, -14540254);
         guiGraphics.fillGradient(this.guiLeft + 351, this.guiTop + 7, this.guiLeft + 352, this.guiTop + 21, -790560, -790560);
@@ -513,10 +513,10 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
             renderer = "GPU";
         }
         String strVersionString = Platform.getMod(YesSteveModel.MOD_ID).getVersion();
-        guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(0.0f, 0.0f);
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0.0f, 0.0f, 0.0f);
         guiGraphics.drawString(this.font, strVersionString + " (" + renderer + ")", this.guiLeft + 2, this.guiTop + 226, opaque(ChatFormatting.DARK_GRAY));
-        guiGraphics.pose().popMatrix();
+        guiGraphics.pose().popPose();
         if (StringUtils.isNotBlank(currentPath)) {
             int lineIndex = 0;
             List listSplit = this.font.split(Component.literal("рџ“‚ " + currentPath).withStyle(ChatFormatting.GRAY), 270);
@@ -550,12 +550,12 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
         });
         if (this.searchBox.isHovered()) {
             MutableComponent mutableComponentWithStyle = Component.translatable("gui.better_player_model.search.tip").withStyle(ChatFormatting.GRAY);
-            guiGraphics.pose().pushMatrix();
-            guiGraphics.pose().translate(0.0f, 0.0f);
-            guiGraphics.setTooltipForNextFrame(this.font, this.font.split(mutableComponentWithStyle, 320), mouseX, mouseY);
+            guiGraphics.pose().pushPose();
+            guiGraphics.pose().translate(0.0f, 0.0f, 0.0f);
+            guiGraphics.renderTooltip(this.font, this.font.split(mutableComponentWithStyle, 320), mouseX, mouseY);
 /*             GuiGraphics.renderTooltip(this.font, this.font.split(mutableComponentWithStyle, 320), mouseX, mouseY);
  */
-            guiGraphics.pose().popMatrix();
+            guiGraphics.pose().popPose();
         }
     }
 
@@ -610,7 +610,7 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
             if (!ModelPreviewRenderer.renderCustomLocalPlayerPreview(extractor, localPlayer, previewLeft, previewTop, previewRight, previewBottom, (previewLeft + previewRight) * 0.5f, previewTop + 150.0f, 70.0f, 200.0f, partialTick, false)) {
                 guiGraphics.enableScissor(previewLeft, previewTop, previewRight, previewBottom);
                 try {
-                    InventoryScreen.renderEntityInInventoryFollowsMouse(extractor, previewLeft, previewTop, previewRight, previewBottom, 70, mouseX, mouseY, 1.0f, localPlayer);
+                    InventoryScreen.renderEntityInInventoryFollowsMouse(extractor, (previewLeft + previewRight) / 2, previewBottom, 70, (previewLeft + previewRight) / 2 - mouseX, previewBottom - 50 - mouseY, localPlayer);
                 } finally {
                     guiGraphics.disableScissor();
                 }
@@ -635,9 +635,9 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
     }
 
     @Override
-    public void resize(int width, int height) {
+    public void resize(Minecraft minecraft, int width, int height) {
         String value = this.searchBox.getValue();
-        super.resize(width, height);
+        this.init(minecraft, width, height);
         this.searchBox.setValue(value);
     }
 
@@ -645,16 +645,16 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean flag) {
-        if (this.searchBox.mouseClicked(event, flag)) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (this.searchBox.mouseClicked(mouseX, mouseY, button)) {
             setFocused(this.searchBox);
             return true;
         }
         if (this.searchBox.isFocused()) {
             this.searchBox.setFocused(false);
         }
-        boolean zMouseClicked = super.mouseClicked(event, flag);
-        if (!zMouseClicked && event.button() == 1 && StringUtils.isNotBlank(currentPath)) {
+        boolean zMouseClicked = super.mouseClicked(mouseX, mouseY, button);
+        if (!zMouseClicked && button == 1 && StringUtils.isNotBlank(currentPath)) {
             Minecraft.getInstance().getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.UI_BUTTON_CLICK, 1.0f));
             navigateUp();
             zMouseClicked = true;
@@ -663,12 +663,12 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
     }
 
     @Override
-    public boolean charTyped(CharacterEvent event) {
+    public boolean charTyped(char codePoint, int modifiers) {
         if (this.searchBox == null) {
             return false;
         }
         String value = this.searchBox.getValue();
-        if (this.searchBox.charTyped(event)) {
+        if (this.searchBox.charTyped(codePoint, modifiers)) {
             if (!Objects.equals(value, this.searchBox.getValue())) {
                 resetCurrentPage();
                 init();
@@ -680,17 +680,17 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
     }
 
     @Override
-    public boolean keyPressed(KeyEvent event) {
-        if (handleToggleKey(event)) {
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (handleToggleKey(keyCode, scanCode, modifiers)) {
             return true;
         }
-        boolean zIsPresent = InputConstants.getKey(event).getNumericKeyValue().isPresent();
+        boolean zIsPresent = false;
         String value = this.searchBox.getValue();
         if (zIsPresent) {
             return true;
         }
-        if (!this.searchBox.keyPressed(event)) {
-            return (this.searchBox.isFocused() && this.searchBox.isVisible() && event.key() != 256) || super.keyPressed(event);
+        if (!this.searchBox.keyPressed(keyCode, scanCode, modifiers)) {
+            return (this.searchBox.isFocused() && this.searchBox.isVisible() && keyCode != 256) || super.keyPressed(keyCode, scanCode, modifiers);
         }
         if (!Objects.equals(value, this.searchBox.getValue())) {
             resetCurrentPage();
@@ -714,8 +714,8 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
         return Component.translatable("gui.better_player_model.import.tooltip.disabled");
     }
 
-    private boolean handleToggleKey(KeyEvent event) {
-        if (PlayerModelToggleKey.KEY_MAPPING.matches(event) && shouldCloseWithToggleKey()) {
+    private boolean handleToggleKey(int keyCode, int scanCode, int modifiers) {
+        if (PlayerModelToggleKey.KEY_MAPPING.matches(keyCode, scanCode) && shouldCloseWithToggleKey()) {
             onClose();
             return true;
         }
@@ -843,14 +843,14 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
         if (this.minecraft == null) {
             return false;
         }
         if (scrollY != 0.0d && isInModelArea(mouseX, mouseY)) {
             return handleScrollPage(scrollY);
         }
-        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+        return super.mouseScrolled(mouseX, mouseY, scrollY);
     }
 
     private boolean isInModelArea(double mouseX, double mouseY) {

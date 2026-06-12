@@ -25,7 +25,7 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.PlayerModelPart;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ItemUseAnimation;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Optional;
@@ -94,7 +94,7 @@ public class QueryBinding extends ContextBinding {
         livingEntityVar("health", QueryBinding::getHealth);
         livingEntityVar("max_health", QueryBinding::getMaxHealth);
         livingEntityVar("hurt_time", ctx -> ctx.entity().hurtTime);
-        livingEntityVar("is_eating", ctx -> ctx.entity().getUseItem().getUseAnimation() == ItemUseAnimation.EAT);
+        livingEntityVar("is_eating", ctx -> ctx.entity().getUseItem().getUseAnimation() == UseAnim.EAT);
         livingEntityVar("is_playing_dead", ctx -> ctx.entity().isDeadOrDying());
         livingEntityVar("is_sleeping", ctx -> ctx.entity().isSleeping());
         livingEntityVar("is_using_item", ctx -> ctx.entity().isUsingItem());
@@ -163,7 +163,7 @@ public class QueryBinding extends ContextBinding {
     }
 
     private static boolean hasCape(AbstractClientPlayer abstractClientPlayer) {
-        return abstractClientPlayer.getSkin().cape() != null && !abstractClientPlayer.isInvisible() && abstractClientPlayer.isModelPartShown(PlayerModelPart.CAPE);
+        return abstractClientPlayer.getCloakTextureLocation() != null && !abstractClientPlayer.isInvisible() && abstractClientPlayer.isModelPartShown(PlayerModelPart.CAPE);
     }
 
     private static int getEquipmentCount(LivingEntity entity) {
@@ -181,7 +181,7 @@ public class QueryBinding extends ContextBinding {
         if (useItem.isEmpty()) {
             return 0;
         }
-        return useItem.getUseDuration(entity);
+        return useItem.getUseDuration();
     }
 
     private static float getYawSpeed(IContext<Entity> context) {
@@ -195,7 +195,7 @@ public class QueryBinding extends ContextBinding {
     }
 
     private static float getDistanceFromCamera(IContext<Entity> context) {
-        Vec3 cameraPosition = Minecraft.getInstance().gameRenderer.getMainCamera().position();
+        Vec3 cameraPosition = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
         return Mth.sqrt((float) context.entity().distanceToSqr(cameraPosition));
     }
 

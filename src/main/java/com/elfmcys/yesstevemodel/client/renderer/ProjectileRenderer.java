@@ -5,16 +5,15 @@ import com.elfmcys.yesstevemodel.client.entity.GeckoProjectileEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.state.EntityRenderState;
+
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.projectile.Projectile;
 import org.jetbrains.annotations.NotNull;
 
 public class ProjectileRenderer extends AbstractProjectileRenderer<Projectile, GeckoProjectileEntity> {
-    @Override
-    public EntityRenderState createRenderState() { return new EntityRenderState(); }
+    public Object createRenderState() { return new Object(); }
 
     public ProjectileRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -31,7 +30,7 @@ public class ProjectileRenderer extends AbstractProjectileRenderer<Projectile, G
     }
 
     @NotNull
-    public Identifier getTextureLocation(Projectile projectile) {
+    public ResourceLocation getTextureLocation(Projectile projectile) {
         return ProjectileCapability.get(projectile).map((cap) -> cap.getTextureLocation()).orElse(MissingTextureAtlasSprite.getLocation());
     }
 }

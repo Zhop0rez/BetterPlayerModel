@@ -1,7 +1,7 @@
 package rip.ysm.gui.components;
 
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.input.MouseButtonEvent;
+import org.lwjgl.glfw.GLFW;
 import rip.ysm.gui.Option;
 import rip.ysm.gui.OptionRow;
 
@@ -26,8 +26,8 @@ public class BooleanOptionRow extends OptionRow<Boolean> {
     }
 
     @Override
-    public void onClick(MouseButtonEvent event, boolean flag) {
-        if (isMouseOverControl(event.x(), event.y())) {
+    public void onClick(double mouseX, double mouseY) {
+        if (isMouseOverControl(mouseX, mouseY)) {
             option.setPending(!option.get());
         }
     }

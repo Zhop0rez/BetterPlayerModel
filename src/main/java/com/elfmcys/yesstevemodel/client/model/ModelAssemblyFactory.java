@@ -21,7 +21,7 @@ import com.elfmcys.yesstevemodel.util.FileTypeUtil;
 import com.elfmcys.yesstevemodel.geckolib3.file.ProjectileModelFiles;
 import it.unimi.dsi.fastutil.objects.*;
 import net.minecraft.client.renderer.texture.AbstractTexture;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
@@ -357,8 +357,8 @@ public class ModelAssemblyFactory {
         return derived;
     }
 
-    private static Map<Identifier, ProjectileModelBundle> buildProjectileModels(ClientModelInfo clientModelInfo, ModelResourceBundle resourceBundle, boolean isPrimary, List<AbstractTexture> textureList) {
-        Object2ReferenceOpenHashMap<Identifier, ProjectileModelBundle> projectileMap = new Object2ReferenceOpenHashMap();
+    private static Map<ResourceLocation, ProjectileModelBundle> buildProjectileModels(ClientModelInfo clientModelInfo, ModelResourceBundle resourceBundle, boolean isPrimary, List<AbstractTexture> textureList) {
+        Object2ReferenceOpenHashMap<ResourceLocation, ProjectileModelBundle> projectileMap = new Object2ReferenceOpenHashMap();
         for (ProjectileModelFiles projectileFiles : clientModelInfo.getExtraItemModels()) {
             GeoModel model = projectileFiles.getModel();
             AnimationFile animationFile = projectileFiles.getAnimations();
@@ -374,7 +374,7 @@ public class ModelAssemblyFactory {
                 textureList.addAll(texture.getSuffixTextures().values());
             }
             ProjectileModelBundle projectileBundle = new ProjectileModelBundle(model, animations, controllers, texture, resourceBundle);
-            Iterator<Identifier> typeIterator = FileTypeUtil.resolveEntityTypes(projectileFiles.getTextureNames()).iterator();
+            Iterator<ResourceLocation> typeIterator = FileTypeUtil.resolveEntityTypes(projectileFiles.getTextureNames()).iterator();
             while (typeIterator.hasNext()) {
                 projectileMap.put(typeIterator.next(), projectileBundle);
             }
@@ -382,8 +382,8 @@ public class ModelAssemblyFactory {
         return projectileMap;
     }
 
-    private static Map<Identifier, VehicleModelBundle> buildVehicleModels(ClientModelInfo clientModelInfo, ModelResourceBundle resourceBundle, boolean isPrimary, List<AbstractTexture> textureList) {
-        Object2ReferenceOpenHashMap<Identifier, VehicleModelBundle> vehicleMap = new Object2ReferenceOpenHashMap<>();
+    private static Map<ResourceLocation, VehicleModelBundle> buildVehicleModels(ClientModelInfo clientModelInfo, ModelResourceBundle resourceBundle, boolean isPrimary, List<AbstractTexture> textureList) {
+        Object2ReferenceOpenHashMap<ResourceLocation, VehicleModelBundle> vehicleMap = new Object2ReferenceOpenHashMap<>();
         for (VehicleModelFiles vehicleFiles : clientModelInfo.getVehicleModelFiles()) {
             GeoModel model = vehicleFiles.getModel();
             AnimationFile animationFile = vehicleFiles.getAnimations();
@@ -399,12 +399,12 @@ public class ModelAssemblyFactory {
                 textureList.addAll(texture.getSuffixTextures().values());
             }
             VehicleModelBundle vehicleBundle = new VehicleModelBundle(model, animations, controllers, texture, resourceBundle);
-            for (Identifier Identifier : FileTypeUtil.resolveEntityTypes(vehicleFiles.getTextureNames())) {
-                vehicleMap.put(Identifier, vehicleBundle);
+            for (ResourceLocation ResourceLocation : FileTypeUtil.resolveEntityTypes(vehicleFiles.getTextureNames())) {
+                vehicleMap.put(ResourceLocation, vehicleBundle);
             }
         }
         if (!isPrimary && primaryAssembly != null) {
-            for (Map.Entry<Identifier, VehicleModelBundle> entry : primaryAssembly.getVehicleModels().entrySet()) {
+            for (Map.Entry<ResourceLocation, VehicleModelBundle> entry : primaryAssembly.getVehicleModels().entrySet()) {
                 vehicleMap.computeIfAbsent(entry.getKey(), k -> entry.getValue());
             }
         }

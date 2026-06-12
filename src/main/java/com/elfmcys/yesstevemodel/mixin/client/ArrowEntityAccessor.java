@@ -1,10 +1,9 @@
 package com.elfmcys.yesstevemodel.mixin.client;
 
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
+import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.alchemy.PotionUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -21,12 +20,6 @@ public abstract class ArrowEntityAccessor {
     @Unique
     public Set<MobEffectInstance> getEffects() {
         ItemStack pickup = getPickupItem();
-        PotionContents contents = pickup.get(DataComponents.POTION_CONTENTS);
-        if (contents != null) {
-            Set<MobEffectInstance> set = new HashSet<>();
-            contents.forEachEffect(e -> set.add(e), 1.0f);
-            return set;
-        }
-        return Set.of();
+        return new HashSet<>(PotionUtils.getMobEffects(pickup));
     }
 }

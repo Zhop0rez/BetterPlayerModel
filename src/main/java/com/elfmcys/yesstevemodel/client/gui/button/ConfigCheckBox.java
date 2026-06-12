@@ -8,9 +8,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.input.MouseButtonEvent;
+import org.lwjgl.glfw.GLFW;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 
 import java.util.function.Consumer;
@@ -18,7 +18,7 @@ import java.util.function.Consumer;
 @Environment(EnvType.CLIENT)
 public class ConfigCheckBox extends AbstractWidget implements ISpecialWidget {
 
-    private static final Identifier location = Identifier.fromNamespaceAndPath(YesSteveModel.MOD_ID, "texture/roulette.png");
+    private static final ResourceLocation location = new ResourceLocation(YesSteveModel.MOD_ID, "texture/roulette.png");
 
     private final Consumer<Boolean> consumer2;
 
@@ -41,11 +41,11 @@ public class ConfigCheckBox extends AbstractWidget implements ISpecialWidget {
         int uOffset = isStateTriggered ? 128 : 0;
         int vOffset = isHovered() ? 12 : 0;
         int boxSize = 12;
-        guiGraphics.blit(location, getX(), getY(), getX() + boxSize, getY() + boxSize, uOffset / 256.0f, (uOffset + boxSize) / 256.0f, vOffset / 24.0f, (vOffset + boxSize) / 24.0f);
+        guiGraphics.blit(location, getX(), getY(), uOffset, vOffset, boxSize, boxSize, 256, 24);
         guiGraphics.drawString(Minecraft.getInstance().font, this.component2, getX() + boxSize + 2, getY() + 2, -1, false);
     }
 
-    public void onClick(MouseButtonEvent event, boolean flag) {
+    public void onClick(double mouseX, double mouseY, int button) {
         this.isStateTriggered = !this.isStateTriggered;
         this.consumer2.accept(Boolean.valueOf(this.isStateTriggered));
     }

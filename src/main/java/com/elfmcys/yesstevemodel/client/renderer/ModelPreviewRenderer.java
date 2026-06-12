@@ -8,7 +8,6 @@ import rip.ysm.compat.oculus.OculusCompat;
 import com.elfmcys.yesstevemodel.client.animation.AnimationTracker;
 import com.elfmcys.yesstevemodel.client.entity.GeckoVehicleEntity;
 import com.elfmcys.yesstevemodel.client.entity.LivingAnimatable;
-import com.elfmcys.yesstevemodel.mixin.client.EntityRidingAccessor;
 import com.elfmcys.yesstevemodel.geckolib3.core.AnimatableEntity;
 import com.elfmcys.yesstevemodel.geckolib3.core.processor.IBone;
 import com.elfmcys.yesstevemodel.geckolib3.geo.GeoReplacedEntityRenderer;
@@ -25,10 +24,10 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import net.minecraft.client.renderer.entity.state.EntityRenderState;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
+
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.NonNullList;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
@@ -64,7 +63,7 @@ public final class ModelPreviewRenderer {
     private static final float BED_WHITE_G = 0.88f;
     private static final float BED_WHITE_B = 0.78f;
 
-    private static final Map<EntityRenderState, GuiPreviewRequest> GUI_PREVIEWS = Collections.synchronizedMap(new IdentityHashMap<>());
+    private static final Map<Object, GuiPreviewRequest> GUI_PREVIEWS = Collections.synchronizedMap(new IdentityHashMap<>());
 
     private static boolean isPreviewMode = false;
 
@@ -117,7 +116,7 @@ public final class ModelPreviewRenderer {
         return DIRECT_GUI_PREVIEWS_SUPPORTED;
     }
 
-    public static boolean renderQueuedGuiPreview(EntityRenderState renderState, PoseStack poseStack, SubmitNodeCollector collector) {
+    public static boolean renderQueuedGuiPreview(Object renderState, PoseStack poseStack, MultiBufferSource collector) {
         GuiPreviewRequest request = GUI_PREVIEWS.remove(renderState);
         if (request == null) {
             return false;
@@ -130,7 +129,7 @@ public final class ModelPreviewRenderer {
         if (guiGraphics == null || animatable == null || renderer == null || right <= left || bottom <= top) {
             return;
         }
-        EntityRenderState state = new EntityRenderState();
+        Object state = new Object();
         GUI_PREVIEWS.put(state, new LivingGuiPreviewRequest(
                 toModelOffset(originX, left, right, scale),
                 toModelOffset(originY, top, bottom, scale),
@@ -142,14 +141,26 @@ public final class ModelPreviewRenderer {
                 disablePreviewRotation ? 180.0f : 200.0f,
                 false
         ));
-        guiGraphics.submitEntityRenderState(state, scale, new Vector3f(), new Quaternionf(), null, left, top, right, bottom);
+        guiGraphics.enableScissor(left, top, right, bottom);
+        GuiPreviewRequest __req = GUI_PREVIEWS.remove(state);
+        if (__req != null) {
+            com.mojang.blaze3d.vertex.PoseStack poseStack = guiGraphics.pose();
+            poseStack.pushPose();
+            poseStack.translate((left + right) * 0.5f, (top + bottom) * 0.5f, 1050.0f);
+            poseStack.scale(1.0f, 1.0f, -1.0f);
+            poseStack.translate(0.0f, 0.0f, 1000.0f);
+            poseStack.scale(scale, scale, scale);
+            __req.render(poseStack, guiGraphics.bufferSource());
+            poseStack.popPose();
+        }
+        guiGraphics.disableScissor();
     }
 
     public static void renderEntityPreview(GuiGraphics guiGraphics, int left, int top, int right, int bottom, float originX, float originY, float scale, float pitch, float yaw, float partialTick, AnimatableEntity animatableEntity, GeoReplacedEntityRenderer renderer, boolean renderGround) {
         if (guiGraphics == null || animatableEntity == null || renderer == null || right <= left || bottom <= top) {
             return;
         }
-        EntityRenderState state = new EntityRenderState();
+        Object state = new Object();
         GUI_PREVIEWS.put(state, new FreeGuiPreviewRequest(
                 toModelOffset(originX, left, right, scale),
                 toModelOffset(originY, top, bottom, scale),
@@ -160,7 +171,19 @@ public final class ModelPreviewRenderer {
                 renderer,
                 renderGround
         ));
-        guiGraphics.submitEntityRenderState(state, scale, new Vector3f(), new Quaternionf(), null, left, top, right, bottom);
+        guiGraphics.enableScissor(left, top, right, bottom);
+        GuiPreviewRequest __req = GUI_PREVIEWS.remove(state);
+        if (__req != null) {
+            com.mojang.blaze3d.vertex.PoseStack poseStack = guiGraphics.pose();
+            poseStack.pushPose();
+            poseStack.translate((left + right) * 0.5f, (top + bottom) * 0.5f, 1050.0f);
+            poseStack.scale(1.0f, 1.0f, -1.0f);
+            poseStack.translate(0.0f, 0.0f, 1000.0f);
+            poseStack.scale(scale, scale, scale);
+            __req.render(poseStack, guiGraphics.bufferSource());
+            poseStack.popPose();
+        }
+        guiGraphics.disableScissor();
     }
 
     private static float toModelOffset(float origin, int start, int end, float scale) {
@@ -168,7 +191,7 @@ public final class ModelPreviewRenderer {
     }
 
     private interface GuiPreviewRequest {
-        void render(PoseStack poseStack, SubmitNodeCollector collector);
+        void render(PoseStack poseStack, MultiBufferSource collector);
     }
 
     private static final class LivingGuiPreviewRequest implements GuiPreviewRequest {
@@ -195,7 +218,7 @@ public final class ModelPreviewRenderer {
         }
 
         @Override
-        public void render(PoseStack poseStack, SubmitNodeCollector collector) {
+        public void render(PoseStack poseStack, MultiBufferSource collector) {
             renderLivingGuiPreview(poseStack, offsetX, offsetY, partialTick, animatable, renderer, disablePreviewRotation, hideEquipment, previewYaw, extraPlayer, collector);
         }
     }
@@ -222,17 +245,17 @@ public final class ModelPreviewRenderer {
         }
 
         @Override
-        public void render(PoseStack poseStack, SubmitNodeCollector collector) {
+        public void render(PoseStack poseStack, MultiBufferSource collector) {
             renderFreeGuiPreview(poseStack, offsetX, offsetY, pitch, yaw, partialTick, animatableEntity, renderer, renderGround);
         }
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private static void renderLivingGuiPreview(PoseStack poseStack, float offsetX, float offsetY, float partialTick, LivingAnimatable animatable, GeoReplacedEntityRenderer renderer, boolean disablePreviewRotation, boolean hideEquipment, float previewYaw, boolean extraPlayer, SubmitNodeCollector collector) {
+    private static void renderLivingGuiPreview(PoseStack poseStack, float offsetX, float offsetY, float partialTick, LivingAnimatable animatable, GeoReplacedEntityRenderer renderer, boolean disablePreviewRotation, boolean hideEquipment, float previewYaw, boolean extraPlayer, MultiBufferSource collector) {
         ItemStack[] savedEquipment;
         boolean previousPreviewMode = isPreviewMode;
         boolean previousExtraPlayerMode = isExtraPlayerMode;
-        SubmitNodeCollector previousCollector = SubmitRenderContext.get();
+        MultiBufferSource previousCollector = SubmitRenderContext.get();
         setPreviewMode(true);
         setExtraPlayerMode(extraPlayer || previousExtraPlayerMode);
         SubmitRenderContext.set(collector != null ? collector : previousCollector);
@@ -286,9 +309,10 @@ public final class ModelPreviewRenderer {
 
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         try {
-            Minecraft.getInstance().gameRenderer.getLighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
-            renderer.renderEntity(animatable, 0.0f, partialTick, poseStack, bufferSource, 15728880);
-            bufferSource.endBatch();
+            InventoryLightingFix.setup(poseStack, () -> {
+                renderer.renderEntity(animatable, 0.0f, partialTick, poseStack, bufferSource, 15728880);
+                bufferSource.endBatch();
+            });
         } finally {
             livingEntity.yBodyRot = oldBodyRot;
             livingEntity.yBodyRotO = oldBodyRotO;
@@ -341,7 +365,6 @@ public final class ModelPreviewRenderer {
 
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
         try {
-            Minecraft.getInstance().gameRenderer.getLighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
             AnimationTracker animationTracker = getPreviewAnimationTracker(animatableEntity);
             if (isPreviewAnimation(animationTracker, "sleep")) {
                 poseStack.mulPose(Axis.YP.rotationDegrees(yaw - 90.0f));
@@ -408,7 +431,7 @@ public final class ModelPreviewRenderer {
                 poseStack.mulPose(Axis.YP.rotationDegrees(180.0f - bodyRotation));
                 RenderUtils.prepMatrixForLocator(poseStack, list);
                 poseStack.mulPose(Axis.YN.rotationDegrees(180.0f - bodyRotation));
-                Vec3 passengerAttachment = ((EntityRidingAccessor) vehicle).invokeGetPassengerAttachmentPoint(entity, entity.getDimensions(entity.getPose()), 1.0F);
+                Vec3 passengerAttachment = new net.minecraft.world.phys.Vec3(0.0D, vehicle.getPassengersRidingOffset(), 0.0D);
                 double myRidingOffset = -passengerAttachment.y();
                 poseStack.translate(0.0d, myRidingOffset, 0.0d);
             });
@@ -421,8 +444,8 @@ public final class ModelPreviewRenderer {
         }
         setPreviewMode(true);
         LivingEntity livingEntity = (LivingEntity) animatableEntity.getEntity();
-        org.joml.Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
-        modelViewStack.pushMatrix();
+        PoseStack modelViewStack = RenderSystem.getModelViewStack();
+        modelViewStack.pushPose();
         modelViewStack.translate(x, y, 1250.0f);
         modelViewStack.scale(1.0f, 1.0f, -1.0f);
         // MC 26.x: applyModelViewMatrix removed
@@ -455,16 +478,16 @@ public final class ModelPreviewRenderer {
         livingEntity.yHeadRot = -yaw;
         livingEntity.yHeadRotO = -yaw;
 
-        // MC 26.x: Lighting.setupForEntityInInventory() removed;
+        com.mojang.blaze3d.platform.Lighting.setupForEntityInInventory();
         EntityRenderDispatcher entityRenderDispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
         rotationX.conjugate();
-        // MC 26.x: overrideCameraOrientation removed
-        // entityRenderDispatcher.overrideCameraOrientation(rotationX);
-        // MC 26.x: setRenderShadow removed
-        // entityRenderDispatcher.setRenderShadow(false);
+        
+        entityRenderDispatcher.overrideCameraOrientation(rotationX);
+        
+        entityRenderDispatcher.setRenderShadow(false);
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
 
-        { // MC 26.x: was RenderSystem.runAsFancy(() -> {
+        com.mojang.blaze3d.systems.RenderSystem.runAsFancy(() -> {
             AnimationTracker animationTracker = getPreviewAnimationTracker(animatableEntity);
             if (isPreviewAnimation(animationTracker, "sleep")) {
                 poseStack.mulPose(Axis.YP.rotationDegrees(yaw - 90.0f));
@@ -502,11 +525,11 @@ public final class ModelPreviewRenderer {
             } catch (ExecutionException e) {
                 throw new RuntimeException(e);
             }
-        } // end was runAsFancy
+        });
 
         bufferSource.endBatch();
-        // MC 26.x: setRenderShadow removed
-        // entityRenderDispatcher.setRenderShadow(true);
+        
+        entityRenderDispatcher.setRenderShadow(true);
         livingEntity.yBodyRot = oldBodyRot;
         livingEntity.yBodyRotO = oldBodyRotO;
         livingEntity.setYRot(oldYRot);
@@ -517,9 +540,9 @@ public final class ModelPreviewRenderer {
         livingEntity.yHeadRot = oldHeadRot;
         livingEntity.setPose(oldPose);
 
-        modelViewStack.popMatrix();
+        modelViewStack.popPose();
         // MC 26.x: applyModelViewMatrix removed
-        // MC 26.x: Lighting.setupFor3DItems() removed;
+        
         setPreviewMode(false);
     }
 
@@ -566,7 +589,7 @@ public final class ModelPreviewRenderer {
     }
 
     private static void renderSimpleGround(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource) {
-        VertexConsumer buffer = bufferSource.getBuffer(RenderTypes.debugQuads());
+        VertexConsumer buffer = bufferSource.getBuffer(RenderType.debugQuads());
         PoseStack.Pose pose = poseStack.last();
         for (int x = 0; x < 3; x++) {
             for (int z = 0; z < 3; z++) {
@@ -580,7 +603,7 @@ public final class ModelPreviewRenderer {
     }
 
     private static void renderSimpleBed(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource) {
-        VertexConsumer buffer = bufferSource.getBuffer(RenderTypes.debugQuads());
+        VertexConsumer buffer = bufferSource.getBuffer(RenderType.debugQuads());
         PoseStack.Pose pose = poseStack.last();
         addCuboid(buffer, pose, 0.0f, 0.0f, 0.0f, 1.0f, 0.28f, 1.0f, BED_RED_R, BED_RED_G, BED_RED_B);
         addCuboid(buffer, pose, 0.0f, 0.29f, 0.0f, 1.0f, 0.34f, 0.35f, BED_WHITE_R, BED_WHITE_G, BED_WHITE_B);
@@ -616,10 +639,10 @@ public final class ModelPreviewRenderer {
                                 float x4, float y4, float z4,
                                 float r, float g, float b,
                                 float nx, float ny, float nz) {
-        buffer.addVertex(pose.pose(), x1, y1, z1).setColor(r, g, b, 1.0f).setNormal(pose, nx, ny, nz);
-        buffer.addVertex(pose.pose(), x2, y2, z2).setColor(r, g, b, 1.0f).setNormal(pose, nx, ny, nz);
-        buffer.addVertex(pose.pose(), x3, y3, z3).setColor(r, g, b, 1.0f).setNormal(pose, nx, ny, nz);
-        buffer.addVertex(pose.pose(), x4, y4, z4).setColor(r, g, b, 1.0f).setNormal(pose, nx, ny, nz);
+        buffer.vertex(pose.pose(), x1, y1, z1).color(r, g, b, 1.0f).normal(pose.normal(), nx, ny, nz);
+        buffer.vertex(pose.pose(), x2, y2, z2).color(r, g, b, 1.0f).normal(pose.normal(), nx, ny, nz);
+        buffer.vertex(pose.pose(), x3, y3, z3).color(r, g, b, 1.0f).normal(pose.normal(), nx, ny, nz);
+        buffer.vertex(pose.pose(), x4, y4, z4).color(r, g, b, 1.0f).normal(pose.normal(), nx, ny, nz);
     }
 
     private static AnimationTracker getPreviewAnimationTracker(AnimatableEntity animatableEntity) {
@@ -652,7 +675,7 @@ public final class ModelPreviewRenderer {
     private static void renderVehicleEntity(float yaw, Entity riderEntity, PoseStack poseStack, EntityRenderDispatcher entityRenderDispatcher, MultiBufferSource.BufferSource bufferSource, Entity vehicleEntity, float partialTick) {
         poseStack.pushPose();
         poseStack.mulPose(Axis.YP.rotationDegrees(yaw));
-        Vec3 passengerAttachment = ((EntityRidingAccessor) vehicleEntity).invokeGetPassengerAttachmentPoint(riderEntity, riderEntity.getDimensions(riderEntity.getPose()), 1.0F);
+        Vec3 passengerAttachment = new net.minecraft.world.phys.Vec3(0.0D, vehicleEntity.getPassengersRidingOffset(), 0.0D);
         // MC 26.x: EntityRenderDispatcher.render() signature changed
         // entityRenderDispatcher.render(vehicleEntity, 0.0d, passengerAttachment.y(), 0.0d, 0.0f, partialTick, poseStack, bufferSource, 15728880);
         poseStack.popPose();
@@ -666,8 +689,8 @@ public final class ModelPreviewRenderer {
         ItemStack[] savedEquipment;
         setPreviewMode(true);
         LivingEntity livingEntity = animatable.getEntity();
-        org.joml.Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
-        modelViewStack.pushMatrix();
+        PoseStack modelViewStack = RenderSystem.getModelViewStack();
+        modelViewStack.pushPose();
         modelViewStack.translate(x, y, 1050.0f);
         modelViewStack.scale(1.0f, 1.0f, -1.0f);
         // MC 26.x: applyModelViewMatrix removed
@@ -722,22 +745,22 @@ public final class ModelPreviewRenderer {
             livingEntity.yHeadRotO = vehicleYaw;
         }
 
-        // MC 26.x: Lighting.setupForEntityInInventory() removed;
+        com.mojang.blaze3d.platform.Lighting.setupForEntityInInventory();
         EntityRenderDispatcher entityRenderDispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
         rotationX.conjugate();
-        // MC 26.x: overrideCameraOrientation removed
-        // entityRenderDispatcher.overrideCameraOrientation(rotationX);
-        // MC 26.x: setRenderShadow removed
-        // entityRenderDispatcher.setRenderShadow(false);
+        
+        entityRenderDispatcher.overrideCameraOrientation(rotationX);
+        
+        entityRenderDispatcher.setRenderShadow(false);
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
 
-        { // MC 26.x: was RenderSystem.runAsFancy(() -> {
+        com.mojang.blaze3d.systems.RenderSystem.runAsFancy(() -> {
             renderer.renderEntity(animatable, 0.0f, partialTick, poseStack, bufferSource, 15728880);
-        } // end was runAsFancy
+        });
 
         bufferSource.endBatch();
-        // MC 26.x: setRenderShadow removed
-        // entityRenderDispatcher.setRenderShadow(true);
+        
+        entityRenderDispatcher.setRenderShadow(true);
         livingEntity.yBodyRot = oldBodyRot;
         livingEntity.yBodyRotO = oldBodyRotO;
         livingEntity.setYRot(oldYRot);
@@ -752,9 +775,9 @@ public final class ModelPreviewRenderer {
             // Equipment restore skipped - Inventory API changed in MC 26.x
         }
 
-        modelViewStack.popMatrix();
+        modelViewStack.popPose();
         // MC 26.x: applyModelViewMatrix removed
-        // MC 26.x: Lighting.setupFor3DItems() removed;
+        
         setPreviewMode(false);
     }
 
@@ -795,7 +818,7 @@ public final class ModelPreviewRenderer {
             guiGraphics.enableScissor(left, top, right, bottom);
         }
         try {
-            InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, left, top, right, bottom, Math.max(1, Math.round(scale)), mouseX, centerY, 1.0f, localPlayer);
+            InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, left + (right - left) / 2, bottom, Math.max(1, Math.round(scale)), mouseX, centerY, localPlayer);
         } finally {
             if (clipToFrame) {
                 guiGraphics.disableScissor();
@@ -808,7 +831,7 @@ public final class ModelPreviewRenderer {
     }
 
     public static boolean renderCustomLocalPlayerPreview(GuiGraphics guiGraphics, LocalPlayer localPlayer, int left, int top, int right, int bottom, float originX, float originY, float scale, float yaw, float partialTick, boolean extraPlayer) {
-        if (guiGraphics == null || localPlayer == null || right <= left || bottom <= top || scale <= 0.0f || GeneralConfig.safeGet(GeneralConfig.DISABLE_SELF_MODEL)) {
+        if (guiGraphics == null || localPlayer == null || right <= left || bottom <= top || scale <= 0.0f) {
             return false;
         }
         PlayerCapability capability = PlayerCapability.get(localPlayer).orElse(null);
@@ -819,7 +842,7 @@ public final class ModelPreviewRenderer {
         if (!capability.isModelReady()) {
             return false;
         }
-        EntityRenderState state = new EntityRenderState();
+        Object state = new Object();
         GUI_PREVIEWS.put(state, new LivingGuiPreviewRequest(
                 toModelOffset(originX, left, right, scale),
                 toModelOffset(originY, top, bottom, scale),
@@ -831,7 +854,20 @@ public final class ModelPreviewRenderer {
                 yaw,
                 extraPlayer
         ));
-        guiGraphics.submitEntityRenderState(state, scale, new Vector3f(), new Quaternionf(), null, left, top, right, bottom);
+        guiGraphics.enableScissor(left, top, right, bottom);
+        GuiPreviewRequest __req = GUI_PREVIEWS.remove(state);
+        if (__req != null) {
+            com.mojang.blaze3d.vertex.PoseStack poseStack = guiGraphics.pose();
+            poseStack.pushPose();
+            poseStack.translate((left + right) * 0.5f, (top + bottom) * 0.5f, 1050.0f);
+            poseStack.scale(1.0f, 1.0f, -1.0f);
+            poseStack.translate(0.0f, 0.0f, 1000.0f);
+            poseStack.scale(scale, scale, scale);
+            __req.render(poseStack, guiGraphics.bufferSource());
+            poseStack.popPose();
+        }
+        guiGraphics.disableScissor();
         return true;
     }
 }
+

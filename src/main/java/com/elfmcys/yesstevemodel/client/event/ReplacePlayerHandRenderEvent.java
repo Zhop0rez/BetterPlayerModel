@@ -9,7 +9,7 @@ import com.elfmcys.yesstevemodel.geckolib3.geo.render.built.GeoModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 
@@ -18,7 +18,7 @@ public class ReplacePlayerHandRenderEvent {
     private ReplacePlayerHandRenderEvent() {
     }
 
-    public static boolean onRenderArm(Player player, HumanoidArm arm, PoseStack poseStack, SubmitNodeCollector collector, int packedLight) {
+    public static boolean onRenderArm(Player player, HumanoidArm arm, PoseStack poseStack, MultiBufferSource collector, int packedLight) {
         if (!YesSteveModel.isAvailable() || GeneralConfig.safeGet(GeneralConfig.DISABLE_SELF_MODEL) || GeneralConfig.safeGet(GeneralConfig.DISABLE_SELF_HANDS)) {
             return false;
         }
@@ -35,7 +35,7 @@ public class ReplacePlayerHandRenderEvent {
                 if (context == null || !hasArmBone(arm, context.getAnimationBundle().getArmModel())) {
                     return;
                 }
-                RendererManager.getHandRenderer().renderHandItem(localPlayer, context, cap, arm, poseStack, collector, packedLight, Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false));
+                RendererManager.getHandRenderer().renderHandItem(localPlayer, context, cap, arm, poseStack, collector, packedLight, Minecraft.getInstance().getFrameTime());
                 cancelled[0] = true;
             });
         } catch (Exception e) {

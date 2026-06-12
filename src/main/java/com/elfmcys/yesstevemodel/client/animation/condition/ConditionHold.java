@@ -6,13 +6,13 @@ import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ItemUseAnimation;
+import net.minecraft.world.item.UseAnim;
 import org.apache.commons.lang3.StringUtils;
 import rip.ysm.api.item.WeaponKind;
 
@@ -37,11 +37,11 @@ public class ConditionHold {
 
     private final String extraPre;
 
-    private final ObjectOpenHashSet<Identifier> idTest = new ObjectOpenHashSet<>();
+    private final ObjectOpenHashSet<ResourceLocation> idTest = new ObjectOpenHashSet<>();
 
     private final ReferenceArrayList<TagKey<Item>> tagTest = new ReferenceArrayList<>();
 
-    private final ReferenceOpenHashSet<ItemUseAnimation> extraTes = new ReferenceOpenHashSet<>();
+    private final ReferenceOpenHashSet<UseAnim> extraTes = new ReferenceOpenHashSet<>();
 
     private final ObjectOpenHashSet<String> innerTest = new ObjectOpenHashSet<>();
 
@@ -64,17 +64,17 @@ public class ConditionHold {
             return;
         }
         String strSubstring = name.substring(this.preSize);
-        Identifier id = ConditionResourceUtil.parseIdentifier(strSubstring);
+        ResourceLocation id = ConditionResourceUtil.parseIdentifier(strSubstring);
         if (name.startsWith(this.idPre) && id != null) {
             this.idTest.add(id);
         }
         if (name.startsWith(this.tagPre) && id != null) {
             this.tagTest.add(TagKey.create(Registries.ITEM, id));
         }
-        if (!name.startsWith(this.extraPre) || strSubstring.equals(ItemUseAnimation.NONE.name().toLowerCase(Locale.US))) {
+        if (!name.startsWith(this.extraPre) || strSubstring.equals(UseAnim.NONE.name().toLowerCase(Locale.US))) {
             return;
         }
-        Optional<ItemUseAnimation> optional = EquipmentUtil.getUseAnimByName(strSubstring);
+        Optional<UseAnim> optional = EquipmentUtil.getUseAnimByName(strSubstring);
         Objects.requireNonNull(this.extraTes);
         optional.ifPresent(extraTes::add);
         this.innerTest.add(name);
@@ -118,7 +118,7 @@ public class ConditionHold {
         if (this.idTest.isEmpty()) {
             return EMPTY;
         }
-        Identifier key = BuiltInRegistries.ITEM.getKey(livingEntity.getItemInHand(interactionHand).getItem());
+        ResourceLocation key = BuiltInRegistries.ITEM.getKey(livingEntity.getItemInHand(interactionHand).getItem());
         if (key != null && this.idTest.contains(key)) {
             return this.idPre + key;
         }
@@ -147,7 +147,7 @@ public class ConditionHold {
         if (StringUtils.isNotBlank(legacyInnerName) && this.innerTest.contains(legacyInnerName)) {
             return legacyInnerName;
         }
-        ItemUseAnimation anim = entity.getItemInHand(hand).getUseAnimation();
+        UseAnim anim = entity.getItemInHand(hand).getUseAnimation();
         if (this.extraTes.contains(anim)) {
             return this.extraPre + anim.name().toLowerCase(Locale.US);
         }

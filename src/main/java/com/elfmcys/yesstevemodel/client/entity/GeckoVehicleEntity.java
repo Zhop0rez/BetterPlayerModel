@@ -11,10 +11,10 @@ import com.elfmcys.yesstevemodel.geckolib3.core.builder.Animation;
 import com.elfmcys.yesstevemodel.client.upload.IResourceLocatable;
 import net.minecraft.client.renderer.texture.MissingTextureAtlasSprite;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.vehicle.boat.AbstractBoat;
-import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
+import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
@@ -30,7 +30,7 @@ public class GeckoVehicleEntity extends GeoEntity<Entity> {
     }
 
     public static boolean usesVanillaRenderer(Entity entity) {
-        return entity instanceof AbstractBoat || entity instanceof AbstractMinecart;
+        return entity instanceof Boat || entity instanceof AbstractMinecart;
     }
 
     @Override
@@ -66,7 +66,7 @@ public class GeckoVehicleEntity extends GeoEntity<Entity> {
     }
 
     @Nullable
-    private Identifier getEntityTypeId() {
+    private ResourceLocation getEntityTypeId() {
         return BuiltInRegistries.ENTITY_TYPE.getKey(this.entity.getType());
     }
 
@@ -92,7 +92,7 @@ public class GeckoVehicleEntity extends GeoEntity<Entity> {
 
     @Override
     @NotNull
-    public Identifier getTextureLocation() {
+    public ResourceLocation getTextureLocation() {
         return ((EntityModelWrapper) getRenderShape()).textureLocatable.getResourceLocation().orElseGet(MissingTextureAtlasSprite::getLocation);
     }
 

@@ -57,7 +57,7 @@ public class AuthModelsCapability {
     public void deserializeNBT(ListTag listTag) {
         this.authModels.clear();
         for (Tag tag : listTag) {
-            tag.asString().ifPresent(this.authModels::add);
+            this.authModels.add(tag.getAsString());
         }
     }
 }

@@ -5,7 +5,7 @@ import com.elfmcys.yesstevemodel.geckolib3.core.molang.funciton.entity.LivingEnt
 import com.elfmcys.yesstevemodel.molang.runtime.ExecutionContext;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -52,15 +52,15 @@ public class Ride extends LivingEntityFunction {
         String strSubstring = id.substring(1);
         EntityType<?> entityType = firstPassenger.getType();
         if (id.startsWith(PREFIX_ITEM_ID)) {
-            Identifier expected = Identifier.tryParse(strSubstring);
+            ResourceLocation expected = ResourceLocation.tryParse(strSubstring);
             if (expected == null) {
                 return 0;
             }
-            Identifier key = BuiltInRegistries.ENTITY_TYPE.getKey(entityType);
+            ResourceLocation key = BuiltInRegistries.ENTITY_TYPE.getKey(entityType);
             return expected.equals(key) ? 1 : 0;
         }
         if (id.startsWith(PREFIX_ITEM_TAG)) {
-            Identifier tagId = Identifier.tryParse(strSubstring);
+            ResourceLocation tagId = ResourceLocation.tryParse(strSubstring);
             if (tagId == null) {
                 return 0;
             }

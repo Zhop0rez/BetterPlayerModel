@@ -12,7 +12,7 @@ import com.elfmcys.yesstevemodel.resource.YSMFolderDeserializer;
 import com.elfmcys.yesstevemodel.resource.pojo.RawYsmModel;
 import rip.ysm.security.YsmCrypt;
 import net.minecraft.client.renderer.texture.AbstractTexture;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 import java.io.File;
 import java.io.IOException;
@@ -152,12 +152,12 @@ public class LazyModelAssembly extends ModelAssembly {
     }
 
     @Override
-    public Map<Identifier, ProjectileModelBundle> getProjectileModels() {
+    public Map<ResourceLocation, ProjectileModelBundle> getProjectileModels() {
         return resolve().getProjectileModels();
     }
 
     @Override
-    public Map<Identifier, VehicleModelBundle> getVehicleModels() {
+    public Map<ResourceLocation, VehicleModelBundle> getVehicleModels() {
         return resolve().getVehicleModels();
     }
 

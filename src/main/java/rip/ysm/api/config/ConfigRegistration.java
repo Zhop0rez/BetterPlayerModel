@@ -1,6 +1,6 @@
 package rip.ysm.api.config;
 
-import net.neoforged.fml.config.ModConfig;
+import net.minecraftforge.fml.config.ModConfig;
 
 public final class ConfigRegistration {
 

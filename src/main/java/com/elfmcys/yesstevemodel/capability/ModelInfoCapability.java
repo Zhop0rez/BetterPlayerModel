@@ -209,26 +209,26 @@ public class ModelInfoCapability {
     }
 
     public void deserializeNBT(CompoundTag compoundTag) throws NumberFormatException {
-        this.modelId = compoundTag.getString("model_id").orElse("");
-        this.selectTexture = compoundTag.getString("select_texture").orElse("");
+        this.modelId = compoundTag.getString("model_id");
+        this.selectTexture = compoundTag.getString("select_texture");
         if (this.selectTexture.length() > 4 && this.selectTexture.toLowerCase().endsWith(".png")) {
             this.selectTexture = this.selectTexture.substring(0, this.selectTexture.length() - 4);
         }
-        this.mandatory = compoundTag.getBoolean("mandatory").orElse(false);
-        this.disabled = compoundTag.getBoolean("disabled").orElse(false);
+        this.mandatory = compoundTag.getBoolean("mandatory");
+        this.disabled = compoundTag.getBoolean("disabled");
         this.molangStorage.clear();
-        CompoundTag compound = compoundTag.getCompound("molang_storage").orElse(null);
+        CompoundTag compound = compoundTag.getCompound("molang_storage");
         if (compound != null) {
-            for (String str : compound.keySet()) {
-                CompoundTag compound2 = compound.getCompound(str).orElse(null);
+            for (String str : compound.getAllKeys()) {
+                CompoundTag compound2 = compound.getCompound(str);
                 if (compound2 != null) {
                     int i = Integer.parseInt(str);
-                    Set<String> allKeys = compound2.keySet();
+                    Set<String> allKeys = compound2.getAllKeys();
                     Object2FloatOpenHashMap object2FloatOpenHashMap = this.molangStorage.computeIfAbsent(i, i2 -> {
                         return new Object2FloatOpenHashMap(allKeys.size());
                     });
                     for (String str2 : allKeys) {
-                        object2FloatOpenHashMap.put(str2, compound2.getFloat(str2).orElse(0f));
+                        object2FloatOpenHashMap.put(str2, compound2.getFloat(str2));
                     }
                 }
             }

@@ -4,9 +4,9 @@ import com.elfmcys.yesstevemodel.capability.StarModelsCapability;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import org.ladysnake.cca.api.v3.component.Component;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
+import dev.onyxstudios.cca.api.v3.component.Component;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.CompoundTag;
 
 public final class StarModelsComponent implements Component {
 
@@ -18,24 +18,24 @@ public final class StarModelsComponent implements Component {
         return capability;
     }
 
-    public void readFromNbt(CompoundTag tag, HolderLookup.Provider provider) {
-        ListTag list = tag.getList("StarModels").orElse(new ListTag());
+    public void readFromNbt_internal(CompoundTag tag) {
+        ListTag list = tag.getList("StarModels", 8);
         capability.deserializeNBT(list);
     }
 
-    public void writeToNbt(CompoundTag tag, HolderLookup.Provider provider) {
+    public void writeToNbt_internal(CompoundTag tag) {
         tag.put("StarModels", capability.serializeNBT());
     }
 
     @Override
-    public void writeData(ValueOutput output) {
+    public void writeToNbt(CompoundTag output) {
         CompoundTag tag = new CompoundTag();
-        writeToNbt(tag, null);
-        output.store(DATA_KEY, CompoundTag.CODEC, tag);
+        writeToNbt_internal(tag);
+        output.put(DATA_KEY, tag);
     }
 
     @Override
-    public void readData(ValueInput input) {
-        input.read(DATA_KEY, CompoundTag.CODEC).ifPresent(tag -> readFromNbt(tag, input.lookup()));
+    public void readFromNbt(CompoundTag input) {
+        if (input.contains(DATA_KEY, 10)) { readFromNbt_internal(input.getCompound(DATA_KEY)); }
     }
 }

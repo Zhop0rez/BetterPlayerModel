@@ -2,7 +2,7 @@ package rip.ysm.gpu;
 
 import com.elfmcys.yesstevemodel.util.ModelMemoryProfiler;
 import com.elfmcys.yesstevemodel.geckolib3.geo.render.built.GeoModel;
-import com.mojang.blaze3d.opengl.GlStateManager;
+import com.mojang.blaze3d.platform.GlStateManager;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.MemoryUtil;
 

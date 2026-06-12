@@ -18,7 +18,7 @@ public class MobEffectEvent {
         }
         if (entity instanceof ServerPlayer serverPlayer && effect != null) {
             ModelInfoCapability.get(serverPlayer).ifPresent(cap ->
-                    cap.getAnimSync().syncEffectAdded(serverPlayer, Holder.direct(effect), amplifier + 1));
+                    cap.getAnimSync().syncEffectAdded(serverPlayer, effect, amplifier + 1));
         }
     }
 
@@ -28,7 +28,7 @@ public class MobEffectEvent {
         }
         if (entity instanceof ServerPlayer serverPlayer && effect != null) {
             ModelInfoCapability.get(serverPlayer).ifPresent(cap ->
-                    cap.getAnimSync().syncEffectRemoved(serverPlayer, Holder.direct(effect)));
+                    cap.getAnimSync().syncEffectRemoved(serverPlayer, effect));
         }
     }
 }

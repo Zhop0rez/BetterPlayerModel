@@ -8,7 +8,7 @@ import com.elfmcys.yesstevemodel.geckolib3.core.enums.PlayState;
 import com.elfmcys.yesstevemodel.geckolib3.core.molang.util.StringPool;
 import com.elfmcys.yesstevemodel.geckolib3.geo.animated.AnimatedGeoModel;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 
@@ -54,7 +54,7 @@ public final class TacCompatImpl {
     public static void handleItemSound(ItemStack stack) {
     }
 
-    public static Identifier getGunTexture(ItemStack stack) {
+    public static ResourceLocation getGunTexture(ItemStack stack) {
         return null;
     }
 }

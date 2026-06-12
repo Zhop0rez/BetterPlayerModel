@@ -4,7 +4,7 @@ import com.elfmcys.yesstevemodel.client.animation.condition.InnerClassify;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ItemUseAnimation;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.phys.Vec3;
 import rip.ysm.api.item.LanceActionState;
 import rip.ysm.api.item.MaceActionState;
@@ -38,7 +38,7 @@ public final class WeaponActionBridgeImpl {
     }
 
     private static TridentActionState buildTridentState(LivingEntity entity, ItemStack stack, float partialTick) {
-        boolean using = isUsingMainHand(entity) && stack.getUseAnimation() == ItemUseAnimation.TRIDENT;
+        boolean using = isUsingMainHand(entity) && stack.getUseAnimation() == UseAnim.SPEAR;
         boolean attacking = isAttackingMainHand(entity);
         return new TridentActionState(
                 true,
@@ -51,7 +51,7 @@ public final class WeaponActionBridgeImpl {
     }
 
     private static LanceActionState buildLanceState(LivingEntity entity, ItemStack stack, float partialTick, float speed) {
-        boolean using = isUsingMainHand(entity) && stack.getUseAnimation() == ItemUseAnimation.SPEAR;
+        boolean using = isUsingMainHand(entity) && stack.getUseAnimation() == UseAnim.SPEAR;
         boolean attacking = isAttackingMainHand(entity);
         boolean riding = entity.isPassenger();
         boolean fallFlying = entity.isFallFlying();
@@ -103,7 +103,7 @@ public final class WeaponActionBridgeImpl {
     }
 
     private static float getUseTicks(LivingEntity entity, boolean using, float partialTick) {
-        return using ? entity.getTicksUsingItem(partialTick) : 0.0f;
+        return using ? entity.getTicksUsingItem() : 0.0f;
     }
 
     private static float getAttackTicks(LivingEntity entity, boolean attacking, float partialTick) {
@@ -114,7 +114,7 @@ public final class WeaponActionBridgeImpl {
         if (!using) {
             return 0.0f;
         }
-        int duration = stack.getUseDuration(entity);
+        int duration = stack.getUseDuration();
         if (duration <= 0) {
             return 0.0f;
         }

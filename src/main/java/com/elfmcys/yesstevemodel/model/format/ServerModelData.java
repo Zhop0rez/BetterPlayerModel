@@ -1,7 +1,7 @@
 package com.elfmcys.yesstevemodel.model.format;
 
 import com.elfmcys.yesstevemodel.util.FileTypeUtil;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -10,8 +10,8 @@ public class ServerModelData {
     // е¦ЇвЂізЂ·йђЁе‹­жґ°й–·е‹«ж‚•з»‹?
     private final String modelId;
     private final ServerAnimationInfo serverAnimationInfo;
-    private final Set<Identifier> entityTypes = new HashSet<>();
-    private final Set<Identifier> excludedEntityTypes = new HashSet<>();
+    private final Set<ResourceLocation> entityTypes = new HashSet<>();
+    private final Set<ResourceLocation> excludedEntityTypes = new HashSet<>();
     private final ServerModelInfo info;
     private final boolean isCustomSkinModel; // йЌ™о€ќе…ж·‡?
     private final boolean isAuth; // йЌ¦в•ќuthз’©е›ЁжћЎжѕ¶еЏҐз¬–is_freeйђђзЇєalse
@@ -47,7 +47,7 @@ public class ServerModelData {
         return this.serverAnimationInfo;
     }
 
-    public Set<Identifier> getEntityTypes() {
+    public Set<ResourceLocation> getEntityTypes() {
         for (Object obj : this.projectiles) {
             this.entityTypes.addAll(FileTypeUtil.resolveEntityTypes((String[]) obj));
             this.projectiles = null;
@@ -55,7 +55,7 @@ public class ServerModelData {
         return this.entityTypes;
     }
 
-    public Set<Identifier> getExcludedEntityTypes() {
+    public Set<ResourceLocation> getExcludedEntityTypes() {
         for (Object obj : this.vehicles) {
             this.excludedEntityTypes.addAll(FileTypeUtil.resolveEntityTypes((String[]) obj));
             this.vehicles = null;

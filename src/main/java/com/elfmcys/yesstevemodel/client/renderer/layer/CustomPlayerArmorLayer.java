@@ -7,16 +7,14 @@ import com.elfmcys.yesstevemodel.geckolib3.geo.GeoLayerRenderer;
 import com.elfmcys.yesstevemodel.geckolib3.geo.animated.AnimatedGeoModel;
 import com.elfmcys.yesstevemodel.geckolib3.util.RenderUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.equipment.Equippable;
 
 public class CustomPlayerArmorLayer extends GeoLayerRenderer<CustomPlayerEntity> {
 
@@ -43,12 +41,11 @@ public class CustomPlayerArmorLayer extends GeoLayerRenderer<CustomPlayerEntity>
     }
 
     private boolean isArmorItem(ItemStack stack) {
-        Equippable equippable = stack.get(DataComponents.EQUIPPABLE);
-        return equippable != null && equippable.slot() == EquipmentSlot.HEAD;
+        return stack.getItem() instanceof net.minecraft.world.item.ArmorItem armorItem && armorItem.getEquipmentSlot() == EquipmentSlot.HEAD;
     }
 
     private void renderArmorPiece(PoseStack poseStack, MultiBufferSource bufferSource, int i, AnimatedGeoModel model, Player player, ItemStack stack) {
-        SubmitNodeCollector collector = SubmitRenderContext.get();
+        MultiBufferSource collector = SubmitRenderContext.get();
         if (collector == null) {
             return;
         }
@@ -56,7 +53,7 @@ public class CustomPlayerArmorLayer extends GeoLayerRenderer<CustomPlayerEntity>
         RenderUtils.prepMatrixForLocator(poseStack, model.headBones());
         poseStack.scale(0.625f, 0.625f, 0.625f);
         poseStack.translate(0.0f, 0.25f, 0.0f);
-        this.itemRenderer.renderItem(player, stack, ItemDisplayContext.HEAD, poseStack, collector, i);
+        // this.itemRenderer.renderStatic(player, stack, ItemDisplayContext.HEAD, false, poseStack, collector, player.level(), i, net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY, player.getId());
         poseStack.popPose();
     }
 }

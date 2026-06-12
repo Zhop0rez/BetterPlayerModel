@@ -1,6 +1,6 @@
 package rip.ysm.compat.oculus;
 
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public enum ShadersTextureType {
     NORMAL("_n"),
@@ -14,7 +14,7 @@ public enum ShadersTextureType {
         this.suffix = str;
     }
 
-    public Identifier appendSuffix(Identifier Identifier) {
-        return Identifier.fromNamespaceAndPath(Identifier.getNamespace(), Identifier.getPath() + this.suffix);
+    public ResourceLocation appendSuffix(ResourceLocation ResourceLocation) {
+        return new ResourceLocation(ResourceLocation.getNamespace(), ResourceLocation.getPath() + this.suffix);
     }
 }

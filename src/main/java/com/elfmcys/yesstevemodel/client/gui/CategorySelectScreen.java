@@ -67,7 +67,7 @@ public class CategorySelectScreen extends Screen {
 
     @Override
     public void render(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        renderTransparentBackground(extractor);
+        renderBackground(extractor);
         extractor.fillGradient(this.guiLeft, this.guiTop, this.guiLeft + 280, this.guiTop + 210, -14540254, -14540254);
         extractor.drawString(this.font, this.titleText, this.guiLeft + 20, this.guiTop + 14, 0xFFF3F3E0);
         if (this.categories.isEmpty()) {

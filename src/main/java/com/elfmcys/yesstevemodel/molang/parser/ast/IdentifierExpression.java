@@ -59,7 +59,7 @@ public final class IdentifierExpression implements Expression {
 
     @Override
     public String toString() {
-        return "Identifier(" + name + ")";
+        return "ResourceLocation(" + name + ")";
     }
 
     @Override

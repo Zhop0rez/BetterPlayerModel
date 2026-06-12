@@ -29,7 +29,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayFIFOQueue;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 
@@ -105,13 +105,13 @@ public final class PlayerCapability extends CustomPlayerEntity {
         return this.serverVarContainer;
     }
 
-    public void beginRenderState(AvatarRenderState renderState) {
+    public void beginRenderState(Player player, float partialTick) {
         this.hasRenderState = true;
-        this.renderStateWalkAnimationSpeed = renderState.walkAnimationSpeed;
-        this.renderStateWalkAnimationPos = renderState.walkAnimationPos;
-        this.renderStateBodyRot = renderState.bodyRot;
-        this.renderStateNetHeadYaw = renderState.yRot;
-        this.renderStateHeadPitch = renderState.xRot;
+        this.renderStateBodyRot = net.minecraft.util.Mth.rotLerp(partialTick, player.yBodyRotO, player.yBodyRot);
+        this.renderStateHeadPitch = net.minecraft.util.Mth.lerp(partialTick, player.xRotO, player.getXRot());
+        this.renderStateNetHeadYaw = net.minecraft.util.Mth.rotLerp(partialTick, player.yHeadRotO, player.yHeadRot) - this.renderStateBodyRot;
+        this.renderStateWalkAnimationPos = player.walkAnimation.position(partialTick);
+        this.renderStateWalkAnimationSpeed = player.walkAnimation.speed(partialTick);
     }
 
     public void endRenderState() {

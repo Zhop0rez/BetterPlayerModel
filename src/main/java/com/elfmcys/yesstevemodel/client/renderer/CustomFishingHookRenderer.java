@@ -7,7 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.Unique;
 import rip.ysm.api.item.ToolActionBridge;
 
 public class CustomFishingHookRenderer {
-    public static boolean tryRenderCustomHook(FishingHook fishingHook, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, net.minecraft.client.renderer.SubmitNodeCollector collector, int packedLight) {
+    public static boolean tryRenderCustomHook(FishingHook fishingHook, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, net.minecraft.client.renderer.MultiBufferSource collector, int packedLight) {
         return ProjectileCapability.get(fishingHook).map(cap -> {
             if (cap.isModelInitialized() && cap.isModelReady()) {
                 fishingHook.setXRot(0.0f);
@@ -72,7 +72,7 @@ public class CustomFishingHookRenderer {
         float startY = ((float) (anglerY - (Mth.lerp(partialTick, fishingHook.yo, fishingHook.getY()) + 0.25d))) + anglerEye;
         float startZ = (float) (anglerZ - Mth.lerp(partialTick, fishingHook.zo, fishingHook.getZ()));
         float[] color = lineColor(fishingHook);
-        VertexConsumer buffer = bufferSource.getBuffer(RenderTypes.leash());
+        VertexConsumer buffer = bufferSource.getBuffer(RenderType.leash());
         PoseStack.Pose poseLast = poseStack.last();
         for (int size = 0; size <= 16; size++) {
             stringVertex(startX, startY, startZ, buffer, poseLast, fraction(size), fraction(size + 1), color[0], color[1], color[2], packedLight);
@@ -99,10 +99,10 @@ public class CustomFishingHookRenderer {
         float dz = (z * endFrac) - vz;
         float length = Mth.sqrt((dx * dx) + (dy * dy) + (dz * dz));
         if (length > 1.0E-4f) {
-            vertexConsumer.addVertex(pose.pose(), vx, vy, vz)
-                    .setColor(red, green, blue, 1.0f)
-                    .setLight(packedLight)
-                    .setNormal(pose, dx / length, dy / length, dz / length);
+            vertexConsumer.vertex(pose.pose(), vx, vy, vz)
+                    .color(red, green, blue, 1.0f)
+                    .uv2(packedLight)
+                    .normal(pose.normal(), dx / length, dy / length, dz / length);
         }
     }
 }

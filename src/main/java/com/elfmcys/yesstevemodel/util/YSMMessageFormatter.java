@@ -5,9 +5,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.permissions.LevelBasedPermissionSet;
-import net.minecraft.server.permissions.PermissionLevel;
-import net.minecraft.server.permissions.PermissionSet;
+
 import net.minecraft.world.entity.Entity;
 import dev.architectury.utils.GameInstance;
 import org.jetbrains.annotations.Nullable;
@@ -33,27 +31,19 @@ public class YSMMessageFormatter {
             return true;
         }
         if (entity instanceof ServerPlayer serverPlayer) {
-            return hasRequiredPermission(serverPlayer.createCommandSourceStack().permissions(), level);
+            return serverPlayer.hasPermissions(level);
         }
         return false;
     }
 
     public static boolean hasCommandPermission(CommandSourceStack commandSourceStack, int level) {
-        if (hasRequiredPermission(commandSourceStack.permissions(), level)) {
+        if (commandSourceStack.hasPermission(level)) {
             return true;
         }
         return commandSourceStack.getEntity() != null && isCurrentClientPlayer(commandSourceStack.getEntity());
     }
 
-    private static boolean hasRequiredPermission(PermissionSet permissions, int level) {
-        if (permissions == PermissionSet.ALL_PERMISSIONS) {
-            return true;
-        }
-        if (permissions instanceof LevelBasedPermissionSet levelBasedPermissionSet) {
-            return levelBasedPermissionSet.level().isEqualOrHigherThan(PermissionLevel.byId(level));
-        }
-        return level <= 0;
-    }
+
 
     public static void sendServerMessage(@Nullable CommandSourceStack commandSourceStack, Component component, boolean broadcastToOps) {
         MinecraftServer currentServer = GameInstance.getServer();

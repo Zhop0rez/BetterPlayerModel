@@ -19,7 +19,7 @@ import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.input.MouseButtonEvent;
+import org.lwjgl.glfw.GLFW;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -225,8 +225,8 @@ public class ModelSettingsScreen extends OptionScreen {
         }
         ModelPreviewRenderer.setPreviewMode(true);
         LivingEntity livingEntity = (LivingEntity) animatable.getEntity();
-        org.joml.Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
-        modelViewStack.pushMatrix();
+        com.mojang.blaze3d.vertex.PoseStack modelViewStack = RenderSystem.getModelViewStack();
+        modelViewStack.pushPose();
         modelViewStack.translate(x, y, 1250.0f);
         modelViewStack.scale(1.0f, 1.0f, -1.0f);
         // MC 26.x: applyModelViewMatrix removed
@@ -259,17 +259,14 @@ public class ModelSettingsScreen extends OptionScreen {
         livingEntity.yHeadRot = -yaw;
         livingEntity.yHeadRotO = -yaw;
 
-        // MC 26.x: Lighting.setupForEntityInInventory() removed;
-        rotationX.conjugate();
-        // MC 26.x: overrideCameraOrientation removed
-        // MC 26.x: setRenderShadow removed
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
 
         try {
-            renderer.renderEntity(animatable, 0.0f, partialTick, poseStack, bufferSource, 15728880);
-            bufferSource.endBatch();
+            com.elfmcys.yesstevemodel.client.renderer.InventoryLightingFix.setup(poseStack, () -> {
+                renderer.renderEntity(animatable, 0.0f, partialTick, poseStack, bufferSource, 15728880);
+                bufferSource.endBatch();
+            });
         } finally {
-            // MC 26.x: setRenderShadow(true) removed
             livingEntity.yBodyRot = oldBodyRot;
             livingEntity.yBodyRotO = oldBodyRotO;
             livingEntity.setYRot(oldYRot);
@@ -278,55 +275,53 @@ public class ModelSettingsScreen extends OptionScreen {
             livingEntity.xRotO = oldXRotO;
             livingEntity.yHeadRot = oldHeadRot;
             livingEntity.yHeadRotO = oldHeadRotO;
-            modelViewStack.popMatrix();
-            // MC 26.x: applyModelViewMatrix removed
-            // MC 26.x: Lighting.setupFor3DItems() removed;
+            modelViewStack.popPose();
+            RenderSystem.applyModelViewMatrix();
             ModelPreviewRenderer.setPreviewMode(false);
         }
     }
 
     @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean flag) {
-        if (isInPreview(event.x(), event.y())) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (isInPreview(mouseX, mouseY)) {
             draggingPreview = true;
-            draggingButton = event.button();
+            draggingButton = button;
             return true;
         }
-        return super.mouseClicked(event, flag);
+        return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
-    public boolean mouseReleased(MouseButtonEvent event) {
-        if (draggingPreview && event.button() == draggingButton) {
+    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+        if (draggingPreview && button == draggingButton) {
             draggingPreview = false;
             draggingButton = -1;
             return true;
         }
-        return super.mouseReleased(event);
+        return super.mouseReleased(mouseX, mouseY, button);
     }
 
     @Override
-    public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
-        if (draggingPreview && event.button() == draggingButton) {
-            if (event.button() == 0) {
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
+        if (draggingPreview && button == draggingButton) {
+            if (button == 0) {
                 yaw = (float) (yaw + dragX * 1.2);
                 pitch = Mth.clamp((float) (pitch - dragY * 0.8), -85.0f, 85.0f);
-            } else if (event.button() == 1) {
+            } else if (button == 1) {
                 offsetX = (float) (offsetX + dragX);
                 offsetY = (float) (offsetY + dragY);
             }
             return true;
         }
-        return super.mouseDragged(event, dragX, dragY);
+        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
     }
 
-    @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollY) {
         if (isInPreview(mouseX, mouseY)) {
             zoom = Mth.clamp((float) (zoom * (1.0 + scrollY * 0.1)), 30.0f, 400.0f);
             return true;
         }
-        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+        return super.mouseScrolled(mouseX, mouseY, scrollY);
     }
 
     private boolean isInPreview(double mouseX, double mouseY) {

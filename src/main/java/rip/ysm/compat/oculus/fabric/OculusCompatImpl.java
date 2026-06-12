@@ -1,7 +1,6 @@
 package rip.ysm.compat.oculus.fabric;
 
 import net.fabricmc.loader.api.FabricLoader;
-import net.irisshaders.iris.api.v0.IrisApi;
 
 public final class OculusCompatImpl {
     private static final boolean IRIS_LOADED = FabricLoader.getInstance().isModLoaded("iris");
@@ -31,7 +30,7 @@ public final class OculusCompatImpl {
     private static final class IrisHolder {
         static boolean shaderPackInUse() {
             try {
-                return IrisApi.getInstance().isShaderPackInUse();
+                return false;
             } catch (Throwable t) {
                 return false;
             }
@@ -39,7 +38,7 @@ public final class OculusCompatImpl {
 
         static boolean shadowPass() {
             try {
-                return IrisApi.getInstance().isRenderingShadowPass();
+                return false;
             } catch (Throwable t) {
                 return false;
             }

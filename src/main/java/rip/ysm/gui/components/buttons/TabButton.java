@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.input.MouseButtonEvent;
+import org.lwjgl.glfw.GLFW;
 import rip.ysm.gui.OptionGroup;
 
 import java.util.function.Consumer;
@@ -54,7 +54,7 @@ public class TabButton extends AbstractWidget {
     }
 
     @Override
-    public void onClick(MouseButtonEvent event, boolean flag) {
+    public void onClick(double mouseX, double mouseY) {
         onSelect.accept(group);
     }
 
