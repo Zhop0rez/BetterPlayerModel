@@ -27,10 +27,9 @@ public final class PlatformUtil {
                 YesSteveModel.LOGGER.warn("Refusing to open non-web URI {}", uri);
                 return;
             }
-            if (openWithDesktop(parsedUri)) {
-                return;
+            if (!openWithDesktop(parsedUri)) {
+                YesSteveModel.LOGGER.warn("Desktop API is not supported. Could not open URI {}", uri);
             }
-            openWithSystem(parsedUri.toString());
         } catch (Exception e) {
             YesSteveModel.LOGGER.warn("Failed to open URI {}", uri, e);
         }
@@ -41,10 +40,9 @@ public final class PlatformUtil {
             return;
         }
         try {
-            if (openWithDesktop(file)) {
-                return;
+            if (!openWithDesktop(file)) {
+                YesSteveModel.LOGGER.warn("Desktop API is not supported. Could not open file {}", file);
             }
-            openWithSystem(file.getAbsolutePath());
         } catch (Exception e) {
             YesSteveModel.LOGGER.warn("Failed to open file {}", file, e);
         }
@@ -83,14 +81,4 @@ public final class PlatformUtil {
         return false;
     }
 
-    private static void openWithSystem(String target) throws IOException {
-        String osName = System.getProperty("os.name", "").toLowerCase(Locale.ROOT);
-        if (osName.contains("win")) {
-            new ProcessBuilder("rundll32", "url.dll,FileProtocolHandler", target).start();
-        } else if (osName.contains("mac")) {
-            new ProcessBuilder("open", target).start();
-        } else {
-            new ProcessBuilder("xdg-open", target).start();
-        }
-    }
 }
