@@ -1,5 +1,0 @@
-v1	named	intermediary
-FIELD	com/elfmcys/yesstevemodel/mixin/AbstractArrowEntityMixin	I	inGroundTime	field_7576
-FIELD	com/elfmcys/yesstevemodel/mixin/AbstractArrowEntityMixin	Z	inGround	field_7588
-FIELD	com/elfmcys/yesstevemodel/mixin/client/BufferSourceMixin	Ljava/util/SequencedMap;	fixedBuffers	field_20953
-METHOD	com/elfmcys/yesstevemodel/mixin/client/ArrowEntityAccessor	()Lnet/minecraft/world/item/ItemStack;	getPickupItem	method_7445
