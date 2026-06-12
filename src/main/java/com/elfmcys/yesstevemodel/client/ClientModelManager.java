@@ -212,7 +212,8 @@ public class ClientModelManager {
                         } catch (Exception ignored) {}
                     }
                 }
-            } else if (syncStep == 2) {
+            }
+            if (!processed && (syncStep == 1 || syncStep == 2 || syncStep == 3)) {
                 // Expecting Packet 03 (Catalog)
                 if (lastKey != null) {
                     byte[] d = YsmCrypt.decrypt(packetBytes.clone(), lastKey);
@@ -318,6 +319,8 @@ public class ClientModelManager {
         int unkSize = buf.readVarInt();
         YesSteveModel.LOGGER.info("[YSM-NET] CLIENT: Received Packet 03 (Catalog) from server. Catalog has {} allowed models. Reading definitions...", unkSize);
         onSyncProgress(unkSize);
+        modelsToRequest.clear();
+        cachedModelHashes.clear();
 
         Set<String> validServerModelIds = new HashSet<>();
         List<String> previousModelIds = new ArrayList<>();
@@ -340,7 +343,10 @@ public class ClientModelManager {
             int version = buf.readVarInt(); // зЂµйЂ›з°¬йЏ‚е›¦ж¬ўжѕ¶и§„ж№­йЌ”зЉІз‘йђЁе‹¬ДЃйЌЁе¬¶зґќж¶“?5535
 
             ServerModelContext ctx = new ServerModelContext(hash1, hash2, modelId, isAuth, isCustomSkinModel, version);
-            serverModels.put(ctx.uuid, ctx);
+            ServerModelContext existing = serverModels.putIfAbsent(ctx.uuid, ctx);
+            if (existing != null) {
+                ctx = existing;
+            }
             validServerModelIds.add(modelId);
             knownServerModelIds.add(modelId);
             localOnlyModelIds.remove(modelId);
@@ -363,6 +369,8 @@ public class ClientModelManager {
                     pendingModelQueue.add(Pair.of(lazyAssembly, modelId));
                     incrementSyncProgress();
                 }
+            } else if (ctx.fileBuffer != null) {
+                YesSteveModel.LOGGER.info("[YSM] Model is already downloading: " + ctx.uuid + " -> Skipping request.");
             } else {
                 YesSteveModel.LOGGER.info("[YSM] Cache MISS or Invalid: " + ctx.uuid + " -> Requesting...");
                 modelsToRequest.add(mHash);
@@ -443,32 +451,35 @@ public class ClientModelManager {
         }
 
         syncStep = 3;
-        pendingModelsCount.set(modelsToRequest.size());
-
-        int garbageLen = 16 + SECURE_RANDOM.nextInt(48);
-        byte[] garbage = new byte[garbageLen];
-        SECURE_RANDOM.nextBytes(garbage);
-
-        try (YSMByteBuf outBuf = new YSMByteBuf(Unpooled.buffer())) {
-            outBuf.writeGarbageHeader(garbageLen, garbage);
-            outBuf.getRawBuf().writeByte(0x04);
-
-            outBuf.writeVarInt(modelsToRequest.size());
-            for (ModelHash h : modelsToRequest) {
-                outBuf.writeVarLong(h.hash1);
-                outBuf.writeVarLong(h.hash2);
+        
+        if (modelsToRequest.isEmpty()) {
+            if (pendingModelsCount.get() == 0) {
+                modelPhraseExecutor.submit(() -> {
+                    YesSteveModel.LOGGER.info("[YSM-NET] CLIENT: All models loaded from local cache. Handshake complete!");
+                    onSyncComplete();
+                });
             }
+        } else {
+            pendingModelsCount.addAndGet(modelsToRequest.size());
+            
+            int garbageLen = 16 + SECURE_RANDOM.nextInt(48);
+            byte[] garbage = new byte[garbageLen];
+            SECURE_RANDOM.nextBytes(garbage);
 
-            YsmCrypt.EncryptedPacket result = YsmCrypt.encrypt(outBuf.toArray(), key1, false);
-            YesSteveModel.LOGGER.info("[YSM-NET] CLIENT: Cache validation complete. Hits: {}, Misses: {}. Sending Packet 04 to request {} models. Size: {} bytes.", unkSize - modelsToRequest.size(), modelsToRequest.size(), modelsToRequest.size(), result.data().length);
-            sendModelFile(ByteBuffer.wrap(result.data()));
-        }
+            try (YSMByteBuf outBuf = new YSMByteBuf(Unpooled.buffer())) {
+                outBuf.writeGarbageHeader(garbageLen, garbage);
+                outBuf.getRawBuf().writeByte(0x04);
 
-        if (pendingModelsCount.get() == 0) {
-            modelPhraseExecutor.submit(() -> {
-                YesSteveModel.LOGGER.info("[YSM-NET] CLIENT: All models loaded from local cache. Handshake complete!");
-                onSyncComplete();
-            });
+                outBuf.writeVarInt(modelsToRequest.size());
+                for (ModelHash h : modelsToRequest) {
+                    outBuf.writeVarLong(h.hash1);
+                    outBuf.writeVarLong(h.hash2);
+                }
+
+                YsmCrypt.EncryptedPacket result = YsmCrypt.encrypt(outBuf.toArray(), key1, false);
+                YesSteveModel.LOGGER.info("[YSM-NET] CLIENT: Cache validation complete. Hits: {}, Misses: {}. Sending Packet 04 to request {} models. Size: {} bytes.", unkSize - modelsToRequest.size(), modelsToRequest.size(), modelsToRequest.size(), result.data().length);
+                sendModelFile(ByteBuffer.wrap(result.data()));
+            }
         }
     }
 
@@ -1156,7 +1167,7 @@ public class ClientModelManager {
     }
 
     private static String normalizeLocalModelId(String modelId) {
-        return stripImportExtension(modelId.replace('\\', '/').toLowerCase(Locale.ROOT).replaceAll("/+", "/"));
+        return stripImportExtension(modelId.replace('\\', '/').toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9_./-]+", "_").replaceAll("/+", "/"));
     }
 
     private static byte[] readLimitedFileBytes(Path file, long maxBytes) throws IOException {
