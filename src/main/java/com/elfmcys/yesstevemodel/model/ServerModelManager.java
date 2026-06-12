@@ -515,7 +515,7 @@ public final class ServerModelManager {
                     // з™јйЂЃеЏЇз”ЁжЁЎећ‹
                     state.step = 2;
                     sendPacket03(uuid, state);
-                } else if (state.step == 2) {
+                } else if (state.step == 2 || state.step == 3) {
                     byte[] decrypted = YsmCrypt.decrypt(packetBytes, state.key1);
                     if (decrypted == null) return;
 
@@ -970,7 +970,12 @@ public final class ServerModelManager {
                         // If modelOverride is present, and we are at step >= 2, we can push Packet03!
                         if (modelOverride != null && state.step >= 2) {
                             synchronized (syncStates) {
+                                state.step = 2;
                                 sendPacket03(uuid, state);
+                                Set<String> delivered = deliveredModelIds.computeIfAbsent(uuid, ignored -> ConcurrentHashMap.newKeySet());
+                                for (ServerModelData model : modelOverride) {
+                                    delivered.add(model.getModelId());
+                                }
                             }
                         }
                     }
@@ -1537,6 +1542,7 @@ public final class ServerModelManager {
                 }
             }
         } while (stripped);
+        normalized = normalized.replaceAll("[^a-z0-9_./-]+", "_");
         normalized = normalized.replaceAll("/+", "/");
         if (normalized.isBlank() || normalized.contains("..") || !MODEL_ID_PATTERN.matcher(normalized).matches()) {
             return null;
