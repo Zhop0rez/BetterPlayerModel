@@ -3,7 +3,7 @@ plugins {
 	id 'maven-publish'
 }
 
-version = '1.0.7-fabric-1.21.11'
+version = '1.0.7-pure-java-fabric-1.21.11'
 group = 'rip.ysm'
 
 base {
@@ -88,6 +88,7 @@ tasks.withType(Jar).configureEach {
     exclude("com/mojang/**")
     exclude("dev/architectury/**")
     exclude("net/irisshaders/**")
+    exclude("natives/**")
 }
 
 loom {
