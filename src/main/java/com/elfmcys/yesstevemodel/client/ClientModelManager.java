@@ -1,6 +1,6 @@
 package com.elfmcys.yesstevemodel.client;
 
-import com.elfmcys.yesstevemodel.NativeLibLoader;
+
 import com.elfmcys.yesstevemodel.YesSteveModel;
 import com.elfmcys.yesstevemodel.capability.ModelInfoCapability;
 import com.elfmcys.yesstevemodel.client.gui.IGuiWidget;
