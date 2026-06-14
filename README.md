@@ -1,5 +1,13 @@
 # Better Player Model
 
+> [!IMPORTANT]
+> **Pure Java (No-Natives) Edition Branch**
+> This branch hosts the source code for the **Pure Java** edition of Better Player Model, built specifically to comply with CurseForge guidelines.
+> * **No Native Binaries:** All .dll, .so, and .dylib files are excluded from this branch.
+> * **Pure Java Fallback:** Zstd decompression and rendering use pure Java fallbacks.
+> * **Note:** For the high-performance Native edition (optimized via Rust/C++ SIMD), please check the main development branches (1.20.1, 1.21.1, or main).
+
+
 A high-performance custom model loader and animation engine for Minecraft Fabric. This project provides a universal bridge for 3D player models, supporting both open standard formats and legacy encrypted files.
 
 ## Overview
