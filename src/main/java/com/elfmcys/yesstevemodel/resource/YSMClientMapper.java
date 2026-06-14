@@ -1,6 +1,6 @@
 package com.elfmcys.yesstevemodel.resource;
 
-import com.elfmcys.yesstevemodel.NativeLibLoader;
+
 import com.elfmcys.yesstevemodel.audio.AudioCodec;
 import com.elfmcys.yesstevemodel.audio.AudioTrackData;
 import com.elfmcys.yesstevemodel.client.ClientModelInfo;
@@ -439,7 +439,7 @@ public class YSMClientMapper {
         GeoModel mesh = buildMesh(geoBones.toArray(new GeoBone[0]), parentMap, context, translucencyArray);
 
         mesh.bakedBones = bakedBones;
-        if (NativeLibLoader.isLoaded()) mesh.buildNativeCache();
+        if (false) mesh.buildNativeCache();
         return mesh;
     }
 

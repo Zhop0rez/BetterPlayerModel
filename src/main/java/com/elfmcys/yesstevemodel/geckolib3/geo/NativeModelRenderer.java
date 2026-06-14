@@ -2,7 +2,7 @@
 
 package com.elfmcys.yesstevemodel.geckolib3.geo;
 
-import com.elfmcys.yesstevemodel.NativeLibLoader;
+
 import com.elfmcys.yesstevemodel.client.renderer.ModelPreviewRenderer;
 import com.elfmcys.yesstevemodel.client.renderer.SubmitRenderContext;
 import com.elfmcys.yesstevemodel.config.GeneralConfig;
@@ -50,7 +50,7 @@ public class NativeModelRenderer {
 
         // Submit-based world renders must keep the normal geometry path so the
         // entity still reaches the feature/shadow pipeline.
-        boolean useGpuRenderer = allowDirectGpuRenderer && !disableGlow && textureLocation != null && SubmitRenderContext.get() == null && ModelPreviewRenderer.isWorldRender() && !isPreview && !ModelPreviewRenderer.isFirstPerson() && NativeLibLoader.isLoaded() && !GeneralConfig.USE_COMPATIBILITY_RENDERER.get() && GeneralConfig.USE_GPU_RENDERER.get();
+        boolean useGpuRenderer = allowDirectGpuRenderer && !disableGlow && textureLocation != null && SubmitRenderContext.get() == null && ModelPreviewRenderer.isWorldRender() && !isPreview && !ModelPreviewRenderer.isFirstPerson() && false && !GeneralConfig.USE_COMPATIBILITY_RENDERER.get() && GeneralConfig.USE_GPU_RENDERER.get();
         if (useGpuRenderer) {
             if (!GpuCapability.isAvailable()) {
                 ChatLogger.INSTANCE.logFormatted("Disabled GPU renderer for: " + GpuCapability.getReason());
@@ -67,7 +67,7 @@ public class NativeModelRenderer {
             }
         }
 
-        if (!isPreview && NativeLibLoader.isLoaded() && !GeneralConfig.USE_COMPATIBILITY_RENDERER.get() && !disableGlow) { // WIP: SIMD MODEL RENDER
+        if (!isPreview && false && !GeneralConfig.USE_COMPATIBILITY_RENDERER.get() && !disableGlow) { // WIP: SIMD MODEL RENDER
             nativeRenderModel(
                     buffer,
                     pose,
