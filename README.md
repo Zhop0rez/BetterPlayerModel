@@ -50,6 +50,21 @@ This project is a specialized adaptation and evolution of the Yes_Steve_Model ec
 Looking for high-quality player models? You can browse and download hundreds of community-made models from the Yes-steve-model community repository:
 **[Download Models Here](https://github.com/Elaina69/Yes-Steve-Model-Repo/tree/main)**
 
+### Built-in Models & Assets Credits
+
+This mod includes the **"Wine Fox" (酒狐)** model built-in by default to provide a high-quality out-of-the-box experience.
+
+* **Model Name:** Wine Fox (酒狐)
+* **License:** [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)
+* **Original Authors:** 
+  * 完美冻结 *(Model & Core)*
+  * 星屑海螺 *(Animations)*
+  * 哥斯拉 / 映素团队 *(Modifications)*
+  * 白帆小喵, 蓝玫瑰, 墨染逝羽, Maks怜悯, 浅陌菌, 祸御神, 羊毛 *(Textures, UI, Sound, and specific additions)*
+
+> Huge thanks to these creators for their incredible work on the model! If you wish to use this model elsewhere, please ensure you respect the original CC BY-NC-SA 4.0 license.
+
+
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for the full text.
