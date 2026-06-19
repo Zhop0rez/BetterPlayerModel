@@ -195,7 +195,7 @@ public class ModelAssemblyFactory {
         }
         String defaultTextureName;
         if (hierarchyData.getTextureMap().isEmpty()) {
-            org.apache.logging.log4j.LogManager.getLogger("better_player_model").warn("[YSM] Model has no textures: {}", clientModelInfo.getInfo().getModelProperties().getDefaultTexture());
+            org.apache.logging.log4j.LogManager.getLogger("better_player_model").warn("[BPM] Model has no textures: {}", clientModelInfo.getInfo().getModelProperties().getDefaultTexture());
             return null;
         }
         defaultTextureName = (StringUtils.isEmpty(clientModelInfo.getInfo().getModelProperties().getDefaultTexture()) || !hierarchyData.getTextureMap().containsKey(clientModelInfo.getInfo().getModelProperties().getDefaultTexture())) ? hierarchyData.getTextureMap().getKeyAt(0) : clientModelInfo.getInfo().getModelProperties().getDefaultTexture();

@@ -60,5 +60,6 @@ public final class ClientPlayerJoinNotification {
             }
             ClientModelManager.resetSync();
         }
+        com.elfmcys.yesstevemodel.capability.PlayerCapability.clearAll();
     }
 }

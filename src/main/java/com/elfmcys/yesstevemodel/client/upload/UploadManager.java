@@ -37,6 +37,7 @@ public class UploadManager {
     }
 
     public static IResourceLocatable getOrCreateLocatableWithSize(AbstractTexture texture, boolean register, int sizeHint) {
+        if (texture == null) return null;
         RenderSystem.assertOnRenderThread();
         WeakReference<TextureLocatable> weakReference = textureCache.get(texture);
         if (weakReference != null) {
