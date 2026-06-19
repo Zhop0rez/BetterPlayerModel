@@ -73,6 +73,7 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
     public int guiTop;
 
     private int maxPage;
+    private boolean needsInit = false;
 
     private EditBox searchBox;
 
@@ -329,7 +330,7 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
             value = this.searchBox.getValue();
             zIsFocused = this.searchBox.isFocused();
         }
-        this.searchBox = new EditBox(Minecraft.getInstance().font, this.guiLeft + 144, this.guiTop + 6, 140, 16, Component.literal("YSM Search Box"));
+        this.searchBox = new EditBox(Minecraft.getInstance().font, this.guiLeft + 144, this.guiTop + 6, 120, 16, Component.literal("YSM Search Box"));
         this.searchBox.setValue(value);
         this.searchBox.setTextColor(15986656);
         this.searchBox.setFocused(zIsFocused);
@@ -362,21 +363,21 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
             GeneralConfig.SHOW_MODEL_ID_FIRST.set(v);
             GeneralConfig.SHOW_MODEL_ID_FIRST.save();
         }).build());
-        addRenderableWidget(new IconButton(this.guiLeft + 328, this.guiTop + 5, 18, 18, 32, 0, button4 -> {
+        addRenderableWidget(new IconButton(this.guiLeft + 317, this.guiTop + 5, 18, 18, 32, 0, button4 -> {
             if (this.category != Category.ALL) {
                 this.category = Category.ALL;
                 resetCurrentPage();
                 init();
             }
         }).setTooltipText("gui.better_player_model.all_models"));
-        addRenderableWidget(new IconButton(this.guiLeft + 308, this.guiTop + 5, 18, 18, 48, 0, button5 -> {
+        addRenderableWidget(new IconButton(this.guiLeft + 297, this.guiTop + 5, 18, 18, 48, 0, button5 -> {
             if (this.category != Category.AUTH) {
                 this.category = Category.AUTH;
                 resetCurrentPage();
                 init();
             }
         }).setTooltipText("gui.better_player_model.auth_models"));
-        addRenderableWidget(new IconButton(this.guiLeft + 288, this.guiTop + 5, 18, 18, 0, 0, button6 -> {
+        addRenderableWidget(new IconButton(this.guiLeft + 277, this.guiTop + 5, 18, 18, 0, 0, button6 -> {
             if (this.category != Category.STAR) {
                 this.category = Category.STAR;
                 resetCurrentPage();
@@ -445,6 +446,10 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
     }
 
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        if (this.needsInit) {
+            this.needsInit = false;
+            init();
+        }
         renderTransparentBackground(guiGraphics);
         guiGraphics.fillGradient(this.guiLeft, this.guiTop, this.guiLeft + 135, this.guiTop + 235, -14540254, -14540254);
         guiGraphics.fillGradient(this.guiLeft + 138, this.guiTop, this.guiLeft + 420, this.guiTop + 235, -14540254, -14540254);
@@ -705,12 +710,12 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
 
     @Override
     public void onModelsLoaded(Map<String, ModelAssembly> map) {
-        init();
+        this.needsInit = true;
     }
 
     @Override
     public void onModelsUpdated(Map<String, ModelAssembly> map) {
-        init();
+        this.needsInit = true;
     }
 
     public boolean shouldCloseWithToggleKey() {

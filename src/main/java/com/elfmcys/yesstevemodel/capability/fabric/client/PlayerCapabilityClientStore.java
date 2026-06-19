@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentMap;
 
 public final class PlayerCapabilityClientStore {
 
-    private static final ConcurrentMap<UUID, PlayerCapability> STORE = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<Player, PlayerCapability> STORE = new ConcurrentHashMap<>();
 
     private PlayerCapabilityClientStore() {
     }
@@ -20,17 +20,20 @@ public final class PlayerCapabilityClientStore {
         if (!(player instanceof AbstractClientPlayer)) {
             return Optional.empty();
         }
-        UUID uuid = player.getUUID();
-        PlayerCapability existing = STORE.get(uuid);
-        if (existing != null && existing.entity == player) {
+        PlayerCapability existing = STORE.get(player);
+        if (existing != null) {
             return Optional.of(existing);
         }
         PlayerCapability fresh = new PlayerCapability(player);
-        STORE.put(uuid, fresh);
+        STORE.put(player, fresh);
         return Optional.of(fresh);
     }
 
     public static void clear() {
         STORE.clear();
+    }
+
+    public static void remove(Player player) {
+        STORE.remove(player);
     }
 }

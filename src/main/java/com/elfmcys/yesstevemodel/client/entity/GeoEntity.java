@@ -114,18 +114,47 @@ public abstract class GeoEntity<T extends Entity> extends AnimatableEntity<T> {
     }
 
     protected void refreshModel() {
+        ModelWrapper oldShape = this.renderShape;
         ClientModelManager.getModelContext(this.modelId).ifPresentOrElse(assembly -> {
-            if (this.renderShape == null || this.renderShape.isDefault || assembly != this.renderShape.context) {
+            boolean shouldRebuild = this.renderShape == null || this.renderShape.isDefault || assembly != this.renderShape.context;
+            if (!shouldRebuild && assembly instanceof com.elfmcys.yesstevemodel.client.model.LazyModelAssembly lazy) {
+                ModelAssembly currentResolved = lazy.isResolved() ? lazy.resolve() : assembly;
+                if (currentResolved != this.renderShape.resolvedContext) {
+                    shouldRebuild = true;
+                }
+            }
+            if (!shouldRebuild && assembly != null && com.elfmcys.yesstevemodel.NativeLibLoader.isLoaded()) {
+                if (assembly.getAnimationBundle() != null && assembly.getAnimationBundle().getMainModel() != null) {
+                    if (assembly.getAnimationBundle().getMainModel().nativeModelHandle == 0) {
+                        shouldRebuild = true;
+                    }
+                }
+            }
+            if (shouldRebuild) {
                 this.renderShape = buildRenderShape(assembly, false);
             }
         }, () -> {
             ModelAssembly modelAssembly = ClientModelManager.getLocalModelContext();
-            if (this.renderShape == null || !this.renderShape.isDefault || modelAssembly != this.renderShape.context) {
+            boolean shouldRebuild = this.renderShape == null || !this.renderShape.isDefault || modelAssembly != this.renderShape.context;
+            if (!shouldRebuild && modelAssembly instanceof com.elfmcys.yesstevemodel.client.model.LazyModelAssembly lazy) {
+                ModelAssembly currentResolved = lazy.isResolved() ? lazy.resolve() : modelAssembly;
+                if (currentResolved != this.renderShape.resolvedContext) {
+                    shouldRebuild = true;
+                }
+            }
+            if (!shouldRebuild && modelAssembly != null && com.elfmcys.yesstevemodel.NativeLibLoader.isLoaded()) {
+                if (modelAssembly.getAnimationBundle() != null && modelAssembly.getAnimationBundle().getMainModel() != null) {
+                    if (modelAssembly.getAnimationBundle().getMainModel().nativeModelHandle == 0) {
+                        shouldRebuild = true;
+                    }
+                }
+            }
+            if (shouldRebuild) {
                 this.renderShape = buildRenderShape(modelAssembly, true);
             }
         });
         if (this.renderShape != null) {
-            if ((this.renderShape.context != this.modelAssembly || this.renderShape.isDefault != this.loaded) && this.renderShape.isValid()) {
+            if ((this.renderShape != oldShape || this.renderShape.context != this.modelAssembly || this.renderShape.isDefault != this.loaded) && this.renderShape.isValid()) {
                 this.modelAssembly = this.renderShape.context;
                 this.loaded = this.renderShape.isDefault;
                 onModelLoaded(this.modelAssembly);
@@ -262,15 +291,21 @@ public abstract class GeoEntity<T extends Entity> extends AnimatableEntity<T> {
     public static class ModelWrapper {
 
         public final ModelAssembly context;
+        
+        public final ModelAssembly resolvedContext;
 
         public final boolean isDefault;
+        
+        public final boolean isLazyFallback;
 
         @Nullable
         public IAudioStreamProvider audioProvider;
 
         public ModelWrapper(ModelAssembly modelAssembly, boolean isDefault) {
             this.context = modelAssembly;
+            this.resolvedContext = modelAssembly instanceof com.elfmcys.yesstevemodel.client.model.LazyModelAssembly lazy && lazy.isResolved() ? lazy.resolve() : modelAssembly;
             this.isDefault = isDefault;
+            this.isLazyFallback = modelAssembly instanceof com.elfmcys.yesstevemodel.client.model.LazyModelAssembly lazy && !lazy.isResolved();
         }
 
         public boolean isValid() {
