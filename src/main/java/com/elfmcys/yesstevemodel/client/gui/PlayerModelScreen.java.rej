@@ -1,0 +1,35 @@
+diff a/src/main/java/com/elfmcys/yesstevemodel/client/gui/PlayerModelScreen.java b/src/main/java/com/elfmcys/yesstevemodel/client/gui/PlayerModelScreen.java	(rejected hunks)
+@@ -76,6 +76,7 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
+     public int guiTop;
+ 
+     private int maxPage;
++    private volatile boolean needsInit = false;
+ 
+     private EditBox searchBox;
+ 
+@@ -492,6 +493,10 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
+ 
+     @Override
+     public void render(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
++        if (this.needsInit) {
++            this.needsInit = false;
++            this.init();
++        }
+         GuiGraphics guiGraphics = extractor;
+         renderTransparentBackground(extractor);
+         guiGraphics.fillGradient(this.guiLeft, this.guiTop, this.guiLeft + 135, this.guiTop + 235, -14540254, -14540254);
+@@ -902,12 +907,12 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
+ 
+     @Override
+     public void onModelsLoaded(Map<String, ModelAssembly> map) {
+-        init();
++        this.needsInit = true;
+     }
+ 
+     @Override
+     public void onModelsUpdated(Map<String, ModelAssembly> map) {
+-        init();
++        this.needsInit = true;
+     }
+ 
+     private Optional<ModelPackData> getPackData(String str) {

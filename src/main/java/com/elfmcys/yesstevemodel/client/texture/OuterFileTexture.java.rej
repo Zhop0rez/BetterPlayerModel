@@ -1,0 +1,17 @@
+diff a/src/main/java/com/elfmcys/yesstevemodel/client/texture/OuterFileTexture.java b/src/main/java/com/elfmcys/yesstevemodel/client/texture/OuterFileTexture.java	(rejected hunks)
+@@ -58,6 +58,15 @@ public class OuterFileTexture extends AbstractTexture implements ITextureMap {
+         return this.uploaded && this.textureView != null;
+     }
+ 
++    @Override
++    public void close() {
++        super.close();
++        this.texture = null;
++        this.textureView = null;
++        this.sampler = null;
++        this.uploaded = false;
++    }
++
+     @Override
+     public GpuTextureView getTextureView() {
+         if (!isLoaded() && RenderSystem.isOnRenderThread()) {

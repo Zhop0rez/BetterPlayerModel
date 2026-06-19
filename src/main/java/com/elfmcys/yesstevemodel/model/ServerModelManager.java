@@ -71,7 +71,7 @@ public final class ServerModelManager {
     private static final String BUILTIN_RESOURCE_INDEX = BUILTIN_RESOURCE_ROOT + "index.txt";
     private static final long UPLOAD_SESSION_TIMEOUT_MS = 120_000L;
     private static final long UPLOAD_RATE_WINDOW_MS = 1_000L;
-    private static final int UPLOAD_CHUNK_SIZE = 32_000;
+    private static final int UPLOAD_CHUNK_SIZE = 16_000;
     private static final int MAX_ACTIVE_UPLOADS_PER_PLAYER = 1;
     private static final int MAX_ACTIVE_UPLOAD_SESSIONS = 8;
     private static final long MAX_ACTIVE_UPLOAD_BYTES_HARD_CAP = 512L * 1024L * 1024L;
@@ -144,7 +144,7 @@ public final class ServerModelManager {
 
                 limitsInitialized = true;
             } catch (Exception e) {
-                YesSteveModel.LOGGER.error("[YSM] Failed to initialize limits from config", e);
+                YesSteveModel.LOGGER.error("[BPM] Failed to initialize limits from config", e);
                 bandwidthLimiter = RateLimiter.create(5 * 131072.0);
                 threadLimiter = new Semaphore(Math.max(2, Runtime.getRuntime().availableProcessors() - 1));
                 limitsInitialized = true;
@@ -299,7 +299,7 @@ public final class ServerModelManager {
                 try {
                     extracted = extractBuiltinModelsFromPath(assetsBuiltin);
                 } catch (Exception e) {
-                    YesSteveModel.LOGGER.warn("[YSM] Failed to extract builtin models from mod path, falling back to resource index", e);
+                    YesSteveModel.LOGGER.warn("[BPM] Failed to extract builtin models from mod path, falling back to resource index", e);
                 }
             }
 
@@ -308,7 +308,7 @@ public final class ServerModelManager {
             }
 
             if (!extracted) {
-                YesSteveModel.LOGGER.warn("[YSM] No builtin model resources were extracted");
+                YesSteveModel.LOGGER.warn("[BPM] No builtin model resources were extracted");
             }
         } catch (Exception e) {
             YesSteveModel.LOGGER.error("Failed to extract builtin models", e);
@@ -359,13 +359,13 @@ public final class ServerModelManager {
                 }
                 Path dest = builtRoot.resolve(relative).normalize();
                 if (!dest.startsWith(builtRoot)) {
-                    YesSteveModel.LOGGER.warn("[YSM] Skipping invalid builtin resource path: {}", relative);
+                    YesSteveModel.LOGGER.warn("[BPM] Skipping invalid builtin resource path: {}", relative);
                     continue;
                 }
                 String resourcePath = BUILTIN_RESOURCE_ROOT + relative;
                 try (InputStream in = YesSteveModel.class.getResourceAsStream(resourcePath)) {
                     if (in == null) {
-                        YesSteveModel.LOGGER.warn("[YSM] Missing indexed builtin resource: {}", resourcePath);
+                        YesSteveModel.LOGGER.warn("[BPM] Missing indexed builtin resource: {}", resourcePath);
                         continue;
                     }
                     Files.createDirectories(dest.getParent());
@@ -510,7 +510,7 @@ public final class ServerModelManager {
                         if (buf.getRawBuf().readByte() != 0x02) return;
                     }
 
-                    YesSteveModel.LOGGER.info("[YSM-NET] SERVER: Received Packet 02 (Pong) from player {}. Handshake step 1 complete, client next key exchanged. Decrypted packet length: {}", getPlayerName(uuid), packetBytes.length);
+                    YesSteveModel.LOGGER.info("[BPM-NET] SERVER: Received Packet 02 (Pong) from player {}. Handshake step 1 complete, client next key exchanged. Decrypted packet length: {}", getPlayerName(uuid), packetBytes.length);
 
                     // з™јйЂЃеЏЇз”ЁжЁЎећ‹
                     state.step = 2;
@@ -528,13 +528,13 @@ public final class ServerModelManager {
                         for (int i = 0; i < numRequests; i++) {
                             requestedHashes.add(new long[]{buf.readVarLong(), buf.readVarLong()});
                         }
-                        YesSteveModel.LOGGER.info("[YSM-NET] SERVER: Received Packet 04 from player {}. Player requested {} models for download. Proceeding to send Packet 05.", getPlayerName(uuid), numRequests);
+                        YesSteveModel.LOGGER.info("[BPM-NET] SERVER: Received Packet 04 from player {}. Player requested {} models for download. Proceeding to send Packet 05.", getPlayerName(uuid), numRequests);
                         state.step = 3;
                         sendPacket05(uuid, state, requestedHashes);
                     }
                 }
             } catch (Exception e) {
-                YesSteveModel.LOGGER.error("[YSM] Server sync error for " + uuid, e);
+                YesSteveModel.LOGGER.error("[BPM] Server sync error for " + uuid, e);
             }
         }
     }
@@ -568,7 +568,7 @@ public final class ServerModelManager {
             saveMetadataCache();
             return true;
         } catch (Exception e) {
-            YesSteveModel.LOGGER.error("[YSM] Model loading failed", e);
+            YesSteveModel.LOGGER.error("[BPM] Model loading failed", e);
             return false;
         }
     }
@@ -782,7 +782,7 @@ public final class ServerModelManager {
             try {
                 Files.deleteIfExists(temp);
             } catch (IOException e) {
-                YesSteveModel.LOGGER.warn("[YSM] Failed to remove temporary model archive {}", temp, e);
+                YesSteveModel.LOGGER.warn("[BPM] Failed to remove temporary model archive {}", temp, e);
             }
         }
     }
@@ -888,7 +888,7 @@ public final class ServerModelManager {
             YsmCrypt.read(existingData, serverKey);
             return true;
         } catch (Exception e) {
-            YesSteveModel.LOGGER.warn("[YSM] Rebuilding unreadable server model cache: {}", modelId);
+            YesSteveModel.LOGGER.warn("[BPM] Rebuilding unreadable server model cache: {}", modelId);
             return false;
         }
     }
@@ -956,7 +956,7 @@ public final class ServerModelManager {
                                 state.lastActiveMs = System.currentTimeMillis();
                             }
 
-                            YesSteveModel.LOGGER.info("[YSM-NET] SERVER: Initiating model sync handshake with player {}. Sending Packet 01 (Public Key Exchange). Size: {} bytes.", getPlayerName(uuid), result.data().length);
+                            YesSteveModel.LOGGER.info("[BPM-NET] SERVER: Initiating model sync handshake with player {}. Sending Packet 01 (Public Key Exchange). Size: {} bytes.", getPlayerName(uuid), result.data().length);
 
                             if (sendModelData(uuid, ByteBuffer.wrap(result.data()), new PendingTransfer())) {
                                 Set<String> delivered = deliveredModelIds.computeIfAbsent(uuid, ignored -> ConcurrentHashMap.newKeySet());
@@ -982,7 +982,7 @@ public final class ServerModelManager {
                 }
 //                if (callback != null) onAuthDataReceived(null, callback);
             } catch (Exception e) {
-                YesSteveModel.LOGGER.error("[YSM] Sync initiation failed", e);
+                YesSteveModel.LOGGER.error("[BPM] Sync initiation failed", e);
             }
         });
     }
@@ -1057,7 +1057,7 @@ public final class ServerModelManager {
             outBuf.writeVarInt(0);  // \0
 
             YsmCrypt.EncryptedPacket result = YsmCrypt.encrypt(outBuf.toArray(), state.clientNextKey, false);
-            YesSteveModel.LOGGER.info("[YSM-NET] SERVER: Sending Packet 03 (Catalog) to player {}. Catalog contains {} allowed models, {} packs. Total encrypted packet size: {} bytes.", getPlayerName(uuid), state.allowedModels.size(), packs.size(), result.data().length);
+            YesSteveModel.LOGGER.info("[BPM-NET] SERVER: Sending Packet 03 (Catalog) to player {}. Catalog contains {} allowed models, {} packs. Total encrypted packet size: {} bytes.", getPlayerName(uuid), state.allowedModels.size(), packs.size(), result.data().length);
             sendModelData(uuid, ByteBuffer.wrap(result.data()), new PendingTransfer());
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -1085,7 +1085,7 @@ public final class ServerModelManager {
                     int chunkCount = (totalSize + maxChunkSize - 1) / maxChunkSize;
                     int chunkSize = (totalSize + chunkCount - 1) / chunkCount;
 
-                    YesSteveModel.LOGGER.info("[YSM-NET] SERVER: Sending model file '{}' (hash: {}) to player {}. Total size: {} bytes, chunks: {}, chunk size: {} bytes.", fileName, hash1 + "_" + hash2, getPlayerName(uuid), totalSize, chunkCount, chunkSize);
+                    YesSteveModel.LOGGER.info("[BPM-NET] SERVER: Sending model file '{}' (hash: {}) to player {}. Total size: {} bytes, chunks: {}, chunk size: {} bytes.", fileName, hash1 + "_" + hash2, getPlayerName(uuid), totalSize, chunkCount, chunkSize);
 
                     int offset = 0;
 
@@ -1118,14 +1118,14 @@ public final class ServerModelManager {
                             // Stream chunks
                             boolean success = sendModelData(uuid, ByteBuffer.wrap(result.data()), transfer);
                             if (success) {
-                                YesSteveModel.LOGGER.debug("[YSM-NET] SERVER: Sent chunk {}/{} ({} bytes) of model '{}' to player {}.", offset + length, totalSize, result.data().length, fileName, getPlayerName(uuid));
+                                YesSteveModel.LOGGER.debug("[BPM-NET] SERVER: Sent chunk {}/{} ({} bytes) of model '{}' to player {}.", offset + length, totalSize, result.data().length, fileName, getPlayerName(uuid));
                                 offset += length;
                             } else {
                                 try { Thread.sleep(5); } catch (InterruptedException e) {}
                             }
                         }
                     }
-                    YesSteveModel.LOGGER.info("[YSM-NET] SERVER: Finished sending all chunks of model '{}' to player {}.", fileName, getPlayerName(uuid));
+                    YesSteveModel.LOGGER.info("[BPM-NET] SERVER: Finished sending all chunks of model '{}' to player {}.", fileName, getPlayerName(uuid));
                 }
             } catch (Exception e) {
                 YesSteveModel.LOGGER.error("Failed to send model chunks to " + uuid, e);
@@ -1281,7 +1281,7 @@ public final class ServerModelManager {
 
             ModelUploadState state = new ModelUploadState(uploadId, sender.getUUID(), modelId, fileName, importKind, totalBytes, sha256.toLowerCase(Locale.ROOT));
             uploadStates.put(uploadId, state);
-            YesSteveModel.LOGGER.info("[YSM-NET] SERVER: Player '{}' (UUID {}) initiated upload for model ID '{}', file: '{}', total bytes: {}, upload ID: {}", sender.getScoreboardName(), sender.getUUID(), modelId, fileName, totalBytes, uploadId);
+            YesSteveModel.LOGGER.info("[BPM-NET] SERVER: Player '{}' (UUID {}) initiated upload for model ID '{}', file: '{}', total bytes: {}, upload ID: {}", sender.getScoreboardName(), sender.getUUID(), modelId, fileName, totalBytes, uploadId);
             return new UploadStartResult(uploadId, (byte) 0, UPLOAD_CHUNK_SIZE, maxBytes, getModelUploadChunksPerTick(), "");
         }
     }
@@ -1317,20 +1317,20 @@ public final class ServerModelManager {
         }
         state.touch();
         if (data == null || data.length <= 0 || data.length > UPLOAD_CHUNK_SIZE || offset < 0 || (long) offset + (long) data.length > state.data.length || offset != state.receivedBytes) {
-            YesSteveModel.LOGGER.warn("[YSM] Rejected invalid model upload chunk player={} modelId={} uploadId={} offset={} length={} received={} total={}",
+            YesSteveModel.LOGGER.warn("[BPM] Rejected invalid model upload chunk player={} modelId={} uploadId={} offset={} length={} received={} total={}",
                     sender.getScoreboardName(), state.modelId, uploadId, offset, data == null ? -1 : data.length, state.receivedBytes, state.data.length);
             state.failed = true;
             return;
         }
         if (!state.tryAcceptChunk(getModelUploadChunksPerTick())) {
-            YesSteveModel.LOGGER.warn("[YSM] Rejected too-fast model upload player={} modelId={} uploadId={} received={} total={}",
+            YesSteveModel.LOGGER.warn("[BPM] Rejected too-fast model upload player={} modelId={} uploadId={} received={} total={}",
                     sender.getScoreboardName(), state.modelId, uploadId, state.receivedBytes, state.data.length);
             state.failed = true;
             return;
         }
         System.arraycopy(data, 0, state.data, offset, data.length);
         state.receivedBytes += data.length;
-        YesSteveModel.LOGGER.info("[YSM-NET] SERVER: Received chunk offset {}/{} ({} bytes) from player '{}' for upload ID {}.", offset, state.data.length, data.length, sender.getScoreboardName(), uploadId);
+        YesSteveModel.LOGGER.info("[BPM-NET] SERVER: Received chunk offset {}/{} ({} bytes) from player '{}' for upload ID {}.", offset, state.data.length, data.length, sender.getScoreboardName(), uploadId);
     }
 
     public static UploadFinishResult finishModelUpload(ServerPlayer sender, long uploadId) {
@@ -1338,7 +1338,7 @@ public final class ServerModelManager {
         if (state == null || sender == null || !state.owner.equals(sender.getUUID())) {
             return UploadFinishResult.reject(uploadId, (byte) 4, "Session expired");
         }
-        YesSteveModel.LOGGER.info("[YSM-NET] SERVER: Player '{}' requested upload completion for upload ID {}. Verifying hash...", sender.getScoreboardName(), uploadId);
+        YesSteveModel.LOGGER.info("[BPM-NET] SERVER: Player '{}' requested upload completion for upload ID {}. Verifying hash...", sender.getScoreboardName(), uploadId);
         if (state.failed) {
             return UploadFinishResult.reject(uploadId, (byte) 5, "Incomplete upload");
         }
@@ -1347,7 +1347,7 @@ public final class ServerModelManager {
         }
         String actualSha256 = DigestUtil.sha256Hex(state.data);
         if (!state.sha256.equals(actualSha256)) {
-            YesSteveModel.LOGGER.warn("[YSM] Import transfer hash mismatch modelId={} file={} type={} declaredSha256={} actualSha256={} bytes={} received={}",
+            YesSteveModel.LOGGER.warn("[BPM] Import transfer hash mismatch modelId={} file={} type={} declaredSha256={} actualSha256={} bytes={} received={}",
                     state.modelId, state.fileName, state.importKind, state.sha256, actualSha256, state.data.length, state.receivedBytes);
             return UploadFinishResult.reject(uploadId, (byte) 1, "Hash mismatch");
         }
@@ -1356,11 +1356,11 @@ public final class ServerModelManager {
         try {
             rawModel = parseUploadedModel(state.data, "import:" + state.fileName, state.importKind);
         } catch (Exception e) {
-            YesSteveModel.LOGGER.error("[YSM] Failed to parse imported model modelId={} file={} type={} rawSha256={} bytes={}",
+            YesSteveModel.LOGGER.error("[BPM] Failed to parse imported model modelId={} file={} type={} rawSha256={} bytes={}",
                     state.modelId, state.fileName, state.importKind, actualSha256, state.data.length, e);
             return UploadFinishResult.reject(uploadId, (byte) 2, e.getMessage());
         }
-        YesSteveModel.LOGGER.info("[YSM] Parsed import modelId={} file={} type={} cryptoVersion={} rawSha256={} contentHash={} metadataName='{}' authors={}",
+        YesSteveModel.LOGGER.info("[BPM] Parsed import modelId={} file={} type={} cryptoVersion={} rawSha256={} contentHash={} metadataName='{}' authors={}",
                 state.modelId,
                 state.fileName,
                 state.importKind,
@@ -1389,7 +1389,7 @@ public final class ServerModelManager {
                 Files.move(temp, absoluteTarget, StandardCopyOption.REPLACE_EXISTING);
             }
         } catch (Exception e) {
-            YesSteveModel.LOGGER.error("[YSM] Failed to store imported model: " + state.modelId, e);
+            YesSteveModel.LOGGER.error("[BPM] Failed to store imported model: " + state.modelId, e);
             return UploadFinishResult.reject(uploadId, (byte) 3, e.getMessage());
         }
 
@@ -1406,12 +1406,12 @@ public final class ServerModelManager {
             }
         }
         if (matchedModelId == null) {
-            YesSteveModel.LOGGER.warn("[YSM] Imported model was written but not visible after scan: modelId={} file={} type={} rawSha256={} contentHash={}",
+            YesSteveModel.LOGGER.warn("[BPM] Imported model was written but not visible after scan: modelId={} file={} type={} rawSha256={} contentHash={}",
                     state.modelId, state.fileName, state.importKind, actualSha256, rawModel.properties.sha256);
             return UploadFinishResult.reject(uploadId, (byte) 8, "Imported model is not visible after scan");
         }
 
-        YesSteveModel.LOGGER.info("[YSM] Imported model '{}' from {} as {}", matchedModelId, sender.getScoreboardName(), state.importKind);
+        YesSteveModel.LOGGER.info("[BPM] Imported model '{}' from {} as {}", matchedModelId, sender.getScoreboardName(), state.importKind);
         syncImportedModelToOtherPlayers(sender, matchedModelId);
         long[] hashes = YsmCrypt.calculateModelHashes(rawModel.properties.sha256, serverKey);
         return new UploadFinishResult(uploadId, (byte) 0, matchedModelId, hashes[0], hashes[1], "");
@@ -1436,7 +1436,7 @@ public final class ServerModelManager {
             onModelLoadComplete(result, null);
             return result;
         } catch (Exception e) {
-            YesSteveModel.LOGGER.error("[YSM] Failed to reload models after import", e);
+            YesSteveModel.LOGGER.error("[BPM] Failed to reload models after import", e);
             return new ModelLoadResult(false, Component.literal(e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()), null, null);
         }
     }
@@ -1543,7 +1543,7 @@ public final class ServerModelManager {
             }
         } while (stripped);
         normalized = normalized.replaceAll("/+", "/");
-        if (normalized.isBlank() || normalized.contains("..") || !MODEL_ID_PATTERN.matcher(normalized).matches()) {
+        if (normalized.isBlank() || normalized.contains("..") ) {
             return null;
         }
         return normalized;
@@ -1802,7 +1802,7 @@ public final class ServerModelManager {
                         if (resolvedTexture == null) {
                             modelInfoCap.resetToDefault();
                         } else if (!resolvedTexture.equals(modelInfoCap.getSelectTexture())) {
-                            YesSteveModel.LOGGER.warn("[YSM] Fixed invalid texture '{}' for model '{}' on player '{}', using '{}'", modelInfoCap.getSelectTexture(), modelId, serverPlayer.getScoreboardName(), resolvedTexture);
+                            YesSteveModel.LOGGER.warn("[BPM] Fixed invalid texture '{}' for model '{}' on player '{}', using '{}'", modelInfoCap.getSelectTexture(), modelId, serverPlayer.getScoreboardName(), resolvedTexture);
                             modelInfoCap.setModelAndTexture(modelId, resolvedTexture);
                         }
                     }
@@ -1869,7 +1869,7 @@ public final class ServerModelManager {
                 this.chunksInWindow = 0;
             }
             int expectedPerSecond = Math.max(1, chunksPerTick) * 20;
-            int burstAllowance = Math.max(4, chunksPerTick * 2);
+            int burstAllowance = Math.max(400, expectedPerSecond * 10);
             if (this.chunksInWindow >= expectedPerSecond + burstAllowance) {
                 return false;
             }
@@ -1932,10 +1932,10 @@ public final class ServerModelManager {
                 if (wrapper != null && currentKeyBase64.equals(wrapper.serverKeyBase64)) {
                     metadataCache.putAll(wrapper.entries);
                 } else {
-                    YesSteveModel.LOGGER.warn("[YSM] Server key mismatch or cache empty, invalidating server model metadata cache.");
+                    YesSteveModel.LOGGER.warn("[BPM] Server key mismatch or cache empty, invalidating server model metadata cache.");
                 }
             } catch (Exception e) {
-                YesSteveModel.LOGGER.warn("[YSM] Failed to load server metadata cache, rebuilding...", e);
+                YesSteveModel.LOGGER.warn("[BPM] Failed to load server metadata cache, rebuilding...", e);
             }
         }
     }
@@ -1950,7 +1950,7 @@ public final class ServerModelManager {
             Files.writeString(METADATA_CACHE_FILE, jsonStr, StandardCharsets.UTF_8);
             cacheModified = false;
         } catch (Exception e) {
-            YesSteveModel.LOGGER.error("[YSM] Failed to save server metadata cache", e);
+            YesSteveModel.LOGGER.error("[BPM] Failed to save server metadata cache", e);
         }
     }
 
@@ -2063,7 +2063,7 @@ public final class ServerModelManager {
         if (current == null || !Files.exists(current)) return;
         if (Files.isDirectory(current)) {
             if (YSMFolderDeserializer.isModelFolder(current)) {
-                String modelId = baseDir.relativize(current).toString().replace('\\', '/').toLowerCase(Locale.ROOT);
+                String modelId = normalizeUploadedModelId(baseDir.relativize(current).toString());
                 tasks.add(new ScanTask(current, true, isAuth, modelId));
             } else {
                 try (Stream<Path> stream = Files.list(current)) {
@@ -2074,9 +2074,11 @@ public final class ServerModelManager {
             String fileName = current.getFileName().toString();
             ImportKind importKind = importKindFromFileName(fileName);
             if (importKind != ImportKind.UNKNOWN && importKind != ImportKind.SEVEN_ZIP) {
-                String modelId = stripImportExtension(baseDir.relativize(current).toString().replace('\\', '/')).toLowerCase(Locale.ROOT);
+                String modelId = stripImportExtension(normalizeUploadedModelId(baseDir.relativize(current).toString()));
                 tasks.add(new ScanTask(current, false, isAuth, modelId));
             }
         }
     }
 }
+
+

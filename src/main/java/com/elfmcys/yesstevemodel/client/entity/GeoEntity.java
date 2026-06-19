@@ -114,18 +114,19 @@ public abstract class GeoEntity<T extends Entity> extends AnimatableEntity<T> {
     }
 
     protected void refreshModel() {
+        ModelWrapper oldShape = this.renderShape;
         ClientModelManager.getModelContext(this.modelId).ifPresentOrElse(assembly -> {
-            if (this.renderShape == null || this.renderShape.isDefault || assembly != this.renderShape.context) {
+            if (this.renderShape == null || this.renderShape.isDefault || assembly != this.renderShape.context || (this.renderShape.isLazyFallback && assembly instanceof com.elfmcys.yesstevemodel.client.model.LazyModelAssembly lazy && lazy.isResolved())) {
                 this.renderShape = buildRenderShape(assembly, false);
             }
         }, () -> {
             ModelAssembly modelAssembly = ClientModelManager.getLocalModelContext();
-            if (this.renderShape == null || !this.renderShape.isDefault || modelAssembly != this.renderShape.context) {
+            if (this.renderShape == null || !this.renderShape.isDefault || modelAssembly != this.renderShape.context || (this.renderShape.isLazyFallback && modelAssembly instanceof com.elfmcys.yesstevemodel.client.model.LazyModelAssembly lazy && lazy.isResolved())) {
                 this.renderShape = buildRenderShape(modelAssembly, true);
             }
         });
         if (this.renderShape != null) {
-            if ((this.renderShape.context != this.modelAssembly || this.renderShape.isDefault != this.loaded) && this.renderShape.isValid()) {
+            if ((this.renderShape != oldShape || this.renderShape.context != this.modelAssembly || this.renderShape.isDefault != this.loaded) && this.renderShape.isValid()) {
                 this.modelAssembly = this.renderShape.context;
                 this.loaded = this.renderShape.isDefault;
                 onModelLoaded(this.modelAssembly);
@@ -264,6 +265,8 @@ public abstract class GeoEntity<T extends Entity> extends AnimatableEntity<T> {
         public final ModelAssembly context;
 
         public final boolean isDefault;
+        
+        public final boolean isLazyFallback;
 
         @Nullable
         public IAudioStreamProvider audioProvider;
@@ -271,6 +274,7 @@ public abstract class GeoEntity<T extends Entity> extends AnimatableEntity<T> {
         public ModelWrapper(ModelAssembly modelAssembly, boolean isDefault) {
             this.context = modelAssembly;
             this.isDefault = isDefault;
+            this.isLazyFallback = modelAssembly instanceof com.elfmcys.yesstevemodel.client.model.LazyModelAssembly lazy && !lazy.isResolved();
         }
 
         public boolean isValid() {

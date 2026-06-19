@@ -76,7 +76,7 @@ public final class YSMChannelImpl {
                 codec.dispatch(buf, ctx);
             }
         } catch (RuntimeException e) {
-            YesSteveModel.LOGGER.warn("[YSM] Dropped malformed network packet id {}", discriminator, e);
+            YesSteveModel.LOGGER.warn("[BPM] Dropped malformed network packet id {}", discriminator, e);
         }
     }
 

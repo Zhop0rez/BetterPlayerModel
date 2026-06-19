@@ -88,6 +88,15 @@ public abstract class CustomPlayerEntity extends LivingAnimatable<Player> implem
             this.isDisabled = true;
             return;
         }
+        
+        if (str != null && !str.isEmpty()) {
+            try {
+                this.executeExpression(com.elfmcys.yesstevemodel.geckolib3.resource.GeckoLibCache.parseSimpleExpression(str), true, false, null);
+            } catch (Exception e) {
+                // Ignore missing animation names that fail to parse as molang
+            }
+        }
+        
         this.isModelSwitching = false;
     }
 

@@ -59,8 +59,8 @@ public interface IGeoRenderer<T extends AnimatableEntity<?>> {
                              @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, int packedLight,
                              int packedOverlayIn, float red, float green, float blue, float alpha) {
         if (getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL) {
-            float width = animatable.getHeightScale();
-            float height = animatable.getWidthScale();
+            float width = animatable.getWidthScale();
+            float height = animatable.getHeightScale();
             poseStack.scale(width, height, width);
         }
     }

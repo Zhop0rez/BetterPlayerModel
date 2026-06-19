@@ -8,7 +8,7 @@ import rip.ysm.api.network.PacketContext;
 
 public record S2CModelUploadStartPacket(long uploadId, byte status, int chunkSize, int maxTotalBytes, int chunksPerTick, String message) {
     private static final int MAX_MESSAGE_LENGTH = 512;
-    private static final int MAX_CHUNK_SIZE = 32_000;
+    private static final int MAX_CHUNK_SIZE = 16_000;
     private static final int MAX_TOTAL_BYTES = 512 * 1024 * 1024;
     private static final int MAX_CHUNKS_PER_TICK = 32;
 
@@ -27,14 +27,16 @@ public record S2CModelUploadStartPacket(long uploadId, byte status, int chunkSiz
         int chunkSize = buf.readVarInt();
         int maxTotalBytes = buf.readVarInt();
         int chunksPerTick = buf.readVarInt();
-        if (chunkSize < 1 || chunkSize > MAX_CHUNK_SIZE) {
-            throw new IllegalArgumentException("Invalid upload chunk size: " + chunkSize);
-        }
-        if (maxTotalBytes < 1 || maxTotalBytes > MAX_TOTAL_BYTES) {
-            throw new IllegalArgumentException("Invalid upload max size: " + maxTotalBytes);
-        }
-        if (chunksPerTick < 1 || chunksPerTick > MAX_CHUNKS_PER_TICK) {
-            throw new IllegalArgumentException("Invalid upload rate: " + chunksPerTick);
+        if (status == 0) {
+            if (chunkSize < 1 || chunkSize > MAX_CHUNK_SIZE) {
+                throw new IllegalArgumentException("Invalid upload chunk size: " + chunkSize);
+            }
+            if (maxTotalBytes < 1 || maxTotalBytes > MAX_TOTAL_BYTES) {
+                throw new IllegalArgumentException("Invalid upload max size: " + maxTotalBytes);
+            }
+            if (chunksPerTick < 1 || chunksPerTick > MAX_CHUNKS_PER_TICK) {
+                throw new IllegalArgumentException("Invalid upload rate: " + chunksPerTick);
+            }
         }
         String message = buf.readUtf(MAX_MESSAGE_LENGTH);
         return new S2CModelUploadStartPacket(uploadId, status, chunkSize, maxTotalBytes, chunksPerTick, message);
@@ -51,3 +53,4 @@ public record S2CModelUploadStartPacket(long uploadId, byte status, int chunkSiz
         ModelUploadSession.onStartAck(packet.uploadId, packet.status, packet.chunkSize, packet.maxTotalBytes, packet.chunksPerTick, packet.message);
     }
 }
+

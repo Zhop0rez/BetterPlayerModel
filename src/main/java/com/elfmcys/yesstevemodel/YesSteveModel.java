@@ -39,7 +39,16 @@ public class YesSteveModel {
 
     public static void init() {
         LOGGER.info("Initializing YesSteveModel, platform: " + PlatformAPI.getPlatformName());
-        initConfig();
+        try {
+            NativeLibLoader.init();
+        } catch (IOException e) {
+            LOGGER.error("Failed to initialize native lib", e);
+        }
+        if (!NativeLibLoader.isAvailable()) {
+            LOGGER.error(getErrorMessage());
+        } else {
+            initConfig();
+        }
         YsmEventBootstrap.register();
     }
 
@@ -61,18 +70,18 @@ public class YesSteveModel {
 
     @Keep
     public static boolean isAvailable() {
-        return true;
+        return NativeLibLoader.isAvailable();
     }
 
     public static boolean isOnAndroid() {
-        return false;
+        return NativeLibLoader.isOnAndroid();
     }
 
     public static Component getUnavailableComponent() {
-        return null;
+        return NativeLibLoader.getErrorComponent();
     }
 
     public static String getErrorMessage() {
-        return null;
+        return NativeLibLoader.getErrorMessage();
     }
 }

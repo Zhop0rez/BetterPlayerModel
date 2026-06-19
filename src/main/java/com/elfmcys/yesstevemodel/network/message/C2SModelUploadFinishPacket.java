@@ -23,13 +23,24 @@ public record C2SModelUploadFinishPacket(long uploadId) {
         if (ctx.isServerSide() && ctx.getSender() != null) {
             ServerPlayer sender = ctx.getSender();
             ctx.enqueueWork(() -> YSMThreadPool.submit(() -> {
-                ServerModelManager.UploadFinishResult result = ServerModelManager.finishModelUpload(sender, message.uploadId);
-                MinecraftServer server = GameInstance.getServer();
-                Runnable sendResult = () -> NetworkHandler.sendToClientPlayer(new S2CModelUploadResultPacket(result.uploadId(), result.status(), result.modelId(), result.hash1(), result.hash2(), result.message()), sender);
-                if (server != null) {
-                    server.execute(sendResult);
-                } else {
-                    sendResult.run();
+                try {
+                    ServerModelManager.UploadFinishResult result = ServerModelManager.finishModelUpload(sender, message.uploadId);
+                    MinecraftServer server = GameInstance.getServer();
+                    Runnable sendResult = () -> NetworkHandler.sendToClientPlayer(new S2CModelUploadResultPacket(result.uploadId(), result.status(), result.modelId(), result.hash1(), result.hash2(), result.message()), sender);
+                    if (server != null) {
+                        server.execute(sendResult);
+                    } else {
+                        sendResult.run();
+                    }
+                } catch (Throwable t) {
+                    com.elfmcys.yesstevemodel.YesSteveModel.LOGGER.error("[BPM] Fatal error processing uploaded model", t);
+                    Runnable sendResult = () -> NetworkHandler.sendToClientPlayer(new S2CModelUploadResultPacket(message.uploadId, (byte) 2, "", 0L, 0L, "Server error: " + t.toString()), sender);
+                    MinecraftServer server = GameInstance.getServer();
+                    if (server != null) {
+                        server.execute(sendResult);
+                    } else {
+                        sendResult.run();
+                    }
                 }
             }));
         }

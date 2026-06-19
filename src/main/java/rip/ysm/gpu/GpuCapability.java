@@ -1,6 +1,6 @@
 package rip.ysm.gpu;
 
-
+import com.elfmcys.yesstevemodel.NativeLibLoader;
 
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
@@ -29,7 +29,7 @@ public final class GpuCapability {
             reason = "gpu renderer disabled by OYSM_DISABLE_GPU";
             return;
         }
-        if (!false) {
+        if (!NativeLibLoader.isLoaded()) {
             reason = "native ysm-core not loaded";
             return;
         }
