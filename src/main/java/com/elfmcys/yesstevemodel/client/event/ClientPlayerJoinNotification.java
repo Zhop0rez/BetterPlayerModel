@@ -17,6 +17,7 @@ public final class ClientPlayerJoinNotification {
 
     private ClientPlayerJoinNotification() {
     }
+    private static int pendingTicks = -1;
 
     public static void register() {
         ClientPlayerEvent.CLIENT_PLAYER_JOIN.register(ClientPlayerJoinNotification::onPlayerJoin);
@@ -36,29 +37,30 @@ public final class ClientPlayerJoinNotification {
         if (((MinecraftAccessor) Minecraft.getInstance()).ysm$isLocalServer()) {
             return;
         }
-        Thread thread = new Thread(() -> {
-            try {
-                Thread.sleep(60000L);
-                ((Executor) Minecraft.getInstance()).execute(() -> {
-                    LocalPlayer localPlayer = Minecraft.getInstance().player;
-                    if (localPlayer != null && localPlayer.connection.isAcceptingMessages() && !NetworkHandler.isConnectionValid(localPlayer.connection.getConnection())) {
-                        localPlayer.displayClientMessage(Component.translatable("message.better_player_model.client.server_not_found"), false);
-                    }
-                });
-            } catch (InterruptedException ignored) {
-            }
-        });
-        thread.setDaemon(true);
-        thread.start();
+        pendingTicks = 1200; // 60 seconds * 20 ticks
     }
 
     private static void onPlayerQuit(LocalPlayer player) {
+        pendingTicks = -1;
         if (notified) {
             notified = false;
             if (!YesSteveModel.isAvailable()) {
                 return;
             }
             ClientModelManager.resetSync();
+        }
+        com.elfmcys.yesstevemodel.capability.PlayerCapability.clearAll();
+    }
+
+    public static void tick() {
+        if (pendingTicks > 0) {
+            pendingTicks--;
+            if (pendingTicks == 0) {
+                LocalPlayer localPlayer = Minecraft.getInstance().player;
+                if (localPlayer != null && localPlayer.connection.isAcceptingMessages() && !NetworkHandler.isConnectionValid(localPlayer.connection.getConnection())) {
+                    localPlayer.displayClientMessage(Component.translatable("message.better_player_model.client.server_not_found"), false);
+                }
+            }
         }
     }
 }

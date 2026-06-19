@@ -80,7 +80,7 @@ public final class ModelRepoClient {
                 return data;
             } catch (IOException | RuntimeException e) {
                 last = asIOException(e);
-                YesSteveModel.LOGGER.warn("[YSM] Resource download candidate failed: {}", url, e);
+                YesSteveModel.LOGGER.warn("[BPM] Resource download candidate failed: {}", url, e);
                 monitor(config, "Download candidate failed name={} url={} error={}", entry.name(), url, e.toString());
             }
         }
@@ -103,7 +103,7 @@ public final class ModelRepoClient {
                 return data;
             } catch (IOException | RuntimeException e) {
                 last = asIOException(e);
-                YesSteveModel.LOGGER.warn("[YSM] Resource download candidate failed: {}", url, e);
+                YesSteveModel.LOGGER.warn("[BPM] Resource download candidate failed: {}", url, e);
                 monitor(config, "Download candidate failed name={} url={} error={}", entry.name(), url, e.toString());
             }
         }
@@ -220,7 +220,7 @@ public final class ModelRepoClient {
         try {
             listGithubTree(path.owner(), path.repo(), path.branch(), path.path(), config, entries);
         } catch (Exception error) {
-            YesSteveModel.LOGGER.warn("[YSM] GitHub tree listing failed for {}/{}@{}",
+            YesSteveModel.LOGGER.warn("[BPM] GitHub tree listing failed for {}/{}@{}",
                     path.owner(), path.repo(), path.branch(), error);
             monitor(config, "GitHub tree {} failed owner={} repo={} branch={} path={} error={}",
                     stage, path.owner(), path.repo(), path.branch(), path.path(), error.toString());
@@ -234,7 +234,7 @@ public final class ModelRepoClient {
         try {
             listJsDelivrDirectory(path.owner(), path.repo(), path.branch(), path.path(), config, entries, new HashSet<>(), 0);
         } catch (Exception jsDelivrError) {
-            YesSteveModel.LOGGER.warn("[YSM] jsDelivr directory listing failed for {}/{}@{}",
+            YesSteveModel.LOGGER.warn("[BPM] jsDelivr directory listing failed for {}/{}@{}",
                     path.owner(), path.repo(), path.branch(), jsDelivrError);
             monitor(config, "jsDelivr fallback failed owner={} repo={} branch={} path={} error={}",
                     path.owner(), path.repo(), path.branch(), path.path(), jsDelivrError.toString());
@@ -281,7 +281,7 @@ public final class ModelRepoClient {
             entries.add(new ModelRepoEntry(name, rawUrl, name, size, "GitHub: " + owner + "/" + repo, owner, repo, branch, childPath));
         }
         if (root.has("truncated") && root.get("truncated").getAsBoolean()) {
-            YesSteveModel.LOGGER.warn("[YSM] GitHub tree response was truncated for {}/{}", owner, repo);
+            YesSteveModel.LOGGER.warn("[BPM] GitHub tree response was truncated for {}/{}", owner, repo);
             monitor(config, "GitHub tree truncated owner={} repo={} branch={}", owner, repo, branch);
         }
     }
@@ -423,7 +423,7 @@ public final class ModelRepoClient {
                 return branch;
             }
         } catch (Exception e) {
-            YesSteveModel.LOGGER.warn("[YSM] Failed to resolve GitHub default branch for {}/{}", owner, repo, e);
+            YesSteveModel.LOGGER.warn("[BPM] Failed to resolve GitHub default branch for {}/{}", owner, repo, e);
         }
         return "main";
     }
@@ -444,7 +444,7 @@ public final class ModelRepoClient {
             }
         }
         monitor(config, "GitHub JSON failed url={} candidates={} last={}", url, candidates.size(), last == null ? "none" : last.toString());
-        YesSteveModel.LOGGER.warn("[YSM] GitHub JSON failed: {}", url, last);
+        YesSteveModel.LOGGER.warn("[BPM] GitHub JSON failed: {}", url, last);
         if (last instanceof IOException io) {
             throw io;
         }
@@ -462,7 +462,7 @@ public final class ModelRepoClient {
                 return data;
             } catch (IOException e) {
                 last = e;
-                YesSteveModel.LOGGER.warn("[YSM] GitHub candidate failed: {}", candidate, e);
+                YesSteveModel.LOGGER.warn("[BPM] GitHub candidate failed: {}", candidate, e);
                 monitor(config, "GitHub read candidate failed url={} candidate={} error={}", url, candidate, e.toString());
             }
         }
@@ -913,7 +913,7 @@ public final class ModelRepoClient {
             MessageDigest digest = MessageDigest.getInstance("SHA-1");
             return HexFormat.of().formatHex(digest.digest(value.getBytes(StandardCharsets.UTF_8)));
         } catch (Exception e) {
-            YesSteveModel.LOGGER.warn("[YSM] Failed to hash repo URL", e);
+            YesSteveModel.LOGGER.warn("[BPM] Failed to hash repo URL", e);
             return Integer.toHexString(value.hashCode());
         }
     }

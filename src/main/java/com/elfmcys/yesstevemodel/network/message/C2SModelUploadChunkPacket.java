@@ -7,7 +7,7 @@ import rip.ysm.api.network.PacketContext;
 
 public record C2SModelUploadChunkPacket(long uploadId, int offset, byte[] data) {
 
-    private static final int MAX_CHUNK_BYTES = 32_000;
+    private static final int MAX_CHUNK_BYTES = 16_000;
 
     public static void encode(C2SModelUploadChunkPacket message, FriendlyByteBuf buf) {
         buf.writeVarLong(message.uploadId);
@@ -26,3 +26,4 @@ public record C2SModelUploadChunkPacket(long uploadId, int offset, byte[] data) 
         }
     }
 }
+

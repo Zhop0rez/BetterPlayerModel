@@ -30,7 +30,7 @@ import java.util.Map;
 
 @Mixin({EntityRenderDispatcher.class})
 public class EntityRenderDispatcherMixin {
-    private static final Map<EntityRenderState, CapturedEntity> CAPTURED_ENTITIES = Collections.synchronizedMap(new IdentityHashMap<>());
+    private static final Map<EntityRenderState, CapturedEntity> CAPTURED_ENTITIES = Collections.synchronizedMap(new java.util.WeakHashMap<>());
 
     @Inject(method = "extractEntity", at = @At("RETURN"))
     private <E extends Entity> void ysm$captureEntity(E entity, float partialTick, CallbackInfoReturnable<EntityRenderState> cir) {

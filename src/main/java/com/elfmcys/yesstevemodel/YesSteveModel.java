@@ -50,6 +50,7 @@ public class YesSteveModel {
             initConfig();
         }
         YsmEventBootstrap.register();
+        com.elfmcys.yesstevemodel.config.ModSoundEvents.REGISTER.register();
     }
 
     @SuppressWarnings({"deprecation", "removal"})

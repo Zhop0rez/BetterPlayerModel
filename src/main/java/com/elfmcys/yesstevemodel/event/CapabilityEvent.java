@@ -51,6 +51,12 @@ public final class CapabilityEvent {
             if (!YesSteveModel.isAvailable()) {
                 return;
             }
+            if (trackedEntity instanceof ServerPlayer trackedPlayer) {
+                ConcurrentMap<UUID, String> states = SYNCED_PLAYER_MODEL_STATES.get(player.getUUID());
+                if (states != null) {
+                    states.remove(trackedPlayer.getUUID());
+                }
+            }
             if (trackedEntity instanceof Projectile projectile) {
                 ProjectileModelCapability.get(projectile).ifPresent(projectileModelCap -> {
                     if (projectileModelCap.isInitialized()) {

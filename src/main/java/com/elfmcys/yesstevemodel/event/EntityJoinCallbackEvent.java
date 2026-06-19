@@ -52,6 +52,8 @@ public class EntityJoinCallbackEvent {
                 } else {
                     addToCallbackList(i, consumer);
                 }
+            } else {
+                addToCallbackList(i, consumer);
             }
         });
     }

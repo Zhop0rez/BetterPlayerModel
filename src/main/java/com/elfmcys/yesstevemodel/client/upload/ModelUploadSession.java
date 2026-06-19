@@ -25,10 +25,11 @@ public final class ModelUploadSession {
     private final String sha256;
     private volatile State state = State.STARTING;
     private volatile long uploadId = 0L;
-    private volatile int chunkSize = 32000;
+    private volatile int chunkSize = 16000;
     private volatile int chunksPerTick = 4;
     private volatile int nextOffset = 0;
     private volatile Component message = Component.empty();
+    private volatile byte lastStatus = 0;
 
     private ModelUploadSession(String modelId, String fileName, byte[] data) {
         this.modelId = modelId;
@@ -70,7 +71,7 @@ public final class ModelUploadSession {
         ModelUploadSession session = new ModelUploadSession(modelId, fileName, data);
         instance = session;
         notifyListeners();
-        com.elfmcys.yesstevemodel.YesSteveModel.LOGGER.info("[YSM-NET] CLIENT: Initiating model upload for ID '{}', filename '{}', size {} bytes, sha256={}", modelId, fileName, data.length, session.sha256);
+        com.elfmcys.yesstevemodel.YesSteveModel.LOGGER.info("[BPM-NET] CLIENT: Initiating model upload for ID '{}', filename '{}', size {} bytes, sha256={}", modelId, fileName, data.length, session.sha256);
         NetworkHandler.sendToServer(new C2SModelUploadStartPacket(modelId, fileName == null ? "" : fileName, data.length, session.sha256));
         return null;
     }
@@ -124,8 +125,9 @@ public final class ModelUploadSession {
         if (s == null || s.state != State.STARTING) {
             return;
         }
+        s.lastStatus = status;
         if (status != 0) {
-            com.elfmcys.yesstevemodel.YesSteveModel.LOGGER.warn("[YSM-NET] CLIENT: Model upload start rejected by server. Status: {}, Message: '{}'", status, message);
+            com.elfmcys.yesstevemodel.YesSteveModel.LOGGER.warn("[BPM-NET] CLIENT: Model upload start rejected by server. Status: {}, Message: '{}'", status, message);
             s.fail(appendServerMessage(getRequestErrorText(status), message));
             return;
         }
@@ -134,7 +136,7 @@ public final class ModelUploadSession {
         s.chunksPerTick = Math.max(1, chunksPerTick);
         s.state = State.UPLOADING;
         s.message = Component.translatable("gui.better_player_model.import.state.importing");
-        com.elfmcys.yesstevemodel.YesSteveModel.LOGGER.info("[YSM-NET] CLIENT: Model upload start ACK received. Upload ID: {}, Chunk size: {}, Chunks per tick: {}", uploadId, chunkSize, chunksPerTick);
+        com.elfmcys.yesstevemodel.YesSteveModel.LOGGER.info("[BPM-NET] CLIENT: Model upload start ACK received. Upload ID: {}, Chunk size: {}, Chunks per tick: {}", uploadId, chunkSize, chunksPerTick);
         notifyListeners();
     }
 
@@ -143,15 +145,24 @@ public final class ModelUploadSession {
         if (s == null || s.uploadId != uploadId) {
             return;
         }
+        s.lastStatus = status;
         if (status == 0) {
             s.state = State.COMPLETED;
             s.message = Component.translatable("gui.better_player_model.import.state.imported_as", modelId);
-            com.elfmcys.yesstevemodel.YesSteveModel.LOGGER.info("[YSM-NET] CLIENT: Model upload completed successfully! Model ID on server: '{}'", modelId);
+            com.elfmcys.yesstevemodel.YesSteveModel.LOGGER.info("[BPM-NET] CLIENT: Model upload completed successfully! Model ID on server: '{}'", modelId);
         } else {
-            com.elfmcys.yesstevemodel.YesSteveModel.LOGGER.warn("[YSM-NET] CLIENT: Model upload verification failed on server. Status: {}, Message: '{}'", status, message);
+            com.elfmcys.yesstevemodel.YesSteveModel.LOGGER.warn("[BPM-NET] CLIENT: Model upload verification failed on server. Status: {}, Message: '{}'", status, message);
             s.fail(appendServerMessage(getResponseErrorText(status), message));
         }
         notifyListeners();
+    }
+
+    public byte getLastStatus() {
+        return lastStatus;
+    }
+
+    public long getUploadId() {
+        return uploadId;
     }
 
     public static void tickCurrent() {
@@ -255,13 +266,13 @@ public final class ModelUploadSession {
             int end = Math.min(nextOffset + chunkSize, data.length);
             byte[] slice = Arrays.copyOfRange(data, nextOffset, end);
             NetworkHandler.sendToServer(new C2SModelUploadChunkPacket(uploadId, nextOffset, slice));
-            com.elfmcys.yesstevemodel.YesSteveModel.LOGGER.info("[YSM-NET] CLIENT: Uploaded chunk offset {}/{} ({} bytes) for upload ID {}", nextOffset, data.length, slice.length, uploadId);
+            com.elfmcys.yesstevemodel.YesSteveModel.LOGGER.info("[BPM-NET] CLIENT: Uploaded chunk offset {}/{} ({} bytes) for upload ID {}", nextOffset, data.length, slice.length, uploadId);
             nextOffset = end;
         }
         if (nextOffset >= data.length) {
             state = State.FINISHING;
             message = Component.translatable("gui.better_player_model.import.state.verifying");
-            com.elfmcys.yesstevemodel.YesSteveModel.LOGGER.info("[YSM-NET] CLIENT: Finished sending all chunks for upload ID {}. Sent to verification.", uploadId);
+            com.elfmcys.yesstevemodel.YesSteveModel.LOGGER.info("[BPM-NET] CLIENT: Finished sending all chunks for upload ID {}. Sent to verification.", uploadId);
             NetworkHandler.sendToServer(new C2SModelUploadFinishPacket(uploadId));
         }
         notifyListeners();
@@ -340,3 +351,4 @@ public final class ModelUploadSession {
         void onSessionUpdate(ModelUploadSession session);
     }
 }
+
