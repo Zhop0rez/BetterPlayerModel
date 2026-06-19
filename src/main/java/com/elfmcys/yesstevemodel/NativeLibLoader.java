@@ -1,9 +1,10 @@
 package com.elfmcys.yesstevemodel;
 
 import net.minecraft.network.chat.Component;
+import java.io.IOException;
 
 public final class NativeLibLoader {
-    public static void init() {
+    public static void init() throws IOException {
         // Pure Java build - no native libraries used
     }
 
