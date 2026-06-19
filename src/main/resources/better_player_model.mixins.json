@@ -14,7 +14,7 @@
     "client.FishingHookAccessor", "client.InventoryScreenMixin", "client.LivingEntityAccessor",
     "client.LivingRendererMixin", "client.MinecraftAccessor", "client.PauseScreenMixin", "client.ScreenAccessor",
     "client.ThrowableItemProjectileAccessor", "client.WorldRendererMixin", "client.EntityRidingAccessor",
-    "client.ScreenMixin"
+    "client.ScreenMixin", "client.OverlayTextureAccessor", "client.LightTextureAccessor"
   ],
   "mixins": [
     "AbstractArrowEntityMixin", "ConnectionAccessor", "ProjectileEntityMixin", "ServerCommonPacketListenerImplAccessor", "ServerPlayerMixin"

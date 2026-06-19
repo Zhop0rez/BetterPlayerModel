@@ -33,6 +33,8 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.glfw.GLFW;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -233,7 +235,10 @@ public class ModelButton extends Button {
                 }
                 if (session.getState() == ModelUploadSession.State.FAILED) {
                     ModelUploadSession.removeListener(this);
-                    if (player != null) {
+                    if (session.getLastStatus() == 1 && session.getUploadId() == 0L) {
+                        ClientModelManager.markLocalModelUploaded(modelId);
+                        sendSwitchModel(modelId, textureName);
+                    } else if (player != null) {
                         player.displayClientMessage(session.getMessage(), false);
                     }
                 }
@@ -334,7 +339,7 @@ public class ModelButton extends Button {
         if (this.backgroundTexture != null) {
             GlStateManager._enableBlend();
             GlStateManager._blendFuncSeparate(770, 771, 1, 0);
-            guiGraphics.blit(this.backgroundTexture.getResourceLocation().get(), x, y, 0.0f, 0.0f, this.width, this.height, this.width, this.height);
+            guiGraphics.blit(this.backgroundTexture.getResourceLocation().get(), x, y, 0, 0, this.width, this.height, this.width, this.height);
             GlStateManager._disableBlend();
         }
         int previewBottom = y + this.height - 20;
@@ -345,7 +350,7 @@ public class ModelButton extends Button {
         if (this.foregroundTexture != null) {
             GlStateManager._enableBlend();
             GlStateManager._blendFuncSeparate(770, 771, 1, 0);
-            guiGraphics.blit(this.foregroundTexture.getResourceLocation().get(), x, y, 0.0f, 0.0f, this.width, this.height, this.width, this.height);
+            guiGraphics.blit(this.foregroundTexture.getResourceLocation().get(), x, y, 0, 0, this.width, this.height, this.width, this.height);
             GlStateManager._disableBlend();
         }
         if (this.isStarred) {
@@ -368,7 +373,7 @@ public class ModelButton extends Button {
             StarModelsCapability.get(minecraft.player).ifPresent(cap -> {
                 if (cap.containsModel(this.modelIdHolder.getModelId())) {
                     int iconX = (x + this.width) - 14;
-                    guiGraphics.blit(ICON_TEXTURE, iconX, y, 0.0f, 0.0f, 16, 16, 256, 256);
+                    guiGraphics.blit(ICON_TEXTURE, iconX, y, 0, 0, 16, 16, 256, 256);
                 }
             });
         }
@@ -382,9 +387,3 @@ public class ModelButton extends Button {
         guiGraphics.drawString(font, formattedCharSequence, centerX - (font.width(formattedCharSequence) / 2), y, color, true);
     }
 }
-
-
-
-
-
-

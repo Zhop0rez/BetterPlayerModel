@@ -28,7 +28,10 @@ public class EntityRenderDispatcherMixin {
         if (entity instanceof Projectile projectile) {
             if (!GeneralConfig.DISABLE_PROJECTILE_MODEL.get()) {
                 if (projectile instanceof FishingHook fishingHook) {
+                    poseStack.pushPose();
+                    poseStack.translate(x, y, z);
                     boolean shouldRenderVanilla = CustomFishingHookRenderer.tryRenderCustomHook(fishingHook, rotationYaw, partialTick, poseStack, bufferSource, packedLight);
+                    poseStack.popPose();
                     if (!shouldRenderVanilla) {
                         if (bufferSource instanceof MultiBufferSource.BufferSource bs) {
                             bs.endBatch();
@@ -37,7 +40,10 @@ public class EntityRenderDispatcherMixin {
                     }
                     return;
                 }
+                poseStack.pushPose();
+                poseStack.translate(x, y, z);
                 boolean shouldRenderVanilla = CustomProjectileRenderer.renderProjectile(projectile, rotationYaw, partialTick, poseStack, bufferSource, packedLight);
+                poseStack.popPose();
                 if (!shouldRenderVanilla) {
                     if (bufferSource instanceof MultiBufferSource.BufferSource bs) {
                         bs.endBatch();
@@ -48,8 +54,11 @@ public class EntityRenderDispatcherMixin {
             }
         }
         if (!GeneralConfig.DISABLE_VEHICLE_MODEL.get()) {
+            poseStack.pushPose();
+            poseStack.translate(x, y, z);
             ModelPreviewRenderer.renderVehicleModel(entity, poseStack, partialTick);
             boolean shouldRenderVanilla = CustomVehicleRenderer.renderVehicle(entity, rotationYaw, partialTick, poseStack, bufferSource, packedLight);
+            poseStack.popPose();
             if (!shouldRenderVanilla) {
                 if (bufferSource instanceof MultiBufferSource.BufferSource bs) {
                     bs.endBatch();

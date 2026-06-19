@@ -37,7 +37,7 @@ public final class ResourceStationConfig {
             try (InputStream in = Files.newInputStream(FILE)) {
                 properties.load(in);
             } catch (IOException e) {
-                YesSteveModel.LOGGER.warn("[YSM] Failed to load resource station config", e);
+                YesSteveModel.LOGGER.warn("[BPM] Failed to load resource station config", e);
             }
         }
         List<String> urls = new ArrayList<>();
@@ -91,7 +91,7 @@ public final class ResourceStationConfig {
                         FILE, state.selectedUrl(), state.urls().size(), state.timeoutMs(), state.maxDownloadBytes(), state.preferGithubAccelerator(), state.githubAccelerators().size());
             }
         } catch (IOException e) {
-            YesSteveModel.LOGGER.warn("[YSM] Failed to save resource station config", e);
+            YesSteveModel.LOGGER.warn("[BPM] Failed to save resource station config", e);
         }
     }
 

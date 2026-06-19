@@ -27,8 +27,7 @@ import java.util.stream.Stream;
 public class ModelUploadScreen extends Screen implements ModelUploadSession.Listener {
     private static final long MODEL_FOLDER_POLL_INTERVAL_MS = 1000L;
     private static final long MODEL_FOLDER_POLL_WINDOW_MS = 60000L;
-    private static final Pattern INVALID_MODEL_ID_CHARS = Pattern.compile("[^a-z0-9_./-]+");
-    private final Screen parentScreen;
+        private final Screen parentScreen;
     private final Queue<ModelImportFilePicker.PickedFile> pendingImports = new ArrayDeque<>();
     private long lastFlashTime = 0L;
     private Component error = Component.empty();
@@ -61,9 +60,10 @@ public class ModelUploadScreen extends Screen implements ModelUploadSession.List
         clearWidgets();
         ModelUploadSession.addListener(this);
         int buttonY = 10;
-        addRenderableWidget(new FlatColorButton(this.width - 350, buttonY, 130, 18, Component.translatable("gui.better_player_model.import.choose_file"), button -> openFilePicker()));
-        addRenderableWidget(new FlatColorButton(this.width - 210, buttonY, 130, 18, Component.translatable("gui.better_player_model.open_model_folder.open"), button -> openModelFolder()));
-        addRenderableWidget(new FlatColorButton(this.width - 70, buttonY, 60, 18, Component.translatable("gui.better_player_model.model.return"), button -> Minecraft.getInstance().setScreen(this.parentScreen)));
+        addRenderableWidget(new FlatColorButton(this.width - 410, buttonY, 130, 18, Component.translatable("gui.better_player_model.import.choose_file"), button -> openFilePicker()));
+        addRenderableWidget(new FlatColorButton(this.width - 270, buttonY, 130, 18, Component.translatable("gui.better_player_model.open_model_folder.open"), button -> openModelFolder()));
+        addRenderableWidget(new FlatColorButton(this.width - 130, buttonY, 70, 18, Component.translatable("gui.better_player_model.resource_station.refresh"), button -> triggerManualRescan()));
+        addRenderableWidget(new FlatColorButton(this.width - 50, buttonY, 40, 18, Component.translatable("gui.better_player_model.model.return"), button -> Minecraft.getInstance().setScreen(this.parentScreen)));
     }
 
     @Override
@@ -178,6 +178,18 @@ public class ModelUploadScreen extends Screen implements ModelUploadSession.List
         this.serverStatusColor = ChatFormatting.YELLOW;
     }
 
+    private void triggerManualRescan() {
+        this.nextModelFolderPollMs = 0L;
+        this.localStatus = Component.translatable("gui.better_player_model.import.state.folder_polling");
+        this.localStatusColor = ChatFormatting.GRAY;
+        try {
+            this.lastModelFolderStamp = -1L;
+            this.modelFolderPollUntilMs = PlatformUtil.getMillis() + MODEL_FOLDER_POLL_WINDOW_MS;
+        } catch (Exception e) {
+            this.error = Component.translatable("gui.better_player_model.import.error.local_reload_failed", e.getMessage());
+        }
+    }
+
     private void openModelFolder() {
         try {
             Files.createDirectories(ServerModelManager.CUSTOM);
@@ -207,7 +219,7 @@ public class ModelUploadScreen extends Screen implements ModelUploadSession.List
         while (normalized.startsWith("/")) {
             normalized = normalized.substring(1);
         }
-        normalized = INVALID_MODEL_ID_CHARS.matcher(normalized).replaceAll("_").replaceAll("/+", "/");
+        normalized = normalized.replaceAll("/+", "/");
         while (normalized.contains("..")) {
             normalized = normalized.replace("..", ".");
         }

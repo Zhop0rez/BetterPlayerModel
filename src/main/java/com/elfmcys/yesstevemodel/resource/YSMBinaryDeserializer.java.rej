@@ -1,0 +1,46 @@
+diff a/src/main/java/com/elfmcys/yesstevemodel/resource/YSMBinaryDeserializer.java b/src/main/java/com/elfmcys/yesstevemodel/resource/YSMBinaryDeserializer.java	(rejected hunks)
+@@ -476,14 +476,17 @@ public class YSMBinaryDeserializer implements AutoCloseable{
+         RawYsmModel.RawGeometry geo = new RawYsmModel.RawGeometry();
+ 
+         int boneCount = reader.readVarInt();
++        validateCapacity(boneCount, 1, "bones");
+         for (int i = 0; i < boneCount; i++) {
+             RawYsmModel.RawBone bone = new RawYsmModel.RawBone();
+             bone.parentName = reader.readString();
+             int cubeCount = reader.readVarInt();
++            validateCapacity(cubeCount, 1, "cubes");
+ 
+             for (int j = 0; j < cubeCount; j++) {
+                 RawYsmModel.RawCube cube = new RawYsmModel.RawCube();
+                 int faceCount = reader.readVarInt();
++                validateCapacity(faceCount, 1, "faces");
+                 for (int k = 0; k < faceCount; k++) {
+                     RawYsmModel.RawFace face = new RawYsmModel.RawFace();
+                     face.normal = readVector3D(); // normal
+@@ -520,6 +523,7 @@ public class YSMBinaryDeserializer implements AutoCloseable{
+         geo.visibleBoundsWidth = reader.readFloat();
+ 
+         int visibleBoundsOffsetSize = reader.readVarInt();
++        validateCapacity(visibleBoundsOffsetSize, 4, "visibleBoundsOffsetSize");
+         geo.visibleBoundsOffset = new float[visibleBoundsOffsetSize];
+         for (int i = 0; i < visibleBoundsOffsetSize; i++) {
+             geo.visibleBoundsOffset[i] = reader.readFloat();
+@@ -689,6 +693,7 @@ public class YSMBinaryDeserializer implements AutoCloseable{
+             reader.readString(); // extra animation name
+         }
+         int authorsCount = reader.readVarInt();
++        validateCapacity(authorsCount, 1, "authors");
+         for (int i = 0; i < authorsCount; i++) {
+             RawYsmModel.RawMetadata.Author author = new RawYsmModel.RawMetadata.Author();
+             author.name = reader.readString();
+@@ -994,4 +999,10 @@ public class YSMBinaryDeserializer implements AutoCloseable{
+     public YSMByteBuf getReader() {
+         return reader;
+     }
++
++    private void validateCapacity(long elements, long sizePerElement, String type) {
++        if (elements < 0 || elements * sizePerElement > reader.getRawBuf().readableBytes()) {
++            throw new IllegalArgumentException("Invalid " + type + " count: " + elements);
++        }
++    }
+ }

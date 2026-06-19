@@ -54,22 +54,22 @@ public class C2SRequestSwitchModelPacket {
                 String modelId = message.modelId;
                 boolean changed = false;
                 if (!ServerModelManager.getServerModelInfo().containsKey(modelId)) {
-                    YesSteveModel.LOGGER.warn("[YSM] Reject model switch for '{}': unknown model '{}'", sender.getScoreboardName(), modelId);
+                    YesSteveModel.LOGGER.warn("[BPM] Reject model switch for '{}': unknown model '{}'", sender.getScoreboardName(), modelId);
                     cap.resetToDefault();
                     changed = true;
                 } else if (ServerModelManager.getAuthModels().contains(modelId) && !cap2.containsModel(modelId)) {
-                    YesSteveModel.LOGGER.warn("[YSM] Reject model switch for '{}': model '{}' requires auth", sender.getScoreboardName(), modelId);
+                    YesSteveModel.LOGGER.warn("[BPM] Reject model switch for '{}': model '{}' requires auth", sender.getScoreboardName(), modelId);
                     cap.resetToDefault();
                     changed = true;
                 } else {
                     String textureId = ServerModelManager.resolveTextureOrDefault(modelId, message.textureId);
                     if (textureId == null) {
-                        YesSteveModel.LOGGER.warn("[YSM] Reject model switch for '{}': model '{}' has no valid texture", sender.getScoreboardName(), modelId);
+                        YesSteveModel.LOGGER.warn("[BPM] Reject model switch for '{}': model '{}' has no valid texture", sender.getScoreboardName(), modelId);
                         cap.resetToDefault();
                         changed = true;
                     } else {
                         if (!textureId.equals(message.textureId)) {
-                            YesSteveModel.LOGGER.warn("[YSM] Replaced invalid texture '{}' for model '{}' on player '{}' with '{}'", message.textureId, modelId, sender.getScoreboardName(), textureId);
+                            YesSteveModel.LOGGER.warn("[BPM] Replaced invalid texture '{}' for model '{}' on player '{}' with '{}'", message.textureId, modelId, sender.getScoreboardName(), textureId);
                         }
                         cap.setModelAndTexture(modelId, textureId);
                         changed = true;

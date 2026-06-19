@@ -55,8 +55,17 @@ public final class PlayerCapability extends CustomPlayerEntity {
             return Optional.of(existing);
         }
         PlayerCapability fresh = new PlayerCapability(player);
+        if (existing != null) {
+            fresh.copyFrom(existing);
+            existing.clearModel();
+        }
         STORE.put(uuid, fresh);
         return Optional.of(fresh);
+    }
+
+    public static void clearAll() {
+        STORE.values().forEach(PlayerCapability::clearModel);
+        STORE.clear();
     }
 
     public static Optional<PlayerCapability> get(Entity entity) {
