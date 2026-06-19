@@ -39,8 +39,18 @@ public class YesSteveModel {
 
     public static void init() {
         LOGGER.info("Initializing YesSteveModel, platform: " + PlatformAPI.getPlatformName());
-        initConfig();
+        try {
+            NativeLibLoader.init();
+        } catch (IOException e) {
+            LOGGER.error("Failed to initialize native lib", e);
+        }
+        if (!NativeLibLoader.isAvailable()) {
+            LOGGER.error(getErrorMessage());
+        } else {
+            initConfig();
+        }
         YsmEventBootstrap.register();
+        com.elfmcys.yesstevemodel.config.ModSoundEvents.REGISTER.register();
     }
 
     @SuppressWarnings({"deprecation", "removal"})
@@ -56,26 +66,22 @@ public class YesSteveModel {
         }
         ConfigRegistration.register(MOD_ID, ModConfig.Type.CLIENT, GeneralConfig.buildSpec());
         ConfigRegistration.register(MOD_ID, ModConfig.Type.SERVER, ServerConfig.buildSpec());
-        if (!PlatformAPI.isServer()) {
-            // MC 26.x: DeferredRegister.register now requires (String, Supplier) args
-            // ModSoundEvents.REGISTER.register("", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(MOD_ID, "")));
-        }
     }
 
     @Keep
     public static boolean isAvailable() {
-        return true;
+        return NativeLibLoader.isAvailable();
     }
 
     public static boolean isOnAndroid() {
-        return false;
+        return NativeLibLoader.isOnAndroid();
     }
 
     public static Component getUnavailableComponent() {
-        return null;
+        return NativeLibLoader.getErrorComponent();
     }
 
     public static String getErrorMessage() {
-        return null;
+        return NativeLibLoader.getErrorMessage();
     }
 }

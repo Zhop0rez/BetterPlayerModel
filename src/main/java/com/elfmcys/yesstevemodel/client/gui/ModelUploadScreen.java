@@ -27,8 +27,7 @@ import java.util.stream.Stream;
 public class ModelUploadScreen extends Screen implements ModelUploadSession.Listener {
     private static final long MODEL_FOLDER_POLL_INTERVAL_MS = 1000L;
     private static final long MODEL_FOLDER_POLL_WINDOW_MS = 60000L;
-    private static final Pattern INVALID_MODEL_ID_CHARS = Pattern.compile("[^a-z0-9_./-]+");
-    private final Screen parentScreen;
+        private final Screen parentScreen;
     private final Queue<ModelImportFilePicker.PickedFile> pendingImports = new ArrayDeque<>();
     private long lastFlashTime = 0L;
     private Component error = Component.empty();
@@ -207,7 +206,7 @@ public class ModelUploadScreen extends Screen implements ModelUploadSession.List
         while (normalized.startsWith("/")) {
             normalized = normalized.substring(1);
         }
-        normalized = INVALID_MODEL_ID_CHARS.matcher(normalized).replaceAll("_").replaceAll("/+", "/");
+        normalized = normalized.replaceAll("/+", "/");
         while (normalized.contains("..")) {
             normalized = normalized.replace("..", ".");
         }

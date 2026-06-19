@@ -61,6 +61,9 @@ public abstract class AbstractProjectileRenderer<TEntity extends Projectile, T e
                     xRot += 90.0f;
                 }
                 poseStack.mulPose(Axis.ZP.rotationDegrees(xRot));
+                float width = animatable.getWidthScale();
+                float height = animatable.getHeightScale();
+                poseStack.scale(width, height, width);
                 renderWithBoneAndRenderType(model, animatable, partialTick, renderType, poseStack, bufferSource, 0, null, packedLight, getPackedLight(projectile, 0.0f), color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f, color.getAlpha() / 255.0f);
                 poseStack.popPose();
             }

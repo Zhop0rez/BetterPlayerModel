@@ -17,7 +17,7 @@ public final class ModelMemoryProfiler {
         }
         Runtime runtime = Runtime.getRuntime();
         long used = runtime.totalMemory() - runtime.freeMemory();
-        YesSteveModel.LOGGER.info("[YSM][Memory] {} model={} heapUsed={} MiB heapTotal={} MiB heapMax={} MiB",
+        YesSteveModel.LOGGER.info("[BPM][Memory] {} model={} heapUsed={} MiB heapTotal={} MiB heapMax={} MiB",
                 stage,
                 modelId == null ? "-" : modelId,
                 toMiB(used),
@@ -31,7 +31,7 @@ public final class ModelMemoryProfiler {
         }
         Runtime runtime = Runtime.getRuntime();
         long used = runtime.totalMemory() - runtime.freeMemory();
-        YesSteveModel.LOGGER.info("[YSM][Memory] {} model={} bytes={} KiB heapUsed={} MiB",
+        YesSteveModel.LOGGER.info("[BPM][Memory] {} model={} bytes={} KiB heapUsed={} MiB",
                 stage,
                 modelId == null ? "-" : modelId,
                 bytes == null ? 0 : bytes.length / 1024,

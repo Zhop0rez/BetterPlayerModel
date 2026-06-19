@@ -59,6 +59,15 @@ public class OuterFileTexture extends AbstractTexture implements ITextureMap {
     }
 
     @Override
+    public void close() {
+        super.close();
+        this.texture = null;
+        this.textureView = null;
+        this.sampler = null;
+        this.uploaded = false;
+    }
+
+    @Override
     public GpuTextureView getTextureView() {
         if (!isLoaded() && RenderSystem.isOnRenderThread()) {
             doLoad();

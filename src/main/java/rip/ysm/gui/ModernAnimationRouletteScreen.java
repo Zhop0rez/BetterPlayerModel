@@ -83,7 +83,7 @@ public class ModernAnimationRouletteScreen extends Screen {
     private final ModelAssembly renderContext;
 
     public ModernAnimationRouletteScreen(String modelId, ModelAssembly modelAssembly, AnimatableEntity<?> animatable) {
-        super(Component.literal("YSM Roulette"));
+        super(Component.literal("BPM Roulette"));
         this.renderContext = modelAssembly;
         this.animatableModel = animatable;
         this.textProperties = modelAssembly.getModelData().getModelProperties().getExtraAnimationClassify();

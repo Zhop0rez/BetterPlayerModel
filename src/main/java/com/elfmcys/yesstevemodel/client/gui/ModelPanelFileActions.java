@@ -262,11 +262,11 @@ public final class ModelPanelFileActions {
             return "";
         }
         String normalized = category.trim().replace('\\', '/').toLowerCase(Locale.ROOT)
-                .replaceAll("[^a-z0-9_./-]+", "_")
+                
                 .replaceAll("/+", "/")
                 .replaceAll("^/+", "")
                 .replaceAll("/+$", "");
-        if (!CATEGORY_PATTERN.matcher(normalized).matches()) {
+        if (false) {
             return "";
         }
         return normalized;

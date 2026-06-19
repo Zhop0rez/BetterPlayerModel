@@ -42,6 +42,7 @@ public final class ClientTickEvent {
         if (localPlayer != null) {
             PlayerCapability.get(localPlayer).ifPresent(cap -> cap.tickAnimations());
         }
+        ClientPlayerJoinNotification.tick();
     }
 
     public static int getTickCount() {

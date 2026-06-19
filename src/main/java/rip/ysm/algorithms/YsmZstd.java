@@ -1,6 +1,6 @@
 package rip.ysm.algorithms;
 
-
+import com.elfmcys.yesstevemodel.NativeLibLoader;
 import com.github.luben.zstd.Zstd;
 import com.github.luben.zstd.ZstdInputStreamNoFinalizer;
 import com.ysm.parser.YSMNative;
@@ -48,15 +48,15 @@ public class YsmZstd {
     }
 
     private static byte[] decompressWithYsmNative(byte[] rawData, int offset, int length) {
-        if (!false) {
-            throw new UnsatisfiedLinkError("YSM native library is not loaded");
+        if (!NativeLibLoader.isLoaded()) {
+            throw new UnsatisfiedLinkError("BPM native library is not loaded");
         }
         return requireDecompressedLimit(YSMNative.ysmZstdDecompress(copyInput(rawData, offset, length)));
     }
 
     private static byte[] compressWithYsmNative(byte[] rawData, int offset, int length, int level) {
-        if (!false) {
-            throw new UnsatisfiedLinkError("YSM native library is not loaded");
+        if (!NativeLibLoader.isLoaded()) {
+            throw new UnsatisfiedLinkError("BPM native library is not loaded");
         }
         return YSMNative.ysmZstdCompress(copyInput(rawData, offset, length), level);
     }
@@ -78,7 +78,7 @@ public class YsmZstd {
                 zstdJniError.addSuppressed(failure);
             }
             failure = zstdJniError;
-            if (false) {
+            if (NativeLibLoader.isOnAndroid()) {
                 try {
                     return decompressRawFrame(zstdData);
                 } catch (Throwable rawFrameError) {
@@ -89,7 +89,7 @@ public class YsmZstd {
                 return ZstdUtil.decompress(zstdData);
             } catch (Throwable fallbackError) {
                 failure.addSuppressed(fallbackError);
-                if (!false) {
+                if (!NativeLibLoader.isOnAndroid()) {
                     try {
                         return decompressRawFrame(zstdData);
                     } catch (Throwable rawFrameError) {
@@ -105,14 +105,14 @@ public class YsmZstd {
     }
 
     private static byte[] decompressWithNative(byte[] zstdData) {
-        if (!false) {
-            throw new UnsatisfiedLinkError("YSM native library is not loaded");
+        if (!NativeLibLoader.isLoaded()) {
+            throw new UnsatisfiedLinkError("BPM native library is not loaded");
         }
         return requireDecompressedLimit(YSMNative.zstdDecompress(zstdData));
     }
 
     private static byte[] decompressWithZstdJni(byte[] zstdData) throws IOException {
-        if (false) {
+        if (NativeLibLoader.isOnAndroid()) {
             throw new UnsatisfiedLinkError("Bundled zstd-jni is not compatible with Android/Bionic");
         }
         try {
@@ -166,7 +166,7 @@ public class YsmZstd {
         } catch (Throwable nativeError) {
             failure = nativeError;
         }
-        if (false) {
+        if (NativeLibLoader.isOnAndroid()) {
             return compressRawFrame(input);
         }
         try {
@@ -188,8 +188,8 @@ public class YsmZstd {
     }
 
     private static byte[] compressWithNative(byte[] input, int level) {
-        if (!false) {
-            throw new UnsatisfiedLinkError("YSM native library is not loaded");
+        if (!NativeLibLoader.isLoaded()) {
+            throw new UnsatisfiedLinkError("BPM native library is not loaded");
         }
         return YSMNative.zstdCompress(input, level);
     }

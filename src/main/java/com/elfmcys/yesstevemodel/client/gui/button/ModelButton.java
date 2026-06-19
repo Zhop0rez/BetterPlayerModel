@@ -235,7 +235,10 @@ public class ModelButton extends Button {
                 }
                 if (session.getState() == ModelUploadSession.State.FAILED) {
                     ModelUploadSession.removeListener(this);
-                    if (player != null) {
+                    if (session.getLastStatus() == 1 && session.getUploadId() == 0L) {
+                        ClientModelManager.markLocalModelUploaded(modelId);
+                        sendSwitchModel(modelId, textureName);
+                    } else if (player != null) {
                         player.displayClientMessage(session.getMessage(), false);
                     }
                 }

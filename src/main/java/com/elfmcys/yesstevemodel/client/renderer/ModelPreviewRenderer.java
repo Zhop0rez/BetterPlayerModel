@@ -64,7 +64,7 @@ public final class ModelPreviewRenderer {
     private static final float BED_WHITE_G = 0.88f;
     private static final float BED_WHITE_B = 0.78f;
 
-    private static final Map<EntityRenderState, GuiPreviewRequest> GUI_PREVIEWS = Collections.synchronizedMap(new IdentityHashMap<>());
+    private static final Map<EntityRenderState, GuiPreviewRequest> GUI_PREVIEWS = Collections.synchronizedMap(new java.util.WeakHashMap<>());
 
     private static boolean isPreviewMode = false;
 
