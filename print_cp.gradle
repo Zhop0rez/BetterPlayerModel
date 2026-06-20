@@ -1,4 +1,0 @@
-def compileClasspath = configurations.compileClasspath.files
-compileClasspath.each { file ->
-    println file.absolutePath
-}
