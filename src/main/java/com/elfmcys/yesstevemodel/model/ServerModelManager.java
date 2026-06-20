@@ -960,7 +960,7 @@ public final class ServerModelManager {
 
                             if (sendModelData(uuid, ByteBuffer.wrap(result.data()), new PendingTransfer())) {
                                 Set<String> delivered = deliveredModelIds.computeIfAbsent(uuid, ignored -> ConcurrentHashMap.newKeySet());
-                                for (ServerModelData model : modelsToSend) {
+                                for (ServerModelData model : state.allowedModels) {
                                     delivered.add(model.getModelId());
                                 }
                             }
@@ -2081,6 +2081,7 @@ public final class ServerModelManager {
         }
     }
 }
+
 
 
 
