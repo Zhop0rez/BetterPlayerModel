@@ -3,7 +3,7 @@ plugins {
 	id 'maven-publish'
 }
 
-version = '1.1.0-fabric-1.21.1'
+version = '1.1.1-fabric-1.21.1'
 group = 'rip.ysm'
 
 base {
@@ -98,6 +98,7 @@ loom {
         defaultRefmapName = "better_player_model.refmap.json"
     }
 }
+
 
 
 
