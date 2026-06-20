@@ -514,7 +514,7 @@ public final class ServerModelManager {
 
                     // з™јйЂЃеЏЇз”ЁжЁЎећ‹
                     state.step = 2;
-                    sendPacket03(uuid, state);
+                    sendPacket03(uuid, state, state.allowedModels);
                 } else if (state.step == 2 || state.step == 3) {
                     byte[] decrypted = YsmCrypt.decrypt(packetBytes, state.key1);
                     if (decrypted == null) return;
@@ -960,7 +960,7 @@ public final class ServerModelManager {
 
                             if (sendModelData(uuid, ByteBuffer.wrap(result.data()), new PendingTransfer())) {
                                 Set<String> delivered = deliveredModelIds.computeIfAbsent(uuid, ignored -> ConcurrentHashMap.newKeySet());
-                                for (ServerModelData model : state.allowedModels) {
+                                for (ServerModelData model : modelsToSend) {
                                     delivered.add(model.getModelId());
                                 }
                             }
@@ -971,7 +971,7 @@ public final class ServerModelManager {
                         if (modelOverride != null && state.step >= 2) {
                             synchronized (syncStates) {
                                 state.step = 2;
-                                sendPacket03(uuid, state);
+                                sendPacket03(uuid, state, modelOverride);
                                 Set<String> delivered = deliveredModelIds.computeIfAbsent(uuid, ignored -> ConcurrentHashMap.newKeySet());
                                 for (ServerModelData model : modelOverride) {
                                     delivered.add(model.getModelId());
@@ -987,7 +987,7 @@ public final class ServerModelManager {
         });
     }
 
-    private static void sendPacket03(UUID uuid, PlayerSyncState state) {
+    private static void sendPacket03(UUID uuid, PlayerSyncState state, java.util.Collection<ServerModelData> modelsToSend) {
         int garbageLen = 16 + theRandom.nextInt(48);
         byte[] garbage = new byte[garbageLen];
         theRandom.nextBytes(garbage);
@@ -1001,8 +1001,8 @@ public final class ServerModelManager {
             outBuf.getRawBuf().writeBytes(serverKey);
             outBuf.getRawBuf().writeBytes(state.clientKey);
 
-            outBuf.writeVarInt(state.allowedModels.size());
-            for (ServerModelData model : state.allowedModels) {
+            outBuf.writeVarInt(modelsToSend.size());
+            for (ServerModelData model : modelsToSend) {
                 String sha256 = model.getLoadedModelData().getModelHash();
                 long[] hashes = YsmCrypt.calculateModelHashes(sha256, serverKey);
                 outBuf.writeVarLong(hashes[0]);
@@ -2081,5 +2081,6 @@ public final class ServerModelManager {
         }
     }
 }
+
 
 
