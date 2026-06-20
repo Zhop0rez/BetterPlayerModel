@@ -10,7 +10,8 @@ import com.elfmcys.yesstevemodel.geckolib3.util.EModelRenderCycle;
 import com.elfmcys.yesstevemodel.geckolib3.util.IRenderCycle;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
@@ -21,22 +22,22 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 
 public interface IGeoRenderer<T extends AnimatableEntity<?>> {
-    MultiBufferSource getCurrentRTB();
+    SubmitNodeCollector getCurrentRTB();
 
-    default void setCurrentRTB(MultiBufferSource bufferSource) {
+    default void setCurrentRTB(SubmitNodeCollector bufferSource) {
     }
 
-    default void renderWithBone(AnimatedGeoModel model, T animatable, float partialTick, PoseStack poseStack, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer vertexConsumer, int packedLight, int packedOverlayIn, float red, float green, float blue, float alpha) {
+    default void renderWithBone(AnimatedGeoModel model, T animatable, float partialTick, PoseStack poseStack, @Nullable SubmitNodeCollector bufferSource, @Nullable VertexConsumer vertexConsumer, int packedLight, int packedOverlayIn, float red, float green, float blue, float alpha) {
         setCurrentRTB(bufferSource);
         renderEarly(animatable, poseStack, partialTick, bufferSource, vertexConsumer, packedLight, packedOverlayIn, red, green, blue, alpha);
         renderLate(animatable, poseStack, partialTick, bufferSource, vertexConsumer, packedLight, packedOverlayIn, red, green, blue, alpha);
     }
 
-    default void renderWithBoneAndRenderType(AnimatedGeoModel model, T animatable, float partialTick, RenderType renderType, PoseStack poseStack, @Nullable MultiBufferSource bufferSource, int i, @Nullable VertexConsumer vertexConsumer, int i2, int i3, float f2, float f3, float f4, float f5) {
+    default void renderWithBoneAndRenderType(AnimatedGeoModel model, T animatable, float partialTick, RenderType renderType, PoseStack poseStack, @Nullable SubmitNodeCollector bufferSource, int i, @Nullable VertexConsumer vertexConsumer, int i2, int i3, float f2, float f3, float f4, float f5) {
         renderWithBoneAndRenderType(model, animatable, partialTick, renderType, poseStack, bufferSource, i, vertexConsumer, i2, i3, f2, f3, f4, f5, animatable.getTextureLocation());
     }
 
-    default void renderWithBoneAndRenderType(AnimatedGeoModel model, T animatable, float partialTick, RenderType renderType, PoseStack poseStack, @Nullable MultiBufferSource bufferSource, int i, @Nullable VertexConsumer vertexConsumer, int i2, int i3, float f2, float f3, float f4, float f5, Identifier textureLocation) {
+    default void renderWithBoneAndRenderType(AnimatedGeoModel model, T animatable, float partialTick, RenderType renderType, PoseStack poseStack, @Nullable SubmitNodeCollector bufferSource, int i, @Nullable VertexConsumer vertexConsumer, int i2, int i3, float f2, float f3, float f4, float f5, Identifier textureLocation) {
         SubmitNodeCollector collector = SubmitRenderContext.get();
         if (collector != null && vertexConsumer == null) {
             animatable.resetAnimationState();
@@ -48,7 +49,7 @@ public interface IGeoRenderer<T extends AnimatableEntity<?>> {
             return;
         }
         if (vertexConsumer == null) {
-            vertexConsumer = bufferSource.getBuffer(renderType);
+            return;
         }
         animatable.resetAnimationState();
         boolean allowDirectGpuRenderer = !(animatable instanceof GeckoVehicleEntity) && !(animatable instanceof GeckoProjectileEntity);
@@ -57,16 +58,16 @@ public interface IGeoRenderer<T extends AnimatableEntity<?>> {
     }
 
     default void renderEarly(T animatable, PoseStack poseStack, float partialTick,
-                             @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, int packedLight,
+                             @Nullable SubmitNodeCollector bufferSource, @Nullable VertexConsumer buffer, int packedLight,
                              int packedOverlayIn, float red, float green, float blue, float alpha) {
         if (getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL) {
-            float width = animatable.getHeightScale();
-            float height = animatable.getWidthScale();
+            float width = animatable.getWidthScale();
+            float height = animatable.getHeightScale();
             poseStack.scale(width, height, width);
         }
     }
 
-    default void renderLate(T animatable, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource,
+    default void renderLate(T animatable, PoseStack poseStack, float partialTick, SubmitNodeCollector bufferSource,
                             @Nullable VertexConsumer buffer, int packedLight, int packedOverlayIn, float red, float green, float blue,
                             float alpha) {
     }
@@ -85,7 +86,7 @@ public interface IGeoRenderer<T extends AnimatableEntity<?>> {
         return null;
     }
 
-    default Color getRenderColor(T animatable, float partialTick, PoseStack poseStack, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, int packedLight) {
+    default Color getRenderColor(T animatable, float partialTick, PoseStack poseStack, @Nullable SubmitNodeCollector bufferSource, @Nullable VertexConsumer buffer, int packedLight) {
         return Color.WHITE;
     }
 

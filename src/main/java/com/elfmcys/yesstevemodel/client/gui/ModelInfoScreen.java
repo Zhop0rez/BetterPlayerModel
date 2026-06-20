@@ -14,7 +14,7 @@ import com.elfmcys.yesstevemodel.mixin.client.ScreenAccessor;
 import com.elfmcys.yesstevemodel.util.PlatformUtil;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -118,32 +118,32 @@ public class ModelInfoScreen extends Screen {
             linkY += 25;
         }
         addRenderableWidget(new FlatColorButton(this.guiLeft + 310, linkY, 85, 20, Component.translatable("gui.better_player_model.model.return"), button4 -> {
-            Minecraft.getInstance().setScreen(this.parentScreen);
+            com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), this.parentScreen);
         }));
     }
 
     private void openUrl(@Nullable String str) {
         if (str != null && StringUtils.isNoneBlank(str)) {
-            Minecraft.getInstance().setScreen(new ConfirmLinkScreen(confirmed -> {
+            com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), new ConfirmLinkScreen(confirmed -> {
                 if (confirmed) {
                     PlatformUtil.openUri(str);
                 }
-                Minecraft.getInstance().setScreen(this);
+                com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), this);
             }, str, true));
         }
     }
 
     @Override
-    public void render(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        GuiGraphics guiGraphics = extractor;
-        renderTransparentBackground(extractor);
-        guiGraphics.fillGradient(this.guiLeft + 25, this.guiTop + 150, this.guiLeft + 305, this.guiTop + 220, -1889838245, -1889838245);
+    public void extractRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        GuiGraphicsExtractor GuiGraphicsExtractor = extractor;
+
+        GuiGraphicsExtractor.fillGradient(this.guiLeft + 25, this.guiTop + 150, this.guiLeft + 305, this.guiTop + 220, -1889838245, -1889838245);
         Metadata metadata2 = this.modelData.getExtraInfo();
         if (metadata2 != null) {
             int lineOffset = 0;
             Iterator it = this.font.split(Component.literal(ModelMetadataPresenter.getLocalizedModelString(this.renderContext, "metadata.tips", metadata2.getTips())), 270).iterator();
             while (it.hasNext()) {
-                guiGraphics.drawString(this.font, (FormattedCharSequence) it.next(), this.guiLeft + 30, this.guiTop + 154 + lineOffset, -1);
+                GuiGraphicsExtractor.text(this.font, (FormattedCharSequence) it.next(), this.guiLeft + 30, this.guiTop + 154 + lineOffset, -1);
                 Objects.requireNonNull(this.font);
                 lineOffset += 9;
                 Objects.requireNonNull(this.font);
@@ -152,16 +152,16 @@ public class ModelInfoScreen extends Screen {
                 }
             }
         }
-        super.render(extractor, mouseX, mouseY, partialTick);
+        super.extractRenderState(extractor, mouseX, mouseY, partialTick);
         ((ScreenAccessor) this).ysm$getRenderables().stream().filter(renderable -> {
             return renderable instanceof AuthorButton;
         }).forEach(renderable2 -> {
-            ((AuthorButton) renderable2).refreshContactComponents(guiGraphics, this, mouseX, mouseY);
+            ((AuthorButton) renderable2).refreshContactComponents(GuiGraphicsExtractor, this, mouseX, mouseY);
         });
         ((ScreenAccessor) this).ysm$getRenderables().stream().filter(renderable -> {
             return renderable instanceof FlatColorButton;
         }).forEach(renderable -> {
-            ((FlatColorButton) renderable).renderTooltip(guiGraphics, this, mouseX, mouseY);
+// tooltip logic removed temporarily
         });
     }
 
@@ -169,3 +169,6 @@ public class ModelInfoScreen extends Screen {
         return false;
     }
 }
+
+
+

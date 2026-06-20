@@ -14,13 +14,14 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(Minecraft.class)
 public interface MinecraftAccessor {
-    @Invoker("isLocalServer") boolean ysm$isLocalServer();
-    @Invoker("setScreen") void ysm$setScreen(Screen screen);
-    @Invoker("getTextureManager") TextureManager ysm$getTextureManager();
-    @Invoker("getEntityRenderDispatcher") EntityRenderDispatcher ysm$getEntityRenderDispatcher();
-    @Invoker("getSoundManager") SoundManager ysm$getSoundManager();
-    @Invoker("getResourceManager") ResourceManager ysm$getResourceManager();
-    @Invoker("getConnection") ClientPacketListener ysm$getConnection();
-    @Invoker("renderBuffers") RenderBuffers ysm$renderBuffers();
-    @Invoker("getDeltaTracker") DeltaTracker ysm$getDeltaTracker();
+    @Invoker(remap = false, value = "isLocalServer") boolean ysm$isLocalServer();
+    // @Invoker(remap = false, value = "setScreen") void ysm$setScreen(Screen screen);
+    @Invoker(remap = false, value = "getTextureManager") TextureManager ysm$getTextureManager();
+    @Invoker(remap = false, value = "getEntityRenderDispatcher") EntityRenderDispatcher ysm$getEntityRenderDispatcher();
+    @Invoker(remap = false, value = "getSoundManager") SoundManager ysm$getSoundManager();
+    @Invoker(remap = false, value = "getResourceManager") ResourceManager ysm$getResourceManager();
+    @Invoker(remap = false, value = "getConnection") ClientPacketListener ysm$getConnection();
+    // @Invoker(remap = false, value = "renderBuffers") RenderBuffers ysm$renderBuffers();
+    @Invoker(remap = false, value = "getDeltaTracker") DeltaTracker ysm$getDeltaTracker();
 }
+

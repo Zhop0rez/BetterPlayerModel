@@ -9,6 +9,6 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(Entity.class)
 public interface EntityRidingAccessor {
 
-    @Invoker("getPassengerAttachmentPoint")
+    @Invoker(remap = false, value = "getPassengerAttachmentPoint")
     Vec3 invokeGetPassengerAttachmentPoint(Entity passenger, EntityDimensions dimensions, float partialTick);
 }

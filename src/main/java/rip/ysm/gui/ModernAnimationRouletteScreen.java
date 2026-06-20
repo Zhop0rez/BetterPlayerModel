@@ -19,7 +19,7 @@ import com.mojang.blaze3d.opengl.GlStateManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -83,7 +83,7 @@ public class ModernAnimationRouletteScreen extends Screen {
     private final ModelAssembly renderContext;
 
     public ModernAnimationRouletteScreen(String modelId, ModelAssembly modelAssembly, AnimatableEntity<?> animatable) {
-        super(Component.literal("YSM Roulette"));
+        super(Component.literal("BPM Roulette"));
         this.renderContext = modelAssembly;
         this.animatableModel = animatable;
         this.textProperties = modelAssembly.getModelData().getModelProperties().getExtraAnimationClassify();
@@ -170,8 +170,8 @@ public class ModernAnimationRouletteScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        GuiGraphics g = extractor;
+    public void extractRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        GuiGraphicsExtractor g = extractor;
         if (GeneralConfig.BLUR_GUI != null && GeneralConfig.BLUR_GUI.get()) collectAndFlushBlur(g);
 
         updateHover(mouseX, mouseY);
@@ -181,10 +181,10 @@ public class ModernAnimationRouletteScreen extends Screen {
         renderPageButtons(g);
         renderPathAndPage(g, mouseX, mouseY);
 
-        super.render(extractor, mouseX, mouseY, partialTick);
+        super.extractRenderState(extractor, mouseX, mouseY, partialTick);
     }
 
-    private void collectAndFlushBlur(GuiGraphics g) {
+    private void collectAndFlushBlur(GuiGraphicsExtractor g) {
         float sliceSpan = Pie.tau / 8.0f;
         for (int i = 0; i < 8; i++) {
             int absoluteIdx = i + page() * 8;
@@ -226,7 +226,7 @@ public class ModernAnimationRouletteScreen extends Screen {
         hoveredNext = (page() + 1) * 8 < currentProperties.size() && (nextDx * nextDx + btnDy * btnDy) <= 16.0f * 16.0f;
     }
 
-    private void renderSlices(GuiGraphics g) {
+    private void renderSlices(GuiGraphicsExtractor g) {
         float sliceSpan = Pie.tau / 8.0f;
         for (int i = 0; i < 8; i++) {
             int absoluteIdx = i + page() * 8;
@@ -250,28 +250,28 @@ public class ModernAnimationRouletteScreen extends Screen {
         }
     }
 
-    private void drawSlice(GuiGraphics g, int sliceIndex, float sliceSpan, float inner, float outer, int color) {
+    private void drawSlice(GuiGraphicsExtractor g, int sliceIndex, float sliceSpan, float inner, float outer, int color) {
         float start = sliceStartOffset() + sliceIndex * sliceSpan + 0.02f;
         float end = sliceStartOffset() + (sliceIndex + 1) * sliceSpan - 0.02f;
         Pie.draw(g, centerX, centerY, inner, outer, start, end, color, 1.0f);
     }
 
-    private void drawSettingsIcon(GuiGraphics g, int sliceIndex, float sliceSpan, boolean hover) {
+    private void drawSettingsIcon(GuiGraphicsExtractor g, int sliceIndex, float sliceSpan, boolean hover) {
         float mid = sliceStartOffset() + (sliceIndex + 0.5f) * sliceSpan;
         float r = 34.0f;
         int ix = centerX + (int) (r * Math.cos(mid)) - 8;
         int iy = centerY + (int) (r * Math.sin(mid)) - 8;
-        GlStateManager._enableBlend();
+        GlStateManager._enableBlend(0);
         GlStateManager._blendFuncSeparate(770, 771, 1, 0);
 /*         if (hover) g.setColor(1.0f, 1.0f, 0.6f, 1.0f);
  */
         g.blit(settingsIcon, ix, iy, ix + 16, iy + 16, 0.0f, 1.0f, 0.0f, 1.0f);
 /*         if (hover) g.setColor(1.0f, 1.0f, 1.0f, 1.0f);
  */
-        GlStateManager._disableBlend();
+        GlStateManager._disableBlend(0);
     }
 
-    private void renderLabels(GuiGraphics g) {
+    private void renderLabels(GuiGraphicsExtractor g) {
         float sliceSpan = Pie.tau / 8.0f;
         for (int i = 0; i < 8; i++) {
             int absoluteIdx = i + page() * 8;
@@ -292,21 +292,21 @@ public class ModernAnimationRouletteScreen extends Screen {
             int totalH = lines.size() * 9 + (showKey ? 10 : 0);
             int lineY = ly - totalH / 2;
             for (FormattedCharSequence line : lines) {
-                g.drawCenteredString(this.font, line, lx, lineY, 0xFFFFFFFF);
+                g.centeredText(this.font, line, lx, lineY, 0xFFFFFFFF);
                 lineY += 9;
             }
             if (showKey) renderKeyBinding(g, absoluteIdx, lx, lineY + 1);
         }
     }
 
-    private void renderKeyBinding(GuiGraphics g, int slot, int x, int y) {
+    private void renderKeyBinding(GuiGraphicsExtractor g, int slot, int x, int y) {
         if (slot >= ExtraAnimationKey.KEY_MAPPINGS.size()) return;
         KeyMapping km = ExtraAnimationKey.KEY_MAPPINGS.get(slot);
         MutableComponent label = Component.literal("[ ").withStyle(ChatFormatting.YELLOW);
         if (km.isUnbound()) label.append(Component.translatable("key.better_player_model.extra_animation.none"));
         else label.append(km.getTranslatedKeyMessage());
         label.append(" ]");
-        g.drawCenteredString(this.font, label, x, y, 0xFFCFB058);
+        g.centeredText(this.font, label, x, y, 0xFFCFB058);
     }
 
     private String displayLabel(int absoluteIdx) {
@@ -321,38 +321,38 @@ public class ModernAnimationRouletteScreen extends Screen {
         return ModelMetadataPresenter.getLocalizedModelString(renderContext, "properties.extra_animation.%s".formatted(key), display);
     }
 
-    private void renderCenter(GuiGraphics g) {
+    private void renderCenter(GuiGraphicsExtractor g) {
         if (animatableModel.getEntity() instanceof Player) {
             Identifier tex = AnimationLockEvent.isLocked() ? lockIcon : unlockIcon;
-            GlStateManager._enableBlend();
+            GlStateManager._enableBlend(0);
             GlStateManager._blendFuncSeparate(770, 771, 1, 0);
             g.blit(tex, centerX - 16, centerY - 16, centerX + 16, centerY + 16, 0.0f, 1.0f, 0.0f, 1.0f);
-            GlStateManager._disableBlend();
+            GlStateManager._disableBlend(0);
         } else {
-            g.drawCenteredString(this.font, Component.translatable("gui.better_player_model.roulette.stop"), centerX, centerY - 4, 0xFFFFFFFF);
+            g.centeredText(this.font, Component.translatable("gui.better_player_model.roulette.stop"), centerX, centerY - 4, 0xFFFFFFFF);
         }
     }
 
-    private void renderPageButtons(GuiGraphics g) {
+    private void renderPageButtons(GuiGraphicsExtractor g) {
         if (pageCount() <= 1) return;
         drawPageButton(g, centerX - 128.0f, centerY, page() > 0, hoveredPrev, "<");
         drawPageButton(g, centerX + 128.0f, centerY, (page() + 1) * 8 < currentProperties.size(), hoveredNext, ">");
     }
 
-    private void drawPageButton(GuiGraphics g, float cx, float cy, boolean enabled, boolean hover, String arrow) {
+    private void drawPageButton(GuiGraphicsExtractor g, float cx, float cy, boolean enabled, boolean hover, String arrow) {
         int color = !enabled ? 0x40000000 : (hover ? 0xD0FFFFFF : 0x90000000);
         Pie.draw(g, cx, cy, 0.0f, 16.0f, 0.0f, Pie.tau, color, 1.0f);
         int textColor = enabled ? (hover ? 0xFF000000 : 0xFFFFFFFF) : 0x60FFFFFF;
-        g.drawCenteredString(this.font, arrow, (int) cx, (int) cy - 4, textColor);
+        g.centeredText(this.font, arrow, (int) cx, (int) cy - 4, textColor);
     }
 
-    private void renderPathAndPage(GuiGraphics g, int mouseX, int mouseY) {
+    private void renderPathAndPage(GuiGraphicsExtractor g, int mouseX, int mouseY) {
         layoutAndDrawPath(g, mouseX, mouseY);
         String pageStr = String.format("%d/%d", page() + 1, pageCount());
-        g.drawCenteredString(this.font, Component.literal(pageStr).withStyle(ChatFormatting.AQUA), centerX, centerY + 108, 0xFFFFFFFF);
+        g.centeredText(this.font, Component.literal(pageStr).withStyle(ChatFormatting.AQUA), centerX, centerY + 108, 0xFFFFFFFF);
     }
 
-    private void layoutAndDrawPath(GuiGraphics g, int mouseX, int mouseY) {
+    private void layoutAndDrawPath(GuiGraphicsExtractor g, int mouseX, int mouseY) {
         int pathY = centerY - 118;
         String prefix = Component.translatable("gui.better_player_model.roulette.path.prefix").getString();
         String rootLabel = Component.translatable("gui.better_player_model.roulette.path.root").getString();
@@ -365,7 +365,7 @@ public class ModernAnimationRouletteScreen extends Screen {
             if (i < navigationStack.size() - 1) total += sep;
         }
         int x = centerX - total / 2;
-        g.drawString(this.font, prefix, x, pathY, 0xFFFFFFFF, true);
+        g.text(this.font, prefix, x, pathY, 0xFFFFFFFF, true);
         x += prefixW;
 
         hoveredPathSegment = -1;
@@ -376,14 +376,14 @@ public class ModernAnimationRouletteScreen extends Screen {
             boolean isLast = i == navigationStack.size() - 1;
             boolean hover = mouseX >= x && mouseX < x + w && mouseY >= pathY - 2 && mouseY < pathY + 10;
             int color = isLast ? 0xFFFFCC00 : (hover ? 0xFFFFFFFF : 0xFFAAAAAA);
-            g.drawString(this.font, s, x, pathY, color, true);
+            g.text(this.font, s, x, pathY, color, true);
             if (hover && !isLast) {
                 g.fill(x, pathY + 9, x + w, pathY + 10, color);
                 hoveredPathSegment = i;
             }
             x += w;
             if (i < navigationStack.size() - 1) {
-                g.drawString(this.font, " > ", x, pathY, 0xFF888888, true);
+                g.text(this.font, " > ", x, pathY, 0xFF888888, true);
                 x += sep;
             }
         }
@@ -412,7 +412,7 @@ public class ModernAnimationRouletteScreen extends Screen {
             if (value.startsWith("#")) {
                 String sub = value.substring(1);
                 if (renderGroups.containsKey(sub)) {
-                    Minecraft.getInstance().setScreen(new ModelSettingsScreen(renderContext, animatableModel, this, sub));
+                    com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), new ModelSettingsScreen(renderContext, animatableModel, this, sub));
                     return true;
                 }
             }
@@ -441,7 +441,7 @@ public class ModernAnimationRouletteScreen extends Screen {
 
     private void navigateTo(int targetIndex) {
         while (navigationStack.size() > targetIndex + 1) navigationStack.removeLast();
-        Minecraft.getInstance().setScreen(new ModernAnimationRouletteScreen(lastModelId, renderContext, animatableModel));
+        com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), new ModernAnimationRouletteScreen(lastModelId, renderContext, animatableModel));
     }
 
     @Override
@@ -470,23 +470,23 @@ public class ModernAnimationRouletteScreen extends Screen {
     private void navigateToSubmenu(String value) {
         if (navigationStack.size() > 5) {
             LocalPlayer p = Minecraft.getInstance().player;
-            if (p != null) p.displayClientMessage(Component.translatable("gui.better_player_model.roulette.too_long"), false);
+            if (p != null) p.sendSystemMessage(Component.translatable("gui.better_player_model.roulette.too_long"));
             return;
         }
         String sub = value.substring(1);
         if (textProperties.get(sub) != null) {
             navigationStack.addLast(MutablePair.of(sub, 0));
-            Minecraft.getInstance().setScreen(new ModernAnimationRouletteScreen(lastModelId, renderContext, animatableModel));
+            com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), new ModernAnimationRouletteScreen(lastModelId, renderContext, animatableModel));
         }
     }
 
     private void navigateBack() {
         if (navigationStack.size() > 1) {
             navigationStack.removeLast();
-            Minecraft.getInstance().setScreen(new ModernAnimationRouletteScreen(lastModelId, renderContext, animatableModel));
+            com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), new ModernAnimationRouletteScreen(lastModelId, renderContext, animatableModel));
             return;
         }
-        Minecraft.getInstance().setScreen(null);
+        com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), null);
     }
 
     private void playAnimation(String key) {
@@ -501,9 +501,9 @@ public class ModernAnimationRouletteScreen extends Screen {
             PlayerCapability.get(player).ifPresent(cap -> cap.requestModelSwitch(key));
         }
         if (player != null && GeneralConfig.PRINT_ANIMATION_ROULETTE_MSG.get()) {
-            player.displayClientMessage(Component.translatable("message.better_player_model.model.animation_roulette.play", key), false);
+            player.sendSystemMessage(Component.translatable("message.better_player_model.model.animation_roulette.play", key));
         }
-        Minecraft.getInstance().setScreen(null);
+        com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), null);
     }
 
     private void playClick() {
@@ -515,3 +515,7 @@ public class ModernAnimationRouletteScreen extends Screen {
         return false;
     }
 }
+
+
+
+

@@ -19,7 +19,7 @@ public abstract class PauseScreenMixin extends Screen {
         super(component);
     }
 
-    @Inject(method = {"init()V"}, at = {@At("TAIL")})
+    @Inject(remap = false, method = {"init()V"}, at = {@At("TAIL")})
     private void init(CallbackInfo callbackInfo) {
         List<Button> buttons = PauseScreenButtonBuilder.createButtons((PauseScreen) (Object) this);
         if (buttons != null && !buttons.isEmpty()) {
@@ -29,3 +29,5 @@ public abstract class PauseScreenMixin extends Screen {
         }
     }
 }
+
+

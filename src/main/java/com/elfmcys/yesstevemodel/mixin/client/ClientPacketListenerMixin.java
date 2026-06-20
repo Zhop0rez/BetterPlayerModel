@@ -1,6 +1,6 @@
 package com.elfmcys.yesstevemodel.mixin.client;
 
-import dev.architectury.event.events.client.ClientPlayerEvent;
+import dev.ysm.architectury.event.events.client.ClientPlayerEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.player.LocalPlayer;
@@ -16,18 +16,21 @@ public class ClientPacketListenerMixin {
     @Unique
     private LocalPlayer ysm$playerBeforeRespawn;
 
-    @Inject(method = "handleRespawn", at = @At("HEAD"))
+    @Inject(remap = false, method = "handleRespawn", at = @At("HEAD"))
     private void ysm$capturePlayerBeforeRespawn(ClientboundRespawnPacket packet, CallbackInfo ci) {
         ysm$playerBeforeRespawn = Minecraft.getInstance().player;
     }
 
-    @Inject(method = "handleRespawn", at = @At("TAIL"))
+    @Inject(remap = false, method = "handleRespawn", at = @At("TAIL"))
     private void ysm$fireClientRespawn(ClientboundRespawnPacket packet, CallbackInfo ci) {
         LocalPlayer oldPlayer = ysm$playerBeforeRespawn;
         LocalPlayer newPlayer = Minecraft.getInstance().player;
         ysm$playerBeforeRespawn = null;
         if (oldPlayer != null && newPlayer != null && oldPlayer != newPlayer) {
-            ClientPlayerEvent.CLIENT_PLAYER_RESPAWN.invoker().respawn(oldPlayer, newPlayer);
+            ClientPlayerEvent.CLIENT_PLAYER_RESPAWN.fire(handler -> handler.accept(oldPlayer, newPlayer));
         }
     }
 }
+
+
+

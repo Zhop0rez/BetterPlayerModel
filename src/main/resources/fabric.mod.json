@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
     "id":  "better_player_model",
-    "version":  "1.0.7-fabric-1.21.11",
+    "version":  "1.1.2-fabric-26.2",
     "name":  "Better Player Model",
     "description":  "A powerful tool for replacing and animating player models. Features universal compatibility with .ysm models via integrated OpenYSM technology. Based on Yes_Steve_Model.",
     "authors":  [
@@ -22,10 +22,7 @@
                                  ],
                         "client":  [
                                        "com.elfmcys.yesstevemodel.fabric.client.YesSteveModelFabricClient"
-                                   ],
-                        "cardinal-components-entity":  [
-                                                           "com.elfmcys.yesstevemodel.fabric.YsmComponents"
-                                                       ]
+                                   ]
                     },
     "mixins":  [
                    "better_player_model.mixins.json",
@@ -33,7 +30,7 @@
                ],
     "depends":  {
                     "fabricloader":  "\u003e=0.16.10",
-                    "minecraft":  "1.21.11",
+                    "minecraft":  "*",
                     "java":  "\u003e=21",
                     "fabric-api":  "*"
                 },

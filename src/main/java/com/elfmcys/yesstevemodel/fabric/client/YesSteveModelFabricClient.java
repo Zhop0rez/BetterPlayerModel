@@ -22,17 +22,18 @@ public final class YesSteveModelFabricClient implements ClientModInitializer {
         HudOverlay debugOverlay = AnimationDebugOverlay.createOverlay();
         HudOverlay loadingOverlay = new ExtraPlayerOverlay();
         HudOverlay syncOverlay = new ModelSyncStateOverlay();
-        HudElementRegistry.attachElementAfter(VanillaHudElements.BOSS_BAR, Identifier.fromNamespaceAndPath(YesSteveModel.MOD_ID, "hud_overlays"), (guiGraphics, tickDelta) -> {
+        HudElementRegistry.attachElementAfter(VanillaHudElements.BOSS_BAR, Identifier.fromNamespaceAndPath(YesSteveModel.MOD_ID, "hud_overlays"), (GuiGraphicsExtractor, tickDelta) -> {
             Minecraft mc = Minecraft.getInstance();
             float delta = tickDelta.getGameTimeDeltaTicks();
             int w = mc.getWindow().getGuiScaledWidth();
             int h = mc.getWindow().getGuiScaledHeight();
             Font font = mc.font;
-            debugOverlay.render(guiGraphics, font, delta, w, h);
-            loadingOverlay.render(guiGraphics, font, delta, w, h);
-            syncOverlay.render(guiGraphics, font, delta, w, h);
+            debugOverlay.render(GuiGraphicsExtractor, font, delta, w, h);
+            loadingOverlay.render(GuiGraphicsExtractor, font, delta, w, h);
+            syncOverlay.render(GuiGraphicsExtractor, font, delta, w, h);
         });
 
         ClientModelManager.loadDefaultModel();
     }
 }
+

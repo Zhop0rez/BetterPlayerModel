@@ -2,7 +2,7 @@ package com.elfmcys.yesstevemodel.client.gui;
 
 import com.elfmcys.yesstevemodel.config.GeneralConfig;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.screens.Screen;
@@ -38,19 +38,21 @@ public class DisclaimerScreen extends Screen {
             if (this.checkbox.selected()) {
                 GeneralConfig.DISCLAIMER_SHOW.set(false);
                 GeneralConfig.DISCLAIMER_SHOW.save();
-                Minecraft.getInstance().setScreen(new PlayerModelScreen());
+                com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), new PlayerModelScreen());
             } else {
-                Minecraft.getInstance().setScreen(null);
+                com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), null);
             }
         }).size(300, 20).pos((this.width - 300) / 2, (this.textHeight + i) - 20).build());
     }
 
     @Override
-    public void render(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        GuiGraphics guiGraphics = extractor;
-        renderTransparentBackground(extractor);
-/*         GuiGraphics.drawWordWrap(this.font, Component.translatable("gui.better_player_model.disclaimer.text"), this.textY, this.textHeight, 400, -1);
+    public void extractRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        GuiGraphicsExtractor GuiGraphicsExtractor = extractor;
+
+/*         GuiGraphicsExtractor.drawWordWrap(this.font, Component.translatable("gui.better_player_model.disclaimer.text"), this.textY, this.textHeight, 400, -1);
  */
-        super.render(extractor, mouseX, mouseY, partialTick);
+        super.extractRenderState(extractor, mouseX, mouseY, partialTick);
     }
 }
+
+

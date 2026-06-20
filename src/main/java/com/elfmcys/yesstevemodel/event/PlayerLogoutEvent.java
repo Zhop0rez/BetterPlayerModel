@@ -3,7 +3,7 @@ package com.elfmcys.yesstevemodel.event;
 import com.elfmcys.yesstevemodel.YesSteveModel;
 import com.elfmcys.yesstevemodel.model.ServerModelManager;
 import com.elfmcys.yesstevemodel.network.NetworkHandler;
-import dev.architectury.event.events.common.PlayerEvent;
+import dev.ysm.architectury.event.events.common.PlayerEvent;
 
 public final class PlayerLogoutEvent {
 

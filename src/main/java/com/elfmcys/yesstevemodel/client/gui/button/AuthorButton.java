@@ -8,7 +8,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -57,38 +57,38 @@ public class AuthorButton extends Button {
     }
 
     private static int opaque(ChatFormatting formatting) {
-        Integer color = formatting.getColor();
+        net.minecraft.network.chat.TextColor tcolor = net.minecraft.network.chat.TextColor.fromLegacyFormat(formatting); Integer color = tcolor != null ? tcolor.getValue() : null;
         return color == null ? 0xFFFFFFFF : 0xFF000000 | color.intValue();
     }
 
     @Override
-    protected void renderContents(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        GuiGraphics guiGraphics = extractor;
+    protected void extractContents(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        GuiGraphicsExtractor GuiGraphicsExtractor = extractor;
         Font font = Minecraft.getInstance().font;
         if (this.authorInfo == null || this.modelAssembly == null || this.Identifier == null) {
-            guiGraphics.fillGradient(getX(), getY(), getX() + this.width, getY() + this.height, -1891417534, -1891417534);
-            guiGraphics.drawCenteredString(font, Component.literal("......"), getX() + (this.width / 2), getY() + (this.height / 2), opaque(ChatFormatting.GRAY));
+            GuiGraphicsExtractor.fillGradient(getX(), getY(), getX() + this.width, getY() + this.height, -1891417534, -1891417534);
+            GuiGraphicsExtractor.centeredText(font, Component.literal("......"), getX() + (this.width / 2), getY() + (this.height / 2), opaque(ChatFormatting.GRAY));
             return;
         }
         if (isHoveredOrFocused()) {
-            guiGraphics.fillGradient(getX(), getY(), getX() + this.width, getY() + this.height, -1892652116, -1892652116);
+            GuiGraphicsExtractor.fillGradient(getX(), getY(), getX() + this.width, getY() + this.height, -1892652116, -1892652116);
         } else {
-            guiGraphics.fillGradient(getX(), getY(), getX() + this.width, getY() + this.height, -1891417534, -1891417534);
+            GuiGraphicsExtractor.fillGradient(getX(), getY(), getX() + this.width, getY() + this.height, -1891417534, -1891417534);
         }
-        guiGraphics.blit(this.Identifier, getX() + 3, getY() + 3, getX() + 67, getY() + 67, 0.0f, 1.0f, 0.0f, 1.0f);
+        GuiGraphicsExtractor.blit(this.Identifier, getX() + 3, getY() + 3, getX() + 67, getY() + 67, 0.0f, 1.0f, 0.0f, 1.0f);
         String str = ModelMetadataPresenter.getLocalizedModelString(this.modelAssembly, "metadata.authors.%d.name".formatted(this.authorIndex), this.authorInfo.getName());
         String str2 = ModelMetadataPresenter.getLocalizedModelString(this.modelAssembly, "metadata.authors.%d.role".formatted(this.authorIndex), this.authorInfo.getRole());
         String str3 = ModelMetadataPresenter.getLocalizedModelString(this.modelAssembly, "metadata.authors.%d.comment".formatted(this.authorIndex), this.authorInfo.getComment());
-        drawCenteredClipped(guiGraphics, font, str, getX() + 2, getY() + 72, this.width - 4, opaque(ChatFormatting.GOLD));
+        drawCenteredClipped(GuiGraphicsExtractor, font, str, getX() + 2, getY() + 72, this.width - 4, opaque(ChatFormatting.GOLD));
         if (str2 != null && !str2.isBlank()) {
-            drawCenteredClipped(guiGraphics, font, str2, getX() + 2, getY() + 82, this.width - 4, opaque(ChatFormatting.GREEN));
+            drawCenteredClipped(GuiGraphicsExtractor, font, str2, getX() + 2, getY() + 82, this.width - 4, opaque(ChatFormatting.GREEN));
         }
         if (str3 != null && !str3.isBlank()) {
-            drawWrappedText(guiGraphics, Component.literal(str3), getX() + 3, getY() + 95, 64, -1);
+            drawWrappedText(GuiGraphicsExtractor, Component.literal(str3), getX() + 3, getY() + 95, 64, -1);
         }
     }
 
-    private void drawCenteredClipped(GuiGraphics guiGraphics, Font font, String text, int x, int y, int width, int color) {
+    private void drawCenteredClipped(GuiGraphicsExtractor GuiGraphicsExtractor, Font font, String text, int x, int y, int width, int color) {
         if (text == null || text.isBlank()) {
             return;
         }
@@ -97,13 +97,13 @@ public class AuthorButton extends Button {
             return;
         }
         FormattedCharSequence line = lines.get(0);
-        guiGraphics.drawString(font, line, x + ((width - font.width(line)) / 2), y, color, true);
+        GuiGraphicsExtractor.text(font, line, x + ((width - font.width(line)) / 2), y, color, true);
     }
 
-    public void drawWrappedText(GuiGraphics guiGraphics, FormattedText formattedText, int x, int y, int wrapWidth, int color) {
+    public void drawWrappedText(GuiGraphicsExtractor GuiGraphicsExtractor, FormattedText formattedText, int x, int y, int wrapWidth, int color) {
         Font font = Minecraft.getInstance().font;
         for (FormattedCharSequence formattedCharSequence : font.split(formattedText, wrapWidth)) {
-            guiGraphics.drawString(font, formattedCharSequence, x, y, color, false);
+            GuiGraphicsExtractor.text(font, formattedCharSequence, x, y, color, false);
             y += 9;
             if (y > getY() + this.height) {
                 return;
@@ -111,10 +111,10 @@ public class AuthorButton extends Button {
         }
     }
 
-    public void refreshContactComponents(GuiGraphics guiGraphics, Screen screen, int mouseX, int mouseY) {
+    public void refreshContactComponents(GuiGraphicsExtractor GuiGraphicsExtractor, Screen screen, int mouseX, int mouseY) {
         if (this.isHovered && !this.componentList.isEmpty()) {
-            guiGraphics.setComponentTooltipForNextFrame(Minecraft.getInstance().font, this.componentList, mouseX, mouseY);
-/*             GuiGraphics.renderComponentTooltip(Minecraft.getInstance().font, this.componentList, mouseX, mouseY);
+            GuiGraphicsExtractor.setComponentTooltipForNextFrame(Minecraft.getInstance().font, this.componentList, mouseX, mouseY);
+/*             GuiGraphicsExtractor.renderComponentTooltip(Minecraft.getInstance().font, this.componentList, mouseX, mouseY);
  */
         } else if (this.selectedContactIndex != -1) {
             this.selectedContactIndex = -1;
@@ -174,11 +174,11 @@ public class AuthorButton extends Button {
             return;
         }
         if (link.startsWith("http://") || link.startsWith("https://")) {
-            Minecraft.getInstance().setScreen(new ConfirmLinkScreen(confirmed -> {
+            com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), new ConfirmLinkScreen(confirmed -> {
                 if (confirmed) {
                     PlatformUtil.openUri(link);
                 }
-                Minecraft.getInstance().setScreen(this.parentScreen);
+                com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), this.parentScreen);
             }, link, true));
             return;
         }
@@ -189,3 +189,5 @@ public class AuthorButton extends Button {
         renderTooltip(true);
     }
 }
+
+

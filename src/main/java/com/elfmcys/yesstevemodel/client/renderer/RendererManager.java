@@ -2,7 +2,7 @@ package com.elfmcys.yesstevemodel.client.renderer;
 
 import com.elfmcys.yesstevemodel.YesSteveModel;
 import com.elfmcys.yesstevemodel.mixin.client.EntityRenderDispatcherAccessor;
-import dev.architectury.registry.ReloadListenerRegistry;
+import dev.ysm.architectury.registry.ReloadListenerRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -49,9 +49,9 @@ public class RendererManager {
         EntityRenderDispatcherAccessor accessor = (EntityRenderDispatcherAccessor) entityRenderDispatcher;
         EntityRendererProvider.Context context = new EntityRendererProvider.Context(
                 entityRenderDispatcher,
+                accessor.ysm$getBlockRenderDispatcher(),
                 accessor.ysm$getItemModelResolver(),
                 accessor.ysm$getMapRenderer(),
-                accessor.ysm$getBlockRenderDispatcher(),
                 resourceManager,
                 accessor.ysm$getEntityModels().get(),
                 accessor.ysm$getEquipmentAssets(),

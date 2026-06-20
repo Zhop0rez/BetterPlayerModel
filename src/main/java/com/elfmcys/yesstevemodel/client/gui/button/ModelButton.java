@@ -26,11 +26,11 @@ import com.elfmcys.yesstevemodel.util.PlatformUtil;
 import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
-import dev.architectury.utils.GameInstance;
+import dev.ysm.architectury.utils.GameInstance;
 import it.unimi.dsi.fastutil.objects.Object2ReferenceMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.InputWithModifiers;
@@ -166,7 +166,7 @@ public class ModelButton extends Button {
                 }
                 Component uploadError = ClientModelManager.uploadLocalModelForSelection(selectedModelId);
                 if (uploadError != null) {
-                    localPlayer.displayClientMessage(uploadError, false);
+                    localPlayer.sendSystemMessage(uploadError);
                     return;
                 }
                 if (!ClientModelManager.isLocalOnlyModel(selectedModelId)) {
@@ -235,8 +235,11 @@ public class ModelButton extends Button {
                 }
                 if (session.getState() == ModelUploadSession.State.FAILED) {
                     ModelUploadSession.removeListener(this);
-                    if (player != null) {
-                        player.displayClientMessage(session.getMessage(), false);
+                    if (session.getLastStatus() == 1 && session.getUploadId() == 0L) {
+                        ClientModelManager.markLocalModelUploaded(modelId);
+                        sendSwitchModel(modelId, textureName);
+                    } else if (player != null) {
+                        player.sendSystemMessage(session.getMessage());
                     }
                 }
             }
@@ -275,10 +278,10 @@ public class ModelButton extends Button {
                 || InputConstants.isKeyDown(window, InputConstants.KEY_RSHIFT);
     }
 
-    public void renderTooltip(GuiGraphics guiGraphics, Screen screen, int mouseX, int mouseY) {
+    public void renderTooltip(GuiGraphicsExtractor GuiGraphicsExtractor, Screen screen, int mouseX, int mouseY) {
         if (isHovered()) {
-            guiGraphics.pose().pushMatrix();
-            guiGraphics.pose().translate(0.0f, 0.0f);
+            GuiGraphicsExtractor.pose().pushMatrix();
+            GuiGraphicsExtractor.pose().translate(0.0f, 0.0f);
             Minecraft minecraft = Minecraft.getInstance();
             String selected = minecraft.getLanguageManager().getSelected();
             if (!Objects.equals(this.cachedLanguage, selected)) {
@@ -290,18 +293,18 @@ public class ModelButton extends Button {
                 if (this.detailedTooltipLines == null) {
                     this.detailedTooltipLines = ModelMetadataPresenter.buildModelTooltip(this.renderContext, selected, this.modelIdHolder.getModelId(), true);
                 }
-                guiGraphics.setComponentTooltipForNextFrame(minecraft.font, this.detailedTooltipLines, mouseX, mouseY);
-/*                 GuiGraphics.renderComponentTooltip(Minecraft.getInstance().font, this.detailedTooltipLines, mouseX, mouseY);
+                GuiGraphicsExtractor.setComponentTooltipForNextFrame(minecraft.font, this.detailedTooltipLines, mouseX, mouseY);
+/*                 GuiGraphicsExtractor.renderComponentTooltip(Minecraft.getInstance().font, this.detailedTooltipLines, mouseX, mouseY);
  */
             } else {
                 if (this.tooltipLines == null) {
                     this.tooltipLines = ModelMetadataPresenter.buildModelTooltip(this.renderContext, selected, this.modelIdHolder.getModelId(), false);
                 }
-                guiGraphics.setComponentTooltipForNextFrame(minecraft.font, this.tooltipLines, mouseX, mouseY);
-/*                 GuiGraphics.renderComponentTooltip(Minecraft.getInstance().font, this.tooltipLines, mouseX, mouseY);
+                GuiGraphicsExtractor.setComponentTooltipForNextFrame(minecraft.font, this.tooltipLines, mouseX, mouseY);
+/*                 GuiGraphicsExtractor.renderComponentTooltip(Minecraft.getInstance().font, this.tooltipLines, mouseX, mouseY);
  */
             }
-            guiGraphics.pose().popMatrix();
+            GuiGraphicsExtractor.pose().popMatrix();
         }
     }
 
@@ -311,8 +314,8 @@ public class ModelButton extends Button {
     }
 
     @Override
-    protected void renderContents(net.minecraft.client.gui.GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        GuiGraphics guiGraphics = extractor;
+    protected void extractContents(net.minecraft.client.gui.GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        GuiGraphicsExtractor GuiGraphicsExtractor = extractor;
         ensurePreviewReady();
         AnimationTracker c0117x8455a741Mo1262xaffeef43 = this.modelIdHolder.getAnimationStateMachine();
         if (isHovered()) {
@@ -332,55 +335,59 @@ public class ModelButton extends Button {
         Font font = minecraft.font;
         int x = getX();
         int y = getY();
-        guiGraphics.fillGradient(x, y, x + this.width, y + this.height, this.backgroundColor, this.backgroundColor);
+        GuiGraphicsExtractor.fillGradient(x, y, x + this.width, y + this.height, this.backgroundColor, this.backgroundColor);
         if (this.backgroundTexture != null) {
-            GlStateManager._enableBlend();
+            GlStateManager._enableBlend(0);
             GlStateManager._blendFuncSeparate(770, 771, 1, 0);
-            guiGraphics.blit(this.backgroundTexture.getResourceLocation().get(), x, y, x + this.width, y + this.height, 0.0f, 1.0f, 0.0f, 1.0f);
-            GlStateManager._disableBlend();
+            GuiGraphicsExtractor.blit(this.backgroundTexture.getResourceLocation().get(), x, y, x + this.width, y + this.height, 0.0f, 1.0f, 0.0f, 1.0f);
+            GlStateManager._disableBlend(0);
         }
         int previewBottom = y + this.height - 20;
-        guiGraphics.enableScissor(x, y, x + this.width, previewBottom);
-        ModelPreviewRenderer.renderLivingEntityPreview(guiGraphics, x, y, x + this.width, previewBottom, x + (this.width / 2.0f), y + (this.height / 2.0f) + 20.0f, 30.0f, partialTick, this.modelIdHolder, RendererManager.getPlayerRenderer(), this.disablePreviewRotation, true);
-        guiGraphics.disableScissor();
+        GuiGraphicsExtractor.enableScissor(x, y, x + this.width, previewBottom);
+        ModelPreviewRenderer.renderLivingEntityPreview(GuiGraphicsExtractor, x, y, x + this.width, previewBottom, x + (this.width / 2.0f), y + (this.height / 2.0f) + 20.0f, 30.0f, partialTick, this.modelIdHolder, RendererManager.getPlayerRenderer(), this.disablePreviewRotation, true);
+        GuiGraphicsExtractor.disableScissor();
         int starZ = 3500;
         if (this.foregroundTexture != null) {
-            GlStateManager._enableBlend();
+            GlStateManager._enableBlend(0);
             GlStateManager._blendFuncSeparate(770, 771, 1, 0);
-            guiGraphics.blit(this.foregroundTexture.getResourceLocation().get(), x, y, x + this.width, y + this.height, 0.0f, 1.0f, 0.0f, 1.0f);
-            GlStateManager._disableBlend();
+            GuiGraphicsExtractor.blit(this.foregroundTexture.getResourceLocation().get(), x, y, x + this.width, y + this.height, 0.0f, 1.0f, 0.0f, 1.0f);
+            GlStateManager._disableBlend(0);
         }
         if (this.isStarred) {
-            guiGraphics.fillGradient(x, y, x + this.width, y + this.height, -1625152990, -1625152990);
+            GuiGraphicsExtractor.fillGradient(x, y, x + this.width, y + this.height, -1625152990, -1625152990);
         }
         List listSplit = font.split(getMessage(), 45);
         if (listSplit.size() > 1) {
-            drawCenteredString(guiGraphics, font, (FormattedCharSequence) listSplit.get(0), x + (this.width / 2), (y + this.height) - 19, 0xFFF3F3E0);
-            drawCenteredString(guiGraphics, font, (FormattedCharSequence) listSplit.get(1), x + (this.width / 2), (y + this.height) - 10, 0xFFF3F3E0);
+            drawCenteredString(GuiGraphicsExtractor, font, (FormattedCharSequence) listSplit.get(0), x + (this.width / 2), (y + this.height) - 19, 0xFFF3F3E0);
+            drawCenteredString(GuiGraphicsExtractor, font, (FormattedCharSequence) listSplit.get(1), x + (this.width / 2), (y + this.height) - 10, 0xFFF3F3E0);
         } else {
-            drawCenteredString(guiGraphics, font, getMessage(), x + (this.width / 2), (y + this.height) - 15, 0xFFF3F3E0);
+            drawCenteredString(GuiGraphicsExtractor, font, getMessage(), x + (this.width / 2), (y + this.height) - 15, 0xFFF3F3E0);
         }
         if (!this.isStarred && isHoveredOrFocused()) {
-            guiGraphics.fillGradient(x, y + 1, x + 1, (y + this.height) - 1, -790560, -790560);
-            guiGraphics.fillGradient(x, y, x + this.width, y + 1, -790560, -790560);
-            guiGraphics.fillGradient((x + this.width) - 1, y + 1, x + this.width, (y + this.height) - 1, -790560, -790560);
-            guiGraphics.fillGradient(x, (y + this.height) - 1, x + this.width, y + this.height, -790560, -790560);
+            GuiGraphicsExtractor.fillGradient(x, y + 1, x + 1, (y + this.height) - 1, -790560, -790560);
+            GuiGraphicsExtractor.fillGradient(x, y, x + this.width, y + 1, -790560, -790560);
+            GuiGraphicsExtractor.fillGradient((x + this.width) - 1, y + 1, x + this.width, (y + this.height) - 1, -790560, -790560);
+            GuiGraphicsExtractor.fillGradient(x, (y + this.height) - 1, x + this.width, y + this.height, -790560, -790560);
         }
         if (minecraft.player != null) {
             StarModelsCapability.get(minecraft.player).ifPresent(cap -> {
                 if (cap.containsModel(this.modelIdHolder.getModelId())) {
                     int iconX = (x + this.width) - 14;
-                    guiGraphics.blit(ICON_TEXTURE, iconX, y, iconX + 16, y + 16, 0.0f, 16.0f / 256.0f, 0.0f, 16.0f / 256.0f);
+                    GuiGraphicsExtractor.blit(ICON_TEXTURE, iconX, y, iconX + 16, y + 16, 0.0f, 16.0f / 256.0f, 0.0f, 16.0f / 256.0f);
                 }
             });
         }
     }
 
-    private static void drawCenteredString(GuiGraphics guiGraphics, Font font, Component component, int centerX, int y, int color) {
-        guiGraphics.drawString(font, component, centerX - (font.width(component) / 2), y, color, true);
+    private static void drawCenteredString(GuiGraphicsExtractor GuiGraphicsExtractor, Font font, Component component, int centerX, int y, int color) {
+        GuiGraphicsExtractor.text(font, component, centerX - (font.width(component) / 2), y, color, true);
     }
 
-    private static void drawCenteredString(GuiGraphics guiGraphics, Font font, FormattedCharSequence formattedCharSequence, int centerX, int y, int color) {
-        guiGraphics.drawString(font, formattedCharSequence, centerX - (font.width(formattedCharSequence) / 2), y, color, true);
+    private static void drawCenteredString(GuiGraphicsExtractor GuiGraphicsExtractor, Font font, FormattedCharSequence formattedCharSequence, int centerX, int y, int color) {
+        GuiGraphicsExtractor.text(font, formattedCharSequence, centerX - (font.width(formattedCharSequence) / 2), y, color, true);
     }
 }
+
+
+
+

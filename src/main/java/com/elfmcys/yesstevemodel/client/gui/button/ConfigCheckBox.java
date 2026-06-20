@@ -5,7 +5,7 @@ import com.elfmcys.yesstevemodel.client.gui.ISpecialWidget;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -36,13 +36,13 @@ public class ConfigCheckBox extends AbstractWidget implements ISpecialWidget {
         this(x, y, 115, component, consumer);
     }
 
-    public void renderWidget(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        GuiGraphics guiGraphics = extractor;
+    public void extractWidgetRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        GuiGraphicsExtractor GuiGraphicsExtractor = extractor;
         int uOffset = isStateTriggered ? 128 : 0;
         int vOffset = isHovered() ? 12 : 0;
         int boxSize = 12;
-        guiGraphics.blit(location, getX(), getY(), getX() + boxSize, getY() + boxSize, uOffset / 256.0f, (uOffset + boxSize) / 256.0f, vOffset / 24.0f, (vOffset + boxSize) / 24.0f);
-        guiGraphics.drawString(Minecraft.getInstance().font, this.component2, getX() + boxSize + 2, getY() + 2, -1, false);
+        GuiGraphicsExtractor.blit(location, getX(), getY(), getX() + boxSize, getY() + boxSize, uOffset / 256.0f, (uOffset + boxSize) / 256.0f, vOffset / 24.0f, (vOffset + boxSize) / 24.0f);
+        GuiGraphicsExtractor.text(Minecraft.getInstance().font, this.component2, getX() + boxSize + 2, getY() + 2, -1, false);
     }
 
     public void onClick(MouseButtonEvent event, boolean flag) {
@@ -63,3 +63,4 @@ public class ConfigCheckBox extends AbstractWidget implements ISpecialWidget {
         this.defaultButtonNarrationText(narrationElementOutput);
     }
 }
+

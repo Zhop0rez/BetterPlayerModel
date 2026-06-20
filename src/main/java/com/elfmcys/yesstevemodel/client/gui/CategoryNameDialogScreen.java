@@ -2,7 +2,7 @@ package com.elfmcys.yesstevemodel.client.gui;
 
 import com.elfmcys.yesstevemodel.client.gui.button.FlatColorButton;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -37,21 +37,21 @@ public class CategoryNameDialogScreen extends Screen {
         this.nameBox.moveCursorToEnd(false);
         addWidget(this.nameBox);
         addRenderableWidget(new FlatColorButton(this.guiLeft + 52, this.guiTop + 62, 64, 18, Component.translatable("gui.better_player_model.model_select.confirm"), button -> confirm()));
-        addRenderableWidget(new FlatColorButton(this.guiLeft + 144, this.guiTop + 62, 64, 18, Component.translatable("gui.better_player_model.config.cancel"), button -> Minecraft.getInstance().setScreen(this.parent)));
+        addRenderableWidget(new FlatColorButton(this.guiLeft + 144, this.guiTop + 62, 64, 18, Component.translatable("gui.better_player_model.config.cancel"), button -> com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), this.parent)));
     }
 
     private void confirm() {
         this.onConfirm.accept(this.nameBox.getValue());
-        Minecraft.getInstance().setScreen(this.parent);
+        com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), this.parent);
     }
 
     @Override
-    public void render(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        renderTransparentBackground(extractor);
+    public void extractRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+
         extractor.fillGradient(this.guiLeft, this.guiTop, this.guiLeft + 260, this.guiTop + 92, -14540254, -14540254);
-        extractor.drawString(this.font, this.prompt, this.guiLeft + 20, this.guiTop + 14, 0xFFF3F3E0);
-        this.nameBox.render(extractor, mouseX, mouseY, partialTick);
-        super.render(extractor, mouseX, mouseY, partialTick);
+        extractor.text(this.font, this.prompt, this.guiLeft + 20, this.guiTop + 14, 0xFFF3F3E0);
+        this.nameBox.extractRenderState(extractor, mouseX, mouseY, partialTick);
+        super.extractRenderState(extractor, mouseX, mouseY, partialTick);
     }
 
     @Override
@@ -77,3 +77,5 @@ public class CategoryNameDialogScreen extends Screen {
         return super.mouseClicked(event, flag);
     }
 }
+
+

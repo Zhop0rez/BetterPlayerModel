@@ -115,7 +115,7 @@ public class ModernModelInfoScreen extends OptionScreen {
 
     @Override
     public void onClose() {
-        if (this.minecraft != null) this.minecraft.setScreen(parentScreen);
+        if (this.minecraft != null) com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(minecraft, parentScreen);
     }
 
     @Override
@@ -138,9 +138,10 @@ public class ModernModelInfoScreen extends OptionScreen {
 
     public void openUrlWithConfirm(String url) {
         if (StringUtils.isBlank(url)) return;
-        Minecraft.getInstance().setScreen(new ConfirmLinkScreen(confirmed -> {
+        com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), new ConfirmLinkScreen(confirmed -> {
             if (confirmed) PlatformUtil.openUri(url);
-            Minecraft.getInstance().setScreen(this);
+            com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), this);
         }, url, true));
     }
 }
+

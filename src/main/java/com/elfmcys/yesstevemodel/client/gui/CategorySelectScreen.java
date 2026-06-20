@@ -2,7 +2,7 @@ package com.elfmcys.yesstevemodel.client.gui;
 
 import com.elfmcys.yesstevemodel.client.gui.button.FlatColorButton;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -42,7 +42,7 @@ public class CategorySelectScreen extends Screen {
             }
             String category = this.categories.get(index);
             addRenderableWidget(new FlatColorButton(this.guiLeft + 20, this.guiTop + 34 + i * 20, 240, 16, Component.literal(category), button -> {
-                Minecraft.getInstance().setScreen(this.parent);
+                com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), this.parent);
                 this.onSelect.accept(category);
             }));
         }
@@ -62,17 +62,19 @@ public class CategorySelectScreen extends Screen {
         if (this.onCreate != null) {
             addRenderableWidget(new FlatColorButton(this.guiLeft + 148, this.guiTop + 178, 52, 18, Component.translatable("gui.better_player_model.model_select.new_category"), button -> this.onCreate.run()));
         }
-        addRenderableWidget(new FlatColorButton(this.guiLeft + 212, this.guiTop + 178, 48, 18, Component.translatable("gui.better_player_model.config.cancel"), button -> Minecraft.getInstance().setScreen(this.parent)));
+        addRenderableWidget(new FlatColorButton(this.guiLeft + 212, this.guiTop + 178, 48, 18, Component.translatable("gui.better_player_model.config.cancel"), button -> com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), this.parent)));
     }
 
     @Override
-    public void render(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        renderTransparentBackground(extractor);
+    public void extractRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+
         extractor.fillGradient(this.guiLeft, this.guiTop, this.guiLeft + 280, this.guiTop + 210, -14540254, -14540254);
-        extractor.drawString(this.font, this.titleText, this.guiLeft + 20, this.guiTop + 14, 0xFFF3F3E0);
+        extractor.text(this.font, this.titleText, this.guiLeft + 20, this.guiTop + 14, 0xFFF3F3E0);
         if (this.categories.isEmpty()) {
-            extractor.drawString(this.font, Component.translatable("gui.better_player_model.model_select.no_category"), this.guiLeft + 20, this.guiTop + 76, 0xFFAAAAAA);
+            extractor.text(this.font, Component.translatable("gui.better_player_model.model_select.no_category"), this.guiLeft + 20, this.guiTop + 76, 0xFFAAAAAA);
         }
-        super.render(extractor, mouseX, mouseY, partialTick);
+        super.extractRenderState(extractor, mouseX, mouseY, partialTick);
     }
 }
+
+

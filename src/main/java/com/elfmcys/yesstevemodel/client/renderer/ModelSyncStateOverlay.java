@@ -3,7 +3,7 @@ package com.elfmcys.yesstevemodel.client.renderer;
 import com.elfmcys.yesstevemodel.client.ClientModelManager;
 import com.elfmcys.yesstevemodel.config.LoadingStateConfig;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -13,7 +13,7 @@ public class ModelSyncStateOverlay implements HudOverlay {
     private static final int TEXT_COLOR = 0xFFFFFFFF;
 
     @Override
-    public void render(GuiGraphics guiGraphics, Font font, float partialTick, int screenWidth, int screenHeight) {
+    public void render(GuiGraphicsExtractor GuiGraphicsExtractor, Font font, float partialTick, int screenWidth, int screenHeight) {
         int textX;
         int textY;
         int barX;
@@ -76,10 +76,10 @@ public class ModelSyncStateOverlay implements HudOverlay {
                 int loadedModelCount = ClientModelManager.getModelAssemblyMap().size();
                 int totalModelCount = loadedModelCount + pendingModelCount;
                 MutableComponent loadingText = Component.translatable("gui.better_player_model.sync_hint.title").append(Component.translatable("gui.better_player_model.sync_hint.loading_models", pendingModelCount, totalModelCount).withStyle(ChatFormatting.YELLOW));
-                renderSyncText(font, guiGraphics, loadingText, textX, textY, screenWidth);
-                guiGraphics.fill(barX, barY, barX + 150, barY + 10, -11184811);
+                renderSyncText(font, GuiGraphicsExtractor, loadingText, textX, textY, screenWidth);
+                GuiGraphicsExtractor.fill(barX, barY, barX + 150, barY + 10, -11184811);
                 int progressWidth = (int) (150.0f * ((float) loadedModelCount / totalModelCount));
-                guiGraphics.fill(barX, barY, barX + progressWidth, barY + 10, -256);
+                GuiGraphicsExtractor.fill(barX, barY, barX + progressWidth, barY + 10, -256);
             }
             return;
         }
@@ -101,16 +101,16 @@ public class ModelSyncStateOverlay implements HudOverlay {
                     prefixText.append(Component.translatable("gui.better_player_model.sync_hint.syncing").withStyle(ChatFormatting.RED));
                 } else {
                     prefixText.append(Component.literal(String.format("%s/%s", syncStatus.getSyncedModels(), syncStatus.getTotalModels())).withStyle(ChatFormatting.GREEN));
-                    guiGraphics.fill(barX, barY, barX + 150, barY + 10, -11184811);
+                    GuiGraphicsExtractor.fill(barX, barY, barX + 150, barY + 10, -11184811);
                     int progressWidth = (int) (150.0f * ((float) syncStatus.getSyncedModels() / syncStatus.getTotalModels()));
-                    guiGraphics.fill(barX, barY, barX + progressWidth, barY + 10, -16711936);
+                    GuiGraphicsExtractor.fill(barX, barY, barX + progressWidth, barY + 10, -16711936);
                 }
                 break;
         }
-        renderSyncText(font, guiGraphics, prefixText, textX, textY, screenWidth);
+        renderSyncText(font, GuiGraphicsExtractor, prefixText, textX, textY, screenWidth);
     }
 
-    private void renderSyncText(Font font, GuiGraphics guiGraphics, MutableComponent textComponent, int baseX, int textY, int screenWidth) {
+    private void renderSyncText(Font font, GuiGraphicsExtractor GuiGraphicsExtractor, MutableComponent textComponent, int baseX, int textY, int screenWidth) {
         int drawX;
         int textWidth = font.width(textComponent);
 
@@ -119,6 +119,7 @@ public class ModelSyncStateOverlay implements HudOverlay {
             case TOP_CENTER, BOTTOM_CENTER -> (screenWidth - textWidth) / 2;
             case TOP_RIGHT, BOTTOM_RIGHT -> baseX - textWidth;
         };
-        guiGraphics.drawString(font, textComponent, drawX, textY, TEXT_COLOR);
+        GuiGraphicsExtractor.text(font, textComponent, drawX, textY, TEXT_COLOR);
     }
 }
+

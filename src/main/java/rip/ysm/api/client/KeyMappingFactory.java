@@ -23,11 +23,15 @@ public final class KeyMappingFactory {
     }
 
     public static KeyMapping createInGameAlt(String name, InputConstants.Type type, int keyCode, String category) {
-        return new KeyMapping(name, type, keyCode, getOrCreateCategory(category));
+        KeyMapping mapping = new KeyMapping(name, type, keyCode, getOrCreateCategory(category));
+        net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper.registerKeyMapping(mapping);
+        return mapping;
     }
 
     public static KeyMapping createInGameNone(String name, InputConstants.Type type, int keyCode, String category) {
-        return new KeyMapping(name, type, keyCode, getOrCreateCategory(category));
+        KeyMapping mapping = new KeyMapping(name, type, keyCode, getOrCreateCategory(category));
+        net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper.registerKeyMapping(mapping);
+        return mapping;
     }
 
     public static boolean isActiveAndMatches(KeyMapping keyMapping, int keyCode, int scanCode) {

@@ -3,7 +3,7 @@ package rip.ysm.gui.components;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
@@ -23,22 +23,22 @@ public final class LinkRow extends OptionRow<Object> {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        GuiGraphics g = extractor;
+    protected void extractWidgetRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        GuiGraphicsExtractor g = extractor;
         boolean hover = isHovered();
         g.fill(getX(), getY(), getX() + width, getY() + height, hover ? 0x90171717 : 0x90000000);
         Font font = Minecraft.getInstance().font;
         String i18nKey = "gui.better_player_model.url." + label;
-        Component nameComponent = I18n.exists(i18nKey) ? Component.translatable(i18nKey) : Component.literal(label);
-        g.drawString(font, nameComponent.copy().withStyle(ChatFormatting.AQUA, ChatFormatting.UNDERLINE), getX() + 8, getY() + (height - 8) / 2, -1, false);
+        Component nameComponent = net.minecraft.locale.Language.getInstance().has(i18nKey) ? Component.translatable(i18nKey) : Component.literal(label);
+        g.text(font, nameComponent.copy().withStyle(ChatFormatting.AQUA, ChatFormatting.UNDERLINE), getX() + 8, getY() + (height - 8) / 2, -1, false);
         Component urlComp = Component.literal(url).withStyle(ChatFormatting.GRAY);
         int urlW = font.width(urlComp);
         int urlX = Math.max(getX() + 8 + font.width(nameComponent) + 12, getX() + width - urlW - 8);
-        g.drawString(font, urlComp, urlX, getY() + (height - 8) / 2, -1, false);
+        g.text(font, urlComp, urlX, getY() + (height - 8) / 2, -1, false);
     }
 
     @Override
-    protected void renderControl(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+    protected void renderControl(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
     }
 
     @Override
@@ -46,3 +46,5 @@ public final class LinkRow extends OptionRow<Object> {
         owner.openUrlWithConfirm(url);
     }
 }
+
+

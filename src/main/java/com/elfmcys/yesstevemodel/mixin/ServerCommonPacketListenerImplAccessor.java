@@ -7,6 +7,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(ServerCommonPacketListenerImpl.class)
 public interface ServerCommonPacketListenerImplAccessor {
-    @Accessor("connection")
+    @Accessor(remap = false, value = "connection")
     Connection ysm$getConnection();
 }

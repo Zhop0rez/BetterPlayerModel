@@ -18,19 +18,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(WingsLayer.class)
 public abstract class WingsLayerMixin {
 
-    @Inject(method = "submit(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;ILnet/minecraft/client/renderer/entity/state/HumanoidRenderState;FF)V", at = @At("HEAD"), cancellable = true)
+    @Inject(remap = false, method = "submit(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;ILnet/minecraft/client/renderer/entity/state/HumanoidRenderState;FF)V", at = @At("HEAD"), cancellable = true)
     private void ysm$suppressVanillaWings(PoseStack poseStack, SubmitNodeCollector collector, int packedLight, HumanoidRenderState renderState, float yRot, float xRot, CallbackInfo ci) {
         if (shouldCancel(renderState)) {
             ci.cancel();
         }
     }
 
-    @Inject(method = "submit(Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;ILnet/minecraft/client/renderer/entity/state/EntityRenderState;FF)V", at = @At("HEAD"), cancellable = true)
-    private void ysm$suppressVanillaWingsBridge(PoseStack poseStack, SubmitNodeCollector collector, int packedLight, EntityRenderState renderState, float yRot, float xRot, CallbackInfo ci) {
-        if (shouldCancel(renderState)) {
-            ci.cancel();
-        }
-    }
 
     private static boolean shouldCancel(EntityRenderState renderState) {
         if (!(renderState instanceof AvatarRenderState avatarState) || Minecraft.getInstance().level == null) {
@@ -47,3 +41,4 @@ public abstract class WingsLayerMixin {
                 && CustomPlayerElytraLayer.shouldSuppressVanillaWings(capability);
     }
 }
+

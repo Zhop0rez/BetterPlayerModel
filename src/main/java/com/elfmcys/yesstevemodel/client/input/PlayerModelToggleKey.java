@@ -8,8 +8,8 @@ import com.elfmcys.yesstevemodel.config.ServerConfig;
 import com.elfmcys.yesstevemodel.network.NetworkHandler;
 import com.elfmcys.yesstevemodel.util.InputUtil;
 import com.mojang.blaze3d.platform.InputConstants;
-import dev.architectury.event.EventResult;
-import dev.architectury.event.events.client.ClientRawInputEvent;
+import dev.ysm.architectury.event.EventResult;
+import dev.ysm.architectury.event.events.client.ClientRawInputEvent;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import rip.ysm.api.PlatformAPI;
@@ -36,7 +36,7 @@ public final class PlayerModelToggleKey {
             return false;
         }
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.screen instanceof PlayerModelScreen screen) {
+        if (com.elfmcys.yesstevemodel.client.ScreenFixer.getScreen(minecraft) instanceof PlayerModelScreen screen) {
             if (screen.shouldCloseWithToggleKey()) {
                 screen.onClose();
                 return true;
@@ -51,9 +51,9 @@ public final class PlayerModelToggleKey {
             return true;
         }
         if (NetworkHandler.isClientConnected() && !ServerConfig.CAN_SWITCH_MODEL.get()) {
-            minecraft.setScreen(new ExtraPlayerConfigScreen(null));
+            com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(minecraft, new ExtraPlayerConfigScreen(null));
         } else {
-            minecraft.setScreen(new PlayerModelScreen());
+             com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(minecraft, new PlayerModelScreen()); 
         }
         return true;
     }

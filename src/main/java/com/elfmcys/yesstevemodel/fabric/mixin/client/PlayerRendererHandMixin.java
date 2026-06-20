@@ -18,7 +18,7 @@ public abstract class PlayerRendererHandMixin {
 
     // MC 26.x Fabric: renderRightHand has 5 params, no AbstractClientPlayer.
     // Player is available from Minecraft.getInstance().player for first-person hand rendering.
-    @Inject(method = "renderRightHand", at = @At("HEAD"), cancellable = true)
+    @Inject(remap = false, method = "renderRightHand", at = @At("HEAD"), cancellable = true)
     private void ysm$onRenderRightHand(PoseStack poseStack, SubmitNodeCollector collector, int packedLight, Identifier id, boolean flag, CallbackInfo ci) {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player != null) {
@@ -28,7 +28,7 @@ public abstract class PlayerRendererHandMixin {
         }
     }
 
-    @Inject(method = "renderLeftHand", at = @At("HEAD"), cancellable = true)
+    @Inject(remap = false, method = "renderLeftHand", at = @At("HEAD"), cancellable = true)
     private void ysm$onRenderLeftHand(PoseStack poseStack, SubmitNodeCollector collector, int packedLight, Identifier id, boolean flag, CallbackInfo ci) {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player != null) {
@@ -38,3 +38,5 @@ public abstract class PlayerRendererHandMixin {
         }
     }
 }
+
+

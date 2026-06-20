@@ -1,6 +1,6 @@
 package net.fabricmc.fabric.api.client.rendering.v1;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 
@@ -10,5 +10,6 @@ public interface HudRenderCallback {
             listener.onHudRender(graphics, tickDelta);
         }
     });
-    void onHudRender(GuiGraphics guiGraphics, TickDeltaCounter tickDelta);
+    void onHudRender(GuiGraphicsExtractor GuiGraphicsExtractor, TickDeltaCounter tickDelta);
 }
+

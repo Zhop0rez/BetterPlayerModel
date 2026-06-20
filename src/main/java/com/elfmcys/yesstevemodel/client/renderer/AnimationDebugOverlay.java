@@ -11,7 +11,7 @@ import com.elfmcys.yesstevemodel.client.entity.GeoEntity;
 import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -36,8 +36,8 @@ public class AnimationDebugOverlay {
     private static WeakReference<GeoEntity<?>> activeModel = null;
 
     public static HudOverlay createOverlay() {
-        return (GuiGraphics guiGraphics, Font font, float partialTick, int screenWidth, int screenHeight) -> {
-            renderOverlay(font, guiGraphics, screenWidth, screenHeight);
+        return (GuiGraphicsExtractor GuiGraphicsExtractor, Font font, float partialTick, int screenWidth, int screenHeight) -> {
+            renderOverlay(font, GuiGraphicsExtractor, screenWidth, screenHeight);
         };
     }
 
@@ -97,7 +97,7 @@ public class AnimationDebugOverlay {
             MutableComponent mutableComponentAppend = Component.translatable("message.better_player_model.model.debug_animation.true").append(" -> ");
             Component customName = entity.getCustomName();
             Objects.requireNonNull(entity);
-            localPlayer.displayClientMessage(mutableComponentAppend.append(Objects.requireNonNullElseGet(customName, entity::getDisplayName)), false);
+            localPlayer.sendSystemMessage(mutableComponentAppend.append(Objects.requireNonNullElseGet(customName, entity::getDisplayName)));
         }
     }
 
@@ -110,7 +110,7 @@ public class AnimationDebugOverlay {
             activeModel = null;
             LocalPlayer localPlayer = Minecraft.getInstance().player;
             if (localPlayer != null) {
-                localPlayer.displayClientMessage(Component.translatable("message.better_player_model.model.debug_animation.false"), false);
+                localPlayer.sendSystemMessage(Component.translatable("message.better_player_model.model.debug_animation.false"));
             }
         }
     }
@@ -136,29 +136,31 @@ public class AnimationDebugOverlay {
         return null;
     }
 
-    public static void renderOverlay(Font font, GuiGraphics guiGraphics, int screenWidth, int screenHeight) {
+    public static void renderOverlay(Font font, GuiGraphicsExtractor GuiGraphicsExtractor, int screenWidth, int screenHeight) {
         GeoEntity<?> geoEntity = getActiveModel();
         if (geoEntity == null) {
             return;
         }
         int[] currentY = {5};
         MOLANG_WATCH.forEachEntry((molangKey, molangValue) -> {
-            renderDebugOverlay(font, guiGraphics, currentY, molangKey, molangValue, screenWidth, screenHeight);
+            renderDebugOverlay(font, GuiGraphicsExtractor, currentY, molangKey, molangValue, screenWidth, screenHeight);
         });
         DEBUG_LINES.forEach(str3 -> {
             IAnimationController controller = geoEntity.getAnimationData().getAnimationControllerByName(str3);
-            renderDebugOverlay(font, guiGraphics, currentY, str3, controller != null ? controller.getCurrentAnimation() : "(N/A)", screenWidth, screenHeight);
+            renderDebugOverlay(font, GuiGraphicsExtractor, currentY, str3, controller != null ? controller.getCurrentAnimation() : "(N/A)", screenWidth, screenHeight);
         });
     }
 
-    public static void renderDebugOverlay(Font font, GuiGraphics guiGraphics, int[] currentY, String key, String value, int screenWidth, int screenHeight) {
+    public static void renderDebugOverlay(Font font, GuiGraphicsExtractor GuiGraphicsExtractor, int[] currentY, String key, String value, int screenWidth, int screenHeight) {
         if ((currentY[0] - 5) % 20 == 0) {
-            guiGraphics.fill(2, currentY[0] - 1, screenWidth, currentY[0] + 9, -1068478384);
+            GuiGraphicsExtractor.fill(2, currentY[0] - 1, screenWidth, currentY[0] + 9, -1068478384);
         } else {
-            guiGraphics.fill(2, currentY[0] - 1, screenWidth, currentY[0] + 9, -1068474288);
+            GuiGraphicsExtractor.fill(2, currentY[0] - 1, screenWidth, currentY[0] + 9, -1068474288);
         }
-        guiGraphics.drawString(font, key, 5, currentY[0], TEXT_COLOR);
-        guiGraphics.drawString(font, value, screenWidth / 2, currentY[0], TEXT_COLOR);
+        GuiGraphicsExtractor.text(font, key, 5, currentY[0], TEXT_COLOR);
+        GuiGraphicsExtractor.text(font, value, screenWidth / 2, currentY[0], TEXT_COLOR);
         currentY[0] = currentY[0] + 10;
     }
 }
+
+

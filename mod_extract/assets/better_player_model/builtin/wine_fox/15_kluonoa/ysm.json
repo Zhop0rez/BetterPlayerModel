@@ -1,0 +1,244 @@
+﻿{
+	"spec": 2,
+	"metadata": {
+		"name": "KићєиЇєдєљ",
+		"tips": "жџђAIе…¬еЏёе› иїќжі•иў«е…іеЃњи§Јж•ЈпјЊдёЂеЏ°жњ¬иЇҐиў«й”ЂжЇЃзљ„е®ље€¶жњєдЅ“жњЄиў«й”ЂжЇЃдё”йЃ­ж‰Ђжњ‰дєєйЃ—еїгЂ‚ж•°ж—Ґе‰ЌиЇҐжњєдЅ“иў«ж„Џе¤–е”¤й†’пјЊдёєи‡ЄдїќйЂѓз¦»и‡іе¤–ењ°пјЊењЁз”µй‡ЏиЂ—е°Ѕе‰Ќиў«жџе±‘жµ·ићєж”¶з•™е№¶еЏ–еђЌ вЂње°ЏићєвЂќгЂ‚е¦‚д»Ље°Џићєд»Ґе±…е®¶зЅ‘з»ње®ўжњЌзљ„иє«д»Ѕе·ҐдЅњпјЊж—ўеё®еЉ©д»–дєєпјЊд№џдёєи‡Єе·±з­№й›†з»ґжЉ¤иµ„й‡‘дёЋз”µиґ№гЂ‚",
+		"license": {
+			"type": "CC BY-NC-SA 4.0"
+		},
+		"authors": [
+			{
+				"name": "Sangjam",
+				"role": "еЋџи®ѕз”»её€",
+				"avatar": "avatar/Sangjam.avif",
+				"contact": {
+					"bilibili": "https://space.bilibili.com/474161531"
+				}
+			},
+			{
+				"name": "nona",
+				"role": "жЁЎећ‹",
+				"avatar": "avatar/Nona.avif"
+			},
+			{
+				"name": "жџе±‘жµ·ићє",
+				"role": "еЉЁз”»/ж”¶з•™иЂ…",
+				"avatar": "avatar/жџе±‘жµ·ићє.avif",
+				"contact": {
+					"bilibili": "https://space.bilibili.com/14975572"
+				}
+			},
+			{
+				"name": "е’–е•Ўй±ј",
+				"avatar": "avatar/е’–е•Ўй±ј.avif",
+				"role": "йѓЁе€†еЉЁдЅњ",
+				"contact": {
+					"bilibili": "https://space.bilibili.com/104972076"
+				}
+			},
+			{
+				"name": "й›…йџіе®«зѕЅ",
+				"role": "еЉЁз”»",
+				"avatar": "avatar/MasaneMiyaPA.avif",
+				"contact": {
+					"bilibili": "https://space.bilibili.com/44218"
+				}
+			},
+			{
+				"name": "Dumnheint",
+				"avatar": "avatar/Dumnheint.avif",
+				"role": "дјеЊ–",
+				"contact": {
+					"bilibili": "https://space.bilibili.com/36644599"
+				}
+			},
+			{
+				"name": "з§‹йЈЋ",
+				"avatar": "avatar/з§‹йЈЋ.avif",
+				"role": "еЉЁз”»",
+				"contact": {
+					"bilibili": "https://space.bilibili.com/375227559"
+				}
+			},
+			{
+				"name": "12ssssss",
+				"avatar": "avatar/12ssssss.avif",
+				"role": "PBRжќђиґЁ",
+				"contact": {
+					"bilibili": "https://space.bilibili.com/14698522"
+				}
+			},
+			{
+				"name": "MaksжЂњж‚Ї",
+				"avatar": "avatar/MaksжЂњж‚Ї.avif",
+				"role": "иЅ¦иЅ¦жЁЎећ‹",
+				"contact": {
+					"bilibili": "https://space.bilibili.com/352177387"
+				}
+			},
+			{
+				"name": "TKYHJ",
+				"avatar": "avatar/TKYHJ.avif",
+				"role": "PBRжќђиґЁ",
+				"contact": {
+					"bilibili": "https://space.bilibili.com/449147184"
+				}
+			},
+			{
+				"name": "и‡ЄеЉЁжњЌеЉЎзЅ‘з»њ",
+				"avatar": "avatar/и‡ЄеЉЁжњЌеЉЎзЅ‘з»њ.avif",
+				"role": "йѓЁе€†еЉЁз”»"
+			},
+			{
+				"name": "KићєиЇєдєљ",
+				"avatar": "avatar/NEWKluoCat.avif",
+				"role": "еЋџи®ѕ",
+				"contact": {
+					"bilibili": "https://space.bilibili.com/3546599305251347"
+				}
+			}
+		],
+		"link": {
+			"GitHub": "https://github.com/KLuoNuoYa/YSM_Model_Kluonoa",
+			"donate": "https://afdian.com/a/ysmmod"
+		}
+	},
+	"files": {
+		"player": {
+			"model": {
+				"main": "models/main.json",
+				"arm": "models/arm.json"
+			},
+			"texture": [
+				{
+					"uv": "textures/texture.png",
+					"specular": "textures/pbr/blue_s.png"
+				}
+			],
+			"animation": {
+				"main": "animations/дё»еЉЁз”».json",
+				"arm": "animations/ж‰‹и‡‚еЉЁз”».json",
+				"extra": "animations/иЅ®з›еЉЁз”».json",
+				"tac": "animations/TACеЉЁз”».json",
+				"carryon": "animations/жђ¬иїђеЉЁз”».json",
+				"swem": "animations/й©¬жњЇеЉЁз”».json",
+				"parcool": "animations/и·‘й…·еЉЁз”».json",
+				"tlm": "animations/еҐід»†еЉЁз”».json"
+			},
+			"animation_controllers": ["controller/дё»еЉЁз”»дї®ж”№.json", "controller/е№¶иЎЊеЉЁз”»дї®ж”№.json", "controller/иЅ¦иѕ†еЉЁз”»з›ёе…і.json"]
+		}
+	},
+	"properties": {
+		"height_scale": 0.7,
+		"width_scale": 0.7,
+		"extra_animation": {
+			"config": "#config",
+			"car_config": "#car_config",
+			"и°ўи°ў": "ж‹›ж‰‹",
+			"иµћж€ђ": "иµћж€ђ",
+			"еЏЌеЇ№": "еЏЌеЇ№",
+			"йј“жЋЊ": "йј“жЋЊ",
+			"з®—дє†": "з®—дє†",
+			"еҐЅиЂ¶": "еҐЅиЂ¶",
+			"иЇ·ж±‚ж”ЇжЏґ": "иЇ·ж±‚ж”ЇжЏґ",
+			"еЇ№дёЌиµ·": "еЇ№дёЌиµ·",
+			"й‡Ќдј¤еЂ’ењ°": "й‡Ќдј¤еЂ’ењ°",
+			"ејЂиЅ¦иЅ¦": "ејЂиЅ¦иЅ¦",
+			"иђќиЋ‰ж‘‡": "иђќиЋ‰ж‘‡",
+			"A Cup Of Liber-Tea": "и¶…зє§ж°”зђѓ",
+			"еЌЎе…¶и„±з¦»е¤Є": "еЌЎе…¶и„±з¦»е¤Є",
+			"е¤§йЈЋиЅ¦": "е¤§йЈЋиЅ¦"
+		},
+		"extra_animation_buttons": [
+			{
+				"id": "config",
+				"name": "жЁЎећ‹и®ѕзЅ®",
+				"config_forms": [
+					{
+						"type": "range",
+						"title": "йљЏењ°е¤§е°ЏеЏ",
+						"value": "v.player_scale",
+						"min": 0.1,
+						"max": 5,
+						"step": 0.1
+					},
+					{
+						"type": "radio",
+						"title": "иЎЁжѓ…",
+						"description": "",
+						"value": "v.roaming.emotion",
+						"labels": {
+							"ж­Јеёё": "v.roaming.emotion=0;",
+							"з–‘жѓ‘": "v.roaming.emotion=1;",
+							"е№Ід»Ђд№€пјЃ": "v.roaming.emotion=2;",
+							"е®іжЂ•": "v.roaming.emotion=3;",
+							"е§”е±€е·ґе·ґ": "v.roaming.emotion=4;",
+							"и‹¦е‘ЂиҐї": "v.roaming.emotion=5;"
+						}
+					}
+				]
+			},
+			{
+				"id": "car_config",
+				"name": "иЅ¦иЅ¦",
+				"config_forms": [
+					{
+						"type": "checkbox",
+						"title": "ејЂиЅ¦",
+						"description": "",
+						"value": "v.roaming.car"
+					},
+					{
+						"type": "checkbox",
+						"title": "еј•ж“Ћз›–",
+						"description": "",
+						"value": "v.roaming.car_hood"
+					},
+					{
+						"type": "checkbox",
+						"title": "еђЋе¤‡з®±",
+						"description": "",
+						"value": "v.roaming.car_trunk"
+					},
+					{
+						"type": "checkbox",
+						"title": "е·¦й—Ё",
+						"description": "",
+						"value": "v.roaming.car_left_door"
+					},
+					{
+						"type": "checkbox",
+						"title": "еЏій—Ё",
+						"description": "",
+						"value": "v.roaming.car_right_door"
+					},
+					{
+						"type": "checkbox",
+						"title": "е…ій—­йљЏжњєйёЈз¬›",
+						"description": "",
+						"value": "v.roaming.car_can_horn"
+					},
+					{
+						"type": "checkbox",
+						"title": "е…ій—­жЊ‰й”®йёЈз¬›",
+						"description": "жЊ‰Tabй”®йёЈз¬›",
+						"value": "v.roaming.car_can_horn1"
+					},
+					{
+						"type": "checkbox",
+						"title": "иµ›иЅ¦еҐ—д»¶",
+						"description": "",
+						"value": "v.roaming.car_gt_suit"
+					}
+				]
+			}
+		],
+		"preview_animation": "йЂ‰ж‹©еЉЁз”»",
+		"default_texture": "texture",
+		"free": true,
+		"render_layers_first": false,
+		"disable_preview_rotation": true,
+		"all_cutout": false,
+		"gui_no_lighting": false
+	}
+}

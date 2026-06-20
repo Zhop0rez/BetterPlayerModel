@@ -4,7 +4,7 @@ import com.elfmcys.yesstevemodel.client.gui.ISpecialWidget;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
@@ -21,10 +21,10 @@ public class FlatIconButton extends AbstractWidget implements ISpecialWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        GuiGraphics guiGraphics = extractor;
-        guiGraphics.fill(getX(), getY(), getX() + getWidth(), getY() + this.iconIndex, -280804798);
-/*         GuiGraphics.renderScrollingString(Minecraft.getInstance().font, getMessage(), getX() + 2, getY(), getX() + getWidth() - 2, getY() + getHeight(), 16777215);
+    protected void extractWidgetRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        GuiGraphicsExtractor GuiGraphicsExtractor = extractor;
+        GuiGraphicsExtractor.fill(getX(), getY(), getX() + getWidth(), getY() + this.iconIndex, -280804798);
+/*         GuiGraphicsExtractor.renderScrollingString(Minecraft.getInstance().font, getMessage(), getX() + 2, getY(), getX() + getWidth() - 2, getY() + getHeight(), 16777215);
  */
     }
 
@@ -32,3 +32,4 @@ public class FlatIconButton extends AbstractWidget implements ISpecialWidget {
         defaultButtonNarrationText(narrationElementOutput);
     }
 }
+

@@ -15,7 +15,9 @@ public final class ClientMessages {
     public static void sendUnavailableMessage() {
         LocalPlayer localPlayer = Minecraft.getInstance().player;
         if (localPlayer != null) {
-            localPlayer.displayClientMessage(YesSteveModel.getUnavailableComponent(), false);
+            localPlayer.sendSystemMessage(YesSteveModel.getUnavailableComponent());
         }
     }
 }
+
+

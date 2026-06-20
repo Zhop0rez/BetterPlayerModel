@@ -2,7 +2,7 @@ package com.elfmcys.yesstevemodel.event;
 
 import com.elfmcys.yesstevemodel.YesSteveModel;
 import com.elfmcys.yesstevemodel.model.ServerModelManager;
-import dev.architectury.event.events.common.LifecycleEvent;
+import dev.ysm.architectury.event.events.common.LifecycleEvent;
 
 public final class ServerStartupEvent {
 

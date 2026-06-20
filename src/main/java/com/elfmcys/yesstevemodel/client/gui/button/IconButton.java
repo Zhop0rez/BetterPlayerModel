@@ -1,7 +1,7 @@
 package com.elfmcys.yesstevemodel.client.gui.button;
 
 import com.elfmcys.yesstevemodel.YesSteveModel;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -21,13 +21,14 @@ public class IconButton extends FlatColorButton {
     }
 
     @Override
-    protected void renderContents(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        super.renderContents(extractor, mouseX, mouseY, partialTick);
-        GuiGraphics guiGraphics = extractor;
+    protected void extractContents(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        super.extractContents(extractor, mouseX, mouseY, partialTick);
+        GuiGraphicsExtractor GuiGraphicsExtractor = extractor;
         int iconOffsetX = (this.width - 16) / 2;
         int iconOffsetY = (this.height - 16) / 2;
         int x = getX() + iconOffsetX;
         int y = getY() + iconOffsetY;
-        guiGraphics.blit(ICON_TEXTURE, x, y, x + 16, y + 16, this.iconU / 256.0f, (this.iconU + 16) / 256.0f, this.iconV / 256.0f, (this.iconV + 16) / 256.0f);
+        GuiGraphicsExtractor.blit(ICON_TEXTURE, x, y, x + 16, y + 16, this.iconU / 256.0f, (this.iconU + 16) / 256.0f, this.iconV / 256.0f, (this.iconV + 16) / 256.0f);
     }
 }
+

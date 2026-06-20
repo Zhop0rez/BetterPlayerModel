@@ -21,10 +21,10 @@ public abstract class AbstractArrowEntityMixin implements ProjectileStateAccesso
     @Unique
     private String ownerMainHandItem = StringPool.EMPTY;
 
-    @Shadow
+    @Shadow(remap = false)
     private int inGroundTime;
 
-    @Shadow
+    @Shadow(remap = false)
     protected abstract boolean isInGround();
 
     @Override
@@ -45,7 +45,7 @@ public abstract class AbstractArrowEntityMixin implements ProjectileStateAccesso
         return this.ownerMainHandItem;
     }
 
-    @Inject(at = {@At("RETURN")}, method = {"setOwner(Lnet/minecraft/world/entity/Entity;)V"})
+    @Inject(remap = false, at = {@At("RETURN")}, method = {"setOwner(Lnet/minecraft/world/entity/Entity;)V"})
     private void onSetOwner(Entity entity, CallbackInfo callbackInfo) {
         Identifier key;
         if (YesSteveModel.isAvailable() && (entity instanceof LivingEntity) && (key = BuiltInRegistries.ITEM.getKey(((LivingEntity) entity).getMainHandItem().getItem())) != null) {
@@ -53,3 +53,5 @@ public abstract class AbstractArrowEntityMixin implements ProjectileStateAccesso
         }
     }
 }
+
+

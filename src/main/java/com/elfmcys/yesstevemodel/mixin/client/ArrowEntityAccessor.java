@@ -15,7 +15,7 @@ import java.util.Set;
 @Mixin(AbstractArrow.class)
 public abstract class ArrowEntityAccessor {
 
-    @Shadow
+    @Shadow(remap = false)
     protected abstract ItemStack getPickupItem();
 
     @Unique

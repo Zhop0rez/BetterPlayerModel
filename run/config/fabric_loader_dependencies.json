@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "overrides": {
+    "forgeconfigapiport": {
+      "-depends": {
+        "minecraft": ">=1.21.11- <1.21.12-"
+      }
+    }
+  }
+}

@@ -85,7 +85,8 @@ public final class GpuRenderPath {
         Matrix4f projMat = projMVScratch.identity();
 
         Minecraft minecraft = Minecraft.getInstance();
-        projMat.set(minecraft.gameRenderer.getProjectionMatrix(minecraft.options.fov().get()));
+        float fov = minecraft.options.fov().get().floatValue();
+        projMat.setPerspective((float) (fov * (Math.PI / 180.0)), (float) minecraft.getWindow().getWidth() / (float) minecraft.getWindow().getHeight(), 0.05f, minecraft.options.getEffectiveRenderDistance() * 4.0f);
         projMat.get(projScratch);
 
         ByteBuffer boneBuf = mesh.perFrameBoneBuffer;
@@ -111,7 +112,7 @@ public final class GpuRenderPath {
         GlStateManager._disableCull();
         GlStateManager._enableDepthTest();
         GlStateManager._depthMask(true);
-        GlStateManager._disableBlend();
+        GlStateManager._disableBlend(0);
 
         stateCache.activeTexture(GL13.GL_TEXTURE0 + 2);
         bindTextureView(lightmapTexture);
@@ -159,11 +160,11 @@ public final class GpuRenderPath {
         drawMeshParts(mesh, renderPartMask);
 
         if (translucentTexture) {
-            GlStateManager._enableBlend();
+            GlStateManager._enableBlend(0);
             GlStateManager._blendFuncSeparate(770, 771, 1, 0);
             if (BoneSkinShader.locAlphaMode() >= 0) GL20.glUniform1i(BoneSkinShader.locAlphaMode(), 2);
             drawMeshParts(mesh, renderPartMask);
-            GlStateManager._disableBlend();
+            GlStateManager._disableBlend(0);
         }
 
         stateCache.bindSsboBase(BoneSkinShader.ssbo, 0);
@@ -419,7 +420,7 @@ public final class GpuRenderPath {
 
     private static TextureBinding resolveLightmapTexture(Minecraft mc) {
         try {
-            return resolveTextureBinding(mc.gameRenderer.lightTexture().getTextureView());
+            return resolveTextureBinding(mc.gameRenderer.lightmap());
         } catch (RuntimeException ignored) {
             return TextureBinding.EMPTY;
         }
@@ -656,3 +657,7 @@ public final class GpuRenderPath {
         }
     }
 }
+
+
+
+

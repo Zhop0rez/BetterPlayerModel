@@ -1,7 +1,7 @@
 package rip.ysm.gui.components.buttons;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -35,8 +35,8 @@ public class TabButton extends AbstractWidget {
     }
 
     @Override
-    public void renderWidget(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        GuiGraphics g = extractor;
+    public void extractWidgetRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        GuiGraphicsExtractor g = extractor;
         int bg = selected ? 0x90171717 : (isHovered() ? 0x900B0B0B : 0x90000000);
         g.fill(getX(), getY(), getX() + width, getY() + height, bg);
         if (selected) {
@@ -47,9 +47,9 @@ public class TabButton extends AbstractWidget {
         if (horizontal) {
             int tw = Minecraft.getInstance().font.width(getMessage());
             int textX = getX() + Math.max(6, (width - tw) / 2);
-            g.drawString(Minecraft.getInstance().font, getMessage(), textX, textY, 0xFFFFFFFF, false);
+            g.text(Minecraft.getInstance().font, getMessage(), textX, textY, 0xFFFFFFFF, false);
         } else {
-            g.drawString(Minecraft.getInstance().font, getMessage(), getX() + 10, textY, 0xFFFFFFFF, false);
+            g.text(Minecraft.getInstance().font, getMessage(), getX() + 10, textY, 0xFFFFFFFF, false);
         }
     }
 
@@ -63,3 +63,4 @@ public class TabButton extends AbstractWidget {
         defaultButtonNarrationText(out);
     }
 }
+

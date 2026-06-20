@@ -2,7 +2,7 @@ package com.elfmcys.yesstevemodel.client.gui.button;
 
 import net.minecraft.client.InputType;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -143,22 +143,22 @@ public class RangedSliderWidget extends AbstractSliderButton {
     }
 
     @Override
-    public void renderWidget(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        GuiGraphics guiGraphics = extractor;
+    public void extractWidgetRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        GuiGraphicsExtractor GuiGraphicsExtractor = extractor;
         final Minecraft mc = Minecraft.getInstance();
 
-        blitWithBorder(guiGraphics, SLIDER_LOCATION, this.getX(), this.getY(), 0, getTextureY(), this.width, this.height, 200, 20, 2, 3, 2, 2);
+        blitWithBorder(GuiGraphicsExtractor, SLIDER_LOCATION, this.getX(), this.getY(), 0, getTextureY(), this.width, this.height, 200, 20, 2, 3, 2, 2);
 
         int handleX = this.getX() + (int)(this.value * (double)(this.width - 8));
-        blitWithBorder(guiGraphics, SLIDER_LOCATION, handleX, this.getY(), 0, getHandleTextureY(), 8, this.height, 200, 20, 2, 3, 2, 2);
+        blitWithBorder(GuiGraphicsExtractor, SLIDER_LOCATION, handleX, this.getY(), 0, getHandleTextureY(), 8, this.height, 200, 20, 2, 3, 2, 2);
 
         int color = this.active ? 16777215 : 10526880;
-/*         GuiGraphics.renderScrollingString(mc.getFont(), getMessage(), getX() + 2, getY(), getX() + getWidth() - 2, getY() + getHeight(), color | Mth.ceil(this.alpha * 255.0F) << 24);
+/*         GuiGraphicsExtractor.renderScrollingString(mc.getFont(), getMessage(), getX() + 2, getY(), getX() + getWidth() - 2, getY() + getHeight(), color | Mth.ceil(this.alpha * 255.0F) << 24);
  */
     }
 
-    //https://github.com/MinecraftForge/MinecraftForge/blob/26.1.2/src/main/java/net/minecraftforge/client/extensions/IForgeGuiGraphics.java#L71
-    protected void blitWithBorder(GuiGraphics guiGraphics, Identifier texture, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight, int topBorder, int bottomBorder, int leftBorder, int rightBorder) {
+    //https://github.com/MinecraftForge/MinecraftForge/blob/26.1.2/src/main/java/net/minecraftforge/client/extensions/IForgeGuiGraphicsExtractor.java#L71
+    protected void blitWithBorder(GuiGraphicsExtractor GuiGraphicsExtractor, Identifier texture, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight, int topBorder, int bottomBorder, int leftBorder, int rightBorder) {
         int fillerWidth = textureWidth - leftBorder - rightBorder;
         int fillerHeight = textureHeight - topBorder - bottomBorder;
         int canvasWidth = width - leftBorder - rightBorder;
@@ -168,30 +168,31 @@ public class RangedSliderWidget extends AbstractSliderButton {
         int yPasses = canvasHeight / fillerHeight;
         int remainderHeight = canvasHeight % fillerHeight;
 
-        blitRegion(guiGraphics, texture, x, y, u, v, leftBorder, topBorder, textureWidth, textureHeight);
-        blitRegion(guiGraphics, texture, x + leftBorder + canvasWidth, y, u + leftBorder + fillerWidth, v, rightBorder, topBorder, textureWidth, textureHeight);
-        blitRegion(guiGraphics, texture, x, y + topBorder + canvasHeight, u, v + topBorder + fillerHeight, leftBorder, bottomBorder, textureWidth, textureHeight);
-        blitRegion(guiGraphics, texture, x + leftBorder + canvasWidth, y + topBorder + canvasHeight, u + leftBorder + fillerWidth, v + topBorder + fillerHeight, rightBorder, bottomBorder, textureWidth, textureHeight);
+        blitRegion(GuiGraphicsExtractor, texture, x, y, u, v, leftBorder, topBorder, textureWidth, textureHeight);
+        blitRegion(GuiGraphicsExtractor, texture, x + leftBorder + canvasWidth, y, u + leftBorder + fillerWidth, v, rightBorder, topBorder, textureWidth, textureHeight);
+        blitRegion(GuiGraphicsExtractor, texture, x, y + topBorder + canvasHeight, u, v + topBorder + fillerHeight, leftBorder, bottomBorder, textureWidth, textureHeight);
+        blitRegion(GuiGraphicsExtractor, texture, x + leftBorder + canvasWidth, y + topBorder + canvasHeight, u + leftBorder + fillerWidth, v + topBorder + fillerHeight, rightBorder, bottomBorder, textureWidth, textureHeight);
 
         for (int i = 0; i < xPasses + (remainderWidth > 0 ? 1 : 0); i++) {
             int drawWidth = (i == xPasses ? remainderWidth : fillerWidth);
-            blitRegion(guiGraphics, texture, x + leftBorder + (i * fillerWidth), y, u + leftBorder, v, drawWidth, topBorder, textureWidth, textureHeight);
-            blitRegion(guiGraphics, texture, x + leftBorder + (i * fillerWidth), y + topBorder + canvasHeight, u + leftBorder, v + topBorder + fillerHeight, drawWidth, bottomBorder, textureWidth, textureHeight);
+            blitRegion(GuiGraphicsExtractor, texture, x + leftBorder + (i * fillerWidth), y, u + leftBorder, v, drawWidth, topBorder, textureWidth, textureHeight);
+            blitRegion(GuiGraphicsExtractor, texture, x + leftBorder + (i * fillerWidth), y + topBorder + canvasHeight, u + leftBorder, v + topBorder + fillerHeight, drawWidth, bottomBorder, textureWidth, textureHeight);
 
             for (int j = 0; j < yPasses + (remainderHeight > 0 ? 1 : 0); j++) {
                 int drawHeight = (j == yPasses ? remainderHeight : fillerHeight);
-                blitRegion(guiGraphics, texture, x + leftBorder + (i * fillerWidth), y + topBorder + (j * fillerHeight), u + leftBorder, v + topBorder, drawWidth, drawHeight, textureWidth, textureHeight);
+                blitRegion(GuiGraphicsExtractor, texture, x + leftBorder + (i * fillerWidth), y + topBorder + (j * fillerHeight), u + leftBorder, v + topBorder, drawWidth, drawHeight, textureWidth, textureHeight);
             }
         }
 
         for (int j = 0; j < yPasses + (remainderHeight > 0 ? 1 : 0); j++) {
             int drawHeight = (j == yPasses ? remainderHeight : fillerHeight);
-            blitRegion(guiGraphics, texture, x, y + topBorder + (j * fillerHeight), u, v + topBorder, leftBorder, drawHeight, textureWidth, textureHeight);
-            blitRegion(guiGraphics, texture, x + leftBorder + canvasWidth, y + topBorder + (j * fillerHeight), u + leftBorder + fillerWidth, v + topBorder, rightBorder, drawHeight, textureWidth, textureHeight);
+            blitRegion(GuiGraphicsExtractor, texture, x, y + topBorder + (j * fillerHeight), u, v + topBorder, leftBorder, drawHeight, textureWidth, textureHeight);
+            blitRegion(GuiGraphicsExtractor, texture, x + leftBorder + canvasWidth, y + topBorder + (j * fillerHeight), u + leftBorder + fillerWidth, v + topBorder, rightBorder, drawHeight, textureWidth, textureHeight);
         }
     }
 
-    private static void blitRegion(GuiGraphics guiGraphics, Identifier texture, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight) {
-        guiGraphics.blit(texture, x, y, x + width, y + height, u / (float) textureWidth, (u + width) / (float) textureWidth, v / (float) textureHeight, (v + height) / (float) textureHeight);
+    private static void blitRegion(GuiGraphicsExtractor GuiGraphicsExtractor, Identifier texture, int x, int y, int u, int v, int width, int height, int textureWidth, int textureHeight) {
+        GuiGraphicsExtractor.blit(texture, x, y, x + width, y + height, u / (float) textureWidth, (u + width) / (float) textureWidth, v / (float) textureHeight, (v + height) / (float) textureHeight);
     }
 }
+

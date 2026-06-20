@@ -3,7 +3,7 @@ package com.elfmcys.yesstevemodel.client.gui;
 import com.elfmcys.yesstevemodel.model.ServerModelManager;
 import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -26,13 +26,13 @@ public class OpenModelFolderScreen extends Screen {
             Util.getPlatform().openFile(ServerModelManager.CUSTOM.toFile());
         }).bounds(x, y, 150, 20).build());
         addRenderableWidget(Button.builder(Component.translatable("gui.better_player_model.model.return"), button2 -> {
-            Minecraft.getInstance().setScreen(this.parentScreen);
+            com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), this.parentScreen);
         }).bounds(x + 160, y, 150, 20).build());
     }
 
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        renderTransparentBackground(guiGraphics);
-        guiGraphics.drawWordWrap(this.font, Component.translatable("gui.better_player_model.open_model_folder.tips"), (this.width - 400) / 2, (this.height / 2) - 80, 400, 16777215);
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {
+        GuiGraphicsExtractor.textWithWordWrap(this.font, Component.translatable("gui.better_player_model.open_model_folder.tips"), (this.width - 400) / 2, (this.height / 2) - 80, 400, 16777215);
+        super.extractRenderState(GuiGraphicsExtractor, mouseX, mouseY, partialTick);
     }
 }
+

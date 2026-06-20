@@ -21,10 +21,10 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.MultiBufferSource;
+
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
@@ -126,11 +126,11 @@ public final class ModelPreviewRenderer {
         return true;
     }
 
-    public static <T extends LivingEntity, TAnimatable extends LivingAnimatable<T>> void renderLivingEntityPreview(GuiGraphics guiGraphics, int left, int top, int right, int bottom, float originX, float originY, float scale, float partialTick, TAnimatable animatable, GeoReplacedEntityRenderer<T, TAnimatable> renderer, boolean disablePreviewRotation, boolean hideEquipment) {
-        if (guiGraphics == null || animatable == null || renderer == null || right <= left || bottom <= top) {
+    public static <T extends LivingEntity, TAnimatable extends LivingAnimatable<T>> void renderLivingEntityPreview(GuiGraphicsExtractor GuiGraphicsExtractor, int left, int top, int right, int bottom, float originX, float originY, float scale, float partialTick, TAnimatable animatable, GeoReplacedEntityRenderer<T, TAnimatable> renderer, boolean disablePreviewRotation, boolean hideEquipment) {
+        if (GuiGraphicsExtractor == null || animatable == null || renderer == null || right <= left || bottom <= top) {
             return;
         }
-        EntityRenderState state = new EntityRenderState();
+        EntityRenderState state = Minecraft.getInstance().getEntityRenderDispatcher().extractEntity(animatable.getEntity(), partialTick);
         GUI_PREVIEWS.put(state, new LivingGuiPreviewRequest(
                 toModelOffset(originX, left, right, scale),
                 toModelOffset(originY, top, bottom, scale),
@@ -142,14 +142,14 @@ public final class ModelPreviewRenderer {
                 disablePreviewRotation ? 180.0f : 200.0f,
                 false
         ));
-        guiGraphics.submitEntityRenderState(state, scale, new Vector3f(), new Quaternionf(), null, left, top, right, bottom);
+        GuiGraphicsExtractor.entity(state, scale, new Vector3f(), new Quaternionf(), null, left, top, right, bottom);
     }
 
-    public static void renderEntityPreview(GuiGraphics guiGraphics, int left, int top, int right, int bottom, float originX, float originY, float scale, float pitch, float yaw, float partialTick, AnimatableEntity animatableEntity, GeoReplacedEntityRenderer renderer, boolean renderGround) {
-        if (guiGraphics == null || animatableEntity == null || renderer == null || right <= left || bottom <= top) {
+    public static void renderEntityPreview(GuiGraphicsExtractor GuiGraphicsExtractor, int left, int top, int right, int bottom, float originX, float originY, float scale, float pitch, float yaw, float partialTick, AnimatableEntity animatableEntity, GeoReplacedEntityRenderer renderer, boolean renderGround) {
+        if (GuiGraphicsExtractor == null || animatableEntity == null || renderer == null || right <= left || bottom <= top) {
             return;
         }
-        EntityRenderState state = new EntityRenderState();
+        EntityRenderState state = Minecraft.getInstance().getEntityRenderDispatcher().extractEntity(animatableEntity.getEntity(), partialTick);
         GUI_PREVIEWS.put(state, new FreeGuiPreviewRequest(
                 toModelOffset(originX, left, right, scale),
                 toModelOffset(originY, top, bottom, scale),
@@ -160,7 +160,7 @@ public final class ModelPreviewRenderer {
                 renderer,
                 renderGround
         ));
-        guiGraphics.submitEntityRenderState(state, scale, new Vector3f(), new Quaternionf(), null, left, top, right, bottom);
+        GuiGraphicsExtractor.entity(state, scale, new Vector3f(), new Quaternionf(), null, left, top, right, bottom);
     }
 
     private static float toModelOffset(float origin, int start, int end, float scale) {
@@ -223,7 +223,7 @@ public final class ModelPreviewRenderer {
 
         @Override
         public void render(PoseStack poseStack, SubmitNodeCollector collector) {
-            renderFreeGuiPreview(poseStack, offsetX, offsetY, pitch, yaw, partialTick, animatableEntity, renderer, renderGround);
+            renderFreeGuiPreview(poseStack, offsetX, offsetY, pitch, yaw, partialTick, animatableEntity, renderer, renderGround, collector);
         }
     }
 
@@ -284,11 +284,11 @@ public final class ModelPreviewRenderer {
             livingEntity.yHeadRotO = vehicleYaw;
         }
 
-        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+        SubmitNodeCollector bufferSource = collector;
         try {
-            Minecraft.getInstance().gameRenderer.getLighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
+            // lighting setup removed in 26.2
             renderer.renderEntity(animatable, 0.0f, partialTick, poseStack, bufferSource, 15728880);
-            bufferSource.endBatch();
+            
         } finally {
             livingEntity.yBodyRot = oldBodyRot;
             livingEntity.yBodyRotO = oldBodyRotO;
@@ -309,7 +309,7 @@ public final class ModelPreviewRenderer {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private static void renderFreeGuiPreview(PoseStack poseStack, float offsetX, float offsetY, float pitch, float yaw, float partialTick, AnimatableEntity animatableEntity, GeoReplacedEntityRenderer renderer, boolean renderGround) {
+    private static void renderFreeGuiPreview(PoseStack poseStack, float offsetX, float offsetY, float pitch, float yaw, float partialTick, AnimatableEntity animatableEntity, GeoReplacedEntityRenderer renderer, boolean renderGround, SubmitNodeCollector collector) {
         setPreviewMode(true);
         LivingEntity livingEntity = (LivingEntity) animatableEntity.getEntity();
         poseStack.pushPose();
@@ -339,9 +339,9 @@ public final class ModelPreviewRenderer {
         livingEntity.yHeadRot = -yaw;
         livingEntity.yHeadRotO = -yaw;
 
-        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+        SubmitNodeCollector bufferSource = collector;
         try {
-            Minecraft.getInstance().gameRenderer.getLighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
+            // lighting setup removed in 26.2
             AnimationTracker animationTracker = getPreviewAnimationTracker(animatableEntity);
             if (isPreviewAnimation(animationTracker, "sleep")) {
                 poseStack.mulPose(Axis.YP.rotationDegrees(yaw - 90.0f));
@@ -375,7 +375,7 @@ public final class ModelPreviewRenderer {
                     renderGroundPreview(poseStack, yaw, bufferSource);
                 }
                 renderer.renderEntity((LivingAnimatable) animatableEntity, 0.0f, partialTick, poseStack, bufferSource, 15728880);
-                bufferSource.endBatch();
+                
             } catch (ExecutionException e) {
                 throw new RuntimeException(e);
             }
@@ -415,115 +415,7 @@ public final class ModelPreviewRenderer {
         }
     }
 
-    public static void renderEntityPreview(float x, float y, float scale, float pitch, float yaw, float partialTick, AnimatableEntity animatableEntity, GeoReplacedEntityRenderer renderer, boolean renderGround) {
-        if (!isDirectGuiPreviewSupported()) {
-            return;
-        }
-        setPreviewMode(true);
-        LivingEntity livingEntity = (LivingEntity) animatableEntity.getEntity();
-        org.joml.Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
-        modelViewStack.pushMatrix();
-        modelViewStack.translate(x, y, 1250.0f);
-        modelViewStack.scale(1.0f, 1.0f, -1.0f);
-        // MC 26.x: applyModelViewMatrix removed
-
-        PoseStack poseStack = new PoseStack();
-        poseStack.translate(0.0d, 0.0d, 1000.0d);
-        poseStack.scale(scale, scale, scale);
-        poseStack.translate(0.0d, 0.8d, 0.0d);
-
-        Quaternionf rotationZ = Axis.ZP.rotationDegrees(180.0f);
-        Quaternionf rotationX = Axis.XP.rotationDegrees((-10.0f) + pitch);
-        rotationZ.mul(rotationX);
-        poseStack.mulPose(rotationZ);
-
-        float oldBodyRot = livingEntity.yBodyRot;
-        float oldBodyRotO = livingEntity.yBodyRotO;
-        float oldYRot = livingEntity.getYRot();
-        float oldYRotO = livingEntity.yRotO;
-        float oldXRot = livingEntity.getXRot();
-        float oldXRotO = livingEntity.xRotO;
-        float oldHeadRotO = livingEntity.yHeadRotO;
-        float oldHeadRot = livingEntity.yHeadRot;
-        Pose oldPose = livingEntity.getPose();
-        livingEntity.yBodyRot = -yaw;
-        livingEntity.yBodyRotO = -yaw;
-        livingEntity.setYRot(180.0f);
-        livingEntity.yRotO = 180.0f;
-        livingEntity.setXRot(0.0f);
-        livingEntity.xRotO = 0.0f;
-        livingEntity.yHeadRot = -yaw;
-        livingEntity.yHeadRotO = -yaw;
-
-        // MC 26.x: Lighting.setupForEntityInInventory() removed;
-        EntityRenderDispatcher entityRenderDispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
-        rotationX.conjugate();
-        // MC 26.x: overrideCameraOrientation removed
-        // entityRenderDispatcher.overrideCameraOrientation(rotationX);
-        // MC 26.x: setRenderShadow removed
-        // entityRenderDispatcher.setRenderShadow(false);
-        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-
-        { // MC 26.x: was RenderSystem.runAsFancy(() -> {
-            AnimationTracker animationTracker = getPreviewAnimationTracker(animatableEntity);
-            if (isPreviewAnimation(animationTracker, "sleep")) {
-                poseStack.mulPose(Axis.YP.rotationDegrees(yaw - 90.0f));
-                poseStack.translate(0.5d, 0.5625d, 0.0d);
-                livingEntity.setPose(Pose.SLEEPING);
-            }
-            if (isPreviewAnimation(animationTracker, "swim") || isPreviewAnimation(animationTracker, "swim_stand")) {
-                livingEntity.setPose(Pose.SWIMMING);
-            }
-            if (isPreviewAnimation(animationTracker, "sneak") || isPreviewAnimation(animationTracker, "sneaking")) {
-                livingEntity.setPose(Pose.CROUCHING);
-            }
-            if (isPreviewAnimation(animationTracker, "sit")) {
-                poseStack.translate(0.0d, -0.5d, 0.0d);
-            }
-            if (isPreviewAnimation(animationTracker, "ride")) {
-                poseStack.translate(0.0d, 0.85d, 0.0d);
-            }
-            if (isPreviewAnimation(animationTracker, "ride_pig")) {
-                poseStack.translate(0.0d, 0.3125d, 0.0d);
-            }
-            if (isPreviewAnimation(animationTracker, "boat")) {
-                poseStack.translate(0.0d, -0.45d, 0.0d);
-            }
-            try {
-                renderVehicleForAnimation(yaw, animatableEntity, animationTracker, partialTick, poseStack, entityRenderDispatcher, bufferSource);
-                if (isPreviewAnimation(animationTracker, "sleep")) {
-                    renderBedPreview(scale, pitch, yaw, bufferSource);
-                }
-                if (renderGround) {
-                    renderGroundPreview(scale, pitch, yaw, bufferSource);
-                }
-                bufferSource.endBatch();
-                renderer.renderEntity((LivingAnimatable) animatableEntity, 0.0f, partialTick, poseStack, bufferSource, 15728880);
-            } catch (ExecutionException e) {
-                throw new RuntimeException(e);
-            }
-        } // end was runAsFancy
-
-        bufferSource.endBatch();
-        // MC 26.x: setRenderShadow removed
-        // entityRenderDispatcher.setRenderShadow(true);
-        livingEntity.yBodyRot = oldBodyRot;
-        livingEntity.yBodyRotO = oldBodyRotO;
-        livingEntity.setYRot(oldYRot);
-        livingEntity.yRotO = oldYRotO;
-        livingEntity.setXRot(oldXRot);
-        livingEntity.xRotO = oldXRotO;
-        livingEntity.yHeadRotO = oldHeadRotO;
-        livingEntity.yHeadRot = oldHeadRot;
-        livingEntity.setPose(oldPose);
-
-        modelViewStack.popMatrix();
-        // MC 26.x: applyModelViewMatrix removed
-        // MC 26.x: Lighting.setupFor3DItems() removed;
-        setPreviewMode(false);
-    }
-
-    private static void renderBedPreview(float scale, float pitch, float yaw, MultiBufferSource.BufferSource bufferSource) {
+    private static void renderBedPreview(float scale, float pitch, float yaw, SubmitNodeCollector bufferSource) {
         PoseStack poseStack = new PoseStack();
         poseStack.translate(0.0d, 0.0d, 1000.0d);
         poseStack.scale(scale, scale, scale);
@@ -536,7 +428,7 @@ public final class ModelPreviewRenderer {
         renderSimpleBed(poseStack, bufferSource);
     }
 
-    private static void renderBedPreview(PoseStack poseStack, float yaw, MultiBufferSource.BufferSource bufferSource) {
+    private static void renderBedPreview(PoseStack poseStack, float yaw, SubmitNodeCollector bufferSource) {
         poseStack.pushPose();
         poseStack.mulPose(Axis.YP.rotationDegrees(yaw + 180.0f));
         poseStack.translate(-0.5d, 0.0d, 0.5d);
@@ -544,7 +436,7 @@ public final class ModelPreviewRenderer {
         poseStack.popPose();
     }
 
-    private static void renderGroundPreview(float scale, float pitch, float yaw, MultiBufferSource.BufferSource bufferSource) {
+    private static void renderGroundPreview(float scale, float pitch, float yaw, SubmitNodeCollector bufferSource) {
         PoseStack poseStack = new PoseStack();
         poseStack.translate(0.0d, 0.0d, 1000.0d);
         poseStack.scale(scale, scale, scale);
@@ -557,7 +449,7 @@ public final class ModelPreviewRenderer {
         renderSimpleGround(poseStack, bufferSource);
     }
 
-    private static void renderGroundPreview(PoseStack poseStack, float yaw, MultiBufferSource.BufferSource bufferSource) {
+    private static void renderGroundPreview(PoseStack poseStack, float yaw, SubmitNodeCollector bufferSource) {
         poseStack.pushPose();
         poseStack.mulPose(Axis.YP.rotationDegrees(yaw));
         poseStack.translate(-1.5d, -1.0d, -2.5d);
@@ -565,9 +457,8 @@ public final class ModelPreviewRenderer {
         poseStack.popPose();
     }
 
-    private static void renderSimpleGround(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource) {
-        VertexConsumer buffer = bufferSource.getBuffer(RenderTypes.debugQuads());
-        PoseStack.Pose pose = poseStack.last();
+    private static void renderSimpleGround(PoseStack poseStack, SubmitNodeCollector bufferSource) {
+        bufferSource.submitCustomGeometry(poseStack, RenderTypes.debugQuads(), (pose, buffer) -> {
         for (int x = 0; x < 3; x++) {
             for (int z = 0; z < 3; z++) {
                 float shade = ((x + z) & 1) == 0 ? 1.0f : 0.88f;
@@ -577,13 +468,14 @@ public final class ModelPreviewRenderer {
         }
         addPlantCross(buffer, pose, 0.55f, 1.45f, 1.0f, 0.28f, 0.64f, 0.18f);
         addPlantCross(buffer, pose, 1.85f, 2.2f, 1.0f, 0.75f, 0.08f, 0.08f);
+        });
     }
 
-    private static void renderSimpleBed(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource) {
-        VertexConsumer buffer = bufferSource.getBuffer(RenderTypes.debugQuads());
-        PoseStack.Pose pose = poseStack.last();
+    private static void renderSimpleBed(PoseStack poseStack, SubmitNodeCollector bufferSource) {
+        bufferSource.submitCustomGeometry(poseStack, RenderTypes.debugQuads(), (pose, buffer) -> {
         addCuboid(buffer, pose, 0.0f, 0.0f, 0.0f, 1.0f, 0.28f, 1.0f, BED_RED_R, BED_RED_G, BED_RED_B);
         addCuboid(buffer, pose, 0.0f, 0.29f, 0.0f, 1.0f, 0.34f, 0.35f, BED_WHITE_R, BED_WHITE_G, BED_WHITE_B);
+        });
     }
 
     private static void addTopQuad(VertexConsumer buffer, PoseStack.Pose pose, float x1, float z1, float x2, float z2, float r, float g, float b) {
@@ -616,12 +508,11 @@ public final class ModelPreviewRenderer {
                                 float x4, float y4, float z4,
                                 float r, float g, float b,
                                 float nx, float ny, float nz) {
-        buffer.addVertex(pose.pose(), x1, y1, z1).setColor(r, g, b, 1.0f).setNormal(pose, nx, ny, nz);
-        buffer.addVertex(pose.pose(), x2, y2, z2).setColor(r, g, b, 1.0f).setNormal(pose, nx, ny, nz);
-        buffer.addVertex(pose.pose(), x3, y3, z3).setColor(r, g, b, 1.0f).setNormal(pose, nx, ny, nz);
-        buffer.addVertex(pose.pose(), x4, y4, z4).setColor(r, g, b, 1.0f).setNormal(pose, nx, ny, nz);
+        buffer.addVertex(pose, x1, y1, z1).setColor(r, g, b, 1.0f).setNormal(pose, nx, ny, nz);
+        buffer.addVertex(pose, x2, y2, z2).setColor(r, g, b, 1.0f).setNormal(pose, nx, ny, nz);
+        buffer.addVertex(pose, x3, y3, z3).setColor(r, g, b, 1.0f).setNormal(pose, nx, ny, nz);
+        buffer.addVertex(pose, x4, y4, z4).setColor(r, g, b, 1.0f).setNormal(pose, nx, ny, nz);
     }
-
     private static AnimationTracker getPreviewAnimationTracker(AnimatableEntity animatableEntity) {
         if (animatableEntity instanceof IPreviewAnimatable previewAnimatable) {
             return previewAnimatable.getAnimationStateMachine();
@@ -633,7 +524,7 @@ public final class ModelPreviewRenderer {
         return animationTracker != null && animationTracker.isCurrentAnimation(animationName);
     }
 
-    private static void renderVehicleForAnimation(float yaw, AnimatableEntity animatableEntity, AnimationTracker animationTracker, float partialTick, PoseStack poseStack, EntityRenderDispatcher entityRenderDispatcher, MultiBufferSource.BufferSource bufferSource) throws ExecutionException {
+    private static void renderVehicleForAnimation(float yaw, AnimatableEntity animatableEntity, AnimationTracker animationTracker, float partialTick, PoseStack poseStack, EntityRenderDispatcher entityRenderDispatcher, SubmitNodeCollector bufferSource) throws ExecutionException {
         if (animationTracker == null) {
             return;
         }
@@ -649,7 +540,7 @@ public final class ModelPreviewRenderer {
         }
     }
 
-    private static void renderVehicleEntity(float yaw, Entity riderEntity, PoseStack poseStack, EntityRenderDispatcher entityRenderDispatcher, MultiBufferSource.BufferSource bufferSource, Entity vehicleEntity, float partialTick) {
+    private static void renderVehicleEntity(float yaw, Entity riderEntity, PoseStack poseStack, EntityRenderDispatcher entityRenderDispatcher, SubmitNodeCollector bufferSource, Entity vehicleEntity, float partialTick) {
         poseStack.pushPose();
         poseStack.mulPose(Axis.YP.rotationDegrees(yaw));
         Vec3 passengerAttachment = ((EntityRidingAccessor) vehicleEntity).invokeGetPassengerAttachmentPoint(riderEntity, riderEntity.getDimensions(riderEntity.getPose()), 1.0F);
@@ -659,111 +550,13 @@ public final class ModelPreviewRenderer {
     }
 
     // жЁЎећ‹йў„и§€йЎµйќў
-    public static <T extends LivingEntity, TAnimatable extends LivingAnimatable<T>> void renderLivingEntityPreview(float x, float y, float scale, float partialTick, TAnimatable animatable, GeoReplacedEntityRenderer<T, TAnimatable> renderer, boolean disablePreviewRotation, boolean hideEquipment) {
-        if (!isDirectGuiPreviewSupported()) {
-            return;
-        }
-        ItemStack[] savedEquipment;
-        setPreviewMode(true);
-        LivingEntity livingEntity = animatable.getEntity();
-        org.joml.Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
-        modelViewStack.pushMatrix();
-        modelViewStack.translate(x, y, 1050.0f);
-        modelViewStack.scale(1.0f, 1.0f, -1.0f);
-        // MC 26.x: applyModelViewMatrix removed
 
-        PoseStack poseStack = new PoseStack();
-        poseStack.translate(0.0d, 0.0d, 1000.0d);
-        poseStack.scale(scale, scale, scale);
-        Quaternionf rotationZ = Axis.ZP.rotationDegrees(180.0f);
-        Quaternionf rotationX = Axis.XP.rotationDegrees(disablePreviewRotation ? 0.0f : -10.0f);
-        rotationZ.mul(rotationX);
-        poseStack.mulPose(rotationZ);
-
-        float oldBodyRot = livingEntity.yBodyRot;
-        float oldBodyRotO = livingEntity.yBodyRotO;
-        float oldYRot = livingEntity.getYRot();
-        float oldYRotO = livingEntity.yRotO;
-        float oldXRot = livingEntity.getXRot();
-        float oldXRotO = livingEntity.xRotO;
-        float oldHeadRotO = livingEntity.yHeadRotO;
-        float oldHeadRot = livingEntity.yHeadRot;
-        // MC 26.x: Inventory.items/selected/offhand/armor are private/removed, skip equipment hiding
-        if (hideEquipment && (livingEntity instanceof Player player)) {
-            savedEquipment = new ItemStack[EquipmentSlot.values().length];
-            int slotIndex = 0;
-            for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
-                try {
-                    savedEquipment[slotIndex] = player.getItemBySlot(equipmentSlot);
-                } catch (Exception e) {
-                    savedEquipment[slotIndex] = ItemStack.EMPTY;
-                }
-                slotIndex++;
-            }
-        } else {
-            savedEquipment = null;
-        }
-
-        float previewYaw = disablePreviewRotation ? 180.0f : 200.0f;
-        livingEntity.yBodyRot = previewYaw;
-        livingEntity.yBodyRotO = previewYaw;
-        livingEntity.setYRot(previewYaw);
-        livingEntity.yRotO = previewYaw;
-        livingEntity.setXRot(0.0f);
-        livingEntity.xRotO = 0.0f;
-        livingEntity.yHeadRot = livingEntity.getYRot();
-        livingEntity.yHeadRotO = livingEntity.getYRot();
-
-        Entity vehicle = livingEntity.getVehicle();
-        if (vehicle instanceof LivingEntity) {
-            float vehicleYaw = vehicle.getYRot();
-            poseStack.mulPose(Axis.YP.rotationDegrees(vehicleYaw - previewYaw));
-            livingEntity.yHeadRot = vehicleYaw;
-            livingEntity.yHeadRotO = vehicleYaw;
-        }
-
-        // MC 26.x: Lighting.setupForEntityInInventory() removed;
-        EntityRenderDispatcher entityRenderDispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
-        rotationX.conjugate();
-        // MC 26.x: overrideCameraOrientation removed
-        // entityRenderDispatcher.overrideCameraOrientation(rotationX);
-        // MC 26.x: setRenderShadow removed
-        // entityRenderDispatcher.setRenderShadow(false);
-        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-
-        { // MC 26.x: was RenderSystem.runAsFancy(() -> {
-            renderer.renderEntity(animatable, 0.0f, partialTick, poseStack, bufferSource, 15728880);
-        } // end was runAsFancy
-
-        bufferSource.endBatch();
-        // MC 26.x: setRenderShadow removed
-        // entityRenderDispatcher.setRenderShadow(true);
-        livingEntity.yBodyRot = oldBodyRot;
-        livingEntity.yBodyRotO = oldBodyRotO;
-        livingEntity.setYRot(oldYRot);
-        livingEntity.yRotO = oldYRotO;
-        livingEntity.setXRot(oldXRot);
-        livingEntity.xRotO = oldXRotO;
-        livingEntity.yHeadRotO = oldHeadRotO;
-        livingEntity.yHeadRot = oldHeadRot;
-        // MC 26.x: Inventory fields private/removed, skip equipment restore
-        if (savedEquipment != null) {
-            // Player player = (Player) livingEntity;
-            // Equipment restore skipped - Inventory API changed in MC 26.x
-        }
-
-        modelViewStack.popMatrix();
-        // MC 26.x: applyModelViewMatrix removed
-        // MC 26.x: Lighting.setupFor3DItems() removed;
-        setPreviewMode(false);
+    public static void renderPlayerOverlay(GuiGraphicsExtractor GuiGraphicsExtractor, LocalPlayer localPlayer, double x, double y, float scale, float yawOffset, int zDepth, float partialTick) {
+        renderPlayerOverlay(GuiGraphicsExtractor, localPlayer, x, y, scale, yawOffset, zDepth, partialTick, true);
     }
 
-    public static void renderPlayerOverlay(GuiGraphics guiGraphics, LocalPlayer localPlayer, double x, double y, float scale, float yawOffset, int zDepth, float partialTick) {
-        renderPlayerOverlay(guiGraphics, localPlayer, x, y, scale, yawOffset, zDepth, partialTick, true);
-    }
-
-    public static void renderPlayerOverlay(GuiGraphics guiGraphics, LocalPlayer localPlayer, double x, double y, float scale, float yawOffset, int zDepth, float partialTick, boolean clipToFrame) {
-        if (guiGraphics == null || localPlayer == null || scale <= 0.0f) {
+    public static void renderPlayerOverlay(GuiGraphicsExtractor GuiGraphicsExtractor, LocalPlayer localPlayer, double x, double y, float scale, float yawOffset, int zDepth, float partialTick, boolean clipToFrame) {
+        if (GuiGraphicsExtractor == null || localPlayer == null || scale <= 0.0f) {
             return;
         }
         int left = Math.round((float) x);
@@ -786,29 +579,29 @@ public final class ModelPreviewRenderer {
             renderRight = Math.max(minecraft.getWindow().getGuiScaledWidth(), right);
             renderBottom = Math.max(minecraft.getWindow().getGuiScaledHeight(), bottom);
         }
-        if (renderCustomLocalPlayerPreview(guiGraphics, localPlayer, renderLeft, renderTop, renderRight, renderBottom, centerX, bottom - 2.0f, scale, 180.0f + yawOffset, partialTick, true)) {
+        if (renderCustomLocalPlayerPreview(GuiGraphicsExtractor, localPlayer, renderLeft, renderTop, renderRight, renderBottom, centerX, bottom - 2.0f, scale, 180.0f + yawOffset, partialTick, true)) {
             return;
         }
         float mouseX = centerX - ((float) Math.tan(yawOffset / 20.0f) * 40.0f);
         setExtraPlayerMode(true);
         if (clipToFrame) {
-            guiGraphics.enableScissor(left, top, right, bottom);
+            GuiGraphicsExtractor.enableScissor(left, top, right, bottom);
         }
         try {
-            InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, left, top, right, bottom, Math.max(1, Math.round(scale)), mouseX, centerY, 1.0f, localPlayer);
+            InventoryScreen.extractEntityInInventoryFollowsMouse(GuiGraphicsExtractor, left, top, right, bottom, Math.max(1, Math.round(scale)), mouseX, centerY, 1.0f, localPlayer);
         } finally {
             if (clipToFrame) {
-                guiGraphics.disableScissor();
+                GuiGraphicsExtractor.disableScissor();
             }
             setExtraPlayerMode(false);
         }
 
-/*         GuiGraphics.flush();
+/*         GuiGraphicsExtractor.flush();
  */
     }
 
-    public static boolean renderCustomLocalPlayerPreview(GuiGraphics guiGraphics, LocalPlayer localPlayer, int left, int top, int right, int bottom, float originX, float originY, float scale, float yaw, float partialTick, boolean extraPlayer) {
-        if (guiGraphics == null || localPlayer == null || right <= left || bottom <= top || scale <= 0.0f || GeneralConfig.safeGet(GeneralConfig.DISABLE_SELF_MODEL)) {
+    public static boolean renderCustomLocalPlayerPreview(GuiGraphicsExtractor GuiGraphicsExtractor, LocalPlayer localPlayer, int left, int top, int right, int bottom, float originX, float originY, float scale, float yaw, float partialTick, boolean extraPlayer) {
+        if (GuiGraphicsExtractor == null || localPlayer == null || right <= left || bottom <= top || scale <= 0.0f || GeneralConfig.safeGet(GeneralConfig.DISABLE_SELF_MODEL)) {
             return false;
         }
         PlayerCapability capability = PlayerCapability.get(localPlayer).orElse(null);
@@ -819,7 +612,7 @@ public final class ModelPreviewRenderer {
         if (!capability.isModelReady()) {
             return false;
         }
-        EntityRenderState state = new EntityRenderState();
+        EntityRenderState state = Minecraft.getInstance().getEntityRenderDispatcher().extractEntity(localPlayer, partialTick);
         GUI_PREVIEWS.put(state, new LivingGuiPreviewRequest(
                 toModelOffset(originX, left, right, scale),
                 toModelOffset(originY, top, bottom, scale),
@@ -831,7 +624,16 @@ public final class ModelPreviewRenderer {
                 yaw,
                 extraPlayer
         ));
-        guiGraphics.submitEntityRenderState(state, scale, new Vector3f(), new Quaternionf(), null, left, top, right, bottom);
+        GuiGraphicsExtractor.entity(state, scale, new Vector3f(), new Quaternionf(), null, left, top, right, bottom);
         return true;
     }
 }
+
+
+
+
+
+
+
+
+

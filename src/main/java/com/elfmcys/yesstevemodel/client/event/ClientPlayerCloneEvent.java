@@ -3,7 +3,7 @@ package com.elfmcys.yesstevemodel.client.event;
 import com.elfmcys.yesstevemodel.YesSteveModel;
 import com.elfmcys.yesstevemodel.capability.PlayerCapability;
 import com.elfmcys.yesstevemodel.network.NetworkHandler;
-import dev.architectury.event.events.client.ClientPlayerEvent;
+import dev.ysm.architectury.event.events.client.ClientPlayerEvent;
 import net.minecraft.client.player.LocalPlayer;
 import rip.ysm.api.PlatformAPI;
 import rip.ysm.api.capability.CapabilityLifecycle;

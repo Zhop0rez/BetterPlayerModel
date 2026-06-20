@@ -2,7 +2,7 @@ package com.elfmcys.yesstevemodel.client.gui.button;
 
 import com.elfmcys.yesstevemodel.client.entity.PlayerPreviewEntity;
 import com.elfmcys.yesstevemodel.client.model.ModelAssembly;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.InputWithModifiers;
 
 import java.util.function.Consumer;
@@ -26,8 +26,8 @@ public class SelectableModelButton extends ModelButton {
     }
 
     @Override
-    protected void renderContents(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        super.renderContents(extractor, mouseX, mouseY, partialTick);
+    protected void extractContents(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        super.extractContents(extractor, mouseX, mouseY, partialTick);
         if (this.selected.get()) {
             extractor.fillGradient(getX(), getY(), getX() + getWidth(), getY() + 3, 0xFF55FF88, 0xFF55FF88);
             extractor.fillGradient(getX(), getY(), getX() + 3, getY() + getHeight(), 0xFF55FF88, 0xFF55FF88);
@@ -36,3 +36,4 @@ public class SelectableModelButton extends ModelButton {
         }
     }
 }
+

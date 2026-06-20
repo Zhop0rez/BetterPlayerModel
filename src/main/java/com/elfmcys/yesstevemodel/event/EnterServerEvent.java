@@ -7,7 +7,7 @@ import com.elfmcys.yesstevemodel.network.message.S2CSetModelAndTexturePacket;
 import com.elfmcys.yesstevemodel.network.message.S2CSyncAuthModelsPacket;
 import com.elfmcys.yesstevemodel.network.message.S2CSyncStarModelsPacket;
 import com.elfmcys.yesstevemodel.network.message.S2CVersionCheckPacket;
-import dev.architectury.event.events.common.PlayerEvent;
+import dev.ysm.architectury.event.events.common.PlayerEvent;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -23,7 +23,7 @@ public final class EnterServerEvent {
             if (!YesSteveModel.isAvailable()) {
                 return;
             }
-            NetworkHandler.sendToClientPlayer(new S2CVersionCheckPacket(), player);
+            YesSteveModel.LOGGER.info("Sending S2CVersionCheckPacket to " + player); NetworkHandler.sendToClientPlayer(new S2CVersionCheckPacket(), player);
             CapabilityEvent.getModelInfoCap(player).ifPresent(modelInfoCap -> {
                 if (!NetworkHandler.isPlayerConnected(player) && !modelInfoCap.isMandatory()) {
                     modelInfoCap.markDirty();

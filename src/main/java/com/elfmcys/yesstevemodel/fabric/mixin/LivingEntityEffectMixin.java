@@ -15,13 +15,13 @@ import java.util.Collection;
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityEffectMixin {
 
-    @Inject(method = "onEffectAdded", at = @At("TAIL"))
+    @Inject(remap = false, method = "onEffectAdded", at = @At("TAIL"))
     private void ysm$onEffectAdded(MobEffectInstance instance, Entity source, CallbackInfo ci) {
         LivingEntity self = (LivingEntity) (Object) this;
         MobEffectEvent.onEffectAdded(self, instance.getEffect().value(), instance.getAmplifier());
     }
 
-    @Inject(method = "onEffectsRemoved", at = @At("HEAD"))
+    @Inject(remap = false, method = "onEffectsRemoved", at = @At("HEAD"))
     private void ysm$onEffectsRemoved(Collection<MobEffectInstance> instances, CallbackInfo ci) {
         LivingEntity self = (LivingEntity) (Object) this;
         for (MobEffectInstance instance : instances) {
@@ -29,3 +29,5 @@ public abstract class LivingEntityEffectMixin {
         }
     }
 }
+
+

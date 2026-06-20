@@ -8,7 +8,8 @@ import com.elfmcys.yesstevemodel.util.CameraUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.world.entity.player.Player;
 import rip.ysm.compat.firstperson.FirstPersonCompat;
@@ -20,11 +21,11 @@ public class ReplacePlayerRenderEvent {
     private ReplacePlayerRenderEvent() {
     }
 
-    public static boolean onRenderPlayerPre(Player entity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+    public static boolean onRenderPlayerPre(Player entity, float partialTick, PoseStack poseStack, SubmitNodeCollector bufferSource, int packedLight) {
         return onRenderPlayerPre(entity, entity.getYRot(), partialTick, poseStack, bufferSource, null, packedLight);
     }
 
-    public static boolean onRenderPlayerPre(Player entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, SubmitNodeCollector collector, int packedLight) {
+    public static boolean onRenderPlayerPre(Player entity, float entityYaw, float partialTick, PoseStack poseStack, SubmitNodeCollector bufferSource, SubmitNodeCollector collector, int packedLight) {
         if (!YesSteveModel.isAvailable()) {
             return false;
         }

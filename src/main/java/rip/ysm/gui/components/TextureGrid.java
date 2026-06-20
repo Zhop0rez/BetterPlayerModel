@@ -9,7 +9,7 @@ import com.elfmcys.yesstevemodel.geckolib3.core.molang.util.StringPool;
 import com.elfmcys.yesstevemodel.network.NetworkHandler;
 import com.elfmcys.yesstevemodel.network.message.C2SRequestSwitchModelPacket;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import rip.ysm.gui.ModernPlayerTextureScreen;
@@ -75,8 +75,8 @@ public final class TextureGrid extends OptionRow<Object> {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        GuiGraphics g = extractor;
+    protected void extractWidgetRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        GuiGraphicsExtractor g = extractor;
         int c = cols();
         int slotW = TEX_BTN_W + TEX_GAP;
         int slotH = TEX_BTN_H + TEX_GAP;
@@ -89,7 +89,7 @@ public final class TextureGrid extends OptionRow<Object> {
         }
     }
 
-    private void renderSlot(GuiGraphics g, int x, int y, int idx, int mx, int my, float pt) {
+    private void renderSlot(GuiGraphicsExtractor g, int x, int y, int idx, int mx, int my, float pt) {
         String name = textureNames.get(idx);
         PlayerPreviewEntity holder = holders[idx];
         ensureHolderReady(holder, name);
@@ -102,7 +102,7 @@ public final class TextureGrid extends OptionRow<Object> {
         Component label = Component.literal(ModelMetadataPresenter.getLocalizedModelString(owner.renderContext, "files.player.texture.%s".formatted(name), name));
         int textY = y + TEX_BTN_H - 12;
         int tw = Minecraft.getInstance().font.width(label);
-        g.drawString(Minecraft.getInstance().font, label, x + (TEX_BTN_W - tw) / 2, textY, 0xFFFFFFFF, true);
+        g.text(Minecraft.getInstance().font, label, x + (TEX_BTN_W - tw) / 2, textY, 0xFFFFFFFF, true);
         if (selected || hover) {
             int border = selected ? 0xFFFFFFFF : 0xFFAAAAAA;
             g.fill(x, y, x + TEX_BTN_W, y + 1, border);
@@ -118,7 +118,7 @@ public final class TextureGrid extends OptionRow<Object> {
         return PlayerCapability.get(mc.player).map(PlayerCapability::getCurrentTextureName).orElse(StringPool.EMPTY);
     }
 
-    private void renderHolderPreview(GuiGraphics g, int x, int y, PlayerPreviewEntity holder, float pt) {
+    private void renderHolderPreview(GuiGraphicsExtractor g, int x, int y, PlayerPreviewEntity holder, float pt) {
         int previewH = TEX_BTN_H - 20;
         g.enableScissor(x, y, x + TEX_BTN_W, y + previewH);
         ModelPreviewRenderer.renderLivingEntityPreview(g, x, y, x + TEX_BTN_W, y + previewH, x + TEX_BTN_W / 2.0f, y + TEX_BTN_H / 2.0f + 24.0f, 35.0f, pt, holder, RendererManager.getPlayerRenderer(), false, true);
@@ -138,7 +138,7 @@ public final class TextureGrid extends OptionRow<Object> {
     }
 
     @Override
-    protected void renderControl(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+    protected void renderControl(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
     }
 
     @Override
@@ -167,3 +167,4 @@ public final class TextureGrid extends OptionRow<Object> {
         });
     }
 }
+

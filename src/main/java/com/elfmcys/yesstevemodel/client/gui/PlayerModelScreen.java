@@ -25,7 +25,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
-import dev.architectury.platform.Platform;
+import dev.ysm.architectury.platform.Platform;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -33,7 +33,7 @@ import it.unimi.dsi.fastutil.objects.Object2ReferenceOpenHashMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.input.CharacterEvent;
@@ -76,6 +76,7 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
     public int guiTop;
 
     private int maxPage;
+    private volatile boolean needsInit = false;
 
     private EditBox searchBox;
 
@@ -100,8 +101,8 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
     }
 
     private static int opaque(ChatFormatting formatting) {
-        Integer color = formatting.getColor();
-        return color == null ? 0xFFFFFFFF : 0xFF000000 | color.intValue();
+        net.minecraft.network.chat.TextColor color = net.minecraft.network.chat.TextColor.fromLegacyFormat(formatting);
+        return color == null ? 0xFFFFFFFF : 0xFF000000 | color.getValue();
     }
 
     public PlayerModelScreen() {
@@ -114,7 +115,7 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
             this.hiddenModels.addAll(ServerConfig.CLIENT_NOT_DISPLAY_MODELS.get());
         }
         ClientModelManager.registerGuiWidget(this);
-        ClientModelManager.ensureLocalModelsLoaded();
+ClientModelManager.ensureLocalModelsLoaded();
         this.modelPackMap = new Object2ReferenceOpenHashMap<>(ClientModelManager.getModelPackMap());
     }
 
@@ -344,7 +345,7 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
             value = this.searchBox.getValue();
             zIsFocused = this.searchBox.isFocused();
         }
-        this.searchBox = new EditBox(Minecraft.getInstance().font, this.guiLeft + 144, this.guiTop + 6, 140, 16, Component.literal("YSM Search Box"));
+        this.searchBox = new EditBox(Minecraft.getInstance().font, this.guiLeft + 144, this.guiTop + 6, 125, 16, Component.literal("YSM Search Box"));
         this.searchBox.setValue(value);
         this.searchBox.setTextColor(0xFFF3F3E0);
         this.searchBox.setFocused(zIsFocused);
@@ -355,7 +356,7 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
                 PlayerCapability.get(Minecraft.getInstance().player).ifPresent(cap -> {
                     ModelAssembly modelAssembly = cap.getModelAssembly();
                     if (modelAssembly.getModelData().getExtraInfo() != null) {
-                        Minecraft.getInstance().setScreen(createModelInfoScreen(this, modelAssembly));
+                        com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), createModelInfoScreen(this, modelAssembly));
                     }
                 });
             }
@@ -363,7 +364,7 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
         addRenderableWidget(new IconButton(this.guiLeft + 28, this.guiTop + 5, 79, 20, 32, 16, button2 -> {
             if (Minecraft.getInstance().player != null) {
                 PlayerCapability.get(Minecraft.getInstance().player).ifPresent(cap -> {
-                    Minecraft.getInstance().setScreen(createTextureScreen(this, cap.getModelId(), cap.getModelAssembly()));
+                    com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), createTextureScreen(this, cap.getModelId(), cap.getModelAssembly()));
                 });
             }
         }).setTooltipText("gui.better_player_model.model.texture"));
@@ -386,21 +387,21 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
         });
         selectButton.setSelected(this.selectionMode);
         addRenderableWidget(selectButton);
-        addRenderableWidget(new IconButton(this.guiLeft + 328, this.guiTop + 5, 18, 18, 32, 0, button4 -> {
+        addRenderableWidget(new IconButton(this.guiLeft + 317, this.guiTop + 5, 18, 18, 32, 0, button4 -> {
             if (this.category != Category.ALL) {
                 this.category = Category.ALL;
                 resetCurrentPage();
                 init();
             }
         }).setTooltipText("gui.better_player_model.all_models"));
-        addRenderableWidget(new IconButton(this.guiLeft + 308, this.guiTop + 5, 18, 18, 48, 0, button5 -> {
+        addRenderableWidget(new IconButton(this.guiLeft + 297, this.guiTop + 5, 18, 18, 48, 0, button5 -> {
             if (this.category != Category.AUTH) {
                 this.category = Category.AUTH;
                 resetCurrentPage();
                 init();
             }
         }).setTooltipText("gui.better_player_model.auth_models"));
-        addRenderableWidget(new IconButton(this.guiLeft + 288, this.guiTop + 5, 18, 18, 0, 0, button6 -> {
+        addRenderableWidget(new IconButton(this.guiLeft + 277, this.guiTop + 5, 18, 18, 0, 0, button6 -> {
             if (this.category != Category.STAR) {
                 this.category = Category.STAR;
                 resetCurrentPage();
@@ -408,22 +409,31 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
             }
         }).setTooltipText("gui.better_player_model.star_models"));
         addRenderableWidget(new IconButton(this.guiLeft + 397, this.guiTop + 5, 18, 18, 16, 16, button7 -> {
-            Minecraft.getInstance().setScreen(new ExtraPlayerConfigScreen(this));
+            com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), new ExtraPlayerConfigScreen(this));
         }).setTooltipText("gui.better_player_model.config"));
+        boolean canUpload = ClientModelManager.isAllowUpload() && ClientModelManager.isOysmServer();
         IconButton importButton = new IconButton(this.guiLeft + 377, this.guiTop + 5, 18, 18, 0, 16, button8 -> {
+            com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), new ModelUploadScreen(this));
+        });
+        importButton.active = canUpload;
+        importButton.setTooltipLines(java.util.Collections.singletonList(getImportTooltip()));
+        addRenderableWidget(importButton);
+
+        IconButton reloadButton = new IconButton(this.guiLeft + 337, this.guiTop + 5, 18, 18, 16, 16, buttonX -> {
             ClientModelManager.reloadLocalModels(error -> {
                 if (this.minecraft != null && this.minecraft.player != null) {
-                    this.minecraft.player.displayClientMessage(error == null
+                    this.minecraft.player.sendSystemMessage(error == null
                             ? Component.translatable("gui.better_player_model.import.state.local_reload_complete")
-                            : error, false);
+                            : error);
                 }
                 init();
             });
         });
-        importButton.setTooltipLines(java.util.Collections.singletonList(getImportTooltip()));
-        addRenderableWidget(importButton);
+        reloadButton.setTooltipLines(java.util.Collections.singletonList(Component.translatable("gui.better_player_model.reload_local_models")));
+        addRenderableWidget(reloadButton);
+        
         addRenderableWidget(new IconButton(this.guiLeft + 357, this.guiTop + 5, 18, 18, 16, 0, button9 -> {
-            Minecraft.getInstance().setScreen(new ResourceStationScreen(this));
+            com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), new ResourceStationScreen(this));
         }).setTooltipText("gui.better_player_model.resource_station.tooltip"));
         if (this.selectionMode) {
             addRenderableWidget(new FlatColorButton(this.guiLeft + 5, this.guiTop + 253, 34, 14, Component.translatable("gui.better_player_model.model_select.delete"), button -> runDeleteSelection()));
@@ -491,85 +501,86 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
     }
 
     @Override
-    public void render(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        GuiGraphics guiGraphics = extractor;
-        renderTransparentBackground(extractor);
-        guiGraphics.fillGradient(this.guiLeft, this.guiTop, this.guiLeft + 135, this.guiTop + 235, -14540254, -14540254);
-        guiGraphics.fillGradient(this.guiLeft + 138, this.guiTop, this.guiLeft + 420, this.guiTop + 235, -14540254, -14540254);
-        guiGraphics.fillGradient(this.guiLeft + 351, this.guiTop + 7, this.guiLeft + 352, this.guiTop + 21, -790560, -790560);
-        this.searchBox.render(extractor, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        if (this.needsInit) {
+            this.needsInit = false;
+            this.init();
+        }
+        GuiGraphicsExtractor GuiGraphicsExtractor = extractor;
+
+        GuiGraphicsExtractor.fillGradient(this.guiLeft, this.guiTop, this.guiLeft + 135, this.guiTop + 235, -14540254, -14540254);
+        GuiGraphicsExtractor.fillGradient(this.guiLeft + 138, this.guiTop, this.guiLeft + 420, this.guiTop + 235, -14540254, -14540254);
+        GuiGraphicsExtractor.fillGradient(this.guiLeft + 351, this.guiTop + 7, this.guiLeft + 352, this.guiTop + 21, -790560, -790560);
+        this.searchBox.extractRenderState(extractor, mouseX, mouseY, partialTick);
         renderModelPreview(extractor, mouseX, mouseY, partialTick);
         if (this.searchBox.getValue().isEmpty() && !this.searchBox.isFocused()) {
-            guiGraphics.drawString(this.font, Component.translatable("gui.better_player_model.search").withStyle(ChatFormatting.ITALIC), this.guiLeft + 148, this.guiTop + 10, 0xFF777777);
+            GuiGraphicsExtractor.text(this.font, Component.translatable("gui.better_player_model.search").withStyle(ChatFormatting.ITALIC), this.guiLeft + 148, this.guiTop + 10, 0xFF777777);
         }
         String str = String.format("%d/%d", getCurrentPage() + 1, Integer.valueOf(this.maxPage + 1));
         Font font = this.font;
         int iWidth = this.guiLeft + 138 + ((282 - this.font.width(str)) / 2);
         int pageY = this.guiTop + 223;
         Objects.requireNonNull(this.font);
-        guiGraphics.drawString(font, str, iWidth, pageY - (9 / 2), 0xFFF3F3E0);
+        GuiGraphicsExtractor.text(font, str, iWidth, pageY - (9 / 2), 0xFFF3F3E0);
         String renderer = (NativeLibLoader.isLoaded() && !GeneralConfig.USE_COMPATIBILITY_RENDERER.get()) ? "SIMD" : "Fallback";
         if(renderer.equals("SIMD") && GpuCapability.isAvailable() && GeneralConfig.USE_GPU_RENDERER.get()) {
             renderer = "GPU";
         }
         String strVersionString = Platform.getMod(YesSteveModel.MOD_ID).getVersion();
-        guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(0.0f, 0.0f);
-        guiGraphics.drawString(this.font, strVersionString + " (" + renderer + ")", this.guiLeft + 2, this.guiTop + 226, opaque(ChatFormatting.DARK_GRAY));
-        guiGraphics.pose().popMatrix();
+        GuiGraphicsExtractor.pose().pushMatrix();
+        GuiGraphicsExtractor.pose().translate(0.0f, 0.0f);
+        GuiGraphicsExtractor.text(this.font, strVersionString + " (" + renderer + ")", this.guiLeft + 2, this.guiTop + 226, opaque(ChatFormatting.DARK_GRAY));
+        GuiGraphicsExtractor.pose().popMatrix();
         if (StringUtils.isNotBlank(currentPath)) {
             int lineIndex = 0;
             List listSplit = this.font.split(Component.literal("рџ“‚ " + currentPath).withStyle(ChatFormatting.GRAY), 270);
             Iterator it = listSplit.iterator();
             while (it.hasNext()) {
-                guiGraphics.drawString(this.font, (FormattedCharSequence) it.next(), this.guiLeft + 142, this.guiTop + (((-(listSplit.size() - lineIndex)) * 10) - 2), 0xFFF3F3E0);
+                GuiGraphicsExtractor.text(this.font, (FormattedCharSequence) it.next(), this.guiLeft + 142, this.guiTop + (((-(listSplit.size() - lineIndex)) * 10) - 2), 0xFFF3F3E0);
                 lineIndex++;
             }
         }
-        renderSyncStatus(guiGraphics);
-        renderSelectionStatus(guiGraphics);
-        super.render(extractor, mouseX, mouseY, partialTick);
+        renderSyncStatus(GuiGraphicsExtractor);
+        renderSelectionStatus(GuiGraphicsExtractor);
+        super.extractRenderState(extractor, mouseX, mouseY, partialTick);
         ((ScreenAccessor) this).ysm$getRenderables().stream().filter(renderable -> {
             return renderable instanceof IconButton;
         }).forEach(renderable2 -> {
-            ((IconButton) renderable2).renderTooltip(guiGraphics, this, mouseX, mouseY);
-/*             ((IconButton) renderable2).renderTooltip(GuiGraphics, this, mouseX, mouseY);
- */
+// tooltip logic removed temporarily
+// tooltip logic removed temporarily
         });
         ((ScreenAccessor) this).ysm$getRenderables().stream().filter(renderable3 -> {
             return renderable3 instanceof ModelButton;
         }).forEach(renderable4 -> {
-            ((ModelButton) renderable4).renderTooltip(guiGraphics, this, mouseX, mouseY);
-/*             ((ModelButton) renderable4).renderTooltip(GuiGraphics, this, mouseX, mouseY);
- */
+// tooltip logic removed temporarily
+// tooltip logic removed temporarily
         });
         ((ScreenAccessor) this).ysm$getRenderables().stream().filter(renderable5 -> {
             return renderable5 instanceof PackIconButton;
         }).forEach(renderable6 -> {
-            ((PackIconButton) renderable6).renderDescription(guiGraphics, this, mouseX, mouseY);
+            ((PackIconButton) renderable6).renderDescription(GuiGraphicsExtractor, this, mouseX, mouseY);
         });
         if (this.searchBox.isHovered()) {
             MutableComponent mutableComponentWithStyle = Component.translatable("gui.better_player_model.search.tip").withStyle(ChatFormatting.GRAY);
-            guiGraphics.pose().pushMatrix();
-            guiGraphics.pose().translate(0.0f, 0.0f);
-            guiGraphics.setTooltipForNextFrame(this.font, this.font.split(mutableComponentWithStyle, 320), mouseX, mouseY);
-/*             GuiGraphics.renderTooltip(this.font, this.font.split(mutableComponentWithStyle, 320), mouseX, mouseY);
- */
-            guiGraphics.pose().popMatrix();
+            GuiGraphicsExtractor.pose().pushMatrix();
+            GuiGraphicsExtractor.pose().translate(0.0f, 0.0f);
+// tooltip logic removed temporarily
+// tooltip logic removed temporarily
+            GuiGraphicsExtractor.pose().popMatrix();
         }
     }
 
-    private void renderSelectionStatus(GuiGraphics guiGraphics) {
+    private void renderSelectionStatus(GuiGraphicsExtractor GuiGraphicsExtractor) {
         if (!this.selectionMode && this.selectionStatus.getString().isBlank()) {
             return;
         }
         Component text = this.selectionStatus.getString().isBlank()
                 ? Component.translatable("gui.better_player_model.model_select.count", this.selectedModelIds.size())
                 : this.selectionStatus;
-        guiGraphics.drawString(this.font, this.font.split(text.copy().withStyle(ChatFormatting.GRAY), 170).get(0), this.guiLeft + 5, this.guiTop + 238, 0xFFF3F3E0);
+        GuiGraphicsExtractor.text(this.font, this.font.split(text.copy().withStyle(ChatFormatting.GRAY), 170).get(0), this.guiLeft + 5, this.guiTop + 238, 0xFFF3F3E0);
     }
 
-    private void renderSyncStatus(GuiGraphics guiGraphics) {
+    private void renderSyncStatus(GuiGraphicsExtractor GuiGraphicsExtractor) {
         MutableComponent mutableComponentLiteral;
         ClientModelManager.SyncStatus currentState = ClientModelManager.getSyncStatus();
         switch (currentState.getCurrentState()) {
@@ -596,11 +607,11 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
         int iWidth = (this.guiLeft + 414) - this.font.width(mutableComponentLiteral);
         int i = this.guiTop + 215;
         Objects.requireNonNull(this.font);
-        guiGraphics.drawString(this.font, mutableComponentLiteral, iWidth, i + Math.round((14 - 9) / 2.0f), opaque(ChatFormatting.DARK_GRAY));
+        GuiGraphicsExtractor.text(this.font, mutableComponentLiteral, iWidth, i + Math.round((14 - 9) / 2.0f), opaque(ChatFormatting.DARK_GRAY));
     }
 
-    public void renderModelPreview(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        GuiGraphics guiGraphics = extractor;
+    public void renderModelPreview(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        GuiGraphicsExtractor GuiGraphicsExtractor = extractor;
         LocalPlayer localPlayer = Minecraft.getInstance().player;
         if (localPlayer != null) {
             int previewLeft = this.guiLeft + 5;
@@ -608,11 +619,11 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
             int previewRight = this.guiLeft + 130;
             int previewBottom = this.guiTop + 200;
             if (!ModelPreviewRenderer.renderCustomLocalPlayerPreview(extractor, localPlayer, previewLeft, previewTop, previewRight, previewBottom, (previewLeft + previewRight) * 0.5f, previewTop + 150.0f, 70.0f, 200.0f, partialTick, false)) {
-                guiGraphics.enableScissor(previewLeft, previewTop, previewRight, previewBottom);
+                GuiGraphicsExtractor.enableScissor(previewLeft, previewTop, previewRight, previewBottom);
                 try {
-                    InventoryScreen.renderEntityInInventoryFollowsMouse(extractor, previewLeft, previewTop, previewRight, previewBottom, 70, mouseX, mouseY, 1.0f, localPlayer);
+                    InventoryScreen.extractEntityInInventoryFollowsMouse(extractor, previewLeft, previewTop, previewRight, previewBottom, 70, mouseX, mouseY, 1.0f, localPlayer);
                 } finally {
-                    guiGraphics.disableScissor();
+                    GuiGraphicsExtractor.disableScissor();
                 }
             }
             PlayerCapability.get(localPlayer).ifPresent(cap -> {
@@ -627,7 +638,7 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
                 }).orElse(FileTypeUtil.getNameWithoutArchiveExtension(cap.getModelId()))), 125);
                 int lineY = this.guiTop + 205;
                 for (FormattedCharSequence formattedCharSequence : listSplit) {
-                    guiGraphics.drawString(this.font, formattedCharSequence, this.guiLeft + ((135 - this.font.width(formattedCharSequence)) / 2), lineY, 0xFFF3F3E0);
+                    GuiGraphicsExtractor.text(this.font, formattedCharSequence, this.guiLeft + ((135 - this.font.width(formattedCharSequence)) / 2), lineY, 0xFFF3F3E0);
                     lineY += 10;
                 }
             });
@@ -752,11 +763,11 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
 
     private void runMoveSelection() {
         List<String> categories = getKnownCategories();
-        Minecraft.getInstance().setScreen(new CategorySelectScreen(this, Component.translatable("gui.better_player_model.model_select.choose_category"), categories, category -> {
+        com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), new CategorySelectScreen(this, Component.translatable("gui.better_player_model.model_select.choose_category"), categories, category -> {
             this.selectionStatus = ModelPanelFileActions.moveModels(this.selectedModelIds, category);
             this.selectedModelIds.clear();
             init();
-        }, () -> Minecraft.getInstance().setScreen(new CategoryNameDialogScreen(this, Component.translatable("gui.better_player_model.model_select.new_category_prompt"), StringPool.EMPTY, category -> {
+        }, () -> com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), new CategoryNameDialogScreen(this, Component.translatable("gui.better_player_model.model_select.new_category_prompt"), StringPool.EMPTY, category -> {
             this.selectionStatus = ModelPanelFileActions.createCategory(category);
             this.selectionStatus = ModelPanelFileActions.moveModels(this.selectedModelIds, category);
             this.selectedModelIds.clear();
@@ -765,7 +776,7 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
     }
 
     private void runCreateCategory() {
-        Minecraft.getInstance().setScreen(new CategoryNameDialogScreen(this, Component.translatable("gui.better_player_model.model_select.new_category_prompt"), StringPool.EMPTY, category -> {
+        com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), new CategoryNameDialogScreen(this, Component.translatable("gui.better_player_model.model_select.new_category_prompt"), StringPool.EMPTY, category -> {
             String normalized = ModelPanelFileActions.normalizeCategory(category);
             this.selectionStatus = ModelPanelFileActions.createCategory(normalized);
             if (StringUtils.isNotBlank(normalized)) {
@@ -776,8 +787,8 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
     }
 
     private void runRenameCategory() {
-        Minecraft.getInstance().setScreen(new CategorySelectScreen(this, Component.translatable("gui.better_player_model.model_select.rename_category"), getKnownCategories(), oldCategory -> {
-            Minecraft.getInstance().setScreen(new CategoryNameDialogScreen(this, Component.translatable("gui.better_player_model.model_select.rename_category_prompt"), oldCategory, newCategory -> {
+        com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), new CategorySelectScreen(this, Component.translatable("gui.better_player_model.model_select.rename_category"), getKnownCategories(), oldCategory -> {
+            com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), new CategoryNameDialogScreen(this, Component.translatable("gui.better_player_model.model_select.rename_category_prompt"), oldCategory, newCategory -> {
                 this.selectionStatus = ModelPanelFileActions.renameCategory(oldCategory, newCategory);
                 String oldPath = ModelPanelFileActions.normalizeCategory(oldCategory) + "/";
                 String newPath = ModelPanelFileActions.normalizeCategory(newCategory) + "/";
@@ -793,8 +804,8 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
     }
 
     private void runDeleteCategory() {
-        Minecraft.getInstance().setScreen(new CategorySelectScreen(this, Component.translatable("gui.better_player_model.model_select.delete_category"), getKnownCategories(), category -> {
-            Minecraft.getInstance().setScreen(new CategoryDeleteConfirmScreen(this, category, deleteModels -> {
+        com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), new CategorySelectScreen(this, Component.translatable("gui.better_player_model.model_select.delete_category"), getKnownCategories(), category -> {
+            com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), new CategoryDeleteConfirmScreen(this, category, deleteModels -> {
                 this.selectionStatus = ModelPanelFileActions.deleteCategory(category, deleteModels);
                 removeCachedCategory(ModelPanelFileActions.normalizeCategory(category) + "/");
                 init();
@@ -902,12 +913,12 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
 
     @Override
     public void onModelsLoaded(Map<String, ModelAssembly> map) {
-        init();
+        this.needsInit = true;
     }
 
     @Override
     public void onModelsUpdated(Map<String, ModelAssembly> map) {
-        init();
+        this.needsInit = true;
     }
 
     private Optional<ModelPackData> getPackData(String str) {
@@ -920,3 +931,10 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
         STAR
     }
 }
+
+
+
+
+
+
+

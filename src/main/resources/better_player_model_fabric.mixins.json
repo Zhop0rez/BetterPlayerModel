@@ -1,4 +1,4 @@
-﻿{
+{
   "required": true,
   "minVersion": "0.8",
   "package": "com.elfmcys.yesstevemodel.fabric.mixin",
@@ -8,6 +8,8 @@
     "defaultRequire": 1
   },
   "client": [
+    "client.KeyboardHandlerMixin",
+    "client.MouseHandlerMixin",
     "client.PlayerRendererHandMixin",
     "client.PlayerRendererMixin",
     "client.YSMSoundInstanceFabricMixin"

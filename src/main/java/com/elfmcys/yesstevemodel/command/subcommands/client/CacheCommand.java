@@ -5,7 +5,7 @@ import com.elfmcys.yesstevemodel.util.YSMMessageFormatter;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
-import dev.architectury.event.events.client.ClientCommandRegistrationEvent;
+import dev.ysm.architectury.event.events.client.ClientCommandRegistrationEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 
@@ -23,17 +23,19 @@ public class CacheCommand {
             return 0;
         }
 
-        player.displayClientMessage(YSMMessageFormatter.withPrefix(Component.literal("ејЂе§‹и§Јжћђе№¶еЇје‡єе®ўж€·з«Їзј“е­жЁЎећ‹...")), false);
+        player.sendSystemMessage(YSMMessageFormatter.withPrefix(Component.literal("ејЂе§‹и§Јжћђе№¶еЇје‡єе®ўж€·з«Їзј“е­жЁЎећ‹...")));
 
         ClientModelManager.exportAllCachedModels(null, exportResult -> {
             if (exportResult.getMessage() != null) {
-                player.displayClientMessage(YSMMessageFormatter.withPrefix(exportResult.getMessage()), false);
+                player.sendSystemMessage(YSMMessageFormatter.withPrefix(exportResult.getMessage()));
             }
             if (exportResult.isSuccess()) {
-                player.displayClientMessage(Component.translatable("commands.better_player_model.export.success", exportResult.getFilePath()), false);
+                player.sendSystemMessage(Component.translatable("commands.better_player_model.export.success", exportResult.getFilePath()));
             }
         });
 
         return Command.SINGLE_SUCCESS;
     }
 }
+
+

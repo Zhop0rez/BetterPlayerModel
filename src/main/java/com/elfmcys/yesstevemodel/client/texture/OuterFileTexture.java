@@ -8,7 +8,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.textures.GpuTexture;
 import com.mojang.blaze3d.textures.GpuTextureView;
-import com.mojang.blaze3d.textures.TextureFormat;
+
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceMaps;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import net.minecraft.client.renderer.texture.AbstractTexture;
@@ -59,6 +59,15 @@ public class OuterFileTexture extends AbstractTexture implements ITextureMap {
     }
 
     @Override
+    public void close() {
+        super.close();
+        this.texture = null;
+        this.textureView = null;
+        this.sampler = null;
+        this.uploaded = false;
+    }
+
+    @Override
     public GpuTextureView getTextureView() {
         if (!isLoaded() && RenderSystem.isOnRenderThread()) {
             doLoad();
@@ -77,7 +86,7 @@ public class OuterFileTexture extends AbstractTexture implements ITextureMap {
             this.texture = device.createTexture(
                     () -> "YSM outer texture",
                     GpuTexture.USAGE_TEXTURE_BINDING | GpuTexture.USAGE_COPY_DST,
-                    TextureFormat.RGBA8,
+                    com.mojang.blaze3d.GpuFormat.RGBA8_UNORM,
                     width,
                     height,
                     1,
