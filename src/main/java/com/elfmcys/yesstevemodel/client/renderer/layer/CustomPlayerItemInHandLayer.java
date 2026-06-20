@@ -53,7 +53,7 @@ public class CustomPlayerItemInHandLayer extends GeoLayerRenderer<CustomPlayerEn
                     TacCompat.handleGunSound(entity, mainHandItem);
                     renderItem(animatedGeoModel, entity, mainHandItem, getDisplayContext(mainArm), mainArm, poseStack, bufferSource, packedLightIn, partialTick);
                     if (useExtraPlayer && !mainHandItem.isEmpty() && (bufferSource instanceof BufferSourceAccessor)) {
-                        ((BufferSourceAccessor) bufferSource).initialize();
+                        // ((BufferSourceAccessor) bufferSource).initialize();
                     }
                     TacCompat.handleItemSound(mainHandItem);
                 }
@@ -66,7 +66,7 @@ public class CustomPlayerItemInHandLayer extends GeoLayerRenderer<CustomPlayerEn
                         renderItem(animatedGeoModel, entity, offhandItem, getDisplayContext(offArm), offArm, poseStack, bufferSource, packedLightIn, partialTick);
                     }
                     if (useExtraPlayer && !offhandItem.isEmpty() && (bufferSource instanceof BufferSourceAccessor)) {
-                        ((BufferSourceAccessor) bufferSource).initialize();
+                        // ((BufferSourceAccessor) bufferSource).initialize();
                     }
                 }
             }
@@ -193,4 +193,5 @@ public class CustomPlayerItemInHandLayer extends GeoLayerRenderer<CustomPlayerEn
         return RenderUtils.prepMatrixForLocator(poseStack, model.rightHandBones());
     }
 }
+
 
