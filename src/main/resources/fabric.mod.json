@@ -1,7 +1,7 @@
 {
     "schemaVersion":  1,
     "id":  "better_player_model",
-    "version": "1.8.1-fabric-1.20.1",
+    "version": "1.1.1-fabric-1.20.1",
     "name":  "Better Player Model",
     "description":  "A powerful tool for replacing and animating player models. Features universal compatibility with .ysm models via integrated OpenYSM technology. Based on Yes_Steve_Model.",
     "authors":  [
@@ -50,5 +50,6 @@
                                            ]
                }
 }
+
 
 
