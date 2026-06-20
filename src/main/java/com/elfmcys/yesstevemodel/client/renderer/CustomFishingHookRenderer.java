@@ -5,7 +5,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.util.Mth;
@@ -17,7 +18,7 @@ import org.spongepowered.asm.mixin.Unique;
 import rip.ysm.api.item.ToolActionBridge;
 
 public class CustomFishingHookRenderer {
-    public static boolean tryRenderCustomHook(FishingHook fishingHook, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, net.minecraft.client.renderer.SubmitNodeCollector collector, int packedLight) {
+    public static boolean tryRenderCustomHook(FishingHook fishingHook, float entityYaw, float partialTick, PoseStack poseStack, SubmitNodeCollector bufferSource, net.minecraft.client.renderer.SubmitNodeCollector collector, int packedLight) {
         return ProjectileCapability.get(fishingHook).map(cap -> {
             if (cap.isModelInitialized() && cap.isModelReady()) {
                 fishingHook.setXRot(0.0f);
@@ -40,7 +41,7 @@ public class CustomFishingHookRenderer {
         }).orElse(true);
     }
 
-    private static void renderFishingLine(FishingHook fishingHook, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight, Player player) {
+    private static void renderFishingLine(FishingHook fishingHook, float partialTick, PoseStack poseStack, SubmitNodeCollector bufferSource, int packedLight, Player player) {
         int hand = player.getMainArm() == HumanoidArm.RIGHT ? 1 : -1;
         if (!ToolActionBridge.canFishingRodCast(player.getMainHandItem())) {
             hand = -hand;
@@ -62,7 +63,7 @@ public class CustomFishingHookRenderer {
             anglerZ = (Mth.lerp(partialTick, player.zo, player.getZ()) - (dSin * handOffset)) + (dCos * 0.8d);
             anglerEye = player.isCrouching() ? -0.1875f : 0.0f;
         } else {
-            Vec3 vec3XRot = entityRenderDispatcher.camera.getNearPlane().getPointOnPlane(hand * 0.525f, -0.1f).scale(960.0d / options.fov().get().intValue()).yRot(swingProgressSqrt * 0.5f).xRot((-swingProgressSqrt) * 0.7f);
+            Vec3 vec3XRot = entityRenderDispatcher.camera.getNearPlane(options.fov().get().floatValue()).getPointOnPlane(hand * 0.525f, -0.1f).scale(960.0d / options.fov().get().intValue()).yRot(swingProgressSqrt * 0.5f).xRot((-swingProgressSqrt) * 0.7f);
             anglerX = Mth.lerp(partialTick, player.xo, player.getX()) + vec3XRot.x;
             anglerY = Mth.lerp(partialTick, player.yo, player.getY()) + vec3XRot.y;
             anglerZ = Mth.lerp(partialTick, player.zo, player.getZ()) + vec3XRot.z;
@@ -72,11 +73,12 @@ public class CustomFishingHookRenderer {
         float startY = ((float) (anglerY - (Mth.lerp(partialTick, fishingHook.yo, fishingHook.getY()) + 0.25d))) + anglerEye;
         float startZ = (float) (anglerZ - Mth.lerp(partialTick, fishingHook.zo, fishingHook.getZ()));
         float[] color = lineColor(fishingHook);
-        VertexConsumer buffer = bufferSource.getBuffer(RenderTypes.leash());
-        PoseStack.Pose poseLast = poseStack.last();
-        for (int size = 0; size <= 16; size++) {
-            stringVertex(startX, startY, startZ, buffer, poseLast, fraction(size), fraction(size + 1), color[0], color[1], color[2], packedLight);
-        }
+        SubmitRenderContext.get().submitCustomGeometry(poseStack, RenderTypes.leash(), (pose, buffer) -> {
+            PoseStack.Pose poseLast = pose;
+            for (int size = 0; size <= 16; size++) {
+                stringVertex(startX, startY, startZ, buffer, poseLast, fraction(size), fraction(size + 1), color[0], color[1], color[2], packedLight);
+            }
+        });
     }
 
     @Unique
@@ -106,3 +108,5 @@ public class CustomFishingHookRenderer {
         }
     }
 }
+
+

@@ -9,7 +9,7 @@ import net.minecraft.server.permissions.LevelBasedPermissionSet;
 import net.minecraft.server.permissions.PermissionLevel;
 import net.minecraft.server.permissions.PermissionSet;
 import net.minecraft.world.entity.Entity;
-import dev.architectury.utils.GameInstance;
+import dev.ysm.architectury.utils.GameInstance;
 import org.jetbrains.annotations.Nullable;
 import rip.ysm.api.PlatformAPI;
 

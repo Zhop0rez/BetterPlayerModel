@@ -6,7 +6,7 @@ import rip.ysm.api.PlatformAPI;
 import rip.ysm.compat.touhoulittlemaid.TouhouMaidCompat;
 import com.elfmcys.yesstevemodel.model.ServerModelManager;
 import com.elfmcys.yesstevemodel.network.NetworkHandler;
-import dev.architectury.event.events.common.LifecycleEvent;
+import dev.ysm.architectury.event.events.common.LifecycleEvent;
 
 import java.io.IOException;
 

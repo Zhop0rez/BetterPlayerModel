@@ -15,7 +15,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -46,11 +47,11 @@ public class CustomPlayerRenderer extends GeoReplacedEntityRenderer<Player, Cust
         addLayerRenderer(new CustomPlayerArmorLayer(context));
     }
 
-    public void render(Player player, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+    public void render(Player player, float entityYaw, float partialTick, PoseStack poseStack, SubmitNodeCollector bufferSource, int packedLight) {
         render(player, entityYaw, partialTick, poseStack, bufferSource, null, packedLight);
     }
 
-    public void render(Player player, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, SubmitNodeCollector collector, int packedLight) {
+    public void render(Player player, float entityYaw, float partialTick, PoseStack poseStack, SubmitNodeCollector bufferSource, SubmitNodeCollector collector, int packedLight) {
         PlayerCapability capability;
         if (SWarfareCompat.isPlayerAiming(player) || (capability = PlayerCapability.get(player).orElse(null)) == null) {
             return;
@@ -98,7 +99,7 @@ public class CustomPlayerRenderer extends GeoReplacedEntityRenderer<Player, Cust
                 }
             }
         }
-        return Minecraft.renderNames() && entity != minecraft.getCameraEntity() && isVisible && !entity.isVehicle();
+        return com.elfmcys.yesstevemodel.client.ScreenFixer.renderNames() && entity != minecraft.getCameraEntity() && isVisible && !entity.isVehicle();
     }
 
     @NotNull
@@ -112,7 +113,7 @@ public class CustomPlayerRenderer extends GeoReplacedEntityRenderer<Player, Cust
         return this.currentTexture == null ? MissingTextureAtlasSprite.getLocation() : this.currentTexture;
     }
 
-    public void renderNameTag(Player player, Component component, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, float partialTick) {
+    public void renderNameTag(Player player, Component component, PoseStack poseStack, SubmitNodeCollector multiBufferSource, int i, float partialTick) {
         Scoreboard scoreboard = null;
         Objective displayObjective;
         if (PlayerPreviewEntity.isPreviewPlayer(player)) {
@@ -146,3 +147,4 @@ public class CustomPlayerRenderer extends GeoReplacedEntityRenderer<Player, Cust
         }
     }
 }
+

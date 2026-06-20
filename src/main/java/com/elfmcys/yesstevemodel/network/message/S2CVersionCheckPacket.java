@@ -58,7 +58,7 @@ public class S2CVersionCheckPacket {
         buf.writeBoolean(message.allowUpload);
     }
 
-    public static void handle(S2CVersionCheckPacket message, PacketContext ctx) {
+    public static void handle(S2CVersionCheckPacket message, PacketContext ctx) { com.elfmcys.yesstevemodel.YesSteveModel.LOGGER.info("Received S2CVersionCheckPacket!");
         ctx.enqueueWork(() -> {
             ClientModelManager.setOysmServer(message.oysmServer);
             ClientModelManager.setAllowUpload(message.allowUpload);

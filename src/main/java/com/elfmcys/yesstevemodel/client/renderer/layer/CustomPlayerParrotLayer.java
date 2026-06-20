@@ -7,7 +7,8 @@ import com.elfmcys.yesstevemodel.geckolib3.util.RenderUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.animal.parrot.ParrotModel;
 import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.ParrotRenderer;
 import net.minecraft.client.renderer.entity.state.ParrotRenderState;
@@ -26,7 +27,7 @@ public class CustomPlayerParrotLayer extends GeoLayerRenderer<CustomPlayerEntity
     }
 
     @Override
-    public void render(PoseStack poseStack, MultiBufferSource bufferSource, int packedLightIn, CustomPlayerEntity entityLivingBaseIn, float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void render(PoseStack poseStack, SubmitNodeCollector bufferSource, int packedLightIn, CustomPlayerEntity entityLivingBaseIn, float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
         Player player = entityLivingBaseIn.getEntity();
         AnimatedGeoModel model = entityLivingBaseIn.getCurrentModel();
         if (model == null) {
@@ -40,7 +41,7 @@ public class CustomPlayerParrotLayer extends GeoLayerRenderer<CustomPlayerEntity
         }
     }
 
-    private void renderParrot(PoseStack poseStack, MultiBufferSource bufferSource, AnimatedGeoModel model, int packedLightIn, Player player, float limbSwing, float limbSwingAmount, float netHeadYaw, float headPitch, boolean isLeftShoulder) {
+    private void renderParrot(PoseStack poseStack, SubmitNodeCollector bufferSource, AnimatedGeoModel model, int packedLightIn, Player player, float limbSwing, float limbSwingAmount, float netHeadYaw, float headPitch, boolean isLeftShoulder) {
         Parrot.Variant variant = (isLeftShoulder ? player.getShoulderParrotLeft() : player.getShoulderParrotRight()).orElse(null);
         if (variant == null) {
             return;
@@ -54,7 +55,7 @@ public class CustomPlayerParrotLayer extends GeoLayerRenderer<CustomPlayerEntity
         applyParrotTransform(poseStack, model, isLeftShoulder);
         poseStack.translate(0.0d, 1.5d, 0.0d);
         poseStack.mulPose(Axis.ZP.rotationDegrees(180.0f));
-        this.parrotModel.renderToBuffer(poseStack, bufferSource.getBuffer(RenderTypes.entityCutout(ParrotRenderer.getVariantTexture(variant))), packedLightIn, OverlayTexture.NO_OVERLAY, -1);
+        bufferSource.submitModel(this.parrotModel, state, poseStack, RenderTypes.entityCutout(ParrotRenderer.getVariantTexture(variant)), packedLightIn, OverlayTexture.NO_OVERLAY, -1, null);
         poseStack.popPose();
     }
 
@@ -66,3 +67,4 @@ public class CustomPlayerParrotLayer extends GeoLayerRenderer<CustomPlayerEntity
         }
     }
 }
+

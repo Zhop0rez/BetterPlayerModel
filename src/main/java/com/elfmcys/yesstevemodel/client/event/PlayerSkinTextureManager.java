@@ -2,7 +2,7 @@ package com.elfmcys.yesstevemodel.client.event;
 
 import com.elfmcys.yesstevemodel.YesSteveModel;
 import com.elfmcys.yesstevemodel.event.api.SpecialPlayerRenderEvent;
-import dev.architectury.event.EventResult;
+import dev.ysm.architectury.event.EventResult;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;

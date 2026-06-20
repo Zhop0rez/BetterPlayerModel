@@ -4,10 +4,10 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.MapRenderer;
 import net.minecraft.client.renderer.PlayerSkinRenderCache;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.BlockModelResolver;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.item.ItemModelResolver;
-import net.minecraft.client.resources.model.AtlasManager;
+import net.minecraft.client.resources.model.sprite.AtlasManager;
 import net.minecraft.client.resources.model.EquipmentAssetManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
@@ -16,27 +16,27 @@ import java.util.function.Supplier;
 
 @Mixin(EntityRenderDispatcher.class)
 public interface EntityRenderDispatcherAccessor {
-    @Accessor("blockRenderDispatcher")
-    BlockRenderDispatcher ysm$getBlockRenderDispatcher();
+    @Accessor(remap = false, value = "blockModelResolver")
+    BlockModelResolver ysm$getBlockRenderDispatcher();
 
-    @Accessor("itemModelResolver")
+    @Accessor(remap = false, value = "itemModelResolver")
     ItemModelResolver ysm$getItemModelResolver();
 
-    @Accessor("mapRenderer")
+    @Accessor(remap = false, value = "mapRenderer")
     MapRenderer ysm$getMapRenderer();
 
-    @Accessor("font")
+    @Accessor(remap = false, value = "font")
     Font ysm$getFont();
 
-    @Accessor("entityModels")
+    @Accessor(remap = false, value = "entityModels")
     Supplier<EntityModelSet> ysm$getEntityModels();
 
-    @Accessor("equipmentAssets")
+    @Accessor(remap = false, value = "equipmentAssets")
     EquipmentAssetManager ysm$getEquipmentAssets();
 
-    @Accessor("atlasManager")
+    @Accessor(remap = false, value = "atlasManager")
     AtlasManager ysm$getAtlasManager();
 
-    @Accessor("playerSkinRenderCache")
+    @Accessor(remap = false, value = "playerSkinRenderCache")
     PlayerSkinRenderCache ysm$getPlayerSkinRenderCache();
 }

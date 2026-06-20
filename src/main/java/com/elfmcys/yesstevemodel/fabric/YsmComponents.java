@@ -1,53 +1,18 @@
 package com.elfmcys.yesstevemodel.fabric;
 
-import com.elfmcys.yesstevemodel.YesSteveModel;
-import com.elfmcys.yesstevemodel.capability.fabric.AuthModelsComponent;
-import com.elfmcys.yesstevemodel.capability.fabric.ModelInfoComponent;
-import com.elfmcys.yesstevemodel.capability.fabric.ProjectileModelComponent;
-import com.elfmcys.yesstevemodel.capability.fabric.StarModelsComponent;
-import com.elfmcys.yesstevemodel.capability.fabric.VehicleModelComponent;
-import org.ladysnake.cca.api.v3.component.ComponentKey;
-import org.ladysnake.cca.api.v3.component.ComponentRegistryV3;
-import org.ladysnake.cca.api.v3.entity.EntityComponentFactoryRegistry;
-import org.ladysnake.cca.api.v3.entity.EntityComponentInitializer;
-import org.ladysnake.cca.api.v3.entity.RespawnCopyStrategy;
-import net.minecraft.resources.Identifier;
+import com.elfmcys.yesstevemodel.capability.fabric.*;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.projectile.Projectile;
 
-public final class YsmComponents implements EntityComponentInitializer {
+public final class YsmComponents {
+    public static final ComponentKey<StarModelsComponent> STAR_MODELS = new ComponentKey<>(e -> ((YsmEntityExtension)e).ysm$getStarModels());
+    public static final ComponentKey<AuthModelsComponent> AUTH_MODELS = new ComponentKey<>(e -> ((YsmEntityExtension)e).ysm$getAuthModels());
+    public static final ComponentKey<ModelInfoComponent> MODEL_INFO = new ComponentKey<>(e -> ((YsmEntityExtension)e).ysm$getModelInfo());
+    public static final ComponentKey<ProjectileModelComponent> PROJECTILE_MODEL = new ComponentKey<>(e -> ((YsmEntityExtension)e).ysm$getProjectileModel());
+    public static final ComponentKey<VehicleModelComponent> VEHICLE_MODEL = new ComponentKey<>(e -> ((YsmEntityExtension)e).ysm$getVehicleModel());
 
-    public static final ComponentKey<StarModelsComponent> STAR_MODELS = ComponentRegistryV3.INSTANCE.getOrCreate(
-            Identifier.fromNamespaceAndPath(YesSteveModel.MOD_ID,"star_models"),
-            StarModelsComponent.class
-    );
-
-    public static final ComponentKey<AuthModelsComponent> AUTH_MODELS = ComponentRegistryV3.INSTANCE.getOrCreate(
-            Identifier.fromNamespaceAndPath(YesSteveModel.MOD_ID,"auth_models"),
-            AuthModelsComponent.class
-    );
-
-    public static final ComponentKey<ModelInfoComponent> MODEL_INFO = ComponentRegistryV3.INSTANCE.getOrCreate(
-            Identifier.fromNamespaceAndPath(YesSteveModel.MOD_ID,"model_info"),
-            ModelInfoComponent.class
-    );
-
-    public static final ComponentKey<ProjectileModelComponent> PROJECTILE_MODEL = ComponentRegistryV3.INSTANCE.getOrCreate(
-            Identifier.fromNamespaceAndPath(YesSteveModel.MOD_ID,"projectile_model"),
-            ProjectileModelComponent.class
-    );
-
-    public static final ComponentKey<VehicleModelComponent> VEHICLE_MODEL = ComponentRegistryV3.INSTANCE.getOrCreate(
-            Identifier.fromNamespaceAndPath(YesSteveModel.MOD_ID,"vehicle_model"),
-            VehicleModelComponent.class
-    );
-
-    @Override
-    public void registerEntityComponentFactories(EntityComponentFactoryRegistry registry) {
-        registry.registerForPlayers(STAR_MODELS, p -> new StarModelsComponent(), RespawnCopyStrategy.ALWAYS_COPY);
-        registry.registerForPlayers(AUTH_MODELS, p -> new AuthModelsComponent(), RespawnCopyStrategy.ALWAYS_COPY);
-        registry.registerForPlayers(MODEL_INFO, p -> new ModelInfoComponent(), RespawnCopyStrategy.ALWAYS_COPY);
-        registry.registerFor(Projectile.class, PROJECTILE_MODEL, p -> new ProjectileModelComponent());
-        registry.registerFor(Entity.class, VEHICLE_MODEL, e -> new VehicleModelComponent());
+    public static class ComponentKey<T> {
+        private final java.util.function.Function<Entity, T> getter;
+        public ComponentKey(java.util.function.Function<Entity, T> getter) { this.getter = getter; }
+        public T getNullable(Entity provider) { return getter.apply(provider); }
     }
 }

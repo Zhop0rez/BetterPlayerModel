@@ -2,7 +2,7 @@ package rip.ysm.gui;
 
 import com.elfmcys.yesstevemodel.config.GeneralConfig;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -255,12 +255,12 @@ public abstract class OptionScreen extends Screen {
 
     protected void onSave() {
         onApply();
-        Minecraft.getInstance().setScreen(parentScreen);
+        com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), parentScreen);
     }
 
     protected void onCancel() {
         for (OptionGroup g : groups) g.undo();
-        Minecraft.getInstance().setScreen(parentScreen);
+        com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), parentScreen);
     }
 
     protected void onUndo() {
@@ -268,14 +268,14 @@ public abstract class OptionScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        GuiGraphics g = extractor;
-        renderTransparentBackground(extractor);
+    public void extractRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        GuiGraphicsExtractor g = extractor;
+
 
         renderPanelBackdrop(g);
 
         g.fill(panelLeft, panelTop, panelRight, panelTop + 18, 0x90000000);
-        g.drawString(this.font, this.title, panelLeft + 6, panelTop + 5, 0xFFFFFFFF, false);
+        g.text(this.font, this.title, panelLeft + 6, panelTop + 5, 0xFFFFFFFF, false);
 
         long now = System.nanoTime();
         if (lastFrameNanos == 0L) lastFrameNanos = now;
@@ -306,7 +306,7 @@ public abstract class OptionScreen extends Screen {
         applyBtn.active = dirty;
         undoBtn.active = activeGroup != null && activeGroup.isDirty();
 
-        super.render(extractor, mouseX, mouseY, partialTick);
+        super.extractRenderState(extractor, mouseX, mouseY, partialTick);
 
         if (!tabButtons.isEmpty()) {
             boolean inTabArea = mouseX >= tabAreaLeft && mouseX < tabAreaRight && mouseY >= tabAreaTop && mouseY < tabAreaBottom;
@@ -322,7 +322,7 @@ public abstract class OptionScreen extends Screen {
             if (compactTabs) g.pose().translate(-tabScrollDisplay, 0);
             else g.pose().translate(0, -tabScrollDisplay);
             for (TabButton tb : tabButtons) {
-                tb.render(extractor, adjTabMouseX, adjTabMouseY, partialTick);
+                tb.extractRenderState(extractor, adjTabMouseX, adjTabMouseY, partialTick);
             }
             g.pose().popMatrix();
             g.disableScissor();
@@ -333,7 +333,7 @@ public abstract class OptionScreen extends Screen {
         g.pose().pushMatrix();
         g.pose().translate(0, -rowScrollDisplay);
         for (OptionRow<?> row : activeRows) {
-            row.render(extractor, mouseX, adjMouseY, partialTick);
+            row.extractRenderState(extractor, mouseX, adjMouseY, partialTick);
         }
         g.pose().popMatrix();
         g.disableScissor();
@@ -350,7 +350,7 @@ public abstract class OptionScreen extends Screen {
         }
     }
 
-    protected void renderExtras(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+    protected void renderExtras(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
     }
 
     protected void collectBlurRegions(List<int[]> out) {
@@ -394,7 +394,7 @@ public abstract class OptionScreen extends Screen {
         out.add(new int[]{btn.getX(), btn.getY(), btn.getWidth(), btn.getHeight()});
     }
 
-    private void renderPanelBackdrop(GuiGraphics g) {
+    private void renderPanelBackdrop(GuiGraphicsExtractor g) {
         if (GeneralConfig.BLUR_GUI == null || !GeneralConfig.BLUR_GUI.get()) return;
         List<int[]> regions = new ArrayList<>();
         collectBlurRegions(regions);
@@ -406,7 +406,7 @@ public abstract class OptionScreen extends Screen {
  */
     }
 
-    private void renderRowScrollbar(GuiGraphics g) {
+    private void renderRowScrollbar(GuiGraphicsExtractor g) {
         int trackX = rowAreaRight - 1;
         int trackTop = rowAreaTop + 1;
         int trackBot = rowAreaBottom - 1;
@@ -417,7 +417,7 @@ public abstract class OptionScreen extends Screen {
         g.fill(trackX, thumbY, trackX + 1, thumbY + thumbH, draggingRowScrollbar ? 0xFFFFFFFF : 0xFFAAAAAA);
     }
 
-    private void renderTabScrollbar(GuiGraphics g) {
+    private void renderTabScrollbar(GuiGraphicsExtractor g) {
         if (compactTabs) {
             int trackY = tabAreaBottom - 1;
             int trackLeft = tabAreaLeft + 1;
@@ -439,12 +439,12 @@ public abstract class OptionScreen extends Screen {
         g.fill(trackX, thumbY, trackX + 1, thumbY + thumbH, draggingTabScrollbar ? 0xFFFFFFFF : 0xFFAAAAAA);
     }
 
-    protected void renderDescription(GuiGraphics g, int descY) {
+    protected void renderDescription(GuiGraphicsExtractor g, int descY) {
         if (hoveredRow == null || hoveredRow.getOption() == null) return;
         g.fill(panelLeft, descY, panelRight, descY + 28, 0x80000000);
         Option<?> opt = hoveredRow.getOption();
         Component title = opt.getLabel();
-        g.drawString(this.font, title, panelLeft + 6, descY + 4, -1, false);
+        g.text(this.font, title, panelLeft + 6, descY + 4, -1, false);
 
         Component desc = opt.getDescription();
         int maxWidth = panelRight - panelLeft - 6 * 2;
@@ -452,7 +452,7 @@ public abstract class OptionScreen extends Screen {
         int lineY = descY + 16;
         int max = Math.min(lines.size(), (28 - 16) / 10);
         for (int i = 0; i < max; i++) {
-            g.drawString(this.font, lines.get(i), panelLeft + 6, lineY, 0xFFCCCCCC, false);
+            g.text(this.font, lines.get(i), panelLeft + 6, lineY, 0xFFCCCCCC, false);
             lineY += 10;
         }
     }
@@ -595,3 +595,5 @@ public abstract class OptionScreen extends Screen {
         return false;
     }
 }
+
+

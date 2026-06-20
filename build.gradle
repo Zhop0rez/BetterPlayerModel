@@ -1,9 +1,9 @@
 plugins {
-	id 'fabric-loom' version '1.14-SNAPSHOT'
+	id 'fabric-loom' version '1.17.12'
 	id 'maven-publish'
 }
 
-version = '1.0.7-fabric-1.21.11'
+version = project.mod_version
 group = 'rip.ysm'
 
 base {
@@ -11,6 +11,7 @@ base {
 }
 
 repositories {
+    maven { url "https://api.modrinth.com/maven" }
     maven { url "https://maven.quiltmc.org/repository/release" }
 	maven { url "https://maven.terraformersmc.com/releases/" }
     maven { url "https://maven.architectury.dev/" }
@@ -22,23 +23,14 @@ repositories {
     mavenCentral()
 }
 
-def ccaVersion = "7.3.1"
+def ccaVersion = "8.0.0"
 
 dependencies {
-	minecraft "com.mojang:minecraft:1.21.11"
-	mappings loom.layered() {
-        officialMojangMappings()
-    }
-    
-	modImplementation "net.fabricmc:fabric-loader:0.18.1"
-	modImplementation "net.fabricmc.fabric-api:fabric-api:0.141.4+1.21.11"
-    
-    modImplementation "dev.architectury:architectury-fabric:19.0.1"
-    include "dev.architectury:architectury-fabric:19.0.1"
-    implementation "dev.architectury:architectury-injectables:1.0.11"
-    
-    modImplementation "org.ladysnake.cardinal-components-api:cardinal-components-api:${ccaVersion}"
-    include "org.ladysnake.cardinal-components-api:cardinal-components-api:${ccaVersion}"
+    mappings "net.fabricmc:intermediary:0.0.0:v2"
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
     include "org.ladysnake.cardinal-components-api:cardinal-components-base:${ccaVersion}"
     include "org.ladysnake.cardinal-components-api:cardinal-components-block:${ccaVersion}"
     include "org.ladysnake.cardinal-components-api:cardinal-components-chunk:${ccaVersion}"
@@ -47,13 +39,13 @@ dependencies {
     include "org.ladysnake.cardinal-components-api:cardinal-components-level:${ccaVersion}"
     include "org.ladysnake.cardinal-components-api:cardinal-components-scoreboard:${ccaVersion}"
     include "org.ladysnake.cardinal-components-api:cardinal-components-world:${ccaVersion}"
-    modImplementation "curse.maven:forge-config-api-port-547434:7337130"
-    include "curse.maven:forge-config-api-port-547434:7337130"
+    modImplementation "maven.modrinth:forge-config-api-port:86ROVP2H"
+    include "maven.modrinth:forge-config-api-port:86ROVP2H"
     implementation "com.electronwill.night-config:core:3.8.3"
     include "com.electronwill.night-config:core:3.8.3"
     implementation "com.electronwill.night-config:toml:3.8.3"
     include "com.electronwill.night-config:toml:3.8.3"
-    modCompileOnly "com.terraformersmc:modmenu:15.0.0"
+    compileOnly "com.terraformersmc:modmenu:15.0.0"
     
     implementation "com.github.TartaricAlkaline:ImageStream:-SNAPSHOT"
     include "com.github.TartaricAlkaline:ImageStream:-SNAPSHOT"
@@ -73,20 +65,19 @@ tasks.withType(JavaCompile).configureEach {
     it.exclude("net/minecraft/**")
     it.exclude("net/fabricmc/**")
     it.exclude("com/mojang/**")
-    it.exclude("dev/architectury/**")
 }
 
 java {
 	withSourcesJar()
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
 }
 
 tasks.withType(Jar).configureEach {
     exclude("net/minecraft/**")
     exclude("net/fabricmc/**")
     exclude("com/mojang/**")
-    exclude("dev/architectury/**")
+    
     exclude("net/irisshaders/**")
 }
 
@@ -100,4 +91,105 @@ loom {
 tasks.register('runTestParser', JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'com.elfmcys.yesstevemodel.client.TestParser'
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+task printScreenMethods {
+    doLast {
+        def urlUrls = sourceSets.main.compileClasspath.collect { it.toURI().toURL() } as java.net.URL[]
+        def cl = new java.net.URLClassLoader(urlUrls, this.class.classLoader)
+        def clazz = cl.loadClass('net.minecraft.client.gui.screens.Screen')
+        clazz.getDeclaredMethods().each { println it.name + ' - ' + it.returnType.name }
+    }
+}
+task printExtractRenderState {
+    doLast {
+        def urlUrls = sourceSets.main.compileClasspath.collect { it.toURI().toURL() } as java.net.URL[]
+        def cl = new java.net.URLClassLoader(urlUrls, this.class.classLoader)
+        def clazz = cl.loadClass('net.minecraft.client.gui.screens.Screen')
+        clazz.getDeclaredMethods().findAll { it.name == 'extractRenderState' }.each { 
+            println it.name + '(' + it.parameterTypes.collect { it.name }.join(', ') + ')'
+        }
+    }
+}
+task printMinecraftMethods {
+    doLast {
+        def urlUrls = sourceSets.main.compileClasspath.collect { it.toURI().toURL() } as java.net.URL[]
+        def cl = new java.net.URLClassLoader(urlUrls, this.class.classLoader)
+        def clazz = cl.loadClass('net.minecraft.client.Minecraft')
+        clazz.getDeclaredMethods().findAll { it.name.startsWith('setScreen') }.each { 
+            println it.name + '(' + it.parameterTypes.collect { it.name }.join(', ') + ')'
+        }
+    }
+}
+task printGuiGraphicsClass {
+    doLast {
+        def urlUrls = sourceSets.main.compileClasspath.collect { it.toURI().toURL() } as java.net.URL[]
+        def cl = new java.net.URLClassLoader(urlUrls, this.class.classLoader)
+        try {
+            def clazz = cl.loadClass('net.minecraft.client.gui.GuiGraphicsExtractor')
+            println "GuiGraphicsExtractor EXISTS"
+        } catch (Exception e) {
+            println "GuiGraphicsExtractor NOT FOUND"
+        }
+        try {
+            def clazz2 = cl.loadClass('net.minecraft.client.gui.GuiGraphics')
+            println "GuiGraphics EXISTS"
+        } catch (Exception e) {
+            println "GuiGraphics NOT FOUND"
+        }
+    }
+}
+task printInventoryScreenMethods {
+    doLast {
+        def urlUrls = sourceSets.main.compileClasspath.collect { it.toURI().toURL() } as java.net.URL[]
+        def cl = new java.net.URLClassLoader(urlUrls, this.class.classLoader)
+        def clazz = cl.loadClass('net.minecraft.client.gui.screens.inventory.InventoryScreen')
+        clazz.getDeclaredMethods().each { 
+            println it.name + '(' + it.parameterTypes.collect { it.name }.join(', ') + ')'
+        }
+    }
+}
+task printGuiGraphicsExtractorMethods {
+    doLast {
+        def urlUrls = sourceSets.main.compileClasspath.collect { it.toURI().toURL() } as java.net.URL[]
+        def cl = new java.net.URLClassLoader(urlUrls, this.class.classLoader)
+        def clazz = cl.loadClass('net.minecraft.client.gui.GuiGraphicsExtractor')
+        clazz.getDeclaredMethods().findAll { it.name == 'entity' }.each { 
+            println it.name + '(' + it.parameterTypes.collect { it.name }.join(', ') + ')'
+        }
+    }
+}
+task printEntityRenderDispatcherMethods {
+    doLast {
+        def urlUrls = sourceSets.main.compileClasspath.collect { it.toURI().toURL() } as java.net.URL[]
+        def cl = new java.net.URLClassLoader(urlUrls, this.class.classLoader)
+        def clazz = cl.loadClass('net.minecraft.client.renderer.entity.EntityRenderDispatcher')
+        clazz.getDeclaredMethods().each { 
+            println it.name + '(' + it.parameterTypes.collect { it.name }.join(', ') + ')'
+        }
+    }
+}
+task printEntityRenderStateClass {
+    doLast {
+        def urlUrls = sourceSets.main.compileClasspath.collect { it.toURI().toURL() } as java.net.URL[]
+        def cl = new java.net.URLClassLoader(urlUrls, this.class.classLoader)
+        def clazz = cl.loadClass('net.minecraft.client.renderer.entity.state.EntityRenderState')
+        println clazz.getName()
+        clazz.getDeclaredFields().each { println "Field: " + it.type.name + " " + it.name }
+    }
 }

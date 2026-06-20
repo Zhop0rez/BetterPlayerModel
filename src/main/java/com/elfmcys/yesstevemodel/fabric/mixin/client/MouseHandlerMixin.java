@@ -1,6 +1,6 @@
 package com.elfmcys.yesstevemodel.fabric.mixin.client;
 
-import dev.architectury.event.events.client.ClientRawInputEvent;
+import dev.ysm.architectury.event.events.client.ClientRawInputEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import net.minecraft.client.input.MouseButtonInfo;
@@ -12,9 +12,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(MouseHandler.class)
 public class MouseHandlerMixin {
 
-    @Inject(method = "onButton", at = @At("HEAD"))
+    @Inject(remap = false, method = "onButton", at = @At("HEAD"))
     private void ysm$fireMouseClickedPre(long window, MouseButtonInfo info, int action, CallbackInfo ci) {
         Minecraft client = Minecraft.getInstance();
-        ClientRawInputEvent.MOUSE_CLICKED_PRE.invoker().mouseClicked(client, info, action);
+        ClientRawInputEvent.MOUSE_CLICKED_PRE.fireEventResult(handler -> handler.mouseClicked(client, info, action));
     }
 }
+
+

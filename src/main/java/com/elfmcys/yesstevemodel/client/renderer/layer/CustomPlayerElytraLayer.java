@@ -12,7 +12,8 @@ import com.mojang.math.Axis;
 import net.minecraft.client.model.object.equipment.ElytraModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
@@ -44,7 +45,7 @@ public class CustomPlayerElytraLayer extends GeoLayerRenderer<CustomPlayerEntity
     }
 
     @Override
-    public void render(PoseStack poseStack, MultiBufferSource bufferSource, int packedLightIn, CustomPlayerEntity entityLivingBaseIn, float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void render(PoseStack poseStack, SubmitNodeCollector bufferSource, int packedLightIn, CustomPlayerEntity entityLivingBaseIn, float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
         AnimatedGeoModel animatedGeoModel = entityLivingBaseIn.getCurrentModel();
         ElytraRenderMode renderMode = getElytraRenderMode(entityLivingBaseIn, animatedGeoModel);
         if (renderMode == ElytraRenderMode.NONE) {
@@ -61,7 +62,7 @@ public class CustomPlayerElytraLayer extends GeoLayerRenderer<CustomPlayerEntity
         }
         if (!hidden) {
             this.elytraModel.setupAnim(createElytraState(entity, partialTick, ageInTicks));
-            this.elytraModel.renderToBuffer(poseStack, bufferSource.getBuffer(RenderTypes.armorCutoutNoCull(cloakTextureLocation)), packedLightIn, OverlayTexture.NO_OVERLAY, -1);
+            bufferSource.submitModel(this.elytraModel, createElytraState(entity, partialTick, ageInTicks), poseStack, RenderTypes.armorCutoutNoCull(cloakTextureLocation), packedLightIn, OverlayTexture.NO_OVERLAY, -1, null);
         }
         poseStack.popPose();
     }
@@ -198,3 +199,4 @@ public class CustomPlayerElytraLayer extends GeoLayerRenderer<CustomPlayerEntity
         FALLBACK
     }
 }
+

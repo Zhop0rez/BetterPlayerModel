@@ -3,7 +3,7 @@ package com.elfmcys.yesstevemodel.client.gui;
 import com.elfmcys.yesstevemodel.client.renderer.ModelPreviewRenderer;
 import com.elfmcys.yesstevemodel.config.ExtraPlayerRenderConfig;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.screens.Screen;
@@ -71,37 +71,37 @@ public class ExtraPlayerRenderScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        GuiGraphics guiGraphics = extractor;
+    public void extractRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        GuiGraphicsExtractor GuiGraphicsExtractor = extractor;
         int boxLeft = this.mouseStartX;
         int boxTop = this.mouseStartY;
         int boxRight = (int) (boxLeft + (this.rotationX));
         int boxBottom = (int) (boxTop + (this.rotationX * 2.0f));
-        guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(0.0f, 0.0f);
-        guiGraphics.vLine((this.width / 2) - 1, -2, this.height + 2, -1610612737);
-        guiGraphics.hLine(-2, this.width + 2, (this.height / 2) - 1, -1610612737);
-        guiGraphics.vLine(10, -2, this.height + 2, -1610612737);
-        guiGraphics.vLine(this.width - 10, -2, this.height + 2, -1610612737);
-        guiGraphics.hLine(-2, this.width + 2, 10, -1610612737);
-        guiGraphics.hLine(-2, this.width + 2, this.height - 10, -1610612737);
-        guiGraphics.vLine(boxLeft, boxTop, boxBottom, -65536);
-        guiGraphics.vLine(boxRight, boxTop, boxBottom, -65536);
-        guiGraphics.hLine(boxLeft, boxRight, boxTop, -65536);
-        guiGraphics.hLine(boxLeft, boxRight, boxBottom, -65536);
-        guiGraphics.fillGradient(boxLeft, boxTop, boxRight, boxBottom, 1342177279, 1342177279);
-        guiGraphics.fillGradient(boxLeft - this.offsetX, boxTop - this.offsetX, boxLeft + this.offsetX, boxTop + this.offsetX, -16711777, -16711777);
-        guiGraphics.fillGradient(boxRight - this.offsetX, boxBottom - this.offsetX, boxRight + this.offsetX, boxBottom + this.offsetX, -16777057, -16777057);
+        GuiGraphicsExtractor.pose().pushMatrix();
+        GuiGraphicsExtractor.pose().translate(0.0f, 0.0f);
+        GuiGraphicsExtractor.fill((this.width / 2) - 1, -2, (this.width / 2), this.height + 2, -1610612737);
+        GuiGraphicsExtractor.fill(-2, (this.height / 2) - 1, this.width + 2, (this.height / 2), -1610612737);
+        GuiGraphicsExtractor.fill(10, -2, 11, this.height + 2, -1610612737);
+        GuiGraphicsExtractor.fill(this.width - 10, -2, this.width - 9, this.height + 2, -1610612737);
+        GuiGraphicsExtractor.fill(-2, 10, this.width + 2, 11, -1610612737);
+        GuiGraphicsExtractor.fill(-2, this.height - 10, this.width + 2, this.height - 9, -1610612737);
+        GuiGraphicsExtractor.fill(boxLeft, boxTop, boxLeft + 1, boxBottom, -65536);
+        GuiGraphicsExtractor.fill(boxRight, boxTop, boxRight + 1, boxBottom, -65536);
+        GuiGraphicsExtractor.fill(boxLeft, boxTop, boxRight, boxTop + 1, -65536);
+        GuiGraphicsExtractor.fill(boxLeft, boxBottom, boxRight, boxBottom + 1, -65536);
+        GuiGraphicsExtractor.fillGradient(boxLeft, boxTop, boxRight, boxBottom, 1342177279, 1342177279);
+        GuiGraphicsExtractor.fillGradient(boxLeft - this.offsetX, boxTop - this.offsetX, boxLeft + this.offsetX, boxTop + this.offsetX, -16711777, -16711777);
+        GuiGraphicsExtractor.fillGradient(boxRight - this.offsetX, boxBottom - this.offsetX, boxRight + this.offsetX, boxBottom + this.offsetX, -16777057, -16777057);
         int tipY = 15;
         for (FormattedCharSequence formattedCharSequence : this.font.split(Component.translatable("gui.better_player_model.extra_player_render.tips"), 500)) {
-            guiGraphics.drawString(this.font, formattedCharSequence, (this.width - 15) - this.font.width(formattedCharSequence), tipY, TEXT_COLOR);
+            GuiGraphicsExtractor.text(this.font, formattedCharSequence, (this.width - 15) - this.font.width(formattedCharSequence), tipY, TEXT_COLOR);
             tipY += 10;
         }
-        guiGraphics.pose().popMatrix();
+        GuiGraphicsExtractor.pose().popMatrix();
         if (Minecraft.getInstance().player != null && !ExtraPlayerRenderConfig.DISABLE_PLAYER_RENDER.get().booleanValue()) {
-            ModelPreviewRenderer.renderPlayerOverlay(guiGraphics, Minecraft.getInstance().player, this.mouseStartX, this.mouseStartY, this.rotationX, this.rotationY, -500, partialTick, false);
+            ModelPreviewRenderer.renderPlayerOverlay(GuiGraphicsExtractor, Minecraft.getInstance().player, this.mouseStartX, this.mouseStartY, this.rotationX, this.rotationY, -500, partialTick, false);
         }
-        super.render(extractor, mouseX, mouseY, partialTick);
+        super.extractRenderState(extractor, mouseX, mouseY, partialTick);
     }
 
     @Override
@@ -173,3 +173,4 @@ public class ExtraPlayerRenderScreen extends Screen {
         super.onClose();
     }
 }
+

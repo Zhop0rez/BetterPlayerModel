@@ -2,7 +2,7 @@ package com.elfmcys.yesstevemodel.client.gui.button;
 
 import com.elfmcys.yesstevemodel.config.LoadingStateConfig;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.network.chat.Component;
@@ -14,9 +14,9 @@ public class LoadingStateButton extends Button {
     }
 
     @Override
-    protected void renderContents(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        GuiGraphics guiGraphics = extractor;
-        guiGraphics.drawString(Minecraft.getInstance().font, Component.translatable("gui.better_player_model.config.loading_state_position"), getX() + 105, getY() + 6, 0xFFFFFFFF, false);
+    protected void extractContents(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        GuiGraphicsExtractor GuiGraphicsExtractor = extractor;
+        GuiGraphicsExtractor.text(Minecraft.getInstance().font, Component.translatable("gui.better_player_model.config.loading_state_position"), getX() + 105, getY() + 6, 0xFFFFFFFF, false);
     }
 
     public Component getMessage() {
@@ -52,3 +52,4 @@ public class LoadingStateButton extends Button {
         LoadingStateConfig.LOADING_STATE_POSITION.save();
     }
 }
+

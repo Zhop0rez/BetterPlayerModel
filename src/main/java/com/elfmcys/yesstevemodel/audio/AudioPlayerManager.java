@@ -86,10 +86,18 @@ public class AudioPlayerManager {
     public void tick() {
         ObjectIterator objectIteratorFastIterator = this.activePlayers.int2ReferenceEntrySet().fastIterator();
         while (objectIteratorFastIterator.hasNext()) {
-            if (((IAudioPlayer) ((Int2ReferenceMap.Entry) objectIteratorFastIterator.next()).getValue()).isStopped()) {
+            IAudioPlayer player = (IAudioPlayer) ((Int2ReferenceMap.Entry) objectIteratorFastIterator.next()).getValue();
+            if (player.isStopped()) {
                 objectIteratorFastIterator.remove();
+                player.release();
             }
         }
-        this.playerList.removeIf(IAudioPlayer::isStopped);
+        this.playerList.removeIf(player -> {
+            if (player.isStopped()) {
+                player.release();
+                return true;
+            }
+            return false;
+        });
     }
 }

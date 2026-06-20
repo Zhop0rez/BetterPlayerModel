@@ -49,14 +49,14 @@ public class YsmZstd {
 
     private static byte[] decompressWithYsmNative(byte[] rawData, int offset, int length) {
         if (!NativeLibLoader.isLoaded()) {
-            throw new UnsatisfiedLinkError("YSM native library is not loaded");
+            throw new UnsatisfiedLinkError("BPM native library is not loaded");
         }
         return requireDecompressedLimit(YSMNative.ysmZstdDecompress(copyInput(rawData, offset, length)));
     }
 
     private static byte[] compressWithYsmNative(byte[] rawData, int offset, int length, int level) {
         if (!NativeLibLoader.isLoaded()) {
-            throw new UnsatisfiedLinkError("YSM native library is not loaded");
+            throw new UnsatisfiedLinkError("BPM native library is not loaded");
         }
         return YSMNative.ysmZstdCompress(copyInput(rawData, offset, length), level);
     }
@@ -106,7 +106,7 @@ public class YsmZstd {
 
     private static byte[] decompressWithNative(byte[] zstdData) {
         if (!NativeLibLoader.isLoaded()) {
-            throw new UnsatisfiedLinkError("YSM native library is not loaded");
+            throw new UnsatisfiedLinkError("BPM native library is not loaded");
         }
         return requireDecompressedLimit(YSMNative.zstdDecompress(zstdData));
     }
@@ -189,7 +189,7 @@ public class YsmZstd {
 
     private static byte[] compressWithNative(byte[] input, int level) {
         if (!NativeLibLoader.isLoaded()) {
-            throw new UnsatisfiedLinkError("YSM native library is not loaded");
+            throw new UnsatisfiedLinkError("BPM native library is not loaded");
         }
         return YSMNative.zstdCompress(input, level);
     }

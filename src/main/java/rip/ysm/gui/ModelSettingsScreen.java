@@ -17,10 +17,11 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
@@ -149,7 +150,7 @@ public class ModelSettingsScreen extends OptionScreen {
 
     @Override
     public void onClose() {
-        if (this.minecraft != null) this.minecraft.setScreen(parentScreen);
+        if (this.minecraft != null) com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(minecraft, parentScreen);
     }
 
     @Override
@@ -203,12 +204,12 @@ public class ModelSettingsScreen extends OptionScreen {
     }
 
     @Override
-    protected void renderExtras(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+    protected void renderExtras(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
         g.fill(previewLeft, previewTop, previewRight, previewBottom, 0x66000000);
         renderPreview(g, partialTick);
     }
 
-    private void renderPreview(GuiGraphics g, float partialTick) {
+    private void renderPreview(GuiGraphicsExtractor g, float partialTick) {
         if (this.minecraft == null || this.minecraft.player == null) return;
         if (!(animatable instanceof LivingAnimatable<?> la)) return;
         g.enableScissor(previewLeft, previewTop, previewRight, previewBottom);
@@ -217,120 +218,5 @@ public class ModelSettingsScreen extends OptionScreen {
         ModelPreviewRenderer.renderEntityPreview(g, previewLeft, previewTop, previewRight, previewBottom, cx, cy, zoom, pitch, yaw, partialTick, (com.elfmcys.yesstevemodel.geckolib3.core.AnimatableEntity) la, RendererManager.getPlayerRenderer(), false);
         g.disableScissor();
     }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private static void renderPlayerForSettings(float x, float y, float scale, float pitch, float yaw, float partialTick, LivingAnimatable animatable, GeoReplacedEntityRenderer renderer) {
-        if (!ModelPreviewRenderer.isDirectGuiPreviewSupported()) {
-            return;
-        }
-        ModelPreviewRenderer.setPreviewMode(true);
-        LivingEntity livingEntity = (LivingEntity) animatable.getEntity();
-        org.joml.Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
-        modelViewStack.pushMatrix();
-        modelViewStack.translate(x, y, 1250.0f);
-        modelViewStack.scale(1.0f, 1.0f, -1.0f);
-        // MC 26.x: applyModelViewMatrix removed
-
-        PoseStack poseStack = new PoseStack();
-        poseStack.translate(0.0d, 0.0d, 1000.0d);
-        poseStack.scale(scale, scale, scale);
-        poseStack.translate(0.0d, 0.8d, 0.0d);
-
-        Quaternionf rotationZ = Axis.ZP.rotationDegrees(180.0f);
-        Quaternionf rotationX = Axis.XP.rotationDegrees(-10.0f + pitch);
-        rotationZ.mul(rotationX);
-        poseStack.mulPose(rotationZ);
-
-        float oldBodyRot = livingEntity.yBodyRot;
-        float oldBodyRotO = livingEntity.yBodyRotO;
-        float oldYRot = livingEntity.getYRot();
-        float oldYRotO = livingEntity.yRotO;
-        float oldXRot = livingEntity.getXRot();
-        float oldXRotO = livingEntity.xRotO;
-        float oldHeadRot = livingEntity.yHeadRot;
-        float oldHeadRotO = livingEntity.yHeadRotO;
-
-        livingEntity.yBodyRot = -yaw;
-        livingEntity.yBodyRotO = -yaw;
-        livingEntity.setYRot(180.0f);
-        livingEntity.yRotO = 180.0f;
-        livingEntity.setXRot(0.0f);
-        livingEntity.xRotO = 0.0f;
-        livingEntity.yHeadRot = -yaw;
-        livingEntity.yHeadRotO = -yaw;
-
-        // MC 26.x: Lighting.setupForEntityInInventory() removed;
-        rotationX.conjugate();
-        // MC 26.x: overrideCameraOrientation removed
-        // MC 26.x: setRenderShadow removed
-        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-
-        try {
-            renderer.renderEntity(animatable, 0.0f, partialTick, poseStack, bufferSource, 15728880);
-            bufferSource.endBatch();
-        } finally {
-            // MC 26.x: setRenderShadow(true) removed
-            livingEntity.yBodyRot = oldBodyRot;
-            livingEntity.yBodyRotO = oldBodyRotO;
-            livingEntity.setYRot(oldYRot);
-            livingEntity.yRotO = oldYRotO;
-            livingEntity.setXRot(oldXRot);
-            livingEntity.xRotO = oldXRotO;
-            livingEntity.yHeadRot = oldHeadRot;
-            livingEntity.yHeadRotO = oldHeadRotO;
-            modelViewStack.popMatrix();
-            // MC 26.x: applyModelViewMatrix removed
-            // MC 26.x: Lighting.setupFor3DItems() removed;
-            ModelPreviewRenderer.setPreviewMode(false);
-        }
-    }
-
-    @Override
-    public boolean mouseClicked(MouseButtonEvent event, boolean flag) {
-        if (isInPreview(event.x(), event.y())) {
-            draggingPreview = true;
-            draggingButton = event.button();
-            return true;
-        }
-        return super.mouseClicked(event, flag);
-    }
-
-    @Override
-    public boolean mouseReleased(MouseButtonEvent event) {
-        if (draggingPreview && event.button() == draggingButton) {
-            draggingPreview = false;
-            draggingButton = -1;
-            return true;
-        }
-        return super.mouseReleased(event);
-    }
-
-    @Override
-    public boolean mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
-        if (draggingPreview && event.button() == draggingButton) {
-            if (event.button() == 0) {
-                yaw = (float) (yaw + dragX * 1.2);
-                pitch = Mth.clamp((float) (pitch - dragY * 0.8), -85.0f, 85.0f);
-            } else if (event.button() == 1) {
-                offsetX = (float) (offsetX + dragX);
-                offsetY = (float) (offsetY + dragY);
-            }
-            return true;
-        }
-        return super.mouseDragged(event, dragX, dragY);
-    }
-
-    @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
-        if (isInPreview(mouseX, mouseY)) {
-            zoom = Mth.clamp((float) (zoom * (1.0 + scrollY * 0.1)), 30.0f, 400.0f);
-            return true;
-        }
-        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
-    }
-
-    private boolean isInPreview(double mouseX, double mouseY) {
-        return mouseX >= previewLeft && mouseX < previewRight && mouseY >= previewTop && mouseY < previewBottom;
-    }
-
 }
+

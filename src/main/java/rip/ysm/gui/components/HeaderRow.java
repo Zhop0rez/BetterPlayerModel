@@ -2,7 +2,7 @@ package rip.ysm.gui.components;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import rip.ysm.gui.OptionRow;
 
@@ -15,13 +15,14 @@ public final class HeaderRow extends OptionRow<Object> {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        GuiGraphics g = extractor;
+    protected void extractWidgetRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        GuiGraphicsExtractor g = extractor;
         g.fill(getX(), getY(), getX() + width, getY() + height, 0x90000000);
-        g.drawString(Minecraft.getInstance().font, Component.literal(text).withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD), getX() + 8, getY() + (height - 8) / 2, -1, false);
+        g.text(Minecraft.getInstance().font, Component.literal(text).withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD), getX() + 8, getY() + (height - 8) / 2, -1, false);
     }
 
     @Override
-    protected void renderControl(GuiGraphics g, int mouseX, int mouseY, float partialTick) {
+    protected void renderControl(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
     }
 }
+

@@ -1,6 +1,6 @@
 package net.minecraft.client.gui.components;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -49,8 +49,8 @@ public abstract class StateSwitchingButton implements Renderable, GuiEventListen
     public void setMessage(Component message) { this.message = message; }
 
     // Rendering
-    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
-    public void render(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {}
+    public void extractWidgetRenderState(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY, float partialTick) {}
+    public void extractRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {}
 
     // GuiEventListener
     @Override
@@ -64,3 +64,4 @@ public abstract class StateSwitchingButton implements Renderable, GuiEventListen
     @Override
     public void updateNarration(NarrationElementOutput output) {}
 }
+

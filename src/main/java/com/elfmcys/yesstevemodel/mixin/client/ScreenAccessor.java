@@ -9,6 +9,6 @@ import java.util.List;
 
 @Mixin(Screen.class)
 public interface ScreenAccessor {
-    @Accessor("renderables")
+    @Accessor(remap = false, value = "renderables")
     List<Renderable> ysm$getRenderables();
 }

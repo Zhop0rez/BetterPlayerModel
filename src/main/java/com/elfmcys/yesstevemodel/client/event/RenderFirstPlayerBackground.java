@@ -11,10 +11,11 @@ import com.elfmcys.yesstevemodel.geckolib3.geo.NativeModelRenderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import dev.architectury.event.EventResult;
+import dev.ysm.architectury.event.EventResult;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
@@ -32,7 +33,7 @@ public class RenderFirstPlayerBackground {
         currentFrameRendered = false;
     }
 
-    public static void onRenderHand(PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, float partialTick) {
+    public static void onRenderHand(PoseStack poseStack, SubmitNodeCollector multiBufferSource, int packedLight, float partialTick) {
         if (!YesSteveModel.isAvailable()) {
             return;
         }
@@ -63,14 +64,15 @@ public class RenderFirstPlayerBackground {
             }
             Identifier resourceLocationB_ = cap.getTextureLocation();
             int textureIndex = cap.getTextureIndex();
-            VertexConsumer buffer = multiBufferSource.getBuffer(RenderTypes.entityCutout(resourceLocationB_));
             if (instance != null) {
                 poseStack.pushPose();
                 if (Minecraft.getInstance().options.bobView().get()) {
                     applyHandTransform(poseStack, partialTick, player);
                 }
                 poseStack.translate(0.0d, -1.5d, 0.0d);
-                NativeModelRenderer.renderMesh(buffer, poseStack.last(), modelAssembly.getAnimationBundle().getArmModel(), modelAssembly.getAnimationBundle().getArmModel().getBoneTransformData(), null, textureIndex, 3, packedLight, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, 1.0f, resourceLocationB_);
+                multiBufferSource.submitCustomGeometry(poseStack, RenderTypes.entityCutout(resourceLocationB_), (pose, buffer) -> {
+                    NativeModelRenderer.renderMesh(buffer, pose, modelAssembly.getAnimationBundle().getArmModel(), modelAssembly.getAnimationBundle().getArmModel().getBoneTransformData(), null, textureIndex, 3, packedLight, OverlayTexture.NO_OVERLAY, 1.0f, 1.0f, 1.0f, 1.0f, resourceLocationB_);
+                });
                 poseStack.popPose();
             }
         });
@@ -84,3 +86,4 @@ public class RenderFirstPlayerBackground {
         poseStack.mulPose(Axis.XN.rotationDegrees(0f));
     }
 }
+

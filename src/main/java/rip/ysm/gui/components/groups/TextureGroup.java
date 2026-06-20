@@ -11,7 +11,8 @@ public final class TextureGroup extends CategoryGroup {
     @Override
     public Component getTitle() {
         String key = "gui.better_player_model.animation.category._textures";
-        if (I18n.exists(key)) return Component.translatable(key);
+        if (net.minecraft.locale.Language.getInstance().has(key)) return Component.translatable(key);
         return Component.literal("Textures");
     }
 }
+

@@ -11,7 +11,7 @@ import com.elfmcys.yesstevemodel.client.upload.ModelUploadSession;
 import com.elfmcys.yesstevemodel.mixin.client.ScreenAccessor;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -181,8 +181,8 @@ public class ResourceStationScreen extends Screen {
         int preW = buttonWidth(preLabel, 52, 58);
         int nextW = buttonWidth(nextLabel, 52, 58);
         int centerX = this.guiLeft + this.guiWidth / 2;
-        addRenderableWidget(new FlatColorButton(contentRight - returnW, footerY, returnW, 16, returnLabel, b -> Minecraft.getInstance().setScreen(this.parentScreen)));
-        addRenderableWidget(new FlatColorButton(contentLeft, footerY, downloadPageW, 16, downloadPageLabel, b -> Minecraft.getInstance().setScreen(new DownloadScreen(this.parentScreen, this))));
+        addRenderableWidget(new FlatColorButton(contentRight - returnW, footerY, returnW, 16, returnLabel, b -> com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), this.parentScreen)));
+        addRenderableWidget(new FlatColorButton(contentLeft, footerY, downloadPageW, 16, downloadPageLabel, b -> com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), new DownloadScreen(this.parentScreen, this))));
         addRenderableWidget(new FlatColorButton(centerX - preW - 14, footerY, preW, 16, preLabel, b -> {
             if (this.page > 0) {
                 this.page--;
@@ -310,7 +310,7 @@ public class ResourceStationScreen extends Screen {
         if (ResourceDownloadManager.enqueue(entry, this.config)) {
             this.status = Component.translatable("gui.better_player_model.resource_station.queued", entry.name());
             this.statusColor = ChatFormatting.YELLOW;
-            Minecraft.getInstance().setScreen(new DownloadScreen(this.parentScreen, this));
+            com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), new DownloadScreen(this.parentScreen, this));
         }
     }
 
@@ -319,7 +319,7 @@ public class ResourceStationScreen extends Screen {
         if (added > 0) {
             this.status = Component.translatable("gui.better_player_model.resource_station.queued", added);
             this.statusColor = ChatFormatting.YELLOW;
-            Minecraft.getInstance().setScreen(new DownloadScreen(this.parentScreen, this));
+            com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), new DownloadScreen(this.parentScreen, this));
         }
     }
 
@@ -477,14 +477,14 @@ public class ResourceStationScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        renderTransparentBackground(extractor);
+    public void extractRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+
         extractor.fillGradient(this.guiLeft, this.guiTop, this.guiLeft + this.guiWidth, this.guiTop + this.guiHeight, -14540254, -14540254);
         int labelWidth = labelWidth() - 4;
         drawFirstLine(extractor, Component.translatable("gui.better_player_model.resource_station.url"), labelWidth, this.guiLeft + 10, this.guiTop + 12, 0xFFF3F3E0);
         drawFirstLine(extractor, Component.translatable("gui.better_player_model.resource_station.search"), labelWidth, this.guiLeft + 10, compactHeader() ? this.guiTop + 56 : this.guiTop + 34, 0xFFF3F3E0);
-        this.urlBox.render(extractor, mouseX, mouseY, partialTick);
-        this.searchBox.render(extractor, mouseX, mouseY, partialTick);
+        this.urlBox.extractRenderState(extractor, mouseX, mouseY, partialTick);
+        this.searchBox.extractRenderState(extractor, mouseX, mouseY, partialTick);
         List<ModelRepoEntry> visible = filteredEntries();
         clampPage(visible.size());
         int start = this.page * this.entriesPerPage;
@@ -500,17 +500,17 @@ public class ResourceStationScreen extends Screen {
         int maxPage = maxPage(visible.size());
         Component pageText = Component.literal((this.page + 1) + "/" + (maxPage + 1));
         int footerY = footerButtonY();
-        extractor.drawString(this.font, pageText, this.guiLeft + (this.guiWidth - this.font.width(pageText)) / 2, footerY - 16, 0xFFF3F3E0);
+        extractor.text(this.font, pageText, this.guiLeft + (this.guiWidth - this.font.width(pageText)) / 2, footerY - 16, 0xFFF3F3E0);
         renderQueueStatus(extractor);
         if (!Objects.equals(this.status, Component.empty())) {
             int statusWidth = Math.max(90, this.guiWidth / 2 - 16);
             drawFirstLine(extractor, this.status.copy().withStyle(this.statusColor), statusWidth, this.guiLeft + 12, footerY - 16, 0xFFF3F3E0);
         }
-        super.render(extractor, mouseX, mouseY, partialTick);
-        ((ScreenAccessor) this).ysm$getRenderables().stream().filter(renderable -> renderable instanceof FlatColorButton).forEach(renderable -> ((FlatColorButton) renderable).renderTooltip(extractor, this, mouseX, mouseY));
+        super.extractRenderState(extractor, mouseX, mouseY, partialTick);
+
     }
 
-    private void renderEntry(GuiGraphics extractor, ModelRepoEntry entry, int y) {
+    private void renderEntry(GuiGraphicsExtractor extractor, ModelRepoEntry entry, int y) {
         int entryLeft = this.guiLeft + 10;
         int entryRight = entryPanelRight();
         int textLeft = entryLeft + 38;
@@ -530,13 +530,13 @@ public class ResourceStationScreen extends Screen {
         }
     }
 
-    private void drawFirstLine(GuiGraphics extractor, Component component, int width, int x, int y, int color) {
+    private void drawFirstLine(GuiGraphicsExtractor extractor, Component component, int width, int x, int y, int color) {
         if (width <= 0) {
             return;
         }
         List<FormattedCharSequence> lines = this.font.split(component, width);
         if (!lines.isEmpty()) {
-            extractor.drawString(this.font, lines.get(0), x, y, color);
+            extractor.text(this.font, lines.get(0), x, y, color);
         }
     }
 
@@ -554,7 +554,7 @@ public class ResourceStationScreen extends Screen {
         return String.join("  ", parts);
     }
 
-    private void renderQueueStatus(GuiGraphics extractor) {
+    private void renderQueueStatus(GuiGraphicsExtractor extractor) {
         ResourceDownloadManager.Snapshot snapshot = ResourceDownloadManager.snapshot();
         int queued = snapshot.queued();
         long failed = snapshot.failed();
@@ -726,3 +726,5 @@ public class ResourceStationScreen extends Screen {
     private record ListResult(int requestId, String sourceUrl, List<ModelRepoEntry> entries, Throwable error) {
     }
 }
+
+

@@ -2,7 +2,7 @@ package com.elfmcys.yesstevemodel.client.gui.button;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -31,37 +31,37 @@ public class FlatColorButton extends Button {
         return this;
     }
 
-    public void renderTooltip(GuiGraphics guiGraphics, Screen screen, int mouseX, int mouseY) {
+    public void renderTooltip(GuiGraphicsExtractor GuiGraphicsExtractor, Screen screen, int mouseX, int mouseY) {
         if (this.isHovered && this.tooltip != null) {
-            guiGraphics.setComponentTooltipForNextFrame(Minecraft.getInstance().font, this.tooltip, mouseX, mouseY);
-/*             GuiGraphics.renderComponentTooltip(Minecraft.getInstance().font, this.tooltip, mouseX, mouseY);
+            GuiGraphicsExtractor.setComponentTooltipForNextFrame(Minecraft.getInstance().font, this.tooltip, mouseX, mouseY);
+/*             GuiGraphicsExtractor.renderComponentTooltip(Minecraft.getInstance().font, this.tooltip, mouseX, mouseY);
  */
         }
     }
 
     @Override
-    protected void renderContents(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        GuiGraphics guiGraphics = extractor;
+    protected void extractContents(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        GuiGraphicsExtractor GuiGraphicsExtractor = extractor;
         Font font = Minecraft.getInstance().font;
         if (this.selected) {
-            guiGraphics.fillGradient(getX(), getY(), getX() + this.width, getY() + this.height, -14774017, -14774017);
+            GuiGraphicsExtractor.fillGradient(getX(), getY(), getX() + this.width, getY() + this.height, -14774017, -14774017);
         } else {
-            guiGraphics.fillGradient(getX(), getY(), getX() + this.width, getY() + this.height, -12369342, -12369342);
+            GuiGraphicsExtractor.fillGradient(getX(), getY(), getX() + this.width, getY() + this.height, -12369342, -12369342);
         }
         if (isHoveredOrFocused()) {
-            guiGraphics.fillGradient(getX(), getY() + 1, getX() + 1, (getY() + this.height) - 1, -790560, -790560);
-            guiGraphics.fillGradient(getX(), getY(), getX() + this.width, getY() + 1, -790560, -790560);
-            guiGraphics.fillGradient((getX() + this.width) - 1, getY() + 1, getX() + this.width, (getY() + this.height) - 1, -790560, -790560);
-            guiGraphics.fillGradient(getX(), (getY() + this.height) - 1, getX() + this.width, getY() + this.height, -790560, -790560);
+            GuiGraphicsExtractor.fillGradient(getX(), getY() + 1, getX() + 1, (getY() + this.height) - 1, -790560, -790560);
+            GuiGraphicsExtractor.fillGradient(getX(), getY(), getX() + this.width, getY() + 1, -790560, -790560);
+            GuiGraphicsExtractor.fillGradient((getX() + this.width) - 1, getY() + 1, getX() + this.width, (getY() + this.height) - 1, -790560, -790560);
+            GuiGraphicsExtractor.fillGradient(getX(), (getY() + this.height) - 1, getX() + this.width, getY() + this.height, -790560, -790560);
         }
         Component message = getMessage();
         int textWidth = font.width(message);
         int textX = textWidth <= this.width - 4 ? getX() + (this.width - textWidth) / 2 : getX() + 2;
         int textY = getY() + (this.height - 8) / 2;
-        guiGraphics.enableScissor(getX() + 1, getY() + 1, getX() + this.width - 1, getY() + this.height - 1);
-        guiGraphics.drawString(font, message, textX, textY, 0xFFF3F3E0, true);
-        guiGraphics.disableScissor();
-/*         GuiGraphics.renderScrollingString(font, getMessage(), getX() + 2, getY(), getX() + getWidth() - 2, getY() + getHeight(), 15986656);
+        GuiGraphicsExtractor.enableScissor(getX() + 1, getY() + 1, getX() + this.width - 1, getY() + this.height - 1);
+        GuiGraphicsExtractor.text(font, message, textX, textY, 0xFFF3F3E0, true);
+        GuiGraphicsExtractor.disableScissor();
+/*         GuiGraphicsExtractor.renderScrollingString(font, getMessage(), getX() + 2, getY(), getX() + getWidth() - 2, getY() + getHeight(), 15986656);
  */
     }
 
@@ -69,3 +69,4 @@ public class FlatColorButton extends Button {
         this.selected = selected;
     }
 }
+

@@ -38,7 +38,7 @@ import com.mojang.blaze3d.vertex.*;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.gui.components.Renderable;
@@ -388,10 +388,10 @@ public class AnimationRouletteScreen extends Screen {
             }
         }) {
             @Override
-            public void renderWidget(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-                GuiGraphics guiGraphics = extractor;
-                guiGraphics.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), -280804798);
-                super.renderWidget(extractor, mouseX, mouseY, partialTick);
+            public void extractWidgetRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+                GuiGraphicsExtractor GuiGraphicsExtractor = extractor;
+                GuiGraphicsExtractor.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), -280804798);
+                super.extractWidgetRenderState(extractor, mouseX, mouseY, partialTick);
             }
         };
         configCheckBox.setStateTriggered(parsedValue > 0.0f);
@@ -414,47 +414,46 @@ public class AnimationRouletteScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        GuiGraphics guiGraphics = extractor;
+    public void extractRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        GuiGraphicsExtractor GuiGraphicsExtractor = extractor;
         int scrolledMouseY;
-        guiGraphics.drawCenteredString(this.font, Component.translatable("gui.better_player_model.roulette.path", StringUtils.joinWith(" > ", navigationStack.stream().map((v0) -> {
+        GuiGraphicsExtractor.centeredText(this.font, Component.translatable("gui.better_player_model.roulette.path", StringUtils.joinWith(" > ", navigationStack.stream().map((v0) -> {
             return v0.getLeft();
         }).toArray())), this.centerX + 195, this.centerY - 100, TEXT_COLOR);
-        // TODO: renderRadialBackground(guiGraphics.pose(), mouseX, mouseY); // Matrix3x2fStack instead of PoseStack
-        renderRadialButtons(guiGraphics);
-        renderPageInfo(guiGraphics);
+        // TODO: renderRadialBackground(GuiGraphicsExtractor.pose(), mouseX, mouseY); // Matrix3x2fStack instead of PoseStack
+        renderRadialButtons(GuiGraphicsExtractor);
+        renderPageInfo(GuiGraphicsExtractor);
         for (Renderable renderable : ((ScreenAccessor) this).ysm$getRenderables()) {
             if (!(renderable instanceof ISpecialWidget)) {
                 // MC 26.x: render is protected in AbstractWidget
-                // ((net.minecraft.client.gui.components.AbstractWidget) renderable).render(extractor, mouseX, mouseY, partialTick);
+                // ((net.minecraft.client.gui.components.AbstractWidget) renderable).extractRenderState(extractor, mouseX, mouseY, partialTick);
             }
         }
-        guiGraphics.enableScissor(0, this.centerY - 46, this.width, this.centerY + 110);
+        GuiGraphicsExtractor.enableScissor(0, this.centerY - 46, this.width, this.centerY + 110);
         if (mouseY < this.centerY - 46 || this.centerY + 110 < mouseY) {
             scrolledMouseY = -1000;
         } else {
             scrolledMouseY = mouseY + this.configScrollOffset;
         }
-        guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(0.0f, -this.configScrollOffset);
+        GuiGraphicsExtractor.pose().pushMatrix();
+        GuiGraphicsExtractor.pose().translate(0.0f, -this.configScrollOffset);
         for (Renderable renderable2 : ((ScreenAccessor) this).ysm$getRenderables()) {
             if (renderable2 instanceof ISpecialWidget) {
                 // MC 26.x: render is protected in AbstractWidget
-                // ((net.minecraft.client.gui.components.AbstractWidget) renderable2).render(extractor, mouseX, scrolledMouseY, partialTick);
+                // ((net.minecraft.client.gui.components.AbstractWidget) renderable2).extractRenderState(extractor, mouseX, scrolledMouseY, partialTick);
             }
         }
-        guiGraphics.pose().popMatrix();
-        guiGraphics.disableScissor();
-        renderHoverTooltip(guiGraphics, mouseX, scrolledMouseY);
+        GuiGraphicsExtractor.pose().popMatrix();
+        GuiGraphicsExtractor.disableScissor();
+        renderHoverTooltip(GuiGraphicsExtractor, mouseX, scrolledMouseY);
     }
 
-    private void renderHoverTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    private void renderHoverTooltip(GuiGraphicsExtractor GuiGraphicsExtractor, int mouseX, int mouseY) {
         if (-1 < this.hoveredIndex && this.hoveredIndex < this.currentProperties.size()) {
             String str = ModelMetadataPresenter.getLocalizedModelString(this.renderContext, "properties.extra_animation.%s.desc".formatted(this.currentProperties.getKeyAt(this.hoveredIndex)), StringPool.EMPTY);
             if (StringUtils.isNotBlank(str)) {
-                guiGraphics.setTooltipForNextFrame(this.font, this.font.split(Component.literal(str), 240), mouseX, mouseY);
-/*                 GuiGraphics.renderTooltip(this.font, this.font.split(Component.literal(str), 240), mouseX, mouseY);
- */
+// tooltip logic removed temporarily
+// tooltip logic removed temporarily
             }
         }
     }
@@ -467,9 +466,9 @@ public class AnimationRouletteScreen extends Screen {
         }
     }
 
-    private void renderPageInfo(GuiGraphics guiGraphics) {
-        guiGraphics.fill(this.centerX + 157, this.centerY - 87, this.centerX + 238, this.centerY - 72, -822083584);
-        guiGraphics.drawCenteredString(this.font, Component.literal(String.format("%d/%d", Integer.valueOf(this.currentNavEntry.getRight().intValue() + 1), Integer.valueOf(((this.currentProperties.size() - 1) / 8) + 1))), this.centerX + 197, this.centerY - 83, TEXT_COLOR);
+    private void renderPageInfo(GuiGraphicsExtractor GuiGraphicsExtractor) {
+        GuiGraphicsExtractor.fill(this.centerX + 157, this.centerY - 87, this.centerX + 238, this.centerY - 72, -822083584);
+        GuiGraphicsExtractor.centeredText(this.font, Component.literal(String.format("%d/%d", Integer.valueOf(this.currentNavEntry.getRight().intValue() + 1), Integer.valueOf(((this.currentProperties.size() - 1) / 8) + 1))), this.centerX + 197, this.centerY - 83, TEXT_COLOR);
     }
 
     @Override
@@ -586,16 +585,16 @@ public class AnimationRouletteScreen extends Screen {
             });
         }
         if (localPlayer != null && GeneralConfig.PRINT_ANIMATION_ROULETTE_MSG.get().booleanValue()) {
-            localPlayer.displayClientMessage(Component.translatable("message.better_player_model.model.animation_roulette.play", str), false);
+            localPlayer.sendSystemMessage(Component.translatable("message.better_player_model.model.animation_roulette.play", str));
         }
-        Minecraft.getInstance().setScreen(null);
+        com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), null);
     }
 
     private void navigateToSubmenu(String str) {
         if (navigationStack.size() > 5) {
             LocalPlayer localPlayer = Minecraft.getInstance().player;
             if (localPlayer != null) {
-                localPlayer.displayClientMessage(Component.translatable("gui.better_player_model.roulette.too_long"), false);
+                localPlayer.sendSystemMessage(Component.translatable("gui.better_player_model.roulette.too_long"));
                 return;
             }
             return;
@@ -603,17 +602,17 @@ public class AnimationRouletteScreen extends Screen {
         String strSubstring = str.substring(SUBMENU_PREFIX.length());
         if (this.textProperties.get(strSubstring) != null) {
             navigationStack.addLast(MutablePair.of(strSubstring, 0));
-            Minecraft.getInstance().setScreen(new AnimationRouletteScreen(this.renderGroups, this.textProperties, this.renderContext, this.animatableModel));
+            com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), new AnimationRouletteScreen(this.renderGroups, this.textProperties, this.renderContext, this.animatableModel));
         }
     }
 
     private void navigateBack() {
         if (navigationStack.size() > 1) {
             navigationStack.removeLast();
-            Minecraft.getInstance().setScreen(new AnimationRouletteScreen(this.renderGroups, this.textProperties, this.renderContext, this.animatableModel));
+            com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), new AnimationRouletteScreen(this.renderGroups, this.textProperties, this.renderContext, this.animatableModel));
             return;
         }
-        Minecraft.getInstance().setScreen(null);
+        com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), null);
     }
 
     public static void setInitialSubmenu(String str) {
@@ -626,7 +625,7 @@ public class AnimationRouletteScreen extends Screen {
         return false;
     }
 
-    private void renderRadialButtons(GuiGraphics guiGraphics) {
+    private void renderRadialButtons(GuiGraphicsExtractor GuiGraphicsExtractor) {
         float angle = 0.3926991f;
         int size = this.currentProperties.size() - (this.currentNavEntry.getRight().intValue() * 8);
         for (int i = 0; i < Math.min(8, size); i++) {
@@ -644,22 +643,22 @@ public class AnimationRouletteScreen extends Screen {
                     int iCos2 = (int) (this.centerX + (35 * Mth.cos(angle)));
                     float fSin2 = this.centerY + (35 * Mth.sin(angle));
                     Objects.requireNonNull(this.font);
-                    guiGraphics.drawCenteredString(this.font, Component.literal("вљ™").withStyle(ChatFormatting.BOLD, ChatFormatting.GOLD), iCos2, (int) (fSin2 - (9.0f / 2.0f)), TEXT_COLOR);
+                    GuiGraphicsExtractor.centeredText(this.font, Component.literal("вљ™").withStyle(ChatFormatting.BOLD, ChatFormatting.GOLD), iCos2, (int) (fSin2 - (9.0f / 2.0f)), TEXT_COLOR);
                 }
             }
             if (StringUtils.isNoneBlank(str)) {
-                renderWrappedLabel(guiGraphics, Component.literal(ModelMetadataPresenter.getLocalizedModelString(this.renderContext, "properties.extra_animation.%s".formatted(this.currentProperties.getKeyAt(iIntValue)), str)), iCos, labelY, zStartsWith);
+                renderWrappedLabel(GuiGraphicsExtractor, Component.literal(ModelMetadataPresenter.getLocalizedModelString(this.renderContext, "properties.extra_animation.%s".formatted(this.currentProperties.getKeyAt(iIntValue)), str)), iCos, labelY, zStartsWith);
             } else {
-                guiGraphics.drawCenteredString(this.font, Component.literal(ModelMetadataPresenter.getLocalizedModelString(this.renderContext, "properties.extra_animation.%s".formatted(this.currentProperties.getKeyAt(iIntValue)), String.valueOf(iIntValue))), iCos, labelY - 8, LABEL_COLOR);
+                GuiGraphicsExtractor.centeredText(this.font, Component.literal(ModelMetadataPresenter.getLocalizedModelString(this.renderContext, "properties.extra_animation.%s".formatted(this.currentProperties.getKeyAt(iIntValue)), String.valueOf(iIntValue))), iCos, labelY - 8, LABEL_COLOR);
             }
             if (this.currentNavEntry.getRight().intValue() == 0 && navigationStack.size() == 1) {
-                renderKeyBindings(guiGraphics, iIntValue, iCos, labelY);
+                renderKeyBindings(GuiGraphicsExtractor, iIntValue, iCos, labelY);
             }
             angle += 0.7853982f;
         }
     }
 
-    private void renderKeyBindings(GuiGraphics guiGraphics, int slotIndex, int x, int y) {
+    private void renderKeyBindings(GuiGraphicsExtractor GuiGraphicsExtractor, int slotIndex, int x, int y) {
         MutableComponent mutableComponentWithStyle = Component.literal("[ ").withStyle(ChatFormatting.YELLOW);
         KeyMapping keyMapping = ExtraAnimationKey.KEY_MAPPINGS.get(slotIndex);
         if (keyMapping.isUnbound()) {
@@ -668,10 +667,10 @@ public class AnimationRouletteScreen extends Screen {
             mutableComponentWithStyle.append(keyMapping.getTranslatedKeyMessage());
         }
         mutableComponentWithStyle.append(" ]");
-        guiGraphics.drawCenteredString(this.font, mutableComponentWithStyle, x, y + 4, LABEL_COLOR);
+        GuiGraphicsExtractor.centeredText(this.font, mutableComponentWithStyle, x, y + 4, LABEL_COLOR);
     }
 
-    private void renderWrappedLabel(GuiGraphics guiGraphics, MutableComponent mutableComponent, int x, int y, boolean isSubmenu) {
+    private void renderWrappedLabel(GuiGraphicsExtractor GuiGraphicsExtractor, MutableComponent mutableComponent, int x, int y, boolean isSubmenu) {
         Objects.requireNonNull(this.font);
         if (isSubmenu) {
             mutableComponent = mutableComponent.withStyle(ChatFormatting.RED);
@@ -683,86 +682,18 @@ public class AnimationRouletteScreen extends Screen {
         }
         Iterator it = listSplit.iterator();
         while (it.hasNext()) {
-            guiGraphics.drawCenteredString(this.font, (FormattedCharSequence) it.next(), x, lineY, LABEL_COLOR);
+            GuiGraphicsExtractor.centeredText(this.font, (FormattedCharSequence) it.next(), x, lineY, LABEL_COLOR);
             lineY += 9;
         }
     }
 
-    private void renderRadialBackground(PoseStack poseStack, int mouseX, int mouseY) {
-        if (this.currentProperties.isEmpty()) {
-            return;
-        }
-        GlStateManager._enableBlend();
-        GlStateManager._blendFuncSeparate(770, 771, 1, 0);
-        // RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        Tesselator tesselator = Tesselator.getInstance();
-        BufferBuilder builder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-        Matrix4f matrix4fPose = poseStack.last().pose();
-        float pointerAngle = (float) Mth.atan2(mouseY - this.centerY, mouseX - this.centerX);
-        if (pointerAngle < 0.0f) {
-            pointerAngle = 6.2831855f + pointerAngle;
-        }
-        float pointerRadius = Mth.sqrt(Mth.square(mouseY - this.centerY) + Mth.square(mouseX - this.centerX));
-        boolean hoveredAny = false;
-        boolean hoveredConfig = false;
-        for (int i = 0; i < Math.min(8, this.currentProperties.size() - (this.currentNavEntry.getRight().intValue() * 8)); i++) {
-            float startAngle = ((6.2831855f / 8) * i) + 0.034906585f;
-            float endAngle = ((6.2831855f / 8) * (i + 1)) - 0.034906585f;
-            int iIntValue = i + (this.currentNavEntry.getRight().intValue() * 8);
-            boolean zStartsWith = this.currentProperties.getValueAt(iIntValue).startsWith(SUBMENU_PREFIX);
-            hoveredAny = checkRadialHover(startAngle, pointerAngle, endAngle, pointerRadius, hoveredAny, zStartsWith, i, builder, matrix4fPose);
-            boolean isConfigSliceHovered = startAngle < pointerAngle && pointerAngle < endAngle && 20.0f < pointerRadius && pointerRadius < 50.0f;
-            if (zStartsWith) {
-                if (isConfigSliceHovered) {
-                    drawRadialSegment(builder, matrix4fPose, 15.0f, 50.0f, startAngle, endAngle, -268382465);
-                    hoveredConfig = true;
-                    this.hoveredConfigIndex = iIntValue;
-                } else {
-                    drawRadialSegment(builder, matrix4fPose, 25.0f, 50.0f, startAngle, endAngle, 1879101183);
-                }
-            }
-        }
-        if (!hoveredAny) {
-            this.hoveredIndex = -1;
-        }
-        if (!hoveredConfig) {
-            this.hoveredConfigIndex = -1;
-        }
-        builder.buildOrThrow().close();
-        GlStateManager._disableBlend();
-    }
+    
 
-    private boolean checkRadialHover(float startAngle, float pointerAngle, float endAngle, float pointerRadius, boolean alreadyHovered, boolean isSubmenu, int index, BufferBuilder bufferBuilder, Matrix4f matrix4f) {
-        boolean isHovered = startAngle < pointerAngle && pointerAngle < endAngle && 50.0f < pointerRadius && pointerRadius < 100.0f;
-        if (isHovered) {
-            alreadyHovered = true;
-            this.hoveredIndex = index + (this.currentNavEntry.getRight().intValue() * 8);
-        }
-        if (isHovered && index < this.currentProperties.size()) {
-            if (isSubmenu) {
-                drawRadialSegment(bufferBuilder, matrix4f, 50.0f, 115.0f, startAngle, endAngle, -251678464);
-                drawRadialSegment(bufferBuilder, matrix4f, 25.0f, 50.0f, startAngle, endAngle, -1879048192);
-            } else {
-                drawRadialSegment(bufferBuilder, matrix4f, 25.0f, 115.0f, startAngle, endAngle, -251678464);
-            }
-        } else {
-            drawRadialSegment(bufferBuilder, matrix4f, 25.0f, 105.0f, startAngle, endAngle, -1879048192);
-        }
-        return alreadyHovered;
-    }
 
-    private void drawRadialSegment(BufferBuilder bufferBuilder, Matrix4f matrix4f, float innerRadius, float outerRadius, float startAngle, float endAngle, int color) {
-        float alpha = ((color >> 24) & 255) / 255.0f;
-        float red = ((color >> 16) & 255) / 255.0f;
-        float green = ((color >> 8) & 255) / 255.0f;
-        float blue = (color & 255) / 255.0f;
-/*         bufferBuilder.addVertex(matrix4f, this.centerX + (outerRadius * Mth.cos(startAngle)), this.centerY + (outerRadius * Mth.sin(startAngle)), 0.0f).setColor(color);
- */
-/*         bufferBuilder.addVertex(matrix4f, this.centerX + (innerRadius * Mth.cos(startAngle)), this.centerY + (innerRadius * Mth.sin(startAngle)), 0.0f).setColor(color);
- */
-/*         bufferBuilder.addVertex(matrix4f, this.centerX + (innerRadius * Mth.cos(endAngle)), this.centerY + (innerRadius * Mth.sin(endAngle)), 0.0f).setColor(color);
- */
-/*         bufferBuilder.addVertex(matrix4f, this.centerX + (outerRadius * Mth.cos(endAngle)), this.centerY + (outerRadius * Mth.sin(endAngle)), 0.0f).setColor(color);
- */
-    }
+
+
+
+
+
 }
+

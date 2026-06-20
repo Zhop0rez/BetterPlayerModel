@@ -17,10 +17,10 @@ import com.elfmcys.yesstevemodel.network.message.S2CSyncVehicleModelPacket;
 import com.elfmcys.yesstevemodel.network.message.S2CVersionCheckPacket;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import rip.ysm.api.capability.CapabilityLifecycle;
-import dev.architectury.event.EventResult;
-import dev.architectury.event.events.common.EntityEvent;
-import dev.architectury.event.events.common.PlayerEvent;
-import dev.architectury.event.events.common.TickEvent;
+import dev.ysm.architectury.event.EventResult;
+import dev.ysm.architectury.event.events.common.EntityEvent;
+import dev.ysm.architectury.event.events.common.PlayerEvent;
+import dev.ysm.architectury.event.events.common.TickEvent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -50,6 +50,12 @@ public final class CapabilityEvent {
         net.fabricmc.fabric.api.networking.v1.EntityTrackingEvents.START_TRACKING.register((trackedEntity, player) -> {
             if (!YesSteveModel.isAvailable()) {
                 return;
+            }
+            if (trackedEntity instanceof ServerPlayer trackedPlayer) {
+                ConcurrentMap<UUID, String> states = SYNCED_PLAYER_MODEL_STATES.get(player.getUUID());
+                if (states != null) {
+                    states.remove(trackedPlayer.getUUID());
+                }
             }
             if (trackedEntity instanceof Projectile projectile) {
                 ProjectileModelCapability.get(projectile).ifPresent(projectileModelCap -> {

@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -22,7 +22,7 @@ public abstract class PlayerRendererMixin {
 
     // MC 26.x Fabric: submit() is in LivingEntityRenderer, not overridden in AvatarRenderer.
     // Only intercept when the render state is for an avatar/player.
-    @Inject(method = "submit", at = @At("HEAD"), cancellable = true)
+    @Inject(remap = false, method = "submit", at = @At("HEAD"), cancellable = true)
     private void ysm$onSubmit(LivingEntityRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState cameraState, CallbackInfo ci) {
         if (state instanceof AvatarRenderState avatarState && Minecraft.getInstance().level != null) {
             net.minecraft.world.entity.Entity entity = Minecraft.getInstance().level.getEntity(avatarState.id);
@@ -57,9 +57,8 @@ public abstract class PlayerRendererMixin {
                     capability.beginRenderState(avatarState);
                 }
                 try {
-                    net.minecraft.client.renderer.MultiBufferSource.BufferSource bufferSource = ((MinecraftAccessor) Minecraft.getInstance()).ysm$renderBuffers().bufferSource();
-                    if (ReplacePlayerRenderEvent.onRenderPlayerPre(player, yaw, partialTick, poseStack, bufferSource, collector, packedLight)) {
-                        bufferSource.endBatch();
+                    
+                    if (ReplacePlayerRenderEvent.onRenderPlayerPre(player, yaw, partialTick, poseStack, collector, collector, packedLight)) {
                         ci.cancel();
                     }
                 } finally {
@@ -81,3 +80,6 @@ public abstract class PlayerRendererMixin {
         }
     }
 }
+
+
+

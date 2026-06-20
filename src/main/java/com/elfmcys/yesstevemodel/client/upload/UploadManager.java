@@ -24,6 +24,8 @@ public class UploadManager {
 
     private static long textureCounter = 0;
 
+    private static final WeakHashMap<AbstractTexture, Identifier> assignedIdentifiers = new WeakHashMap<>();
+
     private static final IdentityHashMap<AbstractTexture, WeakReference<TextureLocatable>> textureCache = new IdentityHashMap<>();
 
     private static final Queue<Pair<TextureLocatable, AbstractTexture>> pendingUploads = Queues.newArrayDeque();
@@ -37,6 +39,7 @@ public class UploadManager {
     }
 
     public static IResourceLocatable getOrCreateLocatableWithSize(AbstractTexture texture, boolean register, int sizeHint) {
+        if (texture == null) return null;
         RenderSystem.assertOnRenderThread();
         WeakReference<TextureLocatable> weakReference = textureCache.get(texture);
         if (weakReference != null) {
@@ -50,12 +53,7 @@ public class UploadManager {
             textureCache.remove(texture);
         }
         ReferenceIntMutablePair<Identifier> removed = expiredTextures.remove(texture);
-        TextureLocatable locatable;
-        if (removed != null) {
-            locatable = new TextureLocatable(removed.first(), sizeHint);
-        } else {
-            locatable = new TextureLocatable(sizeHint);
-        }
+        TextureLocatable locatable = new TextureLocatable(texture, sizeHint);
         if (texture instanceof ITextureMap) {
             for (AbstractTexture suffixTexture : ((ITextureMap) texture).getSuffixTextures().values()) {
                 if (locatable.suffixTextures == null)
@@ -84,6 +82,12 @@ public class UploadManager {
             Iterator<Map.Entry<AbstractTexture, ReferenceIntMutablePair<Identifier>>> it = expiredTextures.entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry<AbstractTexture, ReferenceIntMutablePair<Identifier>> next = it.next();
+                AbstractTexture texture = next.getKey();
+                WeakReference<TextureLocatable> weakRef = textureCache.get(texture);
+                if (weakRef != null && weakRef.get() != null) {
+                    it.remove();
+                    continue;
+                }
                 int iSecondInt = next.getValue().secondInt();
                 if (iSecondInt <= 0) {
                     pendingReleases.add(next.getValue().first());
@@ -141,8 +145,10 @@ public class UploadManager {
             this.resolution = resolution;
         }
 
-        TextureLocatable(int resolution) {
-            this.textureIdentifier = Identifier.fromNamespaceAndPath(YesSteveModel.MOD_ID, "textures/" + ++textureCounter);
+        TextureLocatable(AbstractTexture texture, int resolution) {
+            synchronized (assignedIdentifiers) {
+                this.textureIdentifier = assignedIdentifiers.computeIfAbsent(texture, t -> Identifier.fromNamespaceAndPath(YesSteveModel.MOD_ID, "textures/" + ++textureCounter));
+            }
             this.resolution = resolution;
             this.registered = false;
         }

@@ -7,7 +7,7 @@ import com.elfmcys.yesstevemodel.event.YsmEventBootstrap;
 import com.elfmcys.yesstevemodel.util.obfuscate.Keep;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import dev.architectury.platform.Platform;
+import dev.ysm.architectury.platform.Platform;
 import net.minecraft.network.chat.Component;
 import net.neoforged.fml.config.ModConfig;
 import org.apache.logging.log4j.LogManager;
@@ -50,6 +50,7 @@ public class YesSteveModel {
             initConfig();
         }
         YsmEventBootstrap.register();
+        // com.elfmcys.yesstevemodel.config.ModSoundEvents.REGISTER.register();
     }
 
     @SuppressWarnings({"deprecation", "removal"})
@@ -88,3 +89,4 @@ public class YesSteveModel {
         return NativeLibLoader.getErrorMessage();
     }
 }
+

@@ -3,7 +3,7 @@ package com.elfmcys.yesstevemodel.network.message;
 import com.elfmcys.yesstevemodel.model.ServerModelManager;
 import com.elfmcys.yesstevemodel.network.NetworkHandler;
 import com.elfmcys.yesstevemodel.util.YSMThreadPool;
-import dev.architectury.utils.GameInstance;
+import dev.ysm.architectury.utils.GameInstance;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,13 +23,24 @@ public record C2SModelUploadFinishPacket(long uploadId) {
         if (ctx.isServerSide() && ctx.getSender() != null) {
             ServerPlayer sender = ctx.getSender();
             ctx.enqueueWork(() -> YSMThreadPool.submit(() -> {
-                ServerModelManager.UploadFinishResult result = ServerModelManager.finishModelUpload(sender, message.uploadId);
-                MinecraftServer server = GameInstance.getServer();
-                Runnable sendResult = () -> NetworkHandler.sendToClientPlayer(new S2CModelUploadResultPacket(result.uploadId(), result.status(), result.modelId(), result.hash1(), result.hash2(), result.message()), sender);
-                if (server != null) {
-                    server.execute(sendResult);
-                } else {
-                    sendResult.run();
+                try {
+                    ServerModelManager.UploadFinishResult result = ServerModelManager.finishModelUpload(sender, message.uploadId);
+                    MinecraftServer server = GameInstance.getServer();
+                    Runnable sendResult = () -> NetworkHandler.sendToClientPlayer(new S2CModelUploadResultPacket(result.uploadId(), result.status(), result.modelId(), result.hash1(), result.hash2(), result.message()), sender);
+                    if (server != null) {
+                        server.execute(sendResult);
+                    } else {
+                        sendResult.run();
+                    }
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                    MinecraftServer server = GameInstance.getServer();
+                    Runnable sendResult = () -> NetworkHandler.sendToClientPlayer(new S2CModelUploadResultPacket(message.uploadId, (byte) 2, "null", 0L, 0L, "Server error: " + t.toString()), sender);
+                    if (server != null) {
+                        server.execute(sendResult);
+                    } else {
+                        sendResult.run();
+                    }
                 }
             }));
         }

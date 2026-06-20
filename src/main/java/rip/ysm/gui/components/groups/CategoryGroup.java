@@ -15,7 +15,8 @@ public class CategoryGroup extends OptionGroup {
     @Override
     public Component getTitle() {
         String key = "gui.better_player_model.animation.category." + catKey;
-        if (I18n.exists(key)) return Component.translatable(key);
+        if (net.minecraft.locale.Language.getInstance().has(key)) return Component.translatable(key);
         return Component.literal(catKey);
     }
 }
+

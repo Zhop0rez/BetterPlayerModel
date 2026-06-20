@@ -12,3 +12,7 @@ public final class ConfigRegistrationImpl {
         ConfigRegistry.INSTANCE.register(modId, type, (net.neoforged.fml.config.IConfigSpec) spec);
     }
 }
+
+
+
+

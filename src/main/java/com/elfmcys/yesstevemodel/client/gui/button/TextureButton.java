@@ -10,7 +10,7 @@ import com.elfmcys.yesstevemodel.network.NetworkHandler;
 import com.elfmcys.yesstevemodel.network.message.C2SRequestSwitchModelPacket;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.client.player.LocalPlayer;
@@ -34,26 +34,26 @@ public class TextureButton extends Button {
     }
 
     @Override
-    protected void renderContents(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        GuiGraphics guiGraphics = extractor;
+    protected void extractContents(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        GuiGraphicsExtractor GuiGraphicsExtractor = extractor;
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
-        guiGraphics.fillGradient(getX(), getY(), getX() + this.width, getY() + this.height, -12369342, -12369342);
-        renderPlayerPreview(guiGraphics, partialTick);
+        GuiGraphicsExtractor.fillGradient(getX(), getY(), getX() + this.width, getY() + this.height, -12369342, -12369342);
+        renderPlayerPreview(GuiGraphicsExtractor, partialTick);
         String str = this.previewEntity.getCurrentTextureName();
         MutableComponent mutableComponentLiteral = Component.literal(ModelMetadataPresenter.getLocalizedModelString(this.modelAssembly, "files.player.texture.%s".formatted(str), str));
         List listSplit = font.split(mutableComponentLiteral, 50);
         if (listSplit.size() > 1) {
-            drawCenteredString(guiGraphics, font, (FormattedCharSequence) listSplit.get(0), getX() + (this.width / 2), (getY() + this.height) - 19, 0xFFF3F3E0);
-            drawCenteredString(guiGraphics, font, (FormattedCharSequence) listSplit.get(1), getX() + (this.width / 2), (getY() + this.height) - 10, 0xFFF3F3E0);
+            drawCenteredString(GuiGraphicsExtractor, font, (FormattedCharSequence) listSplit.get(0), getX() + (this.width / 2), (getY() + this.height) - 19, 0xFFF3F3E0);
+            drawCenteredString(GuiGraphicsExtractor, font, (FormattedCharSequence) listSplit.get(1), getX() + (this.width / 2), (getY() + this.height) - 10, 0xFFF3F3E0);
         } else {
-            drawCenteredString(guiGraphics, font, mutableComponentLiteral, getX() + (this.width / 2), (getY() + this.height) - 15, 0xFFF3F3E0);
+            drawCenteredString(GuiGraphicsExtractor, font, mutableComponentLiteral, getX() + (this.width / 2), (getY() + this.height) - 15, 0xFFF3F3E0);
         }
         if (isHoveredOrFocused()) {
-            guiGraphics.fillGradient(getX(), getY() + 1, getX() + 1, (getY() + this.height) - 1, -790560, -790560);
-            guiGraphics.fillGradient(getX(), getY(), getX() + this.width, getY() + 1, -790560, -790560);
-            guiGraphics.fillGradient((getX() + this.width) - 1, getY() + 1, getX() + this.width, (getY() + this.height) - 1, -790560, -790560);
-            guiGraphics.fillGradient(getX(), (getY() + this.height) - 1, getX() + this.width, getY() + this.height, -790560, -790560);
+            GuiGraphicsExtractor.fillGradient(getX(), getY() + 1, getX() + 1, (getY() + this.height) - 1, -790560, -790560);
+            GuiGraphicsExtractor.fillGradient(getX(), getY(), getX() + this.width, getY() + 1, -790560, -790560);
+            GuiGraphicsExtractor.fillGradient((getX() + this.width) - 1, getY() + 1, getX() + this.width, (getY() + this.height) - 1, -790560, -790560);
+            GuiGraphicsExtractor.fillGradient(getX(), (getY() + this.height) - 1, getX() + this.width, getY() + this.height, -790560, -790560);
         }
     }
 
@@ -70,18 +70,19 @@ public class TextureButton extends Button {
         }
     }
 
-    public void renderPlayerPreview(GuiGraphics guiGraphics, float partialTick) {
+    public void renderPlayerPreview(GuiGraphicsExtractor GuiGraphicsExtractor, float partialTick) {
         int previewBottom = getY() + this.height - 20;
-        guiGraphics.enableScissor(getX(), getY(), getX() + this.width, previewBottom);
-        ModelPreviewRenderer.renderLivingEntityPreview(guiGraphics, getX(), getY(), getX() + this.width, previewBottom, getX() + (this.width / 2.0f), getY() + (this.height / 2.0f) + 24.0f, 35.0f, partialTick, this.previewEntity, RendererManager.getPlayerRenderer(), false, true);
-        guiGraphics.disableScissor();
+        GuiGraphicsExtractor.enableScissor(getX(), getY(), getX() + this.width, previewBottom);
+        ModelPreviewRenderer.renderLivingEntityPreview(GuiGraphicsExtractor, getX(), getY(), getX() + this.width, previewBottom, getX() + (this.width / 2.0f), getY() + (this.height / 2.0f) + 24.0f, 35.0f, partialTick, this.previewEntity, RendererManager.getPlayerRenderer(), false, true);
+        GuiGraphicsExtractor.disableScissor();
     }
 
-    private static void drawCenteredString(GuiGraphics guiGraphics, Font font, Component component, int centerX, int y, int color) {
-        guiGraphics.drawString(font, component, centerX - (font.width(component) / 2), y, color, true);
+    private static void drawCenteredString(GuiGraphicsExtractor GuiGraphicsExtractor, Font font, Component component, int centerX, int y, int color) {
+        GuiGraphicsExtractor.text(font, component, centerX - (font.width(component) / 2), y, color, true);
     }
 
-    private static void drawCenteredString(GuiGraphics guiGraphics, Font font, FormattedCharSequence formattedCharSequence, int centerX, int y, int color) {
-        guiGraphics.drawString(font, formattedCharSequence, centerX - (font.width(formattedCharSequence) / 2), y, color, true);
+    private static void drawCenteredString(GuiGraphicsExtractor GuiGraphicsExtractor, Font font, FormattedCharSequence formattedCharSequence, int centerX, int y, int color) {
+        GuiGraphicsExtractor.text(font, formattedCharSequence, centerX - (font.width(formattedCharSequence) / 2), y, color, true);
     }
 }
+

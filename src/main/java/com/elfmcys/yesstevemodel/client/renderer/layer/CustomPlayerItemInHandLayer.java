@@ -10,11 +10,12 @@ import com.elfmcys.yesstevemodel.geckolib3.geo.animated.AnimatedGeoModel;
 import rip.ysm.compat.gun.tacz.TacCompat;
 import com.elfmcys.yesstevemodel.client.renderer.SubmitRenderContext;
 import com.elfmcys.yesstevemodel.geckolib3.util.RenderUtils;
-import com.elfmcys.yesstevemodel.util.accessors.BufferSourceAccessor;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.effects.SpearAnimations;
 import net.minecraft.client.renderer.ItemInHandRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.state.ArmedEntityRenderState;
 import net.minecraft.core.component.DataComponents;
@@ -38,7 +39,7 @@ public class CustomPlayerItemInHandLayer extends GeoLayerRenderer<CustomPlayerEn
     }
 
     @Override
-    public void render(PoseStack poseStack, MultiBufferSource bufferSource, int packedLightIn, CustomPlayerEntity entityLivingBaseIn, float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void render(PoseStack poseStack, SubmitNodeCollector bufferSource, int packedLightIn, CustomPlayerEntity entityLivingBaseIn, float limbSwing, float limbSwingAmount, float partialTick, float ageInTicks, float netHeadYaw, float headPitch) {
         LivingEntity entity = entityLivingBaseIn.getEntity();
         AnimatedGeoModel animatedGeoModel = entityLivingBaseIn.getCurrentModel();
         if (animatedGeoModel == null) {
@@ -57,10 +58,7 @@ public class CustomPlayerItemInHandLayer extends GeoLayerRenderer<CustomPlayerEn
                 } else {
                     TacCompat.handleGunSound(entity, mainHandItem);
                     renderItem(animatedGeoModel, entity, mainHandItem, getDisplayContext(mainArm), mainArm, poseStack, bufferSource, packedLightIn, partialTick);
-                    if (useExtraPlayer && !mainHandItem.isEmpty() && (bufferSource instanceof BufferSourceAccessor)) {
-                        ((BufferSourceAccessor) bufferSource).initialize();
-                    }
-                    TacCompat.handleItemSound(mainHandItem);
+                                        TacCompat.handleItemSound(mainHandItem);
                 }
             }
             if (hasItemBoneTransform(animatedGeoModel, offArm)) {
@@ -70,10 +68,7 @@ public class CustomPlayerItemInHandLayer extends GeoLayerRenderer<CustomPlayerEn
                     if (!SWarfareCompat.isGunItem(offhandItem)) {
                         renderItem(animatedGeoModel, entity, offhandItem, getDisplayContext(offArm), offArm, poseStack, bufferSource, packedLightIn, partialTick);
                     }
-                    if (useExtraPlayer && !offhandItem.isEmpty() && (bufferSource instanceof BufferSourceAccessor)) {
-                        ((BufferSourceAccessor) bufferSource).initialize();
-                    }
-                }
+                                    }
             }
             poseStack.popPose();
             TacCompat.applyItemTransform(offhandItem, animatedGeoModel, entity, poseStack, packedLightIn, partialTick);
@@ -81,7 +76,7 @@ public class CustomPlayerItemInHandLayer extends GeoLayerRenderer<CustomPlayerEn
         }
     }
 
-    public void renderItem(AnimatedGeoModel model, LivingEntity livingEntity, ItemStack itemStack, ItemDisplayContext itemDisplayContext, HumanoidArm humanoidArm, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, float partialTick) {
+    public void renderItem(AnimatedGeoModel model, LivingEntity livingEntity, ItemStack itemStack, ItemDisplayContext itemDisplayContext, HumanoidArm humanoidArm, PoseStack poseStack, SubmitNodeCollector multiBufferSource, int i, float partialTick) {
         if (!itemStack.isEmpty()) {
             boolean isLeftHand = humanoidArm == HumanoidArm.LEFT;
             poseStack.pushPose();
@@ -229,3 +224,5 @@ public class CustomPlayerItemInHandLayer extends GeoLayerRenderer<CustomPlayerEn
         return RenderUtils.prepMatrixForLocator(poseStack, model.rightHandBones());
     }
 }
+
+

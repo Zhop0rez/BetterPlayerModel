@@ -13,8 +13,8 @@ import com.elfmcys.yesstevemodel.util.InputUtil;
 import com.elfmcys.yesstevemodel.util.data.OrderedStringMap;
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.InputConstants;
-import dev.architectury.event.EventResult;
-import dev.architectury.event.events.client.ClientRawInputEvent;
+import dev.ysm.architectury.event.EventResult;
+import dev.ysm.architectury.event.events.client.ClientRawInputEvent;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -75,7 +75,7 @@ public final class ExtraAnimationKey {
                         }
                         if (rouletteKey.startsWith("#") && modelProperties.getExtraAnimationClassify().containsKey(rouletteKey.substring(1))) {
                             AnimationRouletteScreen.setInitialSubmenu(rouletteKey.substring(1));
-                            Minecraft.getInstance().setScreen(new AnimationRouletteScreen(modelProperties.getExtraAnimationButtons(), modelProperties.getExtraAnimationClassify(), modelAssembly, cap));
+                            com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), new AnimationRouletteScreen(modelProperties.getExtraAnimationButtons(), modelProperties.getExtraAnimationClassify(), modelAssembly, cap));
                             return;
                         }
                         NetworkHandler.sendToServer(new C2SPlayAnimationPacket(index, StringPool.EMPTY));

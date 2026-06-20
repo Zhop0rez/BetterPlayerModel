@@ -9,12 +9,13 @@ import com.elfmcys.yesstevemodel.config.GeneralConfig;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.FishingHook;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -30,9 +31,9 @@ import java.util.Map;
 
 @Mixin({EntityRenderDispatcher.class})
 public class EntityRenderDispatcherMixin {
-    private static final Map<EntityRenderState, CapturedEntity> CAPTURED_ENTITIES = Collections.synchronizedMap(new IdentityHashMap<>());
+    private static final Map<EntityRenderState, CapturedEntity> CAPTURED_ENTITIES = Collections.synchronizedMap(new java.util.WeakHashMap<>());
 
-    @Inject(method = "extractEntity", at = @At("RETURN"))
+    @Inject(remap = false, method = "extractEntity", at = @At("RETURN"))
     private <E extends Entity> void ysm$captureEntity(E entity, float partialTick, CallbackInfoReturnable<EntityRenderState> cir) {
         EntityRenderState state = cir.getReturnValue();
         if (state != null) {
@@ -41,14 +42,14 @@ public class EntityRenderDispatcherMixin {
         }
     }
 
-    @Inject(method = "submit", at = @At("HEAD"), cancellable = true)
+    @Inject(remap = false, method = "submit", at = @At("HEAD"), cancellable = true)
     private void ysm$submitQueuedGuiPreview(EntityRenderState state, CameraRenderState cameraState, double x, double y, double z, PoseStack poseStack, SubmitNodeCollector collector, CallbackInfo ci) {
         if (ModelPreviewRenderer.renderQueuedGuiPreview(state, poseStack, collector)) {
             ci.cancel();
         }
     }
 
-    @WrapWithCondition(method = {"submit"}, at = {@At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/EntityRenderer;submit(Lnet/minecraft/client/renderer/entity/state/EntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/CameraRenderState;)V")})
+    @WrapWithCondition(remap = false, method = {"submit"}, at = {@At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/EntityRenderer;submit(Lnet/minecraft/client/renderer/entity/state/EntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/level/CameraRenderState;)V")})
     private boolean ysm$renderCustom(EntityRenderer<?, ?> renderer, EntityRenderState state, PoseStack poseStack, SubmitNodeCollector collector, CameraRenderState cameraState) {
         if (renderer == null) {
             return false;
@@ -64,28 +65,28 @@ public class EntityRenderDispatcherMixin {
         float partialTick = captured.partialTick();
         float entityYaw = entity.getYRot();
         int packedLight = captured.packedLight();
-        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+        
         if (entity instanceof Projectile projectile) {
             if (!GeneralConfig.DISABLE_PROJECTILE_MODEL.get()) {
                 if (projectile instanceof FishingHook fishingHook) {
-                    boolean shouldRenderVanilla = CustomFishingHookRenderer.tryRenderCustomHook(fishingHook, entityYaw, partialTick, poseStack, bufferSource, collector, packedLight);
+                    boolean shouldRenderVanilla = CustomFishingHookRenderer.tryRenderCustomHook(fishingHook, entityYaw, partialTick, poseStack, collector, collector, packedLight);
                     if (!shouldRenderVanilla) {
-                        bufferSource.endBatch();
+                        
                     }
                     return shouldRenderVanilla;
                 }
-                boolean shouldRenderVanilla = CustomProjectileRenderer.renderProjectile(projectile, entityYaw, partialTick, poseStack, bufferSource, collector, packedLight);
+                boolean shouldRenderVanilla = CustomProjectileRenderer.renderProjectile(projectile, entityYaw, partialTick, poseStack, collector, collector, packedLight);
                 if (!shouldRenderVanilla) {
-                    bufferSource.endBatch();
+                    
                 }
                 return shouldRenderVanilla;
             }
         }
         if (!GeneralConfig.DISABLE_VEHICLE_MODEL.get().booleanValue()) {
             ModelPreviewRenderer.renderVehicleModel(entity, poseStack, partialTick);
-            boolean shouldRenderVanilla = CustomVehicleRenderer.renderVehicle(entity, entityYaw, partialTick, poseStack, bufferSource, collector, packedLight);
+            boolean shouldRenderVanilla = CustomVehicleRenderer.renderVehicle(entity, entityYaw, partialTick, poseStack, collector, collector, packedLight);
             if (!shouldRenderVanilla) {
-                bufferSource.endBatch();
+                
             }
             return shouldRenderVanilla;
         }
@@ -95,3 +96,8 @@ public class EntityRenderDispatcherMixin {
     private record CapturedEntity(Entity entity, float partialTick, int packedLight) {
     }
 }
+
+
+
+
+

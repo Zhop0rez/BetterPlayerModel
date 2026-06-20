@@ -1,7 +1,7 @@
 package com.elfmcys.yesstevemodel.client.upload;
 
 import com.elfmcys.yesstevemodel.YesSteveModel;
-import dev.architectury.platform.Platform;
+import dev.ysm.architectury.platform.Platform;
 import net.minecraft.network.chat.Component;
 
 import java.io.ByteArrayOutputStream;
@@ -175,7 +175,7 @@ public final class ModelImportFilePicker {
             return false;
         } catch (Throwable t) {
             lastError = error("gui.better_player_model.import.error.open_picker", safeMessage(t));
-            YesSteveModel.LOGGER.warn("[YSM] Failed to open FCL system file picker", t);
+            YesSteveModel.LOGGER.warn("[BPM] Failed to open FCL system file picker", t);
             return false;
         }
     }
@@ -225,7 +225,7 @@ public final class ModelImportFilePicker {
             return false;
         } catch (Throwable t) {
             lastError = error("gui.better_player_model.import.error.open_picker", safeMessage(t));
-            YesSteveModel.LOGGER.warn("[YSM] Failed to open FCL file picker", t);
+            YesSteveModel.LOGGER.warn("[BPM] Failed to open FCL file picker", t);
             return false;
         }
     }
@@ -249,7 +249,7 @@ public final class ModelImportFilePicker {
             return false;
         } catch (Throwable t) {
             lastError = error("gui.better_player_model.import.error.open_picker", safeMessage(t));
-            YesSteveModel.LOGGER.warn("[YSM] Failed to open AndroidX file picker", t);
+            YesSteveModel.LOGGER.warn("[BPM] Failed to open AndroidX file picker", t);
             return false;
         }
     }
@@ -273,7 +273,7 @@ public final class ModelImportFilePicker {
             return false;
         } catch (Throwable t) {
             lastError = error("gui.better_player_model.import.error.open_picker", safeMessage(t));
-            YesSteveModel.LOGGER.warn("[YSM] Failed to open system Android file picker", t);
+            YesSteveModel.LOGGER.warn("[BPM] Failed to open system Android file picker", t);
             return false;
         }
     }
@@ -366,7 +366,7 @@ public final class ModelImportFilePicker {
             return false;
         } catch (IOException e) {
             lastError = error("gui.better_player_model.import.error.open_picker", safeMessage(e));
-            YesSteveModel.LOGGER.warn("[YSM] Failed to prepare launcher import folder", e);
+            YesSteveModel.LOGGER.warn("[BPM] Failed to prepare launcher import folder", e);
             return false;
         } catch (Throwable t) {
             rememberPickerProbe("launcher folder bridge failed: " + safeMessage(t));
@@ -572,7 +572,7 @@ public final class ModelImportFilePicker {
                 }
             } catch (Throwable t) {
                 setError(error("gui.better_player_model.import.error.read_selected", safeMessage(t)));
-                YesSteveModel.LOGGER.warn("[YSM] Failed to read selected Android file", t);
+                YesSteveModel.LOGGER.warn("[BPM] Failed to read selected Android file", t);
             }
         });
     }
@@ -590,7 +590,7 @@ public final class ModelImportFilePicker {
                 }
             } catch (Throwable t) {
                 setError(error("gui.better_player_model.import.error.read_selected", safeMessage(t)));
-                YesSteveModel.LOGGER.warn("[YSM] Failed to read selected Android file", t);
+                YesSteveModel.LOGGER.warn("[BPM] Failed to read selected Android file", t);
             }
         });
     }
@@ -612,7 +612,7 @@ public final class ModelImportFilePicker {
                 readAndroidIntentData(activity, intent);
             } catch (Throwable t) {
                 setError(error("gui.better_player_model.import.error.read_selected", safeMessage(t)));
-                YesSteveModel.LOGGER.warn("[YSM] Failed to read selected Android file", t);
+                YesSteveModel.LOGGER.warn("[BPM] Failed to read selected Android file", t);
             }
         });
     }
@@ -627,7 +627,7 @@ public final class ModelImportFilePicker {
                 readAndroidIntentData(activity, intent);
             } catch (Throwable t) {
                 setError(error("gui.better_player_model.import.error.read_selected", safeMessage(t)));
-                YesSteveModel.LOGGER.warn("[YSM] Failed to read selected Android file", t);
+                YesSteveModel.LOGGER.warn("[BPM] Failed to read selected Android file", t);
             }
         });
     }
@@ -693,7 +693,7 @@ public final class ModelImportFilePicker {
             launchAndroidXPicker(launcher);
         } catch (Throwable t) {
             setError(error("gui.better_player_model.import.error.open_picker", safeMessage(t)));
-            YesSteveModel.LOGGER.warn("[YSM] Failed to start AndroidX file picker", t);
+            YesSteveModel.LOGGER.warn("[BPM] Failed to start AndroidX file picker", t);
         }
     }
 
@@ -726,7 +726,7 @@ public final class ModelImportFilePicker {
             launchAndroidXPicker(launcher, createOpenDocumentIntent());
         } catch (Throwable t) {
             setError(error("gui.better_player_model.import.error.open_picker", safeMessage(t)));
-            YesSteveModel.LOGGER.warn("[YSM] Failed to start system Android file picker", t);
+            YesSteveModel.LOGGER.warn("[BPM] Failed to start system Android file picker", t);
         }
     }
 
@@ -742,7 +742,7 @@ public final class ModelImportFilePicker {
         } catch (Throwable t) {
             unregisterAndroidXPicker(launcher);
             setError(error("gui.better_player_model.import.error.open_picker", safeMessage(t)));
-            YesSteveModel.LOGGER.warn("[YSM] Failed to launch AndroidX file picker", t);
+            YesSteveModel.LOGGER.warn("[BPM] Failed to launch AndroidX file picker", t);
         }
     }
 
@@ -754,7 +754,7 @@ public final class ModelImportFilePicker {
         } catch (Throwable t) {
             unregisterAndroidXPicker(launcher);
             setError(error("gui.better_player_model.import.error.open_picker", safeMessage(t)));
-            YesSteveModel.LOGGER.warn("[YSM] Failed to launch AndroidX file picker", t);
+            YesSteveModel.LOGGER.warn("[BPM] Failed to launch AndroidX file picker", t);
         }
     }
 
@@ -881,17 +881,29 @@ public final class ModelImportFilePicker {
             }
         } catch (Throwable t) {
             setError(error("gui.better_player_model.import.error.open_picker", safeMessage(t)));
-            YesSteveModel.LOGGER.warn("[YSM] Failed to open LWJGL tinyfd file picker", t);
+            YesSteveModel.LOGGER.warn("[BPM] Failed to open LWJGL tinyfd file picker", t);
         }
     }
 
+    private static void invokeMemFree(Class<?> memoryUtilClass, Object obj) {
+        if (obj == null) return;
+        try {
+            for (Method m : memoryUtilClass.getMethods()) {
+                if (m.getName().equals("memFree") && m.getParameterCount() == 1) {
+                    if (m.getParameterTypes()[0].isInstance(obj)) {
+                        m.invoke(null, obj);
+                        return;
+                    }
+                }
+            }
+        } catch (Exception ignored) {}
+    }
     private static String openTinyFileDialog() throws Exception {
         Class<?> memoryUtilClass = Class.forName("org.lwjgl.system.MemoryUtil");
         Class<?> pointerBufferClass = Class.forName("org.lwjgl.PointerBuffer");
         Class<?> tinyFileDialogsClass = Class.forName("org.lwjgl.util.tinyfd.TinyFileDialogs");
         Method memUTF8 = memoryUtilClass.getMethod("memUTF8", CharSequence.class);
-        Method memFreeByteBuffer = memoryUtilClass.getMethod("memFree", java.nio.ByteBuffer.class);
-        Method memFreeCustomBuffer = memoryUtilClass.getMethod("memFree", Class.forName("org.lwjgl.system.CustomBuffer"));
+
         Method memAllocPointer = memoryUtilClass.getMethod("memAllocPointer", int.class);
         Method pointerPut = pointerBufferClass.getMethod("put", int.class, java.nio.ByteBuffer.class);
         Method open = tinyFileDialogsClass.getMethod("tinyfd_openFileDialog",
@@ -913,11 +925,11 @@ public final class ModelImportFilePicker {
                     true);
         } finally {
             try {
-                memFreeCustomBuffer.invoke(null, filters);
+                invokeMemFree(memoryUtilClass, filters);
             } finally {
-                memFreeByteBuffer.invoke(null, ysmPattern);
-                memFreeByteBuffer.invoke(null, zipPattern);
-                memFreeByteBuffer.invoke(null, sevenZipPattern);
+                invokeMemFree(memoryUtilClass, ysmPattern);
+                invokeMemFree(memoryUtilClass, zipPattern);
+                invokeMemFree(memoryUtilClass, sevenZipPattern);
             }
         }
     }
@@ -966,7 +978,7 @@ public final class ModelImportFilePicker {
                 t.addSuppressed(awtError);
             }
             setError(error("gui.better_player_model.import.error.open_picker", safeMessage(t)));
-            YesSteveModel.LOGGER.warn("[YSM] Failed to open JVM file picker", t);
+            YesSteveModel.LOGGER.warn("[BPM] Failed to open JVM file picker", t);
         }
     }
 
@@ -1151,7 +1163,7 @@ public final class ModelImportFilePicker {
         } catch (IOException e) {
             stopLauncherBridgeImport();
             setError(error("gui.better_player_model.import.error.read_file", safeMessage(e)));
-            YesSteveModel.LOGGER.warn("[YSM] Failed to scan launcher import folder", e);
+            YesSteveModel.LOGGER.warn("[BPM] Failed to scan launcher import folder", e);
         }
     }
 
@@ -1185,7 +1197,7 @@ public final class ModelImportFilePicker {
         } catch (Throwable t) {
             stopLauncherBridgeImport();
             setError(error("gui.better_player_model.import.error.read_selected", safeMessage(t)));
-            YesSteveModel.LOGGER.warn("[YSM] Failed to read launcher-imported file {}", path, t);
+            YesSteveModel.LOGGER.warn("[BPM] Failed to read launcher-imported file {}", path, t);
             return true;
         }
     }
@@ -1215,7 +1227,7 @@ public final class ModelImportFilePicker {
         } catch (Throwable t) {
             stopLauncherBridgeImport();
             setError(error("gui.better_player_model.import.error.read_selected", safeMessage(t)));
-            YesSteveModel.LOGGER.warn("[YSM] Failed to read launcher-imported folder {}", path, t);
+            YesSteveModel.LOGGER.warn("[BPM] Failed to read launcher-imported folder {}", path, t);
             return true;
         }
     }
@@ -1235,7 +1247,7 @@ public final class ModelImportFilePicker {
         try {
             Files.deleteIfExists(path);
         } catch (IOException e) {
-            YesSteveModel.LOGGER.warn("[YSM] Failed to remove launcher import temp file {}", path, e);
+            YesSteveModel.LOGGER.warn("[BPM] Failed to remove launcher import temp file {}", path, e);
         }
     }
 
@@ -1407,7 +1419,7 @@ public final class ModelImportFilePicker {
             method.invoke(target, args);
         } catch (Throwable t) {
             setError(error("gui.better_player_model.import.error.open_picker", safeMessage(t)));
-            YesSteveModel.LOGGER.warn("[YSM] Failed to invoke Android file picker", t);
+            YesSteveModel.LOGGER.warn("[BPM] Failed to invoke Android file picker", t);
         }
     }
 
@@ -1434,7 +1446,7 @@ public final class ModelImportFilePicker {
     }
 
     private static synchronized void rememberPickerProbe(String message) {
-        YesSteveModel.LOGGER.info("[YSM] Android file picker probe: {}", message);
+        YesSteveModel.LOGGER.info("[BPM] Android file picker probe: {}", message);
     }
 
     private static String safeMessage(Throwable t) {
@@ -1460,3 +1472,4 @@ public final class ModelImportFilePicker {
     private record DirectoryCandidate(DirectoryStamp stamp, long firstSeenMs) {
     }
 }
+

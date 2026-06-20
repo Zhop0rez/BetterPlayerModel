@@ -2,7 +2,7 @@ package com.elfmcys.yesstevemodel.client.animation.molang.functions.ysm;
 
 import com.elfmcys.yesstevemodel.molang.runtime.ExecutionContext;
 import com.elfmcys.yesstevemodel.molang.runtime.Function;
-import dev.architectury.platform.Platform;
+import dev.ysm.architectury.platform.Platform;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

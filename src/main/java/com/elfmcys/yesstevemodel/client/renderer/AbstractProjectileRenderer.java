@@ -10,7 +10,8 @@ import com.elfmcys.yesstevemodel.geckolib3.util.IRenderCycle;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
@@ -31,7 +32,7 @@ public abstract class AbstractProjectileRenderer<TEntity extends Projectile, T e
 
     private IRenderCycle renderState;
 
-    public MultiBufferSource bufferSource;
+    public SubmitNodeCollector bufferSource;
 
     public AbstractProjectileRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -41,7 +42,7 @@ public abstract class AbstractProjectileRenderer<TEntity extends Projectile, T e
         this.bufferSource = null;
     }
 
-    public void render(T animatable, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+    public void render(T animatable, float entityYaw, float partialTick, PoseStack poseStack, SubmitNodeCollector bufferSource, int packedLight) {
         AnimationEvent<?> event = animatable.processAnimation(partialTick);
         Minecraft minecraft = Minecraft.getInstance();
         if (event != null && minecraft.player != null) {
@@ -61,16 +62,19 @@ public abstract class AbstractProjectileRenderer<TEntity extends Projectile, T e
                     xRot += 90.0f;
                 }
                 poseStack.mulPose(Axis.ZP.rotationDegrees(xRot));
+                float width = animatable.getWidthScale();
+                float height = animatable.getHeightScale();
+                poseStack.scale(width, height, width);
                 renderWithBoneAndRenderType(model, animatable, partialTick, renderType, poseStack, bufferSource, 0, null, packedLight, getPackedLight(projectile, 0.0f), color.getRed() / 255.0f, color.getGreen() / 255.0f, color.getBlue() / 255.0f, color.getAlpha() / 255.0f);
                 poseStack.popPose();
             }
         }
-        // super.render() param changed in MC 1.26.1.2 - skip super call
-        // super.render(animatable.getEntity(), entityYaw, partialTick, poseStack, bufferSource, packedLight);
+        // super.extractRenderState() param changed in MC 1.26.1.2 - skip super call
+        // super.extractRenderState(animatable.getEntity(), entityYaw, partialTick, poseStack, bufferSource, packedLight);
     }
 
     @Override
-    public void renderEarly(T animatable, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, VertexConsumer buffer, int packedLight, int packedOverlayIn, float red, float green, float blue, float alpha) {
+    public void renderEarly(T animatable, PoseStack poseStack, float partialTick, SubmitNodeCollector bufferSource, VertexConsumer buffer, int packedLight, int packedOverlayIn, float red, float green, float blue, float alpha) {
         this.projectionMatrix = new Matrix4f(poseStack.last().pose());
         IGeoRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight, packedOverlayIn, red, green, blue, alpha);
     }
@@ -91,12 +95,12 @@ public abstract class AbstractProjectileRenderer<TEntity extends Projectile, T e
     }
 
     @Override
-    public void setCurrentRTB(MultiBufferSource bufferSource) {
+    public void setCurrentRTB(SubmitNodeCollector bufferSource) {
         this.bufferSource = bufferSource;
     }
 
     @Override
-    public MultiBufferSource getCurrentRTB() {
+    public SubmitNodeCollector getCurrentRTB() {
         return this.bufferSource;
     }
 }

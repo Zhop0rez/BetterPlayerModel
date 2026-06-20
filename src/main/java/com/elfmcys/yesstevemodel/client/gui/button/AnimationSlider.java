@@ -9,7 +9,7 @@ import com.elfmcys.yesstevemodel.molang.parser.ParseException;
 import com.elfmcys.yesstevemodel.network.NetworkHandler;
 import com.elfmcys.yesstevemodel.network.message.C2SRequestExecuteMolangPacket;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
@@ -51,14 +51,15 @@ public class AnimationSlider extends RangedSliderWidget implements ISpecialWidge
     }
 
     @Override
-    public void renderWidget(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        GuiGraphics guiGraphics = extractor;
+    public void extractWidgetRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        GuiGraphicsExtractor GuiGraphicsExtractor = extractor;
         Minecraft minecraft = Minecraft.getInstance();
-        blitWithBorder(guiGraphics, ROULETTE_TEXTURE, getX(), getY(), 0, getTextureY() + 24, this.width, this.height, 200, 15, 2, 3, 2, 2);
+        blitWithBorder(GuiGraphicsExtractor, ROULETTE_TEXTURE, getX(), getY(), 0, getTextureY() + 24, this.width, this.height, 200, 15, 2, 3, 2, 2);
         int handleX = getX() + (int) (this.value * (this.width - 8));
-        blitWithBorder(guiGraphics, ROULETTE_TEXTURE, handleX, getY(), 0, getHandleTextureY() + 24, 8, this.height, 200, 15, 2, 3, 2, 2);
+        blitWithBorder(GuiGraphicsExtractor, ROULETTE_TEXTURE, handleX, getY(), 0, getHandleTextureY() + 24, 8, this.height, 200, 15, 2, 3, 2, 2);
 
         int color = 16777215 | (Mth.ceil(this.alpha * 255.0f) << 24);
-        guiGraphics.drawCenteredString(minecraft.font, this.getMessage(), getX() + this.width / 2, getY() + (this.height - 8) / 2, color);
+        GuiGraphicsExtractor.centeredText(minecraft.font, this.getMessage(), getX() + this.width / 2, getY() + (this.height - 8) / 2, color);
     }
 }
+

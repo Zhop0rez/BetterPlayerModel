@@ -11,6 +11,10 @@ import com.elfmcys.yesstevemodel.event.EntityJoinCallbackEvent;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientEntityEvents;
+import net.minecraft.world.entity.player.Player;
+import com.elfmcys.yesstevemodel.capability.fabric.client.PlayerCapabilityClientStore;
+
 @Environment(EnvType.CLIENT)
 public final class ClientEventBootstrap {
 
@@ -18,6 +22,12 @@ public final class ClientEventBootstrap {
     }
 
     public static void register() {
+        ClientEntityEvents.ENTITY_UNLOAD.register((entity, level) -> {
+            if (entity instanceof Player player) {
+                PlayerCapabilityClientStore.remove(player);
+            }
+        });
+
         EntityJoinCallbackEvent.register();
 
         ClientSetupEvent.register();

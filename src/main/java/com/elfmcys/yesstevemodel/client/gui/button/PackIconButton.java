@@ -8,7 +8,7 @@ import com.elfmcys.yesstevemodel.util.FileTypeUtil;
 import com.mojang.blaze3d.opengl.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.AbstractTexture;
@@ -32,55 +32,55 @@ public class PackIconButton extends Button {
     }
 
     @Override
-    protected void renderContents(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        GuiGraphics guiGraphics = extractor;
+    protected void extractContents(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        GuiGraphicsExtractor GuiGraphicsExtractor = extractor;
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
-        guiGraphics.fillGradient(getX(), getY(), getX() + this.width, getY() + this.height, -6598176, -6598176);
+        GuiGraphicsExtractor.fillGradient(getX(), getY(), getX() + this.width, getY() + this.height, -6598176, -6598176);
         Identifier location = FileTypeUtil.getPackIconLocation(this.packData.getPath());
-        GlStateManager._enableBlend();
+        GlStateManager._enableBlend(0);
         GlStateManager._blendFuncSeparate(770, 771, 1, 0);
         Identifier iconLocation = getReadyIconLocation(minecraft, location, this.packData.getTexture());
-        guiGraphics.blit(iconLocation, getX(), getY(), getX() + this.width, getY() + this.height, 0.0f, 1.0f, 0.0f, 1.0f);
-        GlStateManager._disableBlend();
-        guiGraphics.fillGradient(getX(), getY() + this.height - 24, getX() + this.width, getY() + this.height, 0xAA000000, 0xAA000000);
+        GuiGraphicsExtractor.blit(iconLocation, getX(), getY(), getX() + this.width, getY() + this.height, 0.0f, 1.0f, 0.0f, 1.0f);
+        GlStateManager._disableBlend(0);
+        GuiGraphicsExtractor.fillGradient(getX(), getY() + this.height - 24, getX() + this.width, getY() + this.height, 0xAA000000, 0xAA000000);
         List listSplit = font.split(getMessage(), 45);
         if (listSplit.size() > 1) {
-            drawCenteredString(guiGraphics, font, (FormattedCharSequence) listSplit.get(0), getX() + (this.width / 2), (getY() + this.height) - 19, 0xFFFFFFFF);
-            drawCenteredString(guiGraphics, font, (FormattedCharSequence) listSplit.get(1), getX() + (this.width / 2), (getY() + this.height) - 10, 0xFFFFFFFF);
+            drawCenteredString(GuiGraphicsExtractor, font, (FormattedCharSequence) listSplit.get(0), getX() + (this.width / 2), (getY() + this.height) - 19, 0xFFFFFFFF);
+            drawCenteredString(GuiGraphicsExtractor, font, (FormattedCharSequence) listSplit.get(1), getX() + (this.width / 2), (getY() + this.height) - 10, 0xFFFFFFFF);
         } else {
-            drawCenteredString(guiGraphics, font, getMessage(), getX() + (this.width / 2), (getY() + this.height) - 15, 0xFFFFFFFF);
+            drawCenteredString(GuiGraphicsExtractor, font, getMessage(), getX() + (this.width / 2), (getY() + this.height) - 15, 0xFFFFFFFF);
         }
         if (isHoveredOrFocused()) {
-            guiGraphics.fillGradient(getX(), getY() + 1, getX() + 1, (getY() + this.height) - 1, -1982745, -1982745);
-            guiGraphics.fillGradient(getX(), getY(), getX() + this.width, getY() + 1, -1982745, -1982745);
-            guiGraphics.fillGradient((getX() + this.width) - 1, getY() + 1, getX() + this.width, (getY() + this.height) - 1, -1982745, -1982745);
-            guiGraphics.fillGradient(getX(), (getY() + this.height) - 1, getX() + this.width, getY() + this.height, -1982745, -1982745);
+            GuiGraphicsExtractor.fillGradient(getX(), getY() + 1, getX() + 1, (getY() + this.height) - 1, -1982745, -1982745);
+            GuiGraphicsExtractor.fillGradient(getX(), getY(), getX() + this.width, getY() + 1, -1982745, -1982745);
+            GuiGraphicsExtractor.fillGradient((getX() + this.width) - 1, getY() + 1, getX() + this.width, (getY() + this.height) - 1, -1982745, -1982745);
+            GuiGraphicsExtractor.fillGradient(getX(), (getY() + this.height) - 1, getX() + this.width, getY() + this.height, -1982745, -1982745);
         }
     }
 
-    public void renderDescription(GuiGraphics guiGraphics, Screen screen, int mouseX, int mouseY) {
+    public void renderDescription(GuiGraphicsExtractor GuiGraphicsExtractor, Screen screen, int mouseX, int mouseY) {
         String str = ModelMetadataPresenter.getLocalizedString(this.packData, "description", this.packData.getDescription());
         if (StringUtils.isBlank(str)) {
             return;
         }
         List<Component> listSingletonList = Collections.singletonList(Component.literal(str));
         if (isHovered()) {
-            guiGraphics.pose().pushMatrix();
-            guiGraphics.pose().translate(0.0f, 0.0f);
-            guiGraphics.setComponentTooltipForNextFrame(Minecraft.getInstance().font, listSingletonList, mouseX, mouseY);
-/*             GuiGraphics.renderComponentTooltip(Minecraft.getInstance().font, listSingletonList, mouseX, mouseY);
+            GuiGraphicsExtractor.pose().pushMatrix();
+            GuiGraphicsExtractor.pose().translate(0.0f, 0.0f);
+            GuiGraphicsExtractor.setComponentTooltipForNextFrame(Minecraft.getInstance().font, listSingletonList, mouseX, mouseY);
+/*             GuiGraphicsExtractor.renderComponentTooltip(Minecraft.getInstance().font, listSingletonList, mouseX, mouseY);
  */
-            guiGraphics.pose().popMatrix();
+            GuiGraphicsExtractor.pose().popMatrix();
         }
     }
 
-    private static void drawCenteredString(GuiGraphics guiGraphics, Font font, Component component, int centerX, int y, int color) {
-        guiGraphics.drawString(font, component, centerX - (font.width(component) / 2), y, color, true);
+    private static void drawCenteredString(GuiGraphicsExtractor GuiGraphicsExtractor, Font font, Component component, int centerX, int y, int color) {
+        GuiGraphicsExtractor.text(font, component, centerX - (font.width(component) / 2), y, color, true);
     }
 
-    private static void drawCenteredString(GuiGraphics guiGraphics, Font font, FormattedCharSequence formattedCharSequence, int centerX, int y, int color) {
-        guiGraphics.drawString(font, formattedCharSequence, centerX - (font.width(formattedCharSequence) / 2), y, color, true);
+    private static void drawCenteredString(GuiGraphicsExtractor GuiGraphicsExtractor, Font font, FormattedCharSequence formattedCharSequence, int centerX, int y, int color) {
+        GuiGraphicsExtractor.text(font, formattedCharSequence, centerX - (font.width(formattedCharSequence) / 2), y, color, true);
     }
 
     private static Identifier getReadyIconLocation(Minecraft minecraft, Identifier location, OuterFileTexture packIconTexture) {
@@ -110,3 +110,4 @@ public class PackIconButton extends Button {
         }
     }
 }
+

@@ -3,8 +3,8 @@ package com.elfmcys.yesstevemodel.event;
 import com.elfmcys.yesstevemodel.YesSteveModel;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import dev.architectury.event.EventResult;
-import dev.architectury.event.events.common.EntityEvent;
+import dev.ysm.architectury.event.EventResult;
+import dev.ysm.architectury.event.events.common.EntityEvent;
 import net.minecraft.client.Minecraft;
 import java.util.concurrent.Executor;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -52,6 +52,8 @@ public class EntityJoinCallbackEvent {
                 } else {
                     addToCallbackList(i, consumer);
                 }
+            } else {
+                addToCallbackList(i, consumer);
             }
         });
     }

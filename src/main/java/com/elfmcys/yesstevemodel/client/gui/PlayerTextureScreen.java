@@ -15,7 +15,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.resources.language.I18n;
@@ -138,7 +138,7 @@ public class PlayerTextureScreen extends Screen {
             this.animationCurrentPage = 0;
         }
         addRenderableWidget(new FlatColorButton(this.guiLeft + 5, this.guiTop, 80, 18, Component.translatable("gui.better_player_model.model.return"), button -> {
-            Minecraft.getInstance().setScreen(this.parentScreen);
+            com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), this.parentScreen);
         }));
         addRenderableWidget(new IconButton(this.guiLeft + 281, this.guiTop + 2, 16, 16, 64, 16, button2 -> {
             this.currentAnimation = "idle";
@@ -182,7 +182,7 @@ public class PlayerTextureScreen extends Screen {
             int animButtonY = this.guiTop + 27 + (17 * animSlot);
             String str2 = String.format("gui.better_player_model.texture.button.%s", str.replaceAll("\\:", "."));
             String str3 = String.format("gui.better_player_model.texture.button.%s.desc", str.replaceAll("\\:", "."));
-            if (I18n.exists(str2)) {
+            if (net.minecraft.locale.Language.getInstance().has(str2)) {
                 mutableComponentLiteral = Component.translatable(str2);
             } else {
                 mutableComponentLiteral = Component.literal(str);
@@ -190,7 +190,7 @@ public class PlayerTextureScreen extends Screen {
             FlatColorButton colorButton = new FlatColorButton(this.guiLeft + 5, animButtonY, 80, 16, mutableComponentLiteral, button9 -> {
                 this.currentAnimation = str;
             });
-            if (I18n.exists(str3)) {
+            if (net.minecraft.locale.Language.getInstance().has(str3)) {
                 colorButton.setTooltipLines(Lists.newArrayList(new Component[]{Component.translatable(str3).withStyle(ChatFormatting.GOLD), Component.translatable("gui.better_player_model.texture.button.animation_name", str).withStyle(ChatFormatting.GRAY)}));
             }
             addRenderableWidget(colorButton);
@@ -205,44 +205,43 @@ public class PlayerTextureScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        GuiGraphics guiGraphics = extractor;
+    public void extractRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        GuiGraphicsExtractor GuiGraphicsExtractor = extractor;
         if (Minecraft.getInstance().player == null) {
             return;
         }
-        renderTransparentBackground(extractor);
-        guiGraphics.fillGradient(this.guiLeft, this.guiTop + 22, this.guiLeft + 90, this.guiTop + 235, -14540254, -14540254);
-        guiGraphics.fillGradient(this.guiLeft + 93, this.guiTop, this.guiLeft + 299, this.guiTop + 235, -14540254, -14540254);
-        guiGraphics.fillGradient(this.guiLeft + 302, this.guiTop, this.guiLeft + 420, this.guiTop + 235, -14540254, -14540254);
+
+        GuiGraphicsExtractor.fillGradient(this.guiLeft, this.guiTop + 22, this.guiLeft + 90, this.guiTop + 235, -14540254, -14540254);
+        GuiGraphicsExtractor.fillGradient(this.guiLeft + 93, this.guiTop, this.guiLeft + 299, this.guiTop + 235, -14540254, -14540254);
+        GuiGraphicsExtractor.fillGradient(this.guiLeft + 302, this.guiTop, this.guiLeft + 420, this.guiTop + 235, -14540254, -14540254);
         if (!this.modelHolder.getAnimationStateMachine().isCurrentAnimation(this.currentAnimation)) {
             this.modelHolder.getAnimationStateMachine().setCurrentAnimation(this.currentAnimation);
         }
-        renderTexturePreview(guiGraphics, this.guiLeft + 93, this.guiTop, this.guiLeft + 299, this.guiTop + 235, partialTick);
+        renderTexturePreview(GuiGraphicsExtractor, this.guiLeft + 93, this.guiTop, this.guiLeft + 299, this.guiTop + 235, partialTick);
         String str = String.format("%d/%d", this.textureCurrentPage + 1, this.textureMaxPage + 1);
         Font font = this.font;
         int iWidth = this.guiLeft + 302 + ((118 - this.font.width(str)) / 2);
         int pageY = this.guiTop + 223;
         Objects.requireNonNull(this.font);
-        guiGraphics.drawString(font, str, iWidth, pageY - (9 / 2), 0xFFF3F3E0);
+        GuiGraphicsExtractor.text(font, str, iWidth, pageY - (9 / 2), 0xFFF3F3E0);
         String str2 = String.format("%d/%d", this.animationCurrentPage + 1, this.animationMaxPage + 1);
-        guiGraphics.drawString(this.font, str2, this.guiLeft + 5 + ((80 - this.font.width(str2)) / 2), this.guiTop + 218, 0xFFF3F3E0);
-        super.render(extractor, mouseX, mouseY, partialTick);
+        GuiGraphicsExtractor.text(this.font, str2, this.guiLeft + 5 + ((80 - this.font.width(str2)) / 2), this.guiTop + 218, 0xFFF3F3E0);
+        super.extractRenderState(extractor, mouseX, mouseY, partialTick);
         ((ScreenAccessor) this).ysm$getRenderables().stream().filter(renderable -> {
             return renderable instanceof FlatColorButton;
         }).forEach(renderable2 -> {
-            ((FlatColorButton) renderable2).renderTooltip(guiGraphics, this, mouseX, mouseY);
-/*             ((FlatColorButton) renderable2).renderTooltip(GuiGraphics, this, mouseX, mouseY);
- */
+// tooltip logic removed temporarily
+// tooltip logic removed temporarily
         });
     }
 
-    public void renderTexturePreview(GuiGraphics guiGraphics, int scissorX, int scissorY, int scissorWidth, int scissorHeight, float partialTick) {
-        guiGraphics.enableScissor(scissorX, scissorY, scissorWidth, scissorHeight);
+    public void renderTexturePreview(GuiGraphicsExtractor GuiGraphicsExtractor, int scissorX, int scissorY, int scissorWidth, int scissorHeight, float partialTick) {
+        GuiGraphicsExtractor.enableScissor(scissorX, scissorY, scissorWidth, scissorHeight);
         PlayerCapability.get(this.minecraft.player).ifPresent(cap -> {
             this.modelHolder.initModelWithTexture(this.modelId, cap.getCurrentTextureName());
-            ModelPreviewRenderer.renderEntityPreview(guiGraphics, scissorX, scissorY, scissorWidth, scissorHeight, this.guiLeft + 149.5f + 40.0f + this.offsetX, this.guiTop + 117.5f + 80.0f + this.offsetY, this.zoom, this.pitch, this.yaw, partialTick, this.modelHolder, RendererManager.getPlayerRenderer(), this.showGround);
+            ModelPreviewRenderer.renderEntityPreview(GuiGraphicsExtractor, scissorX, scissorY, scissorWidth, scissorHeight, this.guiLeft + 149.5f + 40.0f + this.offsetX, this.guiTop + 117.5f + 80.0f + this.offsetY, this.zoom, this.pitch, this.yaw, partialTick, this.modelHolder, RendererManager.getPlayerRenderer(), this.showGround);
         });
-        guiGraphics.disableScissor();
+        GuiGraphicsExtractor.disableScissor();
     }
 
     public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
@@ -341,3 +340,7 @@ public class PlayerTextureScreen extends Screen {
         return false;
     }
 }
+
+
+
+

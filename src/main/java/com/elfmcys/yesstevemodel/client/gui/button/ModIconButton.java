@@ -6,7 +6,7 @@ import com.elfmcys.yesstevemodel.capability.StarModelsCapability;
 import com.elfmcys.yesstevemodel.network.NetworkHandler;
 import com.elfmcys.yesstevemodel.network.message.C2SSetStarModelPacket;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
@@ -22,9 +22,9 @@ public class ModIconButton extends FlatColorButton {
     }
 
     @Override
-    protected void renderContents(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        super.renderContents(extractor, mouseX, mouseY, partialTick);
-        GuiGraphics guiGraphics = extractor;
+    protected void extractContents(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        super.extractContents(extractor, mouseX, mouseY, partialTick);
+        GuiGraphicsExtractor GuiGraphicsExtractor = extractor;
         int iconOffsetX = (this.width - 16) / 2;
         int iconOffsetY = (this.height - 16) / 2;
         LocalPlayer localPlayer = Minecraft.getInstance().player;
@@ -34,11 +34,11 @@ public class ModIconButton extends FlatColorButton {
                     if (cap2.containsModel(cap.getModelId())) {
                         int x = getX() + iconOffsetX;
                         int y = getY() + iconOffsetY;
-                        guiGraphics.blit(ICON_TEXTURE, x, y, x + 16, y + 16, 16.0f / 256.0f, 32.0f / 256.0f, 0.0f, 16.0f / 256.0f);
+                        GuiGraphicsExtractor.blit(ICON_TEXTURE, x, y, x + 16, y + 16, 16.0f / 256.0f, 32.0f / 256.0f, 0.0f, 16.0f / 256.0f);
                     } else {
                         int x = getX() + iconOffsetX;
                         int y = getY() + iconOffsetY;
-                        guiGraphics.blit(ICON_TEXTURE, x, y, x + 16, y + 16, 0.0f, 16.0f / 256.0f, 0.0f, 16.0f / 256.0f);
+                        GuiGraphicsExtractor.blit(ICON_TEXTURE, x, y, x + 16, y + 16, 0.0f, 16.0f / 256.0f, 0.0f, 16.0f / 256.0f);
                     }
                 });
             });
@@ -64,3 +64,4 @@ public class ModIconButton extends FlatColorButton {
         }
     }
 }
+

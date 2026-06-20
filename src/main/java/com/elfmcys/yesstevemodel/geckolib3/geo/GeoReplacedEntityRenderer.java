@@ -17,7 +17,8 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
@@ -48,7 +49,7 @@ public abstract class GeoReplacedEntityRenderer<TEntity extends LivingEntity, T 
 
     public Matrix4f renderEarlyMat = new Matrix4f();
 
-    public MultiBufferSource rtb;
+    public SubmitNodeCollector rtb;
 
     private IRenderCycle currentModelRenderCycle = EModelRenderCycle.INITIAL;
 
@@ -73,17 +74,17 @@ public abstract class GeoReplacedEntityRenderer<TEntity extends LivingEntity, T 
     }
 
     @Override
-    public void renderEarly(T animatable, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, VertexConsumer buffer, int packedLight, int packedOverlayIn, float red, float green, float blue, float alpha) {
+    public void renderEarly(T animatable, PoseStack poseStack, float partialTick, SubmitNodeCollector bufferSource, VertexConsumer buffer, int packedLight, int packedOverlayIn, float red, float green, float blue, float alpha) {
         // жµЈи·Ёж•¤ .set йЏ‰гѓ©дј©йЌЏе¶†зЎеЁ†в„ѓи¦†йЏЊж’іећ±еЇ¤зѓжџЉйђЁ?Matrix4f, йЌ‘еї“зљЇ allocation rate
         this.renderEarlyMat.set(poseStack.last().pose());
         IGeoRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight, packedOverlayIn, red, green, blue, alpha);
     }
 
-    public void renderEntity(T t, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLight) {
+    public void renderEntity(T t, float entityYaw, float partialTick, PoseStack poseStack, SubmitNodeCollector bufferSource, int packedLight) {
         renderEntityWithTexture(t, null, entityYaw, partialTick, poseStack, bufferSource, packedLight);
     }
 
-    public void renderEntityWithTexture(T t, @Nullable Identifier textureLocation, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight) {
+    public void renderEntityWithTexture(T t, @Nullable Identifier textureLocation, float entityYaw, float partialTick, PoseStack poseStack, SubmitNodeCollector multiBufferSource, int packedLight) {
         Direction bedOrientation;
         if (RenderLivingBridge.firePre(t.getEntity(), this, partialTick, poseStack, multiBufferSource, packedLight)) {
             return;
@@ -134,11 +135,11 @@ public abstract class GeoReplacedEntityRenderer<TEntity extends LivingEntity, T 
             }
             poseStack.popPose();
         }
-        ((LivingEntityRendererAccessor) this).tlm$renderNameTag(entity, entityYaw, partialTick, poseStack, multiBufferSource, packedLight);
+        // ((LivingEntityRendererAccessor) this).tlm$renderNameTag(entity, entityYaw, partialTick, poseStack, multiBufferSource, packedLight);
         RenderLivingBridge.firePost(entity, this, partialTick, poseStack, multiBufferSource, packedLight);
     }
 
-    public void render(T entity, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, int packedLightIn, AnimationEvent<?> event, EntityModelData data) {
+    public void render(T entity, float partialTick, PoseStack poseStack, SubmitNodeCollector bufferSource, int packedLightIn, AnimationEvent<?> event, EntityModelData data) {
         for (GeoLayerRenderer<T> layerRenderer : this.layerRenderers) {
             layerRenderer.render(poseStack, bufferSource, packedLightIn, entity, event.getLimbSwing(), event.getLimbSwingAmount(), partialTick, data.lerpedAge, data.rawNetHeadYaw, data.rawHeadPitch);
         }
@@ -198,7 +199,7 @@ public abstract class GeoReplacedEntityRenderer<TEntity extends LivingEntity, T 
 
     public boolean shouldShowName(TEntity entity) {
         double d = entity.isDiscrete() ? 32.0d : 64.0d;
-        return Minecraft.getInstance().getEntityRenderDispatcher().distanceToSqr(entity) < d * d && entity == Minecraft.getInstance().getEntityRenderDispatcher().crosshairPickEntity && entity.hasCustomName() && Minecraft.renderNames();
+        return Minecraft.getInstance().getEntityRenderDispatcher().distanceToSqr(entity) < d * d && entity == Minecraft.getInstance().getEntityRenderDispatcher().crosshairPickEntity && entity.hasCustomName() && com.elfmcys.yesstevemodel.client.ScreenFixer.renderNames();
     }
 
     public final boolean addLayerRenderer(GeoLayerRenderer<T> layerRenderer) {
@@ -206,12 +207,13 @@ public abstract class GeoReplacedEntityRenderer<TEntity extends LivingEntity, T 
     }
 
     @Override
-    public MultiBufferSource getCurrentRTB() {
+    public SubmitNodeCollector getCurrentRTB() {
         return this.rtb;
     }
 
     @Override
-    public void setCurrentRTB(MultiBufferSource bufferSource) {
+    public void setCurrentRTB(SubmitNodeCollector bufferSource) {
         this.rtb = bufferSource;
     }
 }
+

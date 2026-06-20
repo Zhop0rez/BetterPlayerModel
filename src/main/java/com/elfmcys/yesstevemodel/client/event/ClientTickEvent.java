@@ -21,7 +21,7 @@ public final class ClientTickEvent {
     }
 
     public static void register() {
-        dev.architectury.event.events.client.ClientTickEvent.CLIENT_PRE.register(ClientTickEvent::onClientPreTick);
+        dev.ysm.architectury.event.events.client.ClientTickEvent.CLIENT_PRE.register(ClientTickEvent::onClientPreTick);
     }
 
     private static void onClientPreTick(Minecraft client) {
@@ -42,6 +42,7 @@ public final class ClientTickEvent {
         if (localPlayer != null) {
             PlayerCapability.get(localPlayer).ifPresent(cap -> cap.tickAnimations());
         }
+        ClientPlayerJoinNotification.tick();
     }
 
     public static int getTickCount() {

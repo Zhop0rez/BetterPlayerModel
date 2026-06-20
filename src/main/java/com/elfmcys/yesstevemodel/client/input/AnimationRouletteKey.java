@@ -6,8 +6,8 @@ import rip.ysm.compat.touhoulittlemaid.TouhouLittleMaidCompat;
 import com.elfmcys.yesstevemodel.client.model.ModelAssembly;
 import com.elfmcys.yesstevemodel.util.InputUtil;
 import com.mojang.blaze3d.platform.InputConstants;
-import dev.architectury.event.EventResult;
-import dev.architectury.event.events.client.ClientRawInputEvent;
+import dev.ysm.architectury.event.EventResult;
+import dev.ysm.architectury.event.events.client.ClientRawInputEvent;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import rip.ysm.api.PlatformAPI;
@@ -39,10 +39,10 @@ public final class AnimationRouletteKey {
                         String modelId = cap.getModelId();
                         ModelAssembly modelAssembly = cap.getModelAssembly();
                         if (modelAssembly != null && !modelAssembly.getModelData().getModelProperties().getExtraAnimation().isEmpty()) {
-                            if (Minecraft.getInstance().screen == null) {
-                                Minecraft.getInstance().setScreen(new ModernAnimationRouletteScreen(modelId, modelAssembly, cap));
-                            } else if (Minecraft.getInstance().screen instanceof ModernAnimationRouletteScreen) {
-                                Minecraft.getInstance().setScreen(null);
+                            if (com.elfmcys.yesstevemodel.client.ScreenFixer.getScreen(Minecraft.getInstance()) == null) {
+                                com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), new ModernAnimationRouletteScreen(modelId, modelAssembly, cap));
+                            } else if (com.elfmcys.yesstevemodel.client.ScreenFixer.getScreen(Minecraft.getInstance()) instanceof ModernAnimationRouletteScreen) {
+                                com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), null);
                             }
                         }
                     });

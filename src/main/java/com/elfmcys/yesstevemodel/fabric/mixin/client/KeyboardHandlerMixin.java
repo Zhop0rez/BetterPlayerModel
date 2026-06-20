@@ -1,7 +1,7 @@
 package com.elfmcys.yesstevemodel.fabric.mixin.client;
 
-import dev.architectury.event.EventResult;
-import dev.architectury.event.events.client.ClientRawInputEvent;
+import dev.ysm.architectury.event.EventResult;
+import dev.ysm.architectury.event.events.client.ClientRawInputEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.KeyboardHandler;
 import net.minecraft.client.input.KeyEvent;
@@ -13,12 +13,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(KeyboardHandler.class)
 public class KeyboardHandlerMixin {
 
-    @Inject(method = "keyPress", at = @At("HEAD"), cancellable = true)
+    @Inject(remap = false, method = "keyPress", at = @At("HEAD"), cancellable = true)
     private void ysm$fireKeyPress(long window, int action, KeyEvent event, CallbackInfo ci) {
         Minecraft client = Minecraft.getInstance();
-        EventResult result = ClientRawInputEvent.KEY_PRESSED.invoker().keyPressed(client, action, event);
+        EventResult result = ClientRawInputEvent.KEY_PRESSED.fireEventResult(handler -> handler.keyPressed(client, action, event));
         if (result.isFalse()) {
             ci.cancel();
         }
     }
 }
+
+

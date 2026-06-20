@@ -2,7 +2,7 @@ package com.elfmcys.yesstevemodel.network.message;
 
 import com.elfmcys.yesstevemodel.capability.AuthModelsCapability;
 import com.google.common.collect.Sets;
-import dev.architectury.injectables.annotations.PlatformOnly;
+import dev.ysm.architectury.injectables.annotations.PlatformOnly;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;

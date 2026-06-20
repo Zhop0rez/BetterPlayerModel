@@ -58,9 +58,9 @@ public class QueryBinding extends ContextBinding {
         var("life_time", ctx -> ctx.geoInstance().getSeekTime() / 20.0d);
         var("head_x_rotation", ctx -> ctx.data().netHeadYaw);
         var("head_y_rotation", ctx -> ctx.data().headPitch);
-        var("moon_phase", ctx -> getMoonPhase(ctx.level().getDayTime()));
-        var("time_of_day", ctx -> MolangUtils.normalizeTime(ctx.level().getDayTime()));
-        var("time_stamp", ctx -> ctx.level().getDayTime());
+        var("moon_phase", ctx -> getMoonPhase(ctx.level().getOverworldClockTime()));
+        var("time_of_day", ctx -> MolangUtils.normalizeTime(ctx.level().getOverworldClockTime()));
+        var("time_stamp", ctx -> ctx.level().getOverworldClockTime());
         var("delta_time", ctx -> MovementQuery.getTimeDeltaSeconds(ctx.geoInstance().getPositionTracker()));
 
         entityVar("yaw_speed", QueryBinding::getYawSpeed);
@@ -195,7 +195,7 @@ public class QueryBinding extends ContextBinding {
     }
 
     private static float getDistanceFromCamera(IContext<Entity> context) {
-        Vec3 cameraPosition = Minecraft.getInstance().gameRenderer.getMainCamera().position();
+        Vec3 cameraPosition = Minecraft.getInstance().getEntityRenderDispatcher().camera.position();
         return Mth.sqrt((float) context.entity().distanceToSqr(cameraPosition));
     }
 
@@ -224,3 +224,4 @@ public class QueryBinding extends ContextBinding {
         return Mth.clamp(((6.0f + (fClamp2 / 2.0f)) + fSin2) / 108.0f, 0.0f, 1.0f);
     }
 }
+

@@ -37,3 +37,4 @@ public class RootCommand {
         dispatcher.register(root);
     }
 }
+

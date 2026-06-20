@@ -40,8 +40,8 @@ public final class YSMChannelImpl {
         channelId = id;
 
         YSMPayload.initType(channelId);
-        PayloadTypeRegistry.playC2S().register(YSMPayload.TYPE, YSMPayload.CODEC);
-        PayloadTypeRegistry.playS2C().register(YSMPayload.TYPE, YSMPayload.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(YSMPayload.TYPE, YSMPayload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(YSMPayload.TYPE, YSMPayload.CODEC);
 
         ServerPlayNetworking.registerGlobalReceiver(YSMPayload.TYPE, (payload, context) ->
                 dispatch(payload.buf(), new ServerPacketContext(
@@ -81,7 +81,7 @@ public final class YSMChannelImpl {
                 codec.dispatch(buf, ctx);
             }
         } catch (RuntimeException e) {
-            YesSteveModel.LOGGER.warn("[YSM] Dropped malformed network packet id {}", discriminator, e);
+            YesSteveModel.LOGGER.warn("[BPM] Dropped malformed network packet id {}", discriminator, e);
         }
     }
 
@@ -147,7 +147,7 @@ public final class YSMChannelImpl {
     }
 
     private static boolean canSend(ServerPlayer player) {
-        return player != null && YSMPayload.TYPE != null && ServerPlayNetworking.canSend(player, YSMPayload.TYPE);
+        boolean can = player != null && YSMPayload.TYPE != null && ServerPlayNetworking.canSend(player, YSMPayload.TYPE); if(!can) YesSteveModel.LOGGER.info("canSend is false! player=" + player + ", type=" + YSMPayload.TYPE); return can;
     }
 
     private static void registerPayloadTypes() {
@@ -155,3 +155,4 @@ public final class YSMChannelImpl {
         // Payload type registration is handled by registerGlobalReceiver
     }
 }
+

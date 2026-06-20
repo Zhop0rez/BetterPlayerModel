@@ -9,7 +9,8 @@ import com.elfmcys.yesstevemodel.geckolib3.util.IRenderCycle;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -28,7 +29,7 @@ public abstract class GeoEntityRenderer<TEntity extends Entity, T extends Animat
 
     private IRenderCycle renderState;
 
-    public MultiBufferSource bufferSource;
+    public SubmitNodeCollector bufferSource;
 
     public GeoEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -38,7 +39,7 @@ public abstract class GeoEntityRenderer<TEntity extends Entity, T extends Animat
         this.bufferSource = null;
     }
 
-    public void renderEntity(T t, float f, float f2, PoseStack poseStack, MultiBufferSource multiBufferSource, int i) {
+    public void renderEntity(T t, float f, float f2, PoseStack poseStack, SubmitNodeCollector multiBufferSource, int i) {
         AnimationEvent<?> event = t.processAnimation(f2);
         Minecraft minecraft = Minecraft.getInstance();
         if (event != null && minecraft.player != null) {
@@ -57,12 +58,12 @@ public abstract class GeoEntityRenderer<TEntity extends Entity, T extends Animat
                 poseStack.popPose();
             }
         }
-        // MC 26.x: super.render() signature changed, skip call
-        // super.render(t.getEntity(), f, f2, poseStack, multiBufferSource, i);
+        // MC 26.x: super.extractRenderState() signature changed, skip call
+        // super.extractRenderState(t.getEntity(), f, f2, poseStack, multiBufferSource, i);
     }
 
     @Override
-    public void renderEarly(T animatable, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, VertexConsumer buffer, int packedLight, int packedOverlayIn, float red, float green, float blue, float alpha) {
+    public void renderEarly(T animatable, PoseStack poseStack, float partialTick, SubmitNodeCollector bufferSource, VertexConsumer buffer, int packedLight, int packedOverlayIn, float red, float green, float blue, float alpha) {
         this.modelMatrix = new Matrix4f(poseStack.last().pose());
         IGeoRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight, packedOverlayIn, red, green, blue, alpha);
     }
@@ -83,12 +84,12 @@ public abstract class GeoEntityRenderer<TEntity extends Entity, T extends Animat
     }
 
     @Override
-    public void setCurrentRTB(MultiBufferSource bufferSource) {
+    public void setCurrentRTB(SubmitNodeCollector bufferSource) {
         this.bufferSource = bufferSource;
     }
 
     @Override
-    public MultiBufferSource getCurrentRTB() {
+    public SubmitNodeCollector getCurrentRTB() {
         return this.bufferSource;
     }
 }

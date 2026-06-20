@@ -13,11 +13,13 @@ public record YSMPayload(FriendlyByteBuf buf) implements CustomPacketPayload {
     static final StreamCodec<FriendlyByteBuf, YSMPayload> CODEC = StreamCodec.of(
             (target, payload) -> {
                 FriendlyByteBuf src = payload.buf;
-                src.resetReaderIndex();
+                src.readerIndex(0);
                 target.writeBytes(src, src.readerIndex(), src.readableBytes());
             },
             source -> {
-                FriendlyByteBuf copy = new FriendlyByteBuf(Unpooled.buffer(source.readableBytes()));
+                int size = source.readableBytes();
+                if (size > 16777216) throw new IllegalArgumentException("Payload too large: " + size);
+                FriendlyByteBuf copy = new FriendlyByteBuf(Unpooled.buffer(size));
                 source.readBytes(copy);
                 return new YSMPayload(copy);
             }

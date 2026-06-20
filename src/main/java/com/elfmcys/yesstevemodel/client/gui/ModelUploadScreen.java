@@ -8,7 +8,7 @@ import com.elfmcys.yesstevemodel.model.ServerModelManager;
 import com.elfmcys.yesstevemodel.util.PlatformUtil;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -27,8 +27,7 @@ import java.util.stream.Stream;
 public class ModelUploadScreen extends Screen implements ModelUploadSession.Listener {
     private static final long MODEL_FOLDER_POLL_INTERVAL_MS = 1000L;
     private static final long MODEL_FOLDER_POLL_WINDOW_MS = 60000L;
-    private static final Pattern INVALID_MODEL_ID_CHARS = Pattern.compile("[^a-z0-9_./-]+");
-    private final Screen parentScreen;
+        private final Screen parentScreen;
     private final Queue<ModelImportFilePicker.PickedFile> pendingImports = new ArrayDeque<>();
     private long lastFlashTime = 0L;
     private Component error = Component.empty();
@@ -49,7 +48,7 @@ public class ModelUploadScreen extends Screen implements ModelUploadSession.List
         this.parentScreen = parent;
     }
 
-    private static void drawBorder(GuiGraphics g, int x1, int y1, int x2, int y2, int w, int color) {
+    private static void drawBorder(GuiGraphicsExtractor g, int x1, int y1, int x2, int y2, int w, int color) {
         g.fill(x1, y1, x2, y1 + w, color);
         g.fill(x1, y2 - w, x2, y2, color);
         g.fill(x1, y1, x1 + w, y2, color);
@@ -63,7 +62,7 @@ public class ModelUploadScreen extends Screen implements ModelUploadSession.List
         int buttonY = 10;
         addRenderableWidget(new FlatColorButton(this.width - 350, buttonY, 130, 18, Component.translatable("gui.better_player_model.import.choose_file"), button -> openFilePicker()));
         addRenderableWidget(new FlatColorButton(this.width - 210, buttonY, 130, 18, Component.translatable("gui.better_player_model.open_model_folder.open"), button -> openModelFolder()));
-        addRenderableWidget(new FlatColorButton(this.width - 70, buttonY, 60, 18, Component.translatable("gui.better_player_model.model.return"), button -> Minecraft.getInstance().setScreen(this.parentScreen)));
+        addRenderableWidget(new FlatColorButton(this.width - 70, buttonY, 60, 18, Component.translatable("gui.better_player_model.model.return"), button -> com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), this.parentScreen)));
     }
 
     @Override
@@ -207,7 +206,7 @@ public class ModelUploadScreen extends Screen implements ModelUploadSession.List
         while (normalized.startsWith("/")) {
             normalized = normalized.substring(1);
         }
-        normalized = INVALID_MODEL_ID_CHARS.matcher(normalized).replaceAll("_").replaceAll("/+", "/");
+        normalized = normalized.replaceAll("/+", "/");
         while (normalized.contains("..")) {
             normalized = normalized.replace("..", ".");
         }
@@ -303,8 +302,8 @@ public class ModelUploadScreen extends Screen implements ModelUploadSession.List
     }
 
     @Override
-    public void render(GuiGraphics extractor, int mouseX, int mouseY, float partialTick) {
-        GuiGraphics g = extractor;
+    public void extractRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        GuiGraphicsExtractor g = extractor;
         g.fill(0, 0, this.width, this.height, 0xC0000000);
 
         long sinceFlash = PlatformUtil.getMillis() - this.lastFlashTime;
@@ -331,51 +330,51 @@ public class ModelUploadScreen extends Screen implements ModelUploadSession.List
         if (!this.error.getString().isEmpty()) {
             MutableComponent err = this.error.copy().withStyle(ChatFormatting.RED);
             int w = this.font.width(err);
-            g.drawString(this.font, err, (this.width - w) / 2, this.height - 60, 0xFFFFFFFF);
+            g.text(this.font, err, (this.width - w) / 2, this.height - 60, 0xFFFFFFFF);
         }
 
         renderImportStatusLines(g);
 
-        super.render(extractor, mouseX, mouseY, partialTick);
+        super.extractRenderState(extractor, mouseX, mouseY, partialTick);
     }
 
-    private void renderImportStatusLines(GuiGraphics guiGraphics) {
+    private void renderImportStatusLines(GuiGraphicsExtractor GuiGraphicsExtractor) {
         int cx = this.width / 2;
         int y = this.height - 38;
         if (!this.localStatus.getString().isEmpty()) {
             Component line = Component.translatable("gui.better_player_model.import.status.local", this.localStatus).copy().withStyle(this.localStatusColor);
             int w = this.font.width(line);
-            guiGraphics.drawString(this.font, line, cx - w / 2, y, 0xFFFFFFFF);
+            GuiGraphicsExtractor.text(this.font, line, cx - w / 2, y, 0xFFFFFFFF);
             y += 12;
         }
         if (!this.serverStatus.getString().isEmpty()) {
             Component line = Component.translatable("gui.better_player_model.import.status.server", this.serverStatus).copy().withStyle(this.serverStatusColor);
             int w = this.font.width(line);
-            guiGraphics.drawString(this.font, line, cx - w / 2, y, 0xFFFFFFFF);
+            GuiGraphicsExtractor.text(this.font, line, cx - w / 2, y, 0xFFFFFFFF);
         }
     }
 
-    private void renderEmptyState(GuiGraphics guiGraphics) {
+    private void renderEmptyState(GuiGraphicsExtractor GuiGraphicsExtractor) {
         MutableComponent main = Component.translatable(ModelImportFilePicker.isPicking() ? "gui.better_player_model.import.select_in_manager" : "gui.better_player_model.import.empty").withStyle(ChatFormatting.WHITE);
         MutableComponent sub = Component.translatable("gui.better_player_model.import.standalone_only").withStyle(ChatFormatting.GRAY);
         int cx = this.width / 2;
         int cy = this.height / 2;
-        guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().translate(cx, cy - 14);
-        guiGraphics.pose().scale(2.0f, 2.0f);
+        GuiGraphicsExtractor.pose().pushMatrix();
+        GuiGraphicsExtractor.pose().translate(cx, cy - 14);
+        GuiGraphicsExtractor.pose().scale(2.0f, 2.0f);
         int mw = this.font.width(main);
-        guiGraphics.drawString(this.font, main, -mw / 2, 0, 0xFFFFFFFF);
-        guiGraphics.pose().popMatrix();
+        GuiGraphicsExtractor.text(this.font, main, -mw / 2, 0, 0xFFFFFFFF);
+        GuiGraphicsExtractor.pose().popMatrix();
         int sw = this.font.width(sub);
-        guiGraphics.drawString(this.font, sub, cx - sw / 2, cy + 22, 0xFFAAAAAA);
+        GuiGraphicsExtractor.text(this.font, sub, cx - sw / 2, cy + 22, 0xFFAAAAAA);
         if (ModelUploadSession.hasServerLimits()) {
             MutableComponent limit = Component.translatable("gui.better_player_model.import.size_limit", ModelUploadSession.formatBytes(ModelUploadSession.getLastMaxTotalBytes())).withStyle(ChatFormatting.DARK_GRAY);
             int lw = this.font.width(limit);
-            guiGraphics.drawString(this.font, limit, cx - lw / 2, cy + 36, 0xFFFFFFFF);
+            GuiGraphicsExtractor.text(this.font, limit, cx - lw / 2, cy + 36, 0xFFFFFFFF);
         }
     }
 
-    private void renderSessionState(GuiGraphics guiGraphics, ModelUploadSession session) {
+    private void renderSessionState(GuiGraphicsExtractor GuiGraphicsExtractor, ModelUploadSession session) {
         int cx = this.width / 2;
         int cy = this.height / 2;
         ChatFormatting color = switch (session.getState()) {
@@ -385,11 +384,11 @@ public class ModelUploadScreen extends Screen implements ModelUploadSession.List
         };
         Component title = session.getMessage().copy().withStyle(color);
         int tw = this.font.width(title);
-        guiGraphics.drawString(this.font, title, cx - tw / 2, cy - 32, 0xFFFFFFFF);
+        GuiGraphicsExtractor.text(this.font, title, cx - tw / 2, cy - 32, 0xFFFFFFFF);
 
         Component sub = Component.literal(session.getModelId()).withStyle(ChatFormatting.GRAY);
         int sw = this.font.width(sub);
-        guiGraphics.drawString(this.font, sub, cx - sw / 2, cy - 16, 0xFFFFFFFF);
+        GuiGraphicsExtractor.text(this.font, sub, cx - sw / 2, cy - 16, 0xFFFFFFFF);
 
         int barW = 320;
         int barH = 14;
@@ -413,9 +412,9 @@ public class ModelUploadScreen extends Screen implements ModelUploadSession.List
         } else {
             fillColor = 0xFFFFC107;
         }
-        guiGraphics.fill(barX, barY, barX + barW, barY + barH, 0xFF2A2A2A);
+        GuiGraphicsExtractor.fill(barX, barY, barX + barW, barY + barH, 0xFF2A2A2A);
         if (fillW > 0) {
-            guiGraphics.fill(barX, barY, barX + fillW, barY + barH, fillColor);
+            GuiGraphicsExtractor.fill(barX, barY, barX + fillW, barY + barH, fillColor);
         }
         if (session.getState() == ModelUploadSession.State.UPLOADING && fillW > 4) {
             long now = PlatformUtil.getMillis();
@@ -426,17 +425,17 @@ public class ModelUploadScreen extends Screen implements ModelUploadSession.List
             int left = barX + Math.max(0, shimmerX);
             int right = barX + Math.min(fillW, shimmerX + shimmerW);
             if (right > left) {
-                guiGraphics.fill(left, barY + 1, right, barY + barH - 1, 0x55FFFFFF);
+                GuiGraphicsExtractor.fill(left, barY + 1, right, barY + barH - 1, 0x55FFFFFF);
             }
         }
-        guiGraphics.fill(barX, barY, barX + barW, barY + 1, -1);
-        guiGraphics.fill(barX, barY + barH - 1, barX + barW, barY + barH, -1);
-        guiGraphics.fill(barX, barY, barX + 1, barY + barH, -1);
-        guiGraphics.fill(barX + barW - 1, barY, barX + barW, barY + barH, -1);
+        GuiGraphicsExtractor.fill(barX, barY, barX + barW, barY + 1, -1);
+        GuiGraphicsExtractor.fill(barX, barY + barH - 1, barX + barW, barY + barH, -1);
+        GuiGraphicsExtractor.fill(barX, barY, barX + 1, barY + barH, -1);
+        GuiGraphicsExtractor.fill(barX + barW - 1, barY, barX + barW, barY + barH, -1);
 
         String stat = ModelUploadSession.formatBytes(session.getSentBytes()) + " / " + ModelUploadSession.formatBytes(session.getTotalBytes());
         int statW = this.font.width(stat);
-        guiGraphics.drawString(this.font, stat, cx - statW / 2, barY + barH + 6, 0xFFAAAAAA);
+        GuiGraphicsExtractor.text(this.font, stat, cx - statW / 2, barY + barH + 6, 0xFFAAAAAA);
     }
 
     @Override
@@ -446,6 +445,7 @@ public class ModelUploadScreen extends Screen implements ModelUploadSession.List
 
     @Override
     public void onClose() {
-        Minecraft.getInstance().setScreen(this.parentScreen);
+        com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), this.parentScreen);
     }
 }
+

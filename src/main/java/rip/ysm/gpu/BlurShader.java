@@ -167,7 +167,7 @@ public final class BlurShader {
         if (frameKey == lastCaptureFrame && frameKey >= 0) return;
         lastCaptureFrame = frameKey;
         // MC 26.x: RenderTarget moved to com.mojang.blaze3d.pipeline, field names changed
-        Object main = Minecraft.getInstance().getMainRenderTarget();
+        Object main = com.elfmcys.yesstevemodel.client.ScreenFixer.getMainRenderTarget(Minecraft.getInstance());
         /* int w = main.viewWidth;
         int h = main.viewHeight;
         ensureCaptureTexture(w, h);
@@ -215,3 +215,4 @@ public final class BlurShader {
         captureHeight = h;
     }
 }
+

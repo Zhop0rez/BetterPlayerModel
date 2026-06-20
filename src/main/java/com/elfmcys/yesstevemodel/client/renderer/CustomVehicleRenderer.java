@@ -3,7 +3,8 @@ package com.elfmcys.yesstevemodel.client.renderer;
 import com.elfmcys.yesstevemodel.capability.VehicleCapability;
 import com.elfmcys.yesstevemodel.client.entity.GeckoVehicleEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -12,7 +13,7 @@ import net.minecraft.world.phys.Vec3;
 import rip.ysm.api.entity.EntityDataBridge;
 
 public class CustomVehicleRenderer {
-    public static boolean renderVehicle(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, MultiBufferSource bufferSource, net.minecraft.client.renderer.SubmitNodeCollector collector, int packedLight) {
+    public static boolean renderVehicle(Entity entity, float entityYaw, float partialTick, PoseStack poseStack, SubmitNodeCollector bufferSource, net.minecraft.client.renderer.SubmitNodeCollector collector, int packedLight) {
         if (GeckoVehicleEntity.usesVanillaRenderer(entity)) {
             return true;
         }

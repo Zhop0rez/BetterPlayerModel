@@ -2,7 +2,7 @@ package rip.ysm.gpu;
 
 import com.mojang.blaze3d.opengl.GlStateManager;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
@@ -72,7 +72,7 @@ public final class BlurStack {
         return regions.isEmpty();
     }
 
-    public static void flush(GuiGraphics graphics) {
+    public static void flush(GuiGraphicsExtractor graphics) {
         if (regions.isEmpty()) return;
         if (!BlurShader.ensureCompiled()) {
             regions.clear();
@@ -83,10 +83,10 @@ public final class BlurStack {
         BlurShader.captureScreen(frameCounter);
 
         new Matrix4f().mul(new Matrix4f(), mvpScratch);
-        // TODO: mvpScratch.mul(graphics.poseStack.last().pose()); // poseStack removed in MC 26.x GuiGraphics
+        // TODO: mvpScratch.mul(graphics.poseStack.last().pose()); // poseStack removed in MC 26.x GuiGraphicsExtractor
         mvpScratch.get(mvpFloats);
 
-        GlStateManager._enableBlend();
+        GlStateManager._enableBlend(0);
         GlStateManager._blendFuncSeparate(770, 771, 1, 0);
         GlStateManager._disableCull();
         GlStateManager._disableDepthTest();
@@ -131,7 +131,7 @@ public final class BlurStack {
 
         GlStateManager._glUseProgram(0);
         GlStateManager._glBindVertexArray(0);
-        GlStateManager._disableBlend();
+        GlStateManager._disableBlend(0);
 
         regions.clear();
     }
@@ -153,3 +153,4 @@ public final class BlurStack {
         int tintRgba;
     }
 }
+

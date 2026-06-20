@@ -23,11 +23,11 @@ public class PauseScreenButtonBuilder {
         if (isServerConnected()) {
             Minecraft minecraft = Minecraft.getInstance();
             Button buttonBuild = Button.builder(Component.translatable("gui.better_player_model.skin"), button -> {
-                minecraft.setScreen(new PlayerModelScreen());
+                com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(minecraft, new PlayerModelScreen());
             }).bounds((pauseScreen.width / 2) - 94, pauseScreen.height - 35, 138, 30).build();
             buttonBuild.setTooltip(Tooltip.create(Component.translatable("key.better_player_model.player_model.desc")));
             Button buttonBuild2 = Button.builder(Component.translatable("gui.better_player_model.pause.render_config"), button2 -> {
-                minecraft.setScreen(new ExtraPlayerRenderScreen());
+                com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(minecraft, new ExtraPlayerRenderScreen());
             }).bounds((pauseScreen.width / 2) - 145, pauseScreen.height - 35, 50, 30).build();
             buttonBuild2.setTooltip(Tooltip.create(Component.translatable("key.better_player_model.open_extra_player_render.desc")));
             Button buttonBuild3 = Button.builder(Component.translatable("gui.better_player_model.pause.roulette"), button3 -> {
@@ -36,14 +36,14 @@ public class PauseScreenButtonBuilder {
                         String str = cap.getModelId();
                         ModelAssembly modelAssembly = cap.getModelAssembly();
                         if (modelAssembly != null && !modelAssembly.getModelData().getModelProperties().getExtraAnimation().isEmpty()) {
-                            minecraft.setScreen(new ModernAnimationRouletteScreen(str, modelAssembly, cap));
+                            com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(minecraft, new ModernAnimationRouletteScreen(str, modelAssembly, cap));
                         }
                     });
                 }
             }).bounds((pauseScreen.width / 2) + 45, pauseScreen.height - 35, 50, 30).build();
             buttonBuild3.setTooltip(Tooltip.create(Component.translatable("key.better_player_model.animation_roulette.desc")));
             Button buttonBuild4 = Button.builder(Component.literal("YSM"), button4 -> {
-                minecraft.setScreen(new ExtraPlayerConfigScreen(pauseScreen));
+                com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(minecraft, new ExtraPlayerConfigScreen(pauseScreen));
             }).bounds((pauseScreen.width / 2) + 96, pauseScreen.height - 35, 50, 30).build();
             buttonBuild4.setTooltip(Tooltip.create(Component.translatable("gui.better_player_model.config")));
             return List.of(buttonBuild, buttonBuild2, buttonBuild3, buttonBuild4);

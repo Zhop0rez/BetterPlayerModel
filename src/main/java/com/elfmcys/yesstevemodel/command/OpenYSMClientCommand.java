@@ -4,7 +4,7 @@ import com.elfmcys.yesstevemodel.command.subcommands.client.CacheCommand;
 import com.elfmcys.yesstevemodel.util.YSMMessageFormatter;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import dev.architectury.event.events.client.ClientCommandRegistrationEvent;
+import dev.ysm.architectury.event.events.client.ClientCommandRegistrationEvent;
 
 
 public class OpenYSMClientCommand {
