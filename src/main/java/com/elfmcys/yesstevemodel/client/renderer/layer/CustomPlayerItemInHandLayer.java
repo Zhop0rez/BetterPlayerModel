@@ -12,19 +12,14 @@ import com.elfmcys.yesstevemodel.client.renderer.SubmitRenderContext;
 import com.elfmcys.yesstevemodel.geckolib3.util.RenderUtils;
 import com.elfmcys.yesstevemodel.util.accessors.BufferSourceAccessor;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.model.effects.SpearAnimations;
 import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.entity.state.ArmedEntityRenderState;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ItemUseAnimation;
-import net.minecraft.world.item.component.KineticWeapon;
+import net.minecraft.world.item.UseAnim;
 import com.mojang.math.Axis;
 import org.joml.Matrix4f;
 import rip.ysm.api.item.WeaponKind;
@@ -58,7 +53,6 @@ public class CustomPlayerItemInHandLayer extends GeoLayerRenderer<CustomPlayerEn
                     TacCompat.handleGunSound(entity, mainHandItem);
                     renderItem(animatedGeoModel, entity, mainHandItem, getDisplayContext(mainArm), mainArm, poseStack, bufferSource, packedLightIn, partialTick);
                     if (useExtraPlayer && !mainHandItem.isEmpty() && (bufferSource instanceof BufferSourceAccessor)) {
-                        // Removed destructive batch interruption
                         // ((BufferSourceAccessor) bufferSource).initialize();
                     }
                     TacCompat.handleItemSound(mainHandItem);
@@ -72,7 +66,6 @@ public class CustomPlayerItemInHandLayer extends GeoLayerRenderer<CustomPlayerEn
                         renderItem(animatedGeoModel, entity, offhandItem, getDisplayContext(offArm), offArm, poseStack, bufferSource, packedLightIn, partialTick);
                     }
                     if (useExtraPlayer && !offhandItem.isEmpty() && (bufferSource instanceof BufferSourceAccessor)) {
-                        // Removed destructive batch interruption
                         // ((BufferSourceAccessor) bufferSource).initialize();
                     }
                 }
@@ -145,19 +138,12 @@ public class CustomPlayerItemInHandLayer extends GeoLayerRenderer<CustomPlayerEn
         if (shouldNormalizeBowItemScale(itemStack)) {
             normalizeBowItemScale(poseStack);
         }
-        if (shouldApplySpearUseItemTransform(livingEntity, itemStack, humanoidArm)) {
-            float ticksUsingItem = clampSpearUseTicksBeforeVanillaSway(itemStack, livingEntity.getTicksUsingItem(partialTick));
-            poseStack.mulPose(Axis.YP.rotationDegrees(180.0f));
-            ArmedEntityRenderState renderState = new ArmedEntityRenderState();
-            renderState.attackTime = livingEntity.getAttackAnim(partialTick);
-            renderState.ticksSinceKineticHitFeedback = livingEntity.getTicksSinceLastKineticHitFeedback(partialTick);
-            SpearAnimations.thirdPersonUseItem(renderState, poseStack, ticksUsingItem, humanoidArm, itemStack);
-        }
+        // Spear/Kinetic weapon sway logic was removed for 1.20.1 compatibility.
         renderVanillaItem(livingEntity, itemStack, itemDisplayContext, humanoidArm, poseStack, packedLight);
     }
 
     private boolean shouldNormalizeBowItemScale(ItemStack itemStack) {
-        return !itemStack.isEmpty() && itemStack.getUseAnimation() == ItemUseAnimation.BOW;
+        return !itemStack.isEmpty() && itemStack.getUseAnimation() == UseAnim.BOW;
     }
 
     private void normalizeBowItemScale(PoseStack poseStack) {
@@ -180,30 +166,6 @@ public class CustomPlayerItemInHandLayer extends GeoLayerRenderer<CustomPlayerEn
         return (float) Math.sqrt(x * x + y * y + z * z);
     }
 
-    private float clampSpearUseTicksBeforeVanillaSway(ItemStack itemStack, float ticksUsingItem) {
-        KineticWeapon kineticWeapon = itemStack.get(DataComponents.KINETIC_WEAPON);
-        if (kineticWeapon == null) {
-            return ticksUsingItem;
-        }
-        return kineticWeapon.dismountConditions().map(condition -> {
-            float swayStartTicks = kineticWeapon.delayTicks() + condition.maxDurationTicks() - 20.0f;
-            if (swayStartTicks <= 0.0f) {
-                return ticksUsingItem;
-            }
-            float stableUseTicks = Math.max(kineticWeapon.delayTicks(), swayStartTicks - 0.01f);
-            return Math.min(ticksUsingItem, stableUseTicks);
-        }).orElse(ticksUsingItem);
-    }
-
-    private boolean shouldApplySpearUseItemTransform(LivingEntity livingEntity, ItemStack itemStack, HumanoidArm humanoidArm) {
-        if (itemStack.isEmpty() || itemStack.getUseAnimation() != ItemUseAnimation.SPEAR) {
-            return false;
-        }
-        if (!livingEntity.isUsingItem() || livingEntity.getUseItemRemainingTicks() <= 0) {
-            return false;
-        }
-        return livingEntity.getUsedItemHand() == getRenderedHand(livingEntity, humanoidArm);
-    }
 
     private InteractionHand getRenderedHand(LivingEntity livingEntity, HumanoidArm humanoidArm) {
         return humanoidArm == livingEntity.getMainArm() ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;
@@ -218,9 +180,9 @@ public class CustomPlayerItemInHandLayer extends GeoLayerRenderer<CustomPlayerEn
     }
 
     private void renderVanillaItem(LivingEntity livingEntity, ItemStack itemStack, ItemDisplayContext itemDisplayContext, HumanoidArm humanoidArm, PoseStack poseStack, int packedLight) {
-        SubmitNodeCollector collector = SubmitRenderContext.get();
+        MultiBufferSource collector = SubmitRenderContext.get();
         if (collector != null) {
-            this.itemRenderer.renderItem(livingEntity, itemStack, itemDisplayContext, poseStack, collector, packedLight);
+            this.itemRenderer.renderItem(livingEntity, itemStack, itemDisplayContext, itemDisplayContext == net.minecraft.world.item.ItemDisplayContext.THIRD_PERSON_LEFT_HAND || itemDisplayContext == net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_LEFT_HAND, poseStack, collector, packedLight);
         }
     }
 
@@ -231,3 +193,5 @@ public class CustomPlayerItemInHandLayer extends GeoLayerRenderer<CustomPlayerEn
         return RenderUtils.prepMatrixForLocator(poseStack, model.rightHandBones());
     }
 }
+
+

@@ -6,7 +6,7 @@ import com.elfmcys.yesstevemodel.capability.ModelInfoCapability;
 import com.elfmcys.yesstevemodel.client.ExportResult;
 import com.elfmcys.yesstevemodel.config.ServerConfig;
 import com.elfmcys.yesstevemodel.mixin.ConnectionAccessor;
-import com.elfmcys.yesstevemodel.mixin.ServerCommonPacketListenerImplAccessor;
+import com.elfmcys.yesstevemodel.mixin.ServerGamePacketListenerImplAccessor;
 import com.elfmcys.yesstevemodel.model.format.ServerAnimationInfo;
 import com.elfmcys.yesstevemodel.model.format.ServerModelData;
 import com.elfmcys.yesstevemodel.model.format.ServerModelInfo;
@@ -77,7 +77,7 @@ public final class ServerModelManager {
     private static final long MAX_ACTIVE_UPLOAD_BYTES_HARD_CAP = 512L * 1024L * 1024L;
     private static final long MAX_MODEL_FILE_BYTES = 512L * 1024L * 1024L;
     private static final long MAX_PACK_ICON_BYTES = 4L * 1024L * 1024L;
-    private static final Pattern MODEL_ID_PATTERN = Pattern.compile("[a-z0-9_./-]+");
+    private static final Pattern MODEL_ID_PATTERN = Pattern.compile("[a-z0-9_./()\\-\\[\\] ]+");
     private static final String EXT_YSM = ".ysm";
     private static final String EXT_ZIP = ".zip";
     private static final String EXT_7Z = ".7z";
@@ -960,7 +960,7 @@ public final class ServerModelManager {
 
                             if (sendModelData(uuid, ByteBuffer.wrap(result.data()), new PendingTransfer())) {
                                 Set<String> delivered = deliveredModelIds.computeIfAbsent(uuid, ignored -> ConcurrentHashMap.newKeySet());
-                                for (ServerModelData model : state.allowedModels) {
+                                for (ServerModelData model : modelsToSend) {
                                     delivered.add(model.getModelId());
                                 }
                             }
@@ -987,7 +987,7 @@ public final class ServerModelManager {
         });
     }
 
-    private static void sendPacket03(UUID uuid, PlayerSyncState state, Collection<ServerModelData> modelsToSend) {
+    private static void sendPacket03(UUID uuid, PlayerSyncState state, java.util.Collection<ServerModelData> modelsToSend) {
         int garbageLen = 16 + theRandom.nextInt(48);
         byte[] garbage = new byte[garbageLen];
         theRandom.nextBytes(garbage);
@@ -1542,7 +1542,6 @@ public final class ServerModelManager {
                 }
             }
         } while (stripped);
-        normalized = normalized.replaceAll("[^a-z0-9_./-]+", "_");
         normalized = normalized.replaceAll("/+", "/");
         if (normalized.isBlank() || normalized.contains("..") ) {
             return null;
@@ -1658,7 +1657,7 @@ public final class ServerModelManager {
         if (!serverGamePacketListenerImpl.isAcceptingMessages() || !serverGamePacketListenerImpl.getClass().equals(ServerGamePacketListenerImpl.class)) {
             return null;
         }
-        return ((ServerCommonPacketListenerImplAccessor) serverGamePacketListenerImpl).ysm$getConnection();
+        return ((ServerGamePacketListenerImplAccessor) serverGamePacketListenerImpl).ysm$getConnection();
     }
 
     private static boolean sendModelData(UUID uuid, ByteBuffer byteBuffer, PendingTransfer pendingTransfer) {
@@ -2081,5 +2080,6 @@ public final class ServerModelManager {
         }
     }
 }
+
 
 
