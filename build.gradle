@@ -3,7 +3,7 @@ plugins {
 	id 'maven-publish'
 }
 
-version = '1.1.0-fabric-1.21.11'
+version = '1.1.1-fabric-1.21.11'
 group = 'rip.ysm'
 
 base {
@@ -101,3 +101,4 @@ tasks.register('runTestParser', JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'com.elfmcys.yesstevemodel.client.TestParser'
 }
+
