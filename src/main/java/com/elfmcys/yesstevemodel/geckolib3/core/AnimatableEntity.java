@@ -282,12 +282,15 @@ public abstract class AnimatableEntity<TEntity extends Entity> {
                 }
             }
             if (!renderStateMovementSuppressed && limbSwingAmount <= 1.0E-4f) {
-                float movementSpeed = Mth.clamp(playerCapability != null && !playerCapability.isLocalPlayerModel()
-                        ? ControllerActionResolver.getRemotePlayerGroundSpeed(playerCapability, entity, limbSwingAmount)
-                        : MovementQuery.getGroundSpeed(entity, this.positionTracker, null), 0.0f, 1.0f);
-                if (movementSpeed > 1.0E-4f) {
-                    limbSwingAmount = movementSpeed;
-                    limbSwing = this.seekTime * 0.6662f;
+                boolean isLocal = playerCapability != null && playerCapability.isLocalPlayerModel();
+                if (!isLocal) {
+                    float movementSpeed = Mth.clamp(playerCapability != null
+                            ? ControllerActionResolver.getRemotePlayerGroundSpeed(playerCapability, entity, limbSwingAmount)
+                            : MovementQuery.getGroundSpeed(entity, this.positionTracker, null), 0.0f, 1.0f);
+                    if (movementSpeed > 1.0E-4f) {
+                        limbSwingAmount = movementSpeed;
+                        limbSwing = this.seekTime * 0.6662f;
+                    }
                 }
             }
             if (livingEntity.isBaby()) {
@@ -300,7 +303,8 @@ public abstract class AnimatableEntity<TEntity extends Entity> {
         float lerpBodyRot = 0.0f;
         float lerpHeadRot = 0.0f;
         float netHeadYaw = 0.0f;
-        if (playerCapability != null && playerCapability.hasRenderState()) {
+        boolean hasRenderState = playerCapability != null && playerCapability.hasRenderState();
+        if (hasRenderState) {
             modelData.isChild = livingEntity != null && livingEntity.isBaby();
             lerpBodyRot = playerCapability.getRenderStateBodyRot();
             netHeadYaw = playerCapability.getRenderStateNetHeadYaw();
@@ -311,7 +315,7 @@ public abstract class AnimatableEntity<TEntity extends Entity> {
             netHeadYaw = lerpHeadRot - lerpBodyRot;
         }
 
-        if (shouldSit && (entity.getVehicle() instanceof LivingEntity vehicle)) {
+        if (!hasRenderState && shouldSit && (entity.getVehicle() instanceof LivingEntity vehicle)) {
             lerpBodyRot = Mth.rotLerp(partialTick, vehicle.yBodyRotO, vehicle.yBodyRot);
             netHeadYaw = lerpHeadRot - lerpBodyRot;
             float clampedHeadYaw = Mth.clamp(Mth.wrapDegrees(lerpHeadRot - lerpBodyRot), -85.0f, 85.0f);
