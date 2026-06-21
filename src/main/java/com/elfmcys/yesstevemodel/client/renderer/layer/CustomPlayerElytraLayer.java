@@ -62,7 +62,7 @@ public class CustomPlayerElytraLayer extends GeoLayerRenderer<CustomPlayerEntity
         }
         if (!hidden) {
             this.elytraModel.setupAnim(createElytraState(entity, partialTick, ageInTicks));
-            bufferSource.submitModel(this.elytraModel, createElytraState(entity, partialTick, ageInTicks), poseStack, RenderTypes.armorCutoutNoCull(cloakTextureLocation), packedLightIn, OverlayTexture.NO_OVERLAY, -1, null);
+            bufferSource.submitModel(this.elytraModel, createElytraState(entity, partialTick, ageInTicks), poseStack, RenderTypes.armorCutoutNoCull(cloakTextureLocation), packedLightIn, OverlayTexture.NO_OVERLAY, 0, null);
         }
         poseStack.popPose();
     }
