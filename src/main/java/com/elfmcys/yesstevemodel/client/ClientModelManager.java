@@ -1262,7 +1262,6 @@ public class ClientModelManager {
                 return false;
             }
         }
-        incrementSyncProgress();
         return parsedBundle != null;
     }
 
