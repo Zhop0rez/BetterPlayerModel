@@ -1121,6 +1121,10 @@ public final class ServerModelManager {
                                 YesSteveModel.LOGGER.debug("[BPM-NET] SERVER: Sent chunk {}/{} ({} bytes) of model '{}' to player {}.", offset + length, totalSize, result.data().length, fileName, getPlayerName(uuid));
                                 offset += length;
                             } else {
+                                if (getPlayerConnection(uuid) == null) {
+                                    YesSteveModel.LOGGER.warn("[BPM-NET] SERVER: Player {} disconnected during model transfer. Aborting.", uuid);
+                                    return;
+                                }
                                 try { Thread.sleep(5); } catch (InterruptedException e) {}
                             }
                         }
