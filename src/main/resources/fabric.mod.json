@@ -1,49 +1,49 @@
 {
-    "schemaVersion":  1,
-    "id":  "better_player_model",
-    "version":  "1.1.1c-fabric-26.2",
-    "name":  "Better Player Model",
-    "description":  "A powerful tool for replacing and animating player models. Features universal compatibility with .ysm models via integrated OpenYSM technology. Based on Yes_Steve_Model.",
-    "authors":  [
-                    "Zhoporez (Adapter)",
-                    "Micaftic (FoxModelLoader)",
-                    "Elfmcys (Original Author)",
-                    "OpenYSM Team"
-                ],
-    "contact":  {
-                    "homepage":  ""
-                },
-    "license":  "MIT",
-    "icon":  "BetterPlayerModel.png",
-    "environment":  "*",
-    "entrypoints":  {
-                        "main":  [
-                                     "com.elfmcys.yesstevemodel.fabric.YesSteveModelFabric"
-                                 ],
-                        "client":  [
-                                       "com.elfmcys.yesstevemodel.fabric.client.YesSteveModelFabricClient"
-                                   ]
-                    },
-    "mixins":  [
-                   "better_player_model.mixins.json",
-                   "better_player_model_fabric.mixins.json"
-               ],
-    "depends":  {
-                    "fabricloader":  "\u003e=0.16.10",
-                    "minecraft":  "*",
-                    "java":  "\u003e=21",
-                    "fabric-api":  "*"
-                },
-    "suggests":  {
-                     "another-mod":  "*"
-                 },
-    "custom":  {
-                   "cardinal-components":  [
-                                               "better_player_model:star_models",
-                                               "better_player_model:auth_models",
-                                               "better_player_model:model_info",
-                                               "better_player_model:projectile_model",
-                                               "better_player_model:vehicle_model"
-                                           ]
-               }
+    "schemaVersion": 1,
+    "id": "better_player_model",
+    "version": "1.1.2-fabric-26.2",
+    "name": "Better Player Model",
+    "description": "A powerful tool for replacing and animating player models. Features universal compatibility with .ysm models via integrated OpenYSM technology. Based on Yes_Steve_Model.",
+    "authors": [
+        "Zhoporez (Adapter)",
+        "Micaftic (FoxModelLoader)",
+        "Elfmcys (Original Author)",
+        "OpenYSM Team"
+    ],
+    "contact": {
+        "homepage": ""
+    },
+    "license": "MIT",
+    "icon": "BetterPlayerModel.png",
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            "com.elfmcys.yesstevemodel.fabric.YesSteveModelFabric"
+        ],
+        "client": [
+            "com.elfmcys.yesstevemodel.fabric.client.YesSteveModelFabricClient"
+        ]
+    },
+    "mixins": [
+        "better_player_model.mixins.json",
+        "better_player_model_fabric.mixins.json"
+    ],
+    "depends": {
+        "fabricloader": ">=0.16.10",
+        "minecraft": "*",
+        "java": ">=21",
+        "fabric-api": "*"
+    },
+    "suggests": {
+        "another-mod": "*"
+    },
+    "custom": {
+        "cardinal-components": [
+            "better_player_model:star_models",
+            "better_player_model:auth_models",
+            "better_player_model:model_info",
+            "better_player_model:projectile_model",
+            "better_player_model:vehicle_model"
+        ]
+    }
 }

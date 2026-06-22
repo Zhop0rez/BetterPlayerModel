@@ -74,8 +74,15 @@ public class ClientModelManager {
     private static byte[] lastKey;
     private static byte[] serverKey;
     private static byte[] clientKey;
+    public static final byte[] FIXED_CACHE_KEY = new byte[]{
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+            16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+            32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
+            48, 49, 50, 51, 52, 53, 54, 55
+    };
     private static String currentCacheFolderName;
     private static final AtomicInteger pendingModelsCount = new AtomicInteger(0);
+    private static final AtomicInteger syncSessionId = new AtomicInteger(0);
     private static final int MAX_SERVER_MODEL_BYTES = 512 * 1024 * 1024;
 
     private static final ThreadPoolExecutor modelPhraseExecutor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(),
@@ -296,6 +303,7 @@ public class ClientModelManager {
     private static final List<ModelHash> cachedModelHashes = new ArrayList<>();
 
     private static void handlePacket03(YSMByteBuf buf) throws Exception {
+        int currentSession = syncSessionId.get();
         buf.skipGarbageHeader();
         int type = buf.readVarInt(); // expect 3
         long folderHash = buf.readVarLong();
@@ -313,7 +321,7 @@ public class ClientModelManager {
         File cacheDir = ServerModelManager.CACHE_CLIENT.resolve(currentCacheFolderName).toFile();
         if (!cacheDir.exists()) cacheDir.mkdirs();
 
-        Map<UUID, File> localCacheMap = YSMClientCache.buildCacheIndex(cacheDir, clientKey);
+        Map<UUID, File> localCacheMap = YSMClientCache.buildCacheIndex(cacheDir, FIXED_CACHE_KEY);
         List<ModelHash> modelsToRequest = new ArrayList<>();
 
         int unkSize = buf.readVarInt();
@@ -353,7 +361,7 @@ public class ClientModelManager {
             localModelSources.remove(modelId);
 
             File cachedFile = localCacheMap.get(ctx.uuid);
-            boolean isFileValid = YSMClientCache.verifyFileContent(cachedFile, hash1, hash2, clientKey);
+            boolean isFileValid = YSMClientCache.verifyFileContent(cachedFile, hash1, hash2, FIXED_CACHE_KEY);
 
             boolean alreadyInMemory = modelAssemblyMap != null && modelAssemblyMap.containsKey(modelId);
 
@@ -365,7 +373,7 @@ public class ClientModelManager {
                     isModelReadyList.add(isAuth);
                     incrementSyncProgress();
                 } else {
-                    LazyModelAssembly lazyAssembly = new LazyModelAssembly(modelId, cachedFile, clientKey, isAuth);
+                    LazyModelAssembly lazyAssembly = new LazyModelAssembly(modelId, cachedFile, FIXED_CACHE_KEY, isAuth);
                     pendingModelQueue.add(Pair.of(lazyAssembly, modelId));
                     incrementSyncProgress();
                 }
@@ -455,11 +463,13 @@ public class ClientModelManager {
         if (modelsToRequest.isEmpty()) {
             if (pendingModelsCount.get() == 0) {
                 modelPhraseExecutor.submit(() -> {
+                    if (syncSessionId.get() != currentSession) return;
                     YesSteveModel.LOGGER.info("[BPM-NET] CLIENT: All models loaded from local cache. Handshake complete!");
                     onSyncComplete();
                 });
             }
         } else {
+            if (syncSessionId.get() != currentSession) return;
             pendingModelsCount.addAndGet(modelsToRequest.size());
             
             int garbageLen = 16 + SECURE_RANDOM.nextInt(48);
@@ -484,6 +494,7 @@ public class ClientModelManager {
     }
 
     private static void handlePacket05(YSMByteBuf buf) throws Exception {
+        int currentSession = syncSessionId.get();
         buf.skipGarbageHeader();
         int type = buf.readVarInt();
         if (type != 5) return;
@@ -526,16 +537,17 @@ public class ClientModelManager {
             ctx.fileBuffer = null;
 
             modelPhraseExecutor.submit(() -> {
+                if (syncSessionId.get() != currentSession) return;
                 if (clientKey == null) return;
                 try {
                     String folder = currentCacheFolderName != null ? currentCacheFolderName : "default_cache";
                     File cacheDir = ServerModelManager.CACHE_CLIENT.resolve(folder).toFile();
                     if (!cacheDir.exists()) cacheDir.mkdirs();
 
-                    byte[] cachedFileData = YsmCrypt.transcodeServerDataToClientCache(fileBuffer, serverKey, clientKey, hash1, hash2);
+                    byte[] cachedFileData = YsmCrypt.transcodeServerDataToClientCache(fileBuffer, serverKey, FIXED_CACHE_KEY, hash1, hash2);
                     ModelMemoryProfiler.logBytes("download-transcoded-cache", ctx.modelId, cachedFileData);
 
-                    String legitFileName = YSMClientCache.generateCacheFileName(hash1, hash2, clientKey);
+                    String legitFileName = YSMClientCache.generateCacheFileName(hash1, hash2, FIXED_CACHE_KEY);
                     File outFile = new File(cacheDir, legitFileName);
 
                     try (FileOutputStream fos = new FileOutputStream(outFile)) {
@@ -543,16 +555,18 @@ public class ClientModelManager {
                     }
 
                     YesSteveModel.LOGGER.info("[BPM-NET] CLIENT: Downloaded & Cached model: " + ctx.modelId + " -> " + outFile.getAbsolutePath());
-                    LazyModelAssembly lazyAssembly = new LazyModelAssembly(ctx.modelId, outFile, clientKey, ctx.isAuth);
+                    LazyModelAssembly lazyAssembly = new LazyModelAssembly(ctx.modelId, outFile, FIXED_CACHE_KEY, ctx.isAuth);
                     pendingModelQueue.add(Pair.of(lazyAssembly, ctx.modelId));
                     touchModel(ctx.modelId);
                     incrementSyncProgress();
                 } catch (Exception e) {
                     YesSteveModel.LOGGER.error("[BPM] Failed to save/parse downloaded model: " + ctx.modelId, e);
                 } finally {
-                    if (pendingModelsCount.decrementAndGet() <= 0) {
-                        YesSteveModel.LOGGER.info("[BPM-NET] CLIENT: All missing models downloaded and loaded successfully! Handshake complete.");
-                        onSyncComplete();
+                    if (syncSessionId.get() == currentSession) {
+                        if (pendingModelsCount.decrementAndGet() <= 0) {
+                            YesSteveModel.LOGGER.info("[BPM-NET] CLIENT: All missing models downloaded and loaded successfully! Handshake complete.");
+                            onSyncComplete();
+                        }
                     }
                 }
             });
@@ -615,6 +629,8 @@ public class ClientModelManager {
         serverConnection = null;
 
         modelPhraseExecutor.getQueue().clear();
+        pendingModelQueue.clear();
+        syncSessionId.incrementAndGet();
 
         currentCacheFolderName = null;
         pendingModelsCount.set(0);
@@ -1262,7 +1278,6 @@ public class ClientModelManager {
                 return false;
             }
         }
-        incrementSyncProgress();
         return parsedBundle != null;
     }
 
@@ -1571,7 +1586,7 @@ public class ClientModelManager {
 
                     try {
                         byte[] fileBytes = readLimitedFileBytes(file.toPath(), MAX_SERVER_MODEL_BYTES);
-                        byte[] clearText = YsmCrypt.read(fileBytes, clientKey);
+                        byte[] clearText = YsmCrypt.read(fileBytes, FIXED_CACHE_KEY);
 
                         int coreDataLength;
                         String exportName = file.getName(); // Fallback name
