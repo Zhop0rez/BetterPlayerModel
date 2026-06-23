@@ -294,7 +294,9 @@ public final class PlayerCapability extends CustomPlayerEntity {
 
     public void copyFrom(PlayerCapability playerCapability) {
         this.molangVarsMap.putAll(playerCapability.molangVarsMap);
-        initModelWithTexture(playerCapability.getModelId(), playerCapability.currentTextureName);
+        if (playerCapability.isModelInitialized()) {
+            initModelWithTexture(playerCapability.getModelId(), playerCapability.currentTextureName);
+        }
         setForceDisabled(playerCapability.isForceDisabled());
         playerCapability.molangVarsMap.clear();
         playerCapability.serverVarContainer = null;
@@ -322,3 +324,4 @@ public final class PlayerCapability extends CustomPlayerEntity {
         }
     }
 }
+
