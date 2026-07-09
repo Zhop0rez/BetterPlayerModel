@@ -21,6 +21,7 @@ repositories {
     maven { url "https://libraries.minecraft.net/" }
     maven { url "https://maven.fabricmc.net/" }
     mavenCentral()
+    maven { url "https://raw.githubusercontent.com/Fuzss/modresources/main/maven/" }
 }
 
 def ccaVersion = "8.0.0"
@@ -39,8 +40,8 @@ dependencies {
     include "org.ladysnake.cardinal-components-api:cardinal-components-level:${ccaVersion}"
     include "org.ladysnake.cardinal-components-api:cardinal-components-scoreboard:${ccaVersion}"
     include "org.ladysnake.cardinal-components-api:cardinal-components-world:${ccaVersion}"
-    modImplementation "maven.modrinth:forge-config-api-port:86ROVP2H"
-    include "maven.modrinth:forge-config-api-port:86ROVP2H"
+    modImplementation "maven.modrinth:forge-config-api-port:jUe0ucoE"
+    include "maven.modrinth:forge-config-api-port:jUe0ucoE"
     implementation "com.electronwill.night-config:core:3.8.3"
     include "com.electronwill.night-config:core:3.8.3"
     implementation "com.electronwill.night-config:toml:3.8.3"
@@ -68,18 +69,22 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 java {
-	withSourcesJar()
+	// withSourcesJar()
 	sourceCompatibility = JavaVersion.VERSION_25
 	targetCompatibility = JavaVersion.VERSION_25
 }
+
+tasks.matching { it.name == 'sourcesJar' || it.name == 'remapSourcesJar' }.configureEach {
+    enabled = false
+}
+
 
 tasks.withType(Jar).configureEach {
     exclude("net/minecraft/**")
     exclude("net/fabricmc/**")
     exclude("com/mojang/**")
     
-    exclude('net/irisshaders/**')
-    exclude('natives/**')
+    exclude("net/irisshaders/**")
 }
 
 loom {

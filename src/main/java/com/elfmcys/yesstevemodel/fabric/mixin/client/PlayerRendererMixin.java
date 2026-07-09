@@ -3,6 +3,8 @@ package com.elfmcys.yesstevemodel.fabric.mixin.client;
 import com.elfmcys.yesstevemodel.capability.PlayerCapability;
 import com.elfmcys.yesstevemodel.client.event.ReplacePlayerRenderEvent;
 import com.elfmcys.yesstevemodel.client.renderer.ModelPreviewRenderer;
+import com.elfmcys.yesstevemodel.config.GeneralConfig;
+import com.elfmcys.yesstevemodel.mixin.client.EntityRendererInvoker;
 import com.elfmcys.yesstevemodel.mixin.client.MinecraftAccessor;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -59,6 +61,9 @@ public abstract class PlayerRendererMixin {
                 try {
                     
                     if (ReplacePlayerRenderEvent.onRenderPlayerPre(player, yaw, partialTick, poseStack, collector, collector, packedLight)) {
+                        if (!GeneralConfig.safeGet(GeneralConfig.HIDE_MODEL_PLAYER_NAMES, true)) {
+                            ((EntityRendererInvoker) this).ysm$submitNameDisplay(state, poseStack, collector, cameraState);
+                        }
                         ci.cancel();
                     }
                 } finally {
