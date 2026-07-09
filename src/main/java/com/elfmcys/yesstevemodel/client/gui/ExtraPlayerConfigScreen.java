@@ -33,6 +33,7 @@ public class ExtraPlayerConfigScreen extends OptionScreen {
 
         OptionGroup rendering = new OptionGroup("rendering")
                 .add(new BooleanOptionRow(0, 0, 0, 22, Option.ofBoolean("disable_player_render", ExtraPlayerRenderConfig.DISABLE_PLAYER_RENDER)))
+                .add(new BooleanOptionRow(0, 0, 0, 22, Option.ofBoolean("hide_model_player_names", GeneralConfig.HIDE_MODEL_PLAYER_NAMES)))
                 .add(new BooleanOptionRow(0, 0, 0, 22, Option.ofBoolean("disable_projectile_model", GeneralConfig.DISABLE_PROJECTILE_MODEL)))
                 .add(new BooleanOptionRow(0, 0, 0, 22, Option.ofBoolean("disable_vehicle_model", GeneralConfig.DISABLE_VEHICLE_MODEL)))
                 .add(new BooleanOptionRow(0, 0, 0, 22, Option.ofBoolean("disable_external_first_person_anim", GeneralConfig.DISABLE_EXTERNAL_FP_ANIM)));

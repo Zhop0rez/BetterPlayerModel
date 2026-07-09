@@ -31,6 +31,8 @@
   "gui.better_player_model.config.print_animation_roulette_msg": "Виводити повідомлення про відтворення анімації рулетки",
   "gui.better_player_model.config.disable_self_hands": "Вимкнути відображення рук власного гравця",
   "gui.better_player_model.config.disable_player_render": "Вимкнути додаткове відображення гравця",
+  "gui.better_player_model.config.hide_model_player_names": "Hide player name tags for custom models",
+  "gui.better_player_model.config.hide_model_player_names.desc": "When enabled, BPM hides vanilla name tags for players using custom models. Disable this to show names above modeled players.",
   "gui.better_player_model.config.use_compatibility_renderer": "Використовувати сумісний рендерер",
   "gui.better_player_model.config.sound_volume": "Гучність анімації: ",
   "gui.better_player_model.disclaimer.text": "Дякуємо за використання моду, будь ласка, уважно прочитайте відповідні умови та погодьтеся з ними:\n\n\n1. Завантаження та використання моду повністю безкоштовне, а конфіденційність моделі не гарантується в жодній формі\n\n2. Команда розробників не бере участі у відповідних операціях з моделями, будь ласка, беріть на себе відповідальність за можливі суперечки\n\n3. Творець користується авторськими правами на створену модель і також несе відповідну відповідальність, що не має відношення до команди розробників\n\n4. Будь ласка, не створюйте моделі, які порушують закони та правила. Ця команда розробників також виступає проти будь-якої форми створення контенту R18/NSFW! Ми ніколи не брали участі у створенні подібного контенту!",

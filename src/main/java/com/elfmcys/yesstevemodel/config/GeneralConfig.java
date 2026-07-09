@@ -26,6 +26,8 @@ public class GeneralConfig {
 
     public static ModConfigSpec.BooleanValue SHOW_MODEL_ID_FIRST;
 
+    public static ModConfigSpec.BooleanValue HIDE_MODEL_PLAYER_NAMES;
+
     public static ModConfigSpec.BooleanValue SOPHISTICATEDBACKPACK;
 
     public static ModConfigSpec.BooleanValue PARCOOL;
@@ -138,6 +140,8 @@ public class GeneralConfig {
         SOUND_VOLUME = builder.defineInRange("SoundVolume", 100.0d, 0.0d, 100.0d);
         builder.comment("Whether to display model ID first in the model selection screen, instead of the model name filled in by the model author.");
         SHOW_MODEL_ID_FIRST = builder.define("ShowModelIdFirst", false);
+        builder.comment("Hide vanilla name tags above players while their custom model is rendered.");
+        HIDE_MODEL_PLAYER_NAMES = builder.define("HideModelPlayerNames", true);
         builder.pop();
         builder.push("Integration");
         SOPHISTICATEDBACKPACK = builder.define("SophisticatedBackpack", true);

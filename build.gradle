@@ -7,7 +7,7 @@ version = project.mod_version
 group = 'rip.ysm'
 
 base {
-	archivesName = 'better-player-model'
+	archivesName = project.archives_name
 }
 
 repositories {
@@ -83,6 +83,11 @@ java {
 	sourceCompatibility = JavaVersion.VERSION_21
 	targetCompatibility = JavaVersion.VERSION_21
 }
+
+tasks.matching { it.name == 'sourcesJar' || it.name == 'remapSourcesJar' }.configureEach {
+    enabled = false
+}
+
 
 tasks.withType(Jar).configureEach {
     exclude("net/minecraft/**")
