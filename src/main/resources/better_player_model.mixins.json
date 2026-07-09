@@ -9,7 +9,7 @@
     "defaultRequire": 1
   },
   "client": [
-    "client.ArrowEntityAccessor", "client.BufferSourceMixin", "client.ClientPacketListenerMixin",
+    "client.ArrowEntityAccessor", "client.BufferSourceMixin", "client.ClientPacketListenerMixin", "client.EntityRendererInvoker",
     "client.EntityRenderDispatcherAccessor", "client.EntityRenderDispatcherMixin",
     "client.FishingHookAccessor", "client.InventoryScreenMixin", "client.LivingEntityAccessor",
     "client.LivingRendererMixin", "client.MinecraftAccessor", "client.PauseScreenMixin", "client.ScreenAccessor",
