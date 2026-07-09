@@ -14,6 +14,8 @@
   "gui.better_player_model.config.print_animation_roulette_msg": "Afficher ou non le message de lecture de la roulette d'animation",
   "gui.better_player_model.config.disable_self_hands": "Empêche le rendu des mains du joueur",
   "gui.better_player_model.config.disable_player_render": "Désactiver le rendu supplémentaire du joueur",
+  "gui.better_player_model.config.hide_model_player_names": "Hide player name tags for custom models",
+  "gui.better_player_model.config.hide_model_player_names.desc": "When enabled, BPM hides vanilla name tags for players using custom models. Disable this to show names above modeled players.",
   "gui.better_player_model.disclaimer.read": "J'ai lu et j'accepte les conditions d'utilisation",
   "gui.better_player_model.disclaimer.close": "Fermer"
 }
