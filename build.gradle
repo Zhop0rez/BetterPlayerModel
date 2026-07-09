@@ -73,6 +73,14 @@ java {
 	targetCompatibility = JavaVersion.VERSION_25
 }
 
+tasks.named('sourcesJar') {
+    enabled = false
+}
+
+tasks.matching { it.name == 'remapSourcesJar' }.configureEach {
+    enabled = false
+}
+
 tasks.withType(Jar).configureEach {
     exclude("net/minecraft/**")
     exclude("net/fabricmc/**")

@@ -32,6 +32,8 @@
   "gui.better_player_model.config.print_animation_roulette_msg": "Animasyon rulet oynama mesajının yazdırılıp yazdırılmayacağı",
   "gui.better_player_model.config.disable_self_hands": "Kendi Ellerinin Oluşmasını Engeller",
   "gui.better_player_model.config.disable_player_render": "Ekstra oyuncu modelini devre dışı bırak",
+  "gui.better_player_model.config.hide_model_player_names": "Hide player name tags for custom models",
+  "gui.better_player_model.config.hide_model_player_names.desc": "When enabled, BPM hides vanilla name tags for players using custom models. Disable this to show names above modeled players.",
   "gui.better_player_model.config.use_compatibility_renderer": "Uyumluluk oluşturucusunu kullan",
   "gui.better_player_model.config.sound_volume": "Animasyon Ses Düzeyi: ",
   "gui.better_player_model.disclaimer.read": "Kullanım Şartlarını Okudum ve Kabul Ediyorum",
