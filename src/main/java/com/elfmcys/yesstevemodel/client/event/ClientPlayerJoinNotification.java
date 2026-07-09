@@ -4,12 +4,9 @@ import com.elfmcys.yesstevemodel.YesSteveModel;
 import com.elfmcys.yesstevemodel.client.ClientMessages;
 import com.elfmcys.yesstevemodel.client.ClientModelManager;
 import com.elfmcys.yesstevemodel.mixin.client.MinecraftAccessor;
-import com.elfmcys.yesstevemodel.network.NetworkHandler;
 import dev.architectury.event.events.client.ClientPlayerEvent;
 import net.minecraft.client.Minecraft;
-import java.util.concurrent.Executor;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.network.chat.Component;
 
 public final class ClientPlayerJoinNotification {
 
@@ -36,20 +33,6 @@ public final class ClientPlayerJoinNotification {
         if (((MinecraftAccessor) Minecraft.getInstance()).ysm$isLocalServer()) {
             return;
         }
-        Thread thread = new Thread(() -> {
-            try {
-                Thread.sleep(60000L);
-                ((Executor) Minecraft.getInstance()).execute(() -> {
-                    LocalPlayer localPlayer = Minecraft.getInstance().player;
-                    if (localPlayer != null && localPlayer.connection.isAcceptingMessages() && !NetworkHandler.isConnectionValid(localPlayer.connection.getConnection())) {
-                        localPlayer.displayClientMessage(Component.translatable("message.better_player_model.client.server_not_found"), false);
-                    }
-                });
-            } catch (InterruptedException ignored) {
-            }
-        });
-        thread.setDaemon(true);
-        thread.start();
     }
 
     private static void onPlayerQuit(LocalPlayer player) {
@@ -61,5 +44,8 @@ public final class ClientPlayerJoinNotification {
             ClientModelManager.resetSync();
         }
         com.elfmcys.yesstevemodel.capability.PlayerCapability.clearAll();
+    }
+
+    public static void tick() {
     }
 }

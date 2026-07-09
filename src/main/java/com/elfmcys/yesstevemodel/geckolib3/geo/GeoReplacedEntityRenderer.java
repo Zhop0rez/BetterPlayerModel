@@ -1,6 +1,7 @@
 package com.elfmcys.yesstevemodel.geckolib3.geo;
 
 import com.elfmcys.yesstevemodel.capability.VehicleCapability;
+import com.elfmcys.yesstevemodel.config.GeneralConfig;
 import com.elfmcys.yesstevemodel.client.entity.LivingAnimatable;
 import com.elfmcys.yesstevemodel.geckolib3.core.event.predicate.AnimationEvent;
 import com.elfmcys.yesstevemodel.geckolib3.core.util.Color;
@@ -74,7 +75,7 @@ public abstract class GeoReplacedEntityRenderer<TEntity extends LivingEntity, T 
 
     @Override
     public void renderEarly(T animatable, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, VertexConsumer buffer, int packedLight, int packedOverlayIn, float red, float green, float blue, float alpha) {
-        // жµЈи·Ёж•¤ .set йЏ‰гѓ©дј©йЌЏе¶†зЎеЁ†в„ѓи¦†йЏЊж’іећ±еЇ¤зѓжџЉйђЁ?Matrix4f, йЌ‘еї“зљЇ allocation rate
+        // Р¶ВµР€РёВ·РЃР¶вЂўВ¤ .set Р№РЏвЂ°РіС“В©РґСВ©Р№РЊРЏРµВ¶вЂ Р·ВРЋРµРЃвЂ РІвЂћС“РёВ¦вЂ Р№РЏРЉР¶вЂ™С–РµС›В±РµР‡В¤Р·С“ВР¶СџР‰Р№С’РЃ?Matrix4f, Р№РЊвЂРµС—вЂњР·С™Р‡ allocation rate
         this.renderEarlyMat.set(poseStack.last().pose());
         IGeoRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight, packedOverlayIn, red, green, blue, alpha);
     }
@@ -93,7 +94,7 @@ public abstract class GeoReplacedEntityRenderer<TEntity extends LivingEntity, T 
         Minecraft minecraft = Minecraft.getInstance();
         if (event != null && minecraft.player != null) {
             EntityModelData modelData = event.getModelData();
-            // жµЈи·Ёж•¤ .set йЏ‰гѓ©дј©йЌЏе¶†зЎеЁ†в„ѓи¦†йЏЊж’іећ±еЇ¤зѓжџЉйђЁ?Matrix4f, йЌ‘еї“зљЇ allocation rate
+            // Р¶ВµР€РёВ·РЃР¶вЂўВ¤ .set Р№РЏвЂ°РіС“В©РґСВ©Р№РЊРЏРµВ¶вЂ Р·ВРЋРµРЃвЂ РІвЂћС“РёВ¦вЂ Р№РЏРЉР¶вЂ™С–РµС›В±РµР‡В¤Р·С“ВР¶СџР‰Р№С’РЃ?Matrix4f, Р№РЊвЂРµС—вЂњР·С™Р‡ allocation rate
             this.dispatchedMat.set(poseStack.last().pose());
             setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
             poseStack.pushPose();
@@ -134,7 +135,9 @@ public abstract class GeoReplacedEntityRenderer<TEntity extends LivingEntity, T 
             }
             poseStack.popPose();
         }
-        ((LivingEntityRendererAccessor) this).tlm$renderNameTag(entity, entityYaw, partialTick, poseStack, multiBufferSource, packedLight);
+        if (!GeneralConfig.safeGet(GeneralConfig.HIDE_MODEL_PLAYER_NAMES, true)) {
+            ((LivingEntityRendererAccessor) this).tlm$renderNameTag(entity, entityYaw, partialTick, poseStack, multiBufferSource, packedLight);
+        }
         RenderLivingBridge.firePost(entity, this, partialTick, poseStack, multiBufferSource, packedLight);
     }
 
