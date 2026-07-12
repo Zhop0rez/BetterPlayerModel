@@ -1,0 +1,66 @@
+plugins {
+    id 'java'
+    id 'com.gradleup.shadow' version '9.4.2'
+}
+
+group = 'com.example'
+version = '1.0'
+
+repositories {
+    mavenCentral()
+    maven {
+        url = 'https://repo.papermc.io/repository/maven-public/'
+    }
+    maven { url = 'https://jitpack.io' }
+}
+
+dependencies {
+    compileOnly 'io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT'
+    compileOnly 'io.netty:netty-buffer:4.1.97.Final'
+    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'com.github.luben:zstd-jni:1.5.5-11'
+    implementation 'commons-io:commons-io:2.15.1'
+    implementation 'com.github.TartaricAlkaline:ImageStream:-SNAPSHOT'
+    implementation 'org.joml:joml:1.10.8'
+    implementation 'com.google.guava:guava:33.2.1-jre'
+    implementation 'com.google.j2objc:j2objc-annotations:3.0.0'
+    implementation 'it.unimi.dsi:fastutil:8.5.14'
+}
+
+def targetJavaVersion = 17
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+processResources {
+    filesMatching('plugin.yml') {
+        expand(version: project.version)
+    }
+}
+
+tasks.named('jar') {
+    archiveClassifier.set('plain')
+}
+
+tasks.named('shadowJar') {
+    archiveClassifier.set('')
+
+    relocate 'com.google.gson', 'com.example.bpmplugin.libs.gson'
+    relocate 'com.github.luben.zstd', 'com.example.bpmplugin.libs.zstd'
+    relocate 'org.apache.commons.io', 'com.example.bpmplugin.libs.commonsio'
+    relocate 'org.joml', 'com.example.bpmplugin.libs.joml'
+    relocate 'com.google.common', 'com.example.bpmplugin.libs.guava'
+    relocate 'com.google.j2objc.annotations', 'com.example.bpmplugin.libs.j2objc'
+    relocate 'it.unimi.dsi.fastutil', 'com.example.bpmplugin.libs.fastutil'
+    relocate 'rip.ysm.imagestream', 'com.example.bpmplugin.libs.imagestream'
+}
+
+tasks.named('build') {
+    dependsOn tasks.named('shadowJar')
+}

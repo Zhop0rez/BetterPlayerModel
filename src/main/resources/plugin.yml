@@ -1,0 +1,7 @@
+name: PaperBPM
+version: '${version}'
+main: com.example.bpmplugin.BetterPlayerModelPlugin
+api-version: '1.20'
+authors: [Zhoporez]
+description: Server-side synchronization plugin for BetterPlayerModel.
+prefix: BPM

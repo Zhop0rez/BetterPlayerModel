@@ -1,0 +1,11 @@
+.gradle/
+build/
+local.properties
+.vs/
+out/
+bin/
+*.log
+*.log.gz
+*.dat
+*.ysm
+*.tmp

@@ -1,0 +1,26 @@
+network:
+  # Bandwidth limitation during distributing models to players. (In Mbps)
+  # Default: 100
+  global-bandwidth-limit: 100
+
+  # Bandwidth limitation per player during distributing models. (In Mbps)
+  # Default: 5
+  player-bandwidth-limit: 5
+
+upload:
+  # Whether clients are allowed to upload .ysm or .zip model files into the server custom model folder
+  # Default: true
+  allow-model-upload: true
+
+  # Maximum size of a single uploaded .ysm file, in MiB
+  # Default: 128
+  model-upload-max-mib: 128
+
+  # How many upload chunks a client may send per tick
+  # Default: 4
+  model-upload-chunks-per-tick: 4
+
+models:
+  # Require bpm.model.<model-id> for selecting a non-default server model.
+  # Default: false
+  require-model-permission: false
