@@ -1,6 +1,7 @@
 package com.elfmcys.yesstevemodel.geckolib3.core.molang.builtin;
 
 import com.elfmcys.yesstevemodel.capability.PlayerCapability;
+import com.elfmcys.yesstevemodel.client.animation.ControllerActionResolver;
 import com.elfmcys.yesstevemodel.client.renderer.ModelPreviewRenderer;
 import com.elfmcys.yesstevemodel.geckolib3.core.controller.AnimationControllerContext;
 import com.elfmcys.yesstevemodel.audio.PlaybackFlags;
@@ -69,8 +70,10 @@ public class QueryBinding extends ContextBinding {
         entityVar("eye_target_x_rotation", ctx -> ctx.entity().getViewXRot(ctx.animationEvent().getPartialTick()));
         entityVar("eye_target_y_rotation", ctx -> ctx.entity().getViewYRot(ctx.animationEvent().getPartialTick()));
         entityVar("ground_speed", ctx -> {
-            boolean remotePlayer = ctx.geoInstance() instanceof PlayerCapability cap && !cap.isLocalPlayerModel();
-            return MovementQuery.getGroundSpeed(ctx.entity(), ctx.geoInstance().getPositionTracker(), ctx.animationEvent(), !remotePlayer);
+            if (ctx.geoInstance() instanceof PlayerCapability cap && !cap.isLocalPlayerModel()) {
+                return ControllerActionResolver.getRemotePlayerGroundSpeed(cap, ctx.entity());
+            }
+            return MovementQuery.getGroundSpeed(ctx.entity());
         });
         entityVar("modified_distance_moved", ctx -> ctx.entity().moveDist);
         entityVar("vertical_speed", QueryBinding::getVerticalSpeed);
