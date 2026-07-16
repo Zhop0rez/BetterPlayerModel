@@ -1,12 +1,9 @@
 package com.elfmcys.yesstevemodel.geckolib3.util;
 
 import com.elfmcys.yesstevemodel.geckolib3.core.EntityFrameStateTracker;
-import com.elfmcys.yesstevemodel.geckolib3.core.event.predicate.AnimationEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
 
 public final class MovementQuery {
 
@@ -43,46 +40,14 @@ public final class MovementQuery {
         return Vec3.ZERO;
     }
 
-    public static float getGroundSpeed(Entity entity, EntityFrameStateTracker<?> tracker, @Nullable AnimationEvent<?> event) {
-        return getGroundSpeed(entity, tracker, event, true);
-    }
-
-    public static float getGroundSpeed(Entity entity, EntityFrameStateTracker<?> tracker, @Nullable AnimationEvent<?> event, boolean includeWalkAnimation) {
-        Vec3 trackerDelta = sanitize(tracker.getPositionDelta());
-        float trackerSpeed = getHorizontalSpeedFromDelta(trackerDelta, tracker);
-        if (isUsable(trackerSpeed)) {
-            return trackerSpeed;
-        }
-
-        if (includeWalkAnimation && event != null) {
-            float limbSwingAmount = Math.abs(event.getLimbSwingAmount());
-            if (isUsable(limbSwingAmount)) {
-                return limbSwingAmount;
-            }
-        }
-
-        if (includeWalkAnimation && entity instanceof LivingEntity livingEntity) {
-            float partialTick = event != null ? event.getPartialTick() : 1.0f;
-            float walkSpeed = Math.abs(livingEntity.walkAnimation.speed(partialTick));
-            if (isUsable(walkSpeed)) {
-                return walkSpeed;
-            }
-        }
-
+    public static float getGroundSpeed(Entity entity) {
         Vec3 deltaMovement = sanitize(entity.getDeltaMovement());
         float velocitySpeed = 20.0f * horizontalLength(deltaMovement);
-        if (isUsable(velocitySpeed)) {
-            return velocitySpeed;
-        }
-
-        Vec3 tickDelta = sanitize(new Vec3(entity.getX() - entity.xo, entity.getY() - entity.yo, entity.getZ() - entity.zo));
-        float tickSpeed = 20.0f * horizontalLength(tickDelta);
-        return Float.isFinite(tickSpeed) && tickSpeed > 0.0f ? tickSpeed : 0.0f;
+        return Float.isFinite(velocitySpeed) && velocitySpeed > 0.0f ? velocitySpeed : 0.0f;
     }
 
     public static float getImmediateGroundSpeed(Entity entity) {
-        Vec3 deltaMovement = sanitize(entity.getDeltaMovement());
-        float velocitySpeed = 20.0f * horizontalLength(deltaMovement);
+        float velocitySpeed = getGroundSpeed(entity);
         if (isUsable(velocitySpeed)) {
             return velocitySpeed;
         }
