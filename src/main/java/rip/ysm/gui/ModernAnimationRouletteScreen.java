@@ -261,14 +261,14 @@ public class ModernAnimationRouletteScreen extends Screen {
         float r = 34.0f;
         int ix = centerX + (int) (r * Math.cos(mid)) - 8;
         int iy = centerY + (int) (r * Math.sin(mid)) - 8;
-        GlStateManager._enableBlend(0);
+        GlStateManager._enableBlend();
         GlStateManager._blendFuncSeparate(770, 771, 1, 0);
 /*         if (hover) g.setColor(1.0f, 1.0f, 0.6f, 1.0f);
  */
         g.blit(settingsIcon, ix, iy, ix + 16, iy + 16, 0.0f, 1.0f, 0.0f, 1.0f);
 /*         if (hover) g.setColor(1.0f, 1.0f, 1.0f, 1.0f);
  */
-        GlStateManager._disableBlend(0);
+        GlStateManager._disableBlend();
     }
 
     private void renderLabels(GuiGraphicsExtractor g) {
@@ -324,10 +324,10 @@ public class ModernAnimationRouletteScreen extends Screen {
     private void renderCenter(GuiGraphicsExtractor g) {
         if (animatableModel.getEntity() instanceof Player) {
             Identifier tex = AnimationLockEvent.isLocked() ? lockIcon : unlockIcon;
-            GlStateManager._enableBlend(0);
+            GlStateManager._enableBlend();
             GlStateManager._blendFuncSeparate(770, 771, 1, 0);
             g.blit(tex, centerX - 16, centerY - 16, centerX + 16, centerY + 16, 0.0f, 1.0f, 0.0f, 1.0f);
-            GlStateManager._disableBlend(0);
+            GlStateManager._disableBlend();
         } else {
             g.centeredText(this.font, Component.translatable("gui.better_player_model.roulette.stop"), centerX, centerY - 4, 0xFFFFFFFF);
         }

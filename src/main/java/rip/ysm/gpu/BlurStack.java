@@ -86,7 +86,7 @@ public final class BlurStack {
         // TODO: mvpScratch.mul(graphics.poseStack.last().pose()); // poseStack removed in MC 26.x GuiGraphicsExtractor
         mvpScratch.get(mvpFloats);
 
-        GlStateManager._enableBlend(0);
+        GlStateManager._enableBlend();
         GlStateManager._blendFuncSeparate(770, 771, 1, 0);
         GlStateManager._disableCull();
         GlStateManager._disableDepthTest();
@@ -131,7 +131,7 @@ public final class BlurStack {
 
         GlStateManager._glUseProgram(0);
         GlStateManager._glBindVertexArray(0);
-        GlStateManager._disableBlend(0);
+        GlStateManager._disableBlend();
 
         regions.clear();
     }

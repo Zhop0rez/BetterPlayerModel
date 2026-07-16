@@ -86,7 +86,7 @@ public class OuterFileTexture extends AbstractTexture implements ITextureMap {
             this.texture = device.createTexture(
                     () -> "YSM outer texture",
                     GpuTexture.USAGE_TEXTURE_BINDING | GpuTexture.USAGE_COPY_DST,
-                    com.mojang.blaze3d.GpuFormat.RGBA8_UNORM,
+                    com.mojang.blaze3d.textures.TextureFormat.RGBA8,
                     width,
                     height,
                     1,

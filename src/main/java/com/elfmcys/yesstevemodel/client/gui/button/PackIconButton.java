@@ -38,11 +38,11 @@ public class PackIconButton extends Button {
         Font font = minecraft.font;
         GuiGraphicsExtractor.fillGradient(getX(), getY(), getX() + this.width, getY() + this.height, -6598176, -6598176);
         Identifier location = FileTypeUtil.getPackIconLocation(this.packData.getPath());
-        GlStateManager._enableBlend(0);
+        GlStateManager._enableBlend();
         GlStateManager._blendFuncSeparate(770, 771, 1, 0);
         Identifier iconLocation = getReadyIconLocation(minecraft, location, this.packData.getTexture());
         GuiGraphicsExtractor.blit(iconLocation, getX(), getY(), getX() + this.width, getY() + this.height, 0.0f, 1.0f, 0.0f, 1.0f);
-        GlStateManager._disableBlend(0);
+        GlStateManager._disableBlend();
         GuiGraphicsExtractor.fillGradient(getX(), getY() + this.height - 24, getX() + this.width, getY() + this.height, 0xAA000000, 0xAA000000);
         List listSplit = font.split(getMessage(), 45);
         if (listSplit.size() > 1) {

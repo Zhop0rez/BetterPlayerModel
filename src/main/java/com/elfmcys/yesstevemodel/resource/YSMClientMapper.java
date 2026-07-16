@@ -417,6 +417,8 @@ public class YSMClientMapper {
             bakedBones.add(bb);
         }
 
+        CoplanarFaceStabilizer.stabilize(bakedBones);
+
         // е›ћеЎ«з€¶зє§зґўеј•
         for (GeoModel.BakedBone b : bakedBones) {
             String parentName = parentMap.get(b.name);

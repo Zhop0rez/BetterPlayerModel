@@ -337,10 +337,10 @@ public class ModelButton extends Button {
         int y = getY();
         GuiGraphicsExtractor.fillGradient(x, y, x + this.width, y + this.height, this.backgroundColor, this.backgroundColor);
         if (this.backgroundTexture != null) {
-            GlStateManager._enableBlend(0);
+            GlStateManager._enableBlend();
             GlStateManager._blendFuncSeparate(770, 771, 1, 0);
             GuiGraphicsExtractor.blit(this.backgroundTexture.getResourceLocation().get(), x, y, x + this.width, y + this.height, 0.0f, 1.0f, 0.0f, 1.0f);
-            GlStateManager._disableBlend(0);
+            GlStateManager._disableBlend();
         }
         int previewBottom = y + this.height - 20;
         GuiGraphicsExtractor.enableScissor(x, y, x + this.width, previewBottom);
@@ -348,10 +348,10 @@ public class ModelButton extends Button {
         GuiGraphicsExtractor.disableScissor();
         int starZ = 3500;
         if (this.foregroundTexture != null) {
-            GlStateManager._enableBlend(0);
+            GlStateManager._enableBlend();
             GlStateManager._blendFuncSeparate(770, 771, 1, 0);
             GuiGraphicsExtractor.blit(this.foregroundTexture.getResourceLocation().get(), x, y, x + this.width, y + this.height, 0.0f, 1.0f, 0.0f, 1.0f);
-            GlStateManager._disableBlend(0);
+            GlStateManager._disableBlend();
         }
         if (this.isStarred) {
             GuiGraphicsExtractor.fillGradient(x, y, x + this.width, y + this.height, -1625152990, -1625152990);

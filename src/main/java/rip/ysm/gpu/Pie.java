@@ -34,7 +34,7 @@ public final class Pie {
         float cb = (rgba & 0xFF) / 255.0f;
         float ca = ((rgba >> 24) & 0xFF) / 255.0f;
 
-        GlStateManager._enableBlend(0);
+        GlStateManager._enableBlend();
         GlStateManager._blendFuncSeparate(770, 771, 1, 0);
         GlStateManager._disableCull();
         GlStateManager._disableDepthTest();
@@ -57,7 +57,7 @@ public final class Pie {
         GlStateManager._glUseProgram(0);
         GlStateManager._glBindVertexArray(0);
 
-        GlStateManager._disableBlend(0);
+        GlStateManager._disableBlend();
     }
 }
 

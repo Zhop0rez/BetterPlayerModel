@@ -286,7 +286,7 @@ public abstract class AnimatableEntity<TEntity extends Entity> {
                 if (!isLocal) {
                     float movementSpeed = Mth.clamp(playerCapability != null
                             ? ControllerActionResolver.getRemotePlayerGroundSpeed(playerCapability, entity, limbSwingAmount)
-                            : MovementQuery.getGroundSpeed(entity, this.positionTracker, null), 0.0f, 1.0f);
+                            : MovementQuery.getGroundSpeed(entity), 0.0f, 1.0f);
                     if (movementSpeed > 1.0E-4f) {
                         limbSwingAmount = movementSpeed;
                         limbSwing = this.seekTime * 0.6662f;

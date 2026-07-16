@@ -237,6 +237,8 @@ public final class ModelPreviewRenderer {
         setExtraPlayerMode(extraPlayer || previousExtraPlayerMode);
         SubmitRenderContext.set(collector != null ? collector : previousCollector);
         LivingEntity livingEntity = (LivingEntity) animatable.getEntity();
+        // Sample movement-facing queries before preview-only rotations are applied.
+        animatable.processAnimationImpl(partialTick, false);
         poseStack.pushPose();
         poseStack.translate(offsetX, offsetY, 0.0d);
         Quaternionf rotationZ = Axis.ZP.rotationDegrees(180.0f);
@@ -312,6 +314,8 @@ public final class ModelPreviewRenderer {
     private static void renderFreeGuiPreview(PoseStack poseStack, float offsetX, float offsetY, float pitch, float yaw, float partialTick, AnimatableEntity animatableEntity, GeoReplacedEntityRenderer renderer, boolean renderGround, SubmitNodeCollector collector) {
         setPreviewMode(true);
         LivingEntity livingEntity = (LivingEntity) animatableEntity.getEntity();
+        // Keep controller direction independent from the preview camera yaw.
+        animatableEntity.processAnimationImpl(partialTick, false);
         poseStack.pushPose();
         poseStack.translate(offsetX, offsetY, 0.0d);
         poseStack.translate(0.0d, 0.8d, 0.0d);
