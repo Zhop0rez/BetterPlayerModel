@@ -72,7 +72,7 @@ public class QueryBinding extends ContextBinding {
             if (ctx.geoInstance() instanceof PlayerCapability cap && !cap.isLocalPlayerModel()) {
                 return ControllerActionResolver.getRemotePlayerGroundSpeed(cap, ctx.entity());
             }
-            return MovementQuery.getGroundSpeed(ctx.entity(), ctx.geoInstance().getPositionTracker(), ctx.animationEvent());
+            return MovementQuery.getGroundSpeed(ctx.entity());
         });
         entityVar("modified_distance_moved", ctx -> ctx.entity().moveDist);
         entityVar("vertical_speed", QueryBinding::getVerticalSpeed);
