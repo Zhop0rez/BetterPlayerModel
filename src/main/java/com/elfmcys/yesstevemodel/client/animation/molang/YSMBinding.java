@@ -325,7 +325,7 @@ public class YSMBinding extends ContextBinding {
         if (context.geoInstance() instanceof PlayerCapability cap && !cap.isLocalPlayerModel()) {
             return ControllerActionResolver.getRemotePlayerGroundSpeed(cap, context.entity());
         }
-        return MovementQuery.getGroundSpeed(context.entity(), context.geoInstance().getPositionTracker(), context.animationEvent());
+        return MovementQuery.getGroundSpeed(context.entity());
     }
 
     private static boolean getBoatPaddleState(IContext<Entity> context, int paddle) {

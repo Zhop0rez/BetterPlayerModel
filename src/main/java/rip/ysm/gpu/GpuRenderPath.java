@@ -112,7 +112,7 @@ public final class GpuRenderPath {
         GlStateManager._disableCull();
         GlStateManager._enableDepthTest();
         GlStateManager._depthMask(true);
-        GlStateManager._disableBlend(0);
+        GlStateManager._disableBlend();
 
         stateCache.activeTexture(GL13.GL_TEXTURE0 + 2);
         bindTextureView(lightmapTexture);
@@ -160,11 +160,11 @@ public final class GpuRenderPath {
         drawMeshParts(mesh, renderPartMask);
 
         if (translucentTexture) {
-            GlStateManager._enableBlend(0);
+            GlStateManager._enableBlend();
             GlStateManager._blendFuncSeparate(770, 771, 1, 0);
             if (BoneSkinShader.locAlphaMode() >= 0) GL20.glUniform1i(BoneSkinShader.locAlphaMode(), 2);
             drawMeshParts(mesh, renderPartMask);
-            GlStateManager._disableBlend(0);
+            GlStateManager._disableBlend();
         }
 
         stateCache.bindSsboBase(BoneSkinShader.ssbo, 0);

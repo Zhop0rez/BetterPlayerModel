@@ -160,7 +160,7 @@ public final class ControllerActionResolver {
     }
 
     public static float getGroundSpeed(LivingEntity entity, EntityFrameStateTracker<?> tracker, AnimationEvent<?> event) {
-        return MovementQuery.getGroundSpeed(entity, tracker, event);
+        return MovementQuery.getGroundSpeed(entity);
     }
 
     public static float getRemotePlayerGroundSpeed(PlayerCapability cap, Entity entity) {
