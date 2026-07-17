@@ -12,8 +12,10 @@ import com.elfmcys.yesstevemodel.util.log.ChatLogger;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.Camera;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import rip.ysm.compat.oculus.OculusCompat;
@@ -32,6 +34,7 @@ public class NativeModelRenderer {
     private static final int FULL_BRIGHT_LIGHT = 0xF000F0;
 
     private static final Matrix4f projectionModelViewMatrix = new Matrix4f();
+    private static final Quaternionf cullingCameraRotation = new Quaternionf();
     private static final ThreadLocal<RenderScratch> FALLBACK_SCRATCH = ThreadLocal.withInitial(RenderScratch::new);
 
     public static void renderMesh(VertexConsumer buffer, PoseStack.Pose pose, GeoModel model, float[] boneParams, float[] stateBuffer, int textureIndex, int renderPartMask, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
@@ -128,6 +131,14 @@ public class NativeModelRenderer {
         Minecraft minecraft = Minecraft.getInstance();
         target.set(minecraft.gameRenderer.getProjectionMatrix(
                 minecraft.options.fov().get().floatValue()));
+        Camera camera = minecraft.gameRenderer.getMainCamera();
+        if (camera.isInitialized()) {
+            // Entity poses submitted by 1.21.11 are camera-relative but still
+            // in world orientation. Face culling must use the same view
+            // rotation that Minecraft applies later when it draws the node.
+            camera.rotation().conjugate(cullingCameraRotation);
+            target.rotate(cullingCameraRotation);
+        }
     }
 
     public static void renderModel(
