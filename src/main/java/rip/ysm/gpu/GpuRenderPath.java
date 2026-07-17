@@ -18,6 +18,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.*;
 
@@ -35,6 +36,7 @@ public final class GpuRenderPath {
     private static final float[] boneMatrix4Scratch = new float[16];
     private static final float[] boneMatrix3Scratch = new float[9];
     private static final Matrix4f projMVScratch = new Matrix4f();
+    private static final Quaternionf cameraRotationScratch = new Quaternionf();
     private static final Matrix4f identityScratch = new Matrix4f();
     private static final Matrix4f globalBoneScratch = new Matrix4f();
     private static final Matrix3f localNormalScratchMat = new Matrix3f();
@@ -86,6 +88,14 @@ public final class GpuRenderPath {
 
         Minecraft minecraft = Minecraft.getInstance();
         projMat.set(minecraft.gameRenderer.getProjectionMatrix(minecraft.options.fov().get()));
+        Camera camera = minecraft.gameRenderer.getMainCamera();
+        if (camera.isInitialized()) {
+            // The GPU path bypasses Minecraft's later world-view transform.
+            // Entity poses are camera-relative, so apply the inverse camera
+            // rotation here to obtain the same projection-view space.
+            camera.rotation().conjugate(cameraRotationScratch);
+            projMat.rotate(cameraRotationScratch);
+        }
         projMat.get(projScratch);
 
         ByteBuffer boneBuf = mesh.perFrameBoneBuffer;
