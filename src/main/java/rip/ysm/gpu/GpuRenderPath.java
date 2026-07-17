@@ -82,8 +82,9 @@ public final class GpuRenderPath {
         Matrix3f rootNormal = pose.normal();
         Matrix4f projMat = projMVScratch.identity();
 
-        Minecraft minecraft = Minecraft.getInstance();
-        projMat.set(minecraft.gameRenderer.getProjectionMatrix(minecraft.options.fov().get()));
+        // The direct shader bypasses Minecraft's normal vertex shader, so it
+        // needs the active camera model-view as well as the projection.
+        projMat.set(RenderSystem.getProjectionMatrix()).mul(RenderSystem.getModelViewMatrix());
         projMat.get(projScratch);
 
         ByteBuffer boneBuf = mesh.perFrameBoneBuffer;
