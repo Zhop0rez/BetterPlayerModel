@@ -44,7 +44,12 @@ public class NativeModelRenderer {
 
     public static void renderMesh(VertexConsumer buffer, PoseStack.Pose pose, GeoModel model, float[] boneParams, float[] stateBuffer, int textureIndex, int renderPartMask, int packedLight, int packedOverlay, float red, float green, float blue, float alpha, net.minecraft.resources.ResourceLocation textureLocation, boolean allowDirectGpuRenderer) {
         OculusCompat.updatePBRState();
-        projectionModelViewMatrix.set(RenderSystem.getProjectionMatrix());
+        // Legacy 1.20.1 applies the world camera through RenderSystem's
+        // model-view stack. Face culling must use the complete clip transform,
+        // otherwise horizontal camera rotation can discard the whole model.
+        projectionModelViewMatrix
+                .set(RenderSystem.getProjectionMatrix())
+                .mul(RenderSystem.getModelViewMatrix());
         boolean isPreview = ModelPreviewRenderer.isPreview() || ModelPreviewRenderer.isExtraPlayer();
         boolean shaderPackInUse = OculusCompat.isShaderPackInUse() && !isPreview;
         boolean disableGlow = shouldDisableModelGlow(shaderPackInUse);
