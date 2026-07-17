@@ -64,7 +64,9 @@ public final class ModelPreviewRenderer {
     private static final float BED_WHITE_G = 0.88f;
     private static final float BED_WHITE_B = 0.78f;
 
-    private static final Map<EntityRenderState, GuiPreviewRequest> GUI_PREVIEWS = Collections.synchronizedMap(new java.util.WeakHashMap<>());
+    private static final Map<EntityRenderState, GuiPreviewRequest> GUI_PREVIEWS = Collections.synchronizedMap(new IdentityHashMap<>());
+    private static final Map<EntityRenderState, Boolean> DEFERRED_GUI_PREVIEW_STATES =
+            Collections.synchronizedMap(new IdentityHashMap<>());
 
     private static boolean isPreviewMode = false;
 
@@ -126,11 +128,22 @@ public final class ModelPreviewRenderer {
         return true;
     }
 
+    public static void markDeferredGuiPreview(EntityRenderState renderState) {
+        if (renderState != null) {
+            DEFERRED_GUI_PREVIEW_STATES.put(renderState, Boolean.TRUE);
+        }
+    }
+
+    public static boolean consumeDeferredGuiPreview(EntityRenderState renderState) {
+        return renderState != null
+                && Boolean.TRUE.equals(DEFERRED_GUI_PREVIEW_STATES.remove(renderState));
+    }
+
     public static <T extends LivingEntity, TAnimatable extends LivingAnimatable<T>> void renderLivingEntityPreview(GuiGraphics guiGraphics, int left, int top, int right, int bottom, float originX, float originY, float scale, float partialTick, TAnimatable animatable, GeoReplacedEntityRenderer<T, TAnimatable> renderer, boolean disablePreviewRotation, boolean hideEquipment) {
         if (guiGraphics == null || animatable == null || renderer == null || right <= left || bottom <= top) {
             return;
         }
-        EntityRenderState state = new EntityRenderState();
+        EntityRenderState state = Minecraft.getInstance().getEntityRenderDispatcher().extractEntity(animatable.getEntity(), partialTick);
         GUI_PREVIEWS.put(state, new LivingGuiPreviewRequest(
                 toModelOffset(originX, left, right, scale),
                 toModelOffset(originY, top, bottom, scale),
@@ -149,7 +162,7 @@ public final class ModelPreviewRenderer {
         if (guiGraphics == null || animatableEntity == null || renderer == null || right <= left || bottom <= top) {
             return;
         }
-        EntityRenderState state = new EntityRenderState();
+        EntityRenderState state = Minecraft.getInstance().getEntityRenderDispatcher().extractEntity(animatableEntity.getEntity(), partialTick);
         GUI_PREVIEWS.put(state, new FreeGuiPreviewRequest(
                 toModelOffset(originX, left, right, scale),
                 toModelOffset(originY, top, bottom, scale),
@@ -823,7 +836,7 @@ public final class ModelPreviewRenderer {
         if (!capability.isModelReady()) {
             return false;
         }
-        EntityRenderState state = new EntityRenderState();
+        EntityRenderState state = Minecraft.getInstance().getEntityRenderDispatcher().extractEntity(localPlayer, partialTick);
         GUI_PREVIEWS.put(state, new LivingGuiPreviewRequest(
                 toModelOffset(originX, left, right, scale),
                 toModelOffset(originY, top, bottom, scale),
