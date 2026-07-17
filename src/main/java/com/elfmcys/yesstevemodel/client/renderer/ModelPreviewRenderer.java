@@ -139,10 +139,23 @@ public final class ModelPreviewRenderer {
                 && Boolean.TRUE.equals(DEFERRED_GUI_PREVIEW_STATES.remove(renderState));
     }
 
+    /**
+     * MC 26.2 passes {@code DeltaTracker#getGameTimeDeltaTicks()} to screen
+     * extraction. That value is the duration of the current frame, not the
+     * interpolation progress within the current game tick expected by the YSM
+     * animation code. Reading the interpolation explicitly keeps GUI previews
+     * animated at the render frame rate instead of effectively at 20 TPS.
+     */
+    private static float getGuiAnimationPartialTick() {
+        float partialTick = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false);
+        return Float.isFinite(partialTick) ? Mth.clamp(partialTick, 0.0f, 1.0f) : 0.0f;
+    }
+
     public static <T extends LivingEntity, TAnimatable extends LivingAnimatable<T>> void renderLivingEntityPreview(GuiGraphicsExtractor GuiGraphicsExtractor, int left, int top, int right, int bottom, float originX, float originY, float scale, float partialTick, TAnimatable animatable, GeoReplacedEntityRenderer<T, TAnimatable> renderer, boolean disablePreviewRotation, boolean hideEquipment) {
         if (GuiGraphicsExtractor == null || animatable == null || renderer == null || right <= left || bottom <= top) {
             return;
         }
+        partialTick = getGuiAnimationPartialTick();
         EntityRenderState state = Minecraft.getInstance().getEntityRenderDispatcher().extractEntity(animatable.getEntity(), partialTick);
         GUI_PREVIEWS.put(state, new LivingGuiPreviewRequest(
                 toModelOffset(originX, left, right, scale),
@@ -162,6 +175,7 @@ public final class ModelPreviewRenderer {
         if (GuiGraphicsExtractor == null || animatableEntity == null || renderer == null || right <= left || bottom <= top) {
             return;
         }
+        partialTick = getGuiAnimationPartialTick();
         EntityRenderState state = Minecraft.getInstance().getEntityRenderDispatcher().extractEntity(animatableEntity.getEntity(), partialTick);
         GUI_PREVIEWS.put(state, new FreeGuiPreviewRequest(
                 toModelOffset(originX, left, right, scale),
@@ -629,6 +643,7 @@ public final class ModelPreviewRenderer {
         if (!capability.isModelReady()) {
             return false;
         }
+        partialTick = getGuiAnimationPartialTick();
         EntityRenderState state = Minecraft.getInstance().getEntityRenderDispatcher().extractEntity(localPlayer, partialTick);
         GUI_PREVIEWS.put(state, new LivingGuiPreviewRequest(
                 toModelOffset(originX, left, right, scale),
