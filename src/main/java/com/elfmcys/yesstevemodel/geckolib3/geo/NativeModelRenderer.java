@@ -11,6 +11,7 @@ import com.elfmcys.yesstevemodel.util.log.ChatLogger;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Minecraft;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -42,9 +43,19 @@ public class NativeModelRenderer {
     }
 
     public static void renderMesh(VertexConsumer buffer, PoseStack.Pose pose, GeoModel model, float[] boneParams, float[] stateBuffer, int textureIndex, int renderPartMask, int packedLight, int packedOverlay, float red, float green, float blue, float alpha, net.minecraft.resources.Identifier textureLocation, boolean allowDirectGpuRenderer) {
+        renderMesh(
+                buffer, pose, model, boneParams, stateBuffer, textureIndex, renderPartMask,
+                packedLight, packedOverlay, red, green, blue, alpha, textureLocation,
+                allowDirectGpuRenderer,
+                ModelPreviewRenderer.isPreview() || ModelPreviewRenderer.isExtraPlayer());
+    }
+
+    public static void renderMesh(VertexConsumer buffer, PoseStack.Pose pose, GeoModel model, float[] boneParams, float[] stateBuffer, int textureIndex, int renderPartMask, int packedLight, int packedOverlay, float red, float green, float blue, float alpha, net.minecraft.resources.Identifier textureLocation, boolean allowDirectGpuRenderer, boolean previewContext) {
         OculusCompat.updatePBRState();
-        projectionModelViewMatrix.identity();
-        boolean isPreview = ModelPreviewRenderer.isPreview() || ModelPreviewRenderer.isExtraPlayer();
+        boolean isPreview = previewContext
+                || ModelPreviewRenderer.isPreview()
+                || ModelPreviewRenderer.isExtraPlayer();
+        configureCullingProjection(projectionModelViewMatrix, isPreview);
         boolean shaderPackInUse = OculusCompat.isShaderPackInUse() && !isPreview;
         boolean disableGlow = shouldDisableModelGlow(shaderPackInUse);
 
@@ -107,6 +118,31 @@ public class NativeModelRenderer {
         return shaderPackInUse && GeneralConfig.safeGet(GeneralConfig.DISABLE_MODEL_GLOW_IN_SHADERPACK, true);
     }
 
+    /**
+     * MC 26.x stores camera rotation outside entity poses and applies it later.
+     * Face culling therefore needs the complete projection-view matrix in world
+     * renders. GUI previews use the orthographic path with an inverted Y axis.
+     */
+    private static void configureCullingProjection(Matrix4f target, boolean isPreview) {
+        target.identity();
+        if (isPreview) {
+            target.scale(1.0f, -1.0f, 1.0f);
+            return;
+        }
+
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.gameRenderer != null && minecraft.gameRenderer.mainCamera().isInitialized()) {
+            minecraft.gameRenderer.mainCamera().getViewRotationProjectionMatrix(target);
+            return;
+        }
+
+        int width = Math.max(1, minecraft.getWindow().getWidth());
+        int height = Math.max(1, minecraft.getWindow().getHeight());
+        float fovRadians = (float) Math.toRadians(minecraft.options.fov().get().doubleValue());
+        float farPlane = Math.max(16.0f, minecraft.options.getEffectiveRenderDistance() * 4.0f);
+        target.setPerspective(fovRadians, (float) width / (float) height, 0.05f, farPlane);
+    }
+
     public static void renderModel(
             VertexConsumer vertexConsumer,
             PoseStack.Pose pose,
@@ -161,10 +197,11 @@ public class NativeModelRenderer {
         Matrix3f rootNormalMC = pose.normal();
         Matrix4f identityMat = scratch.identityMat.identity();
         Matrix4f globalBoneMat = scratch.globalBoneMat;
-        Matrix4f projBoneMat = scratch.projBoneMat;
+        Matrix4f cullingBoneMat = scratch.cullingBoneMat;
         Matrix3f localNormalMat = scratch.localNormalMat;
         Matrix3f globalNormalMat = scratch.globalNormalMat;
         Vector4f tempPos = scratch.tempPos;
+        Vector4f[] clipPositions = scratch.clipPositions;
         Vector3f tempNorm = scratch.tempNorm;
         Matrix4f[] boneLocalTransforms = scratch.boneLocalTransforms;
         boolean[] boneVisible = scratch.boneVisible;
@@ -187,7 +224,7 @@ public class NativeModelRenderer {
 
             Matrix4f localBoneMat = boneLocalTransforms[i];
             globalBoneMat.set(rootPoseMat).mul(localBoneMat);
-            projBoneMat.identity().mul(globalBoneMat);
+            cullingBoneMat.set(projectionModelViewMatrix).mul(globalBoneMat);
 
             // еЁ‰ж› зЄ”йЌЏг„Ґз…™йђ­в•…ж«Ќ
             localBoneMat.normal(localNormalMat);
@@ -197,6 +234,17 @@ public class NativeModelRenderer {
 
             for (GeoModel.BakedCube cube : bone.cubes) {
                 for (GeoModel.BakedQuad quad : cube.quads) {
+                    if (cube.cullable) {
+                        for (int v = 0; v < 3; v++) {
+                            Vector3f position = quad.positions[v];
+                            clipPositions[v]
+                                    .set(position.x(), position.y(), position.z(), 1.0f)
+                                    .mul(cullingBoneMat);
+                        }
+                        if (!FaceCulling.isFrontFacing(clipPositions)) {
+                            continue;
+                        }
+                    }
                     tempNorm.set(quad.normal).mul(globalNormalMat).normalize();
                     for (int v = 0; v < 4; v++) {
                         tempPos.set(quad.positions[v].x(), quad.positions[v].y(), quad.positions[v].z(), 1.0f).mul(globalBoneMat);
@@ -319,7 +367,7 @@ public class NativeModelRenderer {
 
         pose.pose().get(matrixTransferArray, 0);
         pose.normal().get(matrixTransferArray, 16);
-        projectionModelViewMatrix.identity().get(matrixTransferArray, 32);
+        projectionModelViewMatrix.get(matrixTransferArray, 32);
 
         GeoModel.nComputeModelVertices(
                 mesh.nativeModelHandle,
@@ -335,10 +383,13 @@ public class NativeModelRenderer {
     private static final class RenderScratch {
         final Matrix4f identityMat = new Matrix4f();
         final Matrix4f globalBoneMat = new Matrix4f();
-        final Matrix4f projBoneMat = new Matrix4f();
+        final Matrix4f cullingBoneMat = new Matrix4f();
         final Matrix3f localNormalMat = new Matrix3f();
         final Matrix3f globalNormalMat = new Matrix3f();
         final Vector4f tempPos = new Vector4f();
+        final Vector4f[] clipPositions = {
+                new Vector4f(), new Vector4f(), new Vector4f()
+        };
         final Vector3f tempNorm = new Vector3f();
         Matrix4f[] boneLocalTransforms = new Matrix4f[0];
         boolean[] boneVisible = new boolean[0];

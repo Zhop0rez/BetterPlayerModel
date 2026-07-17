@@ -65,6 +65,8 @@ public final class ModelPreviewRenderer {
     private static final float BED_WHITE_B = 0.78f;
 
     private static final Map<EntityRenderState, GuiPreviewRequest> GUI_PREVIEWS = Collections.synchronizedMap(new IdentityHashMap<>());
+    private static final Map<EntityRenderState, Boolean> DEFERRED_GUI_PREVIEW_STATES =
+            Collections.synchronizedMap(new IdentityHashMap<>());
 
     private static boolean isPreviewMode = false;
 
@@ -124,6 +126,17 @@ public final class ModelPreviewRenderer {
         }
         request.render(poseStack, collector);
         return true;
+    }
+
+    public static void markDeferredGuiPreview(EntityRenderState renderState) {
+        if (renderState != null) {
+            DEFERRED_GUI_PREVIEW_STATES.put(renderState, Boolean.TRUE);
+        }
+    }
+
+    public static boolean consumeDeferredGuiPreview(EntityRenderState renderState) {
+        return renderState != null
+                && Boolean.TRUE.equals(DEFERRED_GUI_PREVIEW_STATES.remove(renderState));
     }
 
     public static <T extends LivingEntity, TAnimatable extends LivingAnimatable<T>> void renderLivingEntityPreview(GuiGraphicsExtractor GuiGraphicsExtractor, int left, int top, int right, int bottom, float originX, float originY, float scale, float partialTick, TAnimatable animatable, GeoReplacedEntityRenderer<T, TAnimatable> renderer, boolean disablePreviewRotation, boolean hideEquipment) {
