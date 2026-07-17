@@ -405,10 +405,15 @@ public class YSMClientMapper {
                     isZeroThickness = false;
                 }
 
-                // MC 26.x no longer gives this renderer the old projected view matrix here.
-                // The old software back-face culling can incorrectly drop visible faces,
-                // especially for first-person arms and rotated thin model parts.
-                bc.cullable = false;
+                if (forceCull) {
+                    bc.cullable = true;
+                } else if (hasTranslucentFace) {
+                    bc.cullable = false;
+                } else if (isZeroThickness && validFaceCount > 1) {
+                    bc.cullable = true;
+                } else {
+                    bc.cullable = validFaceCount >= 5;
+                }
 
                 if (!bc.quads.isEmpty()) {
                     bb.cubes.add(bc);
@@ -416,8 +421,6 @@ public class YSMClientMapper {
             }
             bakedBones.add(bb);
         }
-
-        CoplanarFaceStabilizer.stabilize(bakedBones);
 
         // е›ћеЎ«з€¶зє§зґўеј•
         for (GeoModel.BakedBone b : bakedBones) {
