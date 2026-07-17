@@ -131,8 +131,8 @@ public class NativeModelRenderer {
         }
 
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.gameRenderer != null && minecraft.gameRenderer.mainCamera().isInitialized()) {
-            minecraft.gameRenderer.mainCamera().getViewRotationProjectionMatrix(target);
+        if (minecraft.gameRenderer != null && minecraft.gameRenderer.getMainCamera().isInitialized()) {
+            minecraft.gameRenderer.getMainCamera().getViewRotationProjectionMatrix(target);
             return;
         }
 
