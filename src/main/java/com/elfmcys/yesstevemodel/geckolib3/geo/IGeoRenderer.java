@@ -1,6 +1,7 @@
 package com.elfmcys.yesstevemodel.geckolib3.geo;
 
 import com.elfmcys.yesstevemodel.client.renderer.SubmitRenderContext;
+import com.elfmcys.yesstevemodel.client.renderer.ModelPreviewRenderer;
 import com.elfmcys.yesstevemodel.client.entity.GeckoVehicleEntity;
 import com.elfmcys.yesstevemodel.client.entity.GeckoProjectileEntity;
 import com.elfmcys.yesstevemodel.geckolib3.core.AnimatableEntity;
@@ -42,8 +43,13 @@ public interface IGeoRenderer<T extends AnimatableEntity<?>> {
             animatable.resetAnimationState();
             float[] matrixData = Arrays.copyOf(model.getMatrixData(), model.getMatrixData().length);
             float[] absPivotData = Arrays.copyOf(model.getAbsPivotData(), model.getAbsPivotData().length);
+            boolean previewContext =
+                    ModelPreviewRenderer.isPreview() || ModelPreviewRenderer.isExtraPlayer();
             collector.submitCustomGeometry(poseStack, renderType, (pose, buffer) ->
-                    NativeModelRenderer.renderMesh(buffer, pose, model.getGeoModel(), matrixData, absPivotData, i, 0, i2, i3, f2, f3, f4, f5, textureLocation, false));
+                    NativeModelRenderer.renderMesh(
+                            buffer, pose, model.getGeoModel(), matrixData, absPivotData,
+                            i, 0, i2, i3, f2, f3, f4, f5, textureLocation,
+                            false, previewContext));
             setCurrentModelRenderCycle(EModelRenderCycle.REPEATED);
             return;
         }
