@@ -31,7 +31,12 @@ public abstract class PlayerRendererMixin {
             if (entity instanceof AbstractClientPlayer player) {
                 float partialTick = ((MinecraftAccessor) Minecraft.getInstance()).ysm$getDeltaTracker().getGameTimeDeltaPartialTick(false);
                 int packedLight = ((MinecraftAccessor) Minecraft.getInstance()).ysm$getEntityRenderDispatcher().getPackedLightCoords(player, partialTick);
-                boolean preview = ModelPreviewRenderer.isPreview();
+                boolean previousPreview = ModelPreviewRenderer.isPreview();
+                boolean deferredGuiPreview = ModelPreviewRenderer.consumeDeferredGuiPreview(avatarState);
+                boolean preview = previousPreview || deferredGuiPreview;
+                if (deferredGuiPreview) {
+                    ModelPreviewRenderer.setPreviewMode(true);
+                }
                 float yaw = preview ? state.bodyRot : state.yRot;
 
                 float oldBodyRot = player.yBodyRot;
@@ -79,6 +84,9 @@ public abstract class PlayerRendererMixin {
                         player.xRotO = oldXRotO;
                         player.yHeadRot = oldHeadRot;
                         player.yHeadRotO = oldHeadRotO;
+                    }
+                    if (deferredGuiPreview) {
+                        ModelPreviewRenderer.setPreviewMode(previousPreview);
                     }
                 }
             }
