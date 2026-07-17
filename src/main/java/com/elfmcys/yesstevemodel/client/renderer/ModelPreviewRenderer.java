@@ -125,10 +125,21 @@ public final class ModelPreviewRenderer {
         return true;
     }
 
+    /**
+     * GUI APIs do not consistently pass tick interpolation as their render
+     * argument. Read it from this version's game timer so preview poses can be
+     * evaluated on every rendered frame.
+     */
+    private static float getGuiAnimationPartialTick() {
+        float partialTick = Minecraft.getInstance().getFrameTime();
+        return Float.isFinite(partialTick) ? Mth.clamp(partialTick, 0.0f, 1.0f) : 0.0f;
+    }
+
     public static <T extends LivingEntity, TAnimatable extends LivingAnimatable<T>> void renderLivingEntityPreview(GuiGraphics guiGraphics, int left, int top, int right, int bottom, float originX, float originY, float scale, float partialTick, TAnimatable animatable, GeoReplacedEntityRenderer<T, TAnimatable> renderer, boolean disablePreviewRotation, boolean hideEquipment) {
         if (guiGraphics == null || animatable == null || renderer == null || right <= left || bottom <= top) {
             return;
         }
+        partialTick = getGuiAnimationPartialTick();
         Object state = new Object();
         GUI_PREVIEWS.put(state, new LivingGuiPreviewRequest(
                 toModelOffset(originX, left, right, scale),
@@ -160,6 +171,7 @@ public final class ModelPreviewRenderer {
         if (guiGraphics == null || animatableEntity == null || renderer == null || right <= left || bottom <= top) {
             return;
         }
+        partialTick = getGuiAnimationPartialTick();
         Object state = new Object();
         GUI_PREVIEWS.put(state, new FreeGuiPreviewRequest(
                 toModelOffset(originX, left, right, scale),
@@ -846,6 +858,7 @@ public final class ModelPreviewRenderer {
         if (!capability.isModelReady()) {
             return false;
         }
+        partialTick = getGuiAnimationPartialTick();
         Object state = new Object();
         GUI_PREVIEWS.put(state, new LivingGuiPreviewRequest(
                 toModelOffset(originX, left, right, scale),
