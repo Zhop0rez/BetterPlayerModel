@@ -1,5 +1,6 @@
 .gradle/
 build/
+TEST_READY/
 local.properties
 .vs/
 out/

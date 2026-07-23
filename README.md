@@ -2,6 +2,8 @@
 
 PaperBPM is a native Paper/Folia Minecraft server plugin that implements the server-side protocol of the Better Player Model (openYSM / YesSteveModel fork) client mod. It acts as a lightweight replacement for running the mod on hybrid servers, eliminating memory leaks, network congestion, and crashes associated with hybrid mod engines.
 
+> Version 1.0.1 is currently a beta release.
+
 ## Features
 
 - **Protocol Emulation:** Complete cryptographic handshake matching the openYSM 2.6.0 specification (using XChaCha20, CityHash, and MT19937).
@@ -13,7 +15,7 @@ PaperBPM is a native Paper/Folia Minecraft server plugin that implements the ser
 
 ## Installation
 
-1. Copy the compiled `PaperBPM-1.0.jar` into your server's `plugins/` directory.
+1. Copy the compiled `PaperBPM-1.0.1.jar` into your server's `plugins/` directory.
 2. Restart the server to generate the configuration files.
 3. Place custom `.ysm` or `.zip` models inside the `plugins/PaperBPM/models/` folder.
 4. Players running the Better Player Model mod on their client will automatically synchronize and render custom models.
@@ -53,4 +55,4 @@ Build the plugin using the Gradle wrapper:
 ./gradlew shadowJar
 ```
 
-The output shaded jar will be located at `build/libs/PaperBPM-1.0.jar`.
+The output shaded jar will be located at `build/libs/PaperBPM-1.0.1.jar`.

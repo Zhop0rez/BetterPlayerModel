@@ -49,6 +49,10 @@ public class YsmSessionManager {
         public java.util.Queue<PendingTransfer> transferQueue = new java.util.concurrent.ConcurrentLinkedQueue<>();
         public PendingTransfer currentTransfer = null;
         public long tokens = 0;
+        // The Paper bridge has no client-side "models are ready" acknowledgement.
+        // Use a generation to keep bounded compatibility resyncs from overlapping.
+        public long modelStateResyncGeneration = 0;
+        public boolean resyncAfterTransfers = false;
     }
 
     class PendingTransfer {
@@ -1036,6 +1040,7 @@ public class YsmSessionManager {
 
             broadcastModelChange(player, state.modelId, state.textureId, player);
             resyncPlayer(player);
+            scheduleModelStateResyncs(player, state, 10L, 40L, 100L);
             
             // Note: After packet 03, the client is Synced. 
             // It might send Packet 04 via discriminator 2.
@@ -1066,8 +1071,12 @@ public class YsmSessionManager {
                 state.step = 3;
                 plugin.getLogger().info("" + player.getName() + " requested " + requested.size() + " models.");
                 sendPacket05(player, state, requested);
+                state.resyncAfterTransfers = !requested.isEmpty();
                 broadcastModelChange(player, state.modelId, state.textureId, player);
                 resyncPlayer(player);
+                if (requested.isEmpty()) {
+                    scheduleModelStateResyncs(player, state, 2L, 20L, 60L);
+                }
             }
         }
     }
@@ -1121,6 +1130,30 @@ public class YsmSessionManager {
                     && targetState != null && targetState.step >= 2) {
                 broadcastModelChange(target, targetState.modelId, targetState.textureId, player);
             }
+        }
+    }
+
+    private void scheduleModelStateResyncs(Player player, PlayerSyncState state, long... delays) {
+        UUID playerId = player.getUniqueId();
+        long generation = ++state.modelStateResyncGeneration;
+
+        // Model payloads are decoded on a client worker thread while ordinary state
+        // packets are applied on the game thread. A few small, bounded retries make
+        // the plugin bridge robust without changing the existing client protocol.
+        for (long delay : delays) {
+            plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                Player currentPlayer = plugin.getServer().getPlayer(playerId);
+                PlayerSyncState currentState = sessions.get(playerId);
+                if (currentPlayer == null || !currentPlayer.isOnline()
+                        || currentState != state
+                        || currentState.step < 2
+                        || currentState.modelStateResyncGeneration != generation) {
+                    return;
+                }
+
+                broadcastModelChange(currentPlayer, currentState.modelId, currentState.textureId, currentPlayer);
+                resyncPlayer(currentPlayer);
+            }, Math.max(1L, delay));
         }
     }
 
@@ -1379,6 +1412,10 @@ public class YsmSessionManager {
                     
                     if (pt.offset >= pt.encryptedPayload.length) {
                         state.currentTransfer = null;
+                        if (state.transferQueue.isEmpty() && state.resyncAfterTransfers) {
+                            state.resyncAfterTransfers = false;
+                            scheduleModelStateResyncs(player, state, 1L, 20L, 60L);
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
