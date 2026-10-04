@@ -133,8 +133,14 @@ public class YSMBinarySerializer {
             buf.writeString(sub.model != null && sub.model.sha256 != null ? sub.model.sha256 : "");
             writeGeometry(buf, sub.model, format);
             if (format > 26) {
-                buf.writeVarInt(0x01); // footer
-                buf.writeString(sub.identifier);
+                // Симметрично десериализатору: в футере — список имён (все матчятся на одну модель)
+                String[] ids = sub.matchIds != null && sub.matchIds.length > 0
+                        ? sub.matchIds
+                        : new String[]{sub.identifier};
+                buf.writeVarInt(ids.length);
+                for (String id : ids) {
+                    buf.writeString(id != null ? id : "");
+                }
             }
             index++;
         }
@@ -528,7 +534,8 @@ public class YSMBinarySerializer {
         }
 
         // иѓЊж™Їе›ѕ
-        if (format > 15) {
+        // Симметрично десериализатору: секция пишется только при непустых guiForeground/guiBackground (как в C++ эталоне)
+        if (format > 15 && (!isBlank(props.guiForeground) || !isBlank(props.guiBackground))) {
             buf.writeVarInt(props.backgroundImages.size());
             for (RawYsmModel.RawImage bg : props.backgroundImages) {
                 buf.writeString(bg.name != null ? bg.name : "");
@@ -545,6 +552,10 @@ public class YSMBinarySerializer {
                 buf.writeVarInt(bg.unknownFlag);
             }
         }
+    }
+
+    private static boolean isBlank(String s) {
+        return s == null || s.isEmpty();
     }
 
     private static byte[] convertRgbaToPng(byte[] rgbaData, int width, int height) {
