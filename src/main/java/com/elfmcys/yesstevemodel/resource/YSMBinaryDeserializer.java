@@ -104,7 +104,7 @@ public class YSMBinaryDeserializer implements AutoCloseable{
             rawGeometry.modelType = modelId;
             tempModels.add(rawGeometry);
         }
-        assignMainModels(tempModels);
+        assignMainModels(tempModels, true);
 
         Map<Integer, RawYsmModel.RawAnimationFile> tempAnims = new HashMap<>();
         int animationBlobCount = reader.readVarInt();
@@ -114,7 +114,7 @@ public class YSMBinaryDeserializer implements AutoCloseable{
             if (unknownPadding != 1) throw new RuntimeException("Expected 1");
             RawYsmModel.RawAnimationFile rawAnimationFile = parseAnimations();
 
-            String animKey = getAnimKeyFromType(animationId);
+            String animKey = YSMFolderDeserializer.getAnimKeyFromType(animationId);
             if (animationId == 5) {
                 RawYsmModel.RawSubEntity arrowEntity = model.projectiles.computeIfAbsent("minecraft:arrow", k -> {
                     RawYsmModel.RawSubEntity newSub = new RawYsmModel.RawSubEntity();
@@ -145,10 +145,17 @@ public class YSMBinaryDeserializer implements AutoCloseable{
             tex.imageFormat = -1; // RGBA
 
 
-            if ("arrow.png".equals(tex.name))
-                model.projectiles.get("minecraft:arrow").textures.put(tex.name, tex);
-            else
+            // C++ эталон: в V1 текстура стрелки называется "/ARROW\\"
+            if ("/ARROW\\".equals(tex.name)) {
+                RawYsmModel.RawSubEntity arrowEntity = model.projectiles.computeIfAbsent("minecraft:arrow", k -> {
+                    RawYsmModel.RawSubEntity newSub = new RawYsmModel.RawSubEntity();
+                    newSub.identifier = k;
+                    return newSub;
+                });
+                arrowEntity.textures.put(tex.name, tex);
+            } else {
                 model.mainEntity.textures.put(tex.name, tex);
+            }
 
             tempTextures.add(tex);
         }
@@ -197,7 +204,7 @@ public class YSMBinaryDeserializer implements AutoCloseable{
             tempModels.add(rawGeometry);
         }
 
-        assignMainModels(tempModels); //TODO
+        assignMainModels(tempModels, true); //TODO
 
         Map<Integer, RawYsmModel.RawAnimationFile> tempAnims = new HashMap<>();
         int animationBlobCount = reader.readVarInt();
@@ -207,7 +214,7 @@ public class YSMBinaryDeserializer implements AutoCloseable{
             if (unknownPadding != 1) throw new RuntimeException("Expected 1");
             RawYsmModel.RawAnimationFile rawAnimationFile = parseAnimations();
 
-            String animKey = getAnimKeyFromType(animationId);
+            String animKey = YSMFolderDeserializer.getAnimKeyFromType(animationId);
             if (animationId == 5) {
                 RawYsmModel.RawSubEntity arrowEntity = model.projectiles.computeIfAbsent("minecraft:arrow", k -> {
                     RawYsmModel.RawSubEntity newSub = new RawYsmModel.RawSubEntity();
@@ -259,14 +266,20 @@ public class YSMBinaryDeserializer implements AutoCloseable{
             }
 
             // з‰№ж®Љи™•зђ†дёЂдё‹
-            if ("/ARROW\\".equals(tex.name))
-                model.projectiles.get("minecraft:arrow").textures.put(tex.name, tex);
-            else
+            if ("/ARROW\\".equals(tex.name)) {
+                RawYsmModel.RawSubEntity arrowEntity = model.projectiles.computeIfAbsent("minecraft:arrow", k -> {
+                    RawYsmModel.RawSubEntity newSub = new RawYsmModel.RawSubEntity();
+                    newSub.identifier = k;
+                    return newSub;
+                });
+                arrowEntity.textures.put(tex.name, tex);
+            } else {
                 model.mainEntity.textures.put(tex.name, tex);
+            }
 
         }
 
-        if (format > 14) {
+        if (format > 9) { // C++ эталон: звуки в legacy с format 10
             parseSoundFiles();
             int soundTableCount = reader.readVarInt();
             for (int i = 0; i < soundTableCount; ++i) {
@@ -382,7 +395,7 @@ public class YSMBinaryDeserializer implements AutoCloseable{
 
             RawYsmModel.RawAnimationFile animRef = parseAnimations();
             model.mainEntity.animationFiles.put(
-                    getAnimKeyFromType(type),
+                    YSMFolderDeserializer.getAnimKeyFromType(type),
                     animRef
             );
             animRef.animType = type;
@@ -405,7 +418,7 @@ public class YSMBinaryDeserializer implements AutoCloseable{
             tempMainModels.add(geoRef);
             System.out.println("Model Table Entry: ID=" + modelType + ", Hash=" + hash);
         }
-        assignMainModels(tempMainModels);
+        assignMainModels(tempMainModels, false);
 
         parseYSMJson();
     }
@@ -464,9 +477,17 @@ public class YSMBinaryDeserializer implements AutoCloseable{
 
 
         if (format > 26) {
-            int footerFlag = reader.readVarInt(); // always 01
-            String footerSubModuleName = reader.readString();
-            subEntity.identifier = footerSubModuleName;
+            // >=26.3: за моделью может идти список имён сущностей (вместо одного) — все матчятся на одну геометрию
+            int footerNameCount = reader.readVarInt();
+            String[] footerNames = new String[footerNameCount];
+            for (int i = 0; i < footerNameCount; i++) {
+                footerNames[i] = reader.readString();
+            }
+            if (footerNameCount == 0) {
+                return; // C++ эталон: без имён модель не регистрируется
+            }
+            subEntity.matchIds = footerNames;
+            subEntity.identifier = footerNames[0];
         }
 
         targetMap.put(subEntity.identifier, subEntity);
@@ -591,7 +612,7 @@ public class YSMBinaryDeserializer implements AutoCloseable{
             }
         }
 
-        if (format > 14) {
+        if (format > 9) { // C++ эталон: buttons/classify с format 10, не 15
             int extraAnimationButtonsCount = reader.readVarInt();
             for (int i = 0; i < extraAnimationButtonsCount; i++) {
                 RawYsmModel.ExtraAnimationButton btn = new RawYsmModel.ExtraAnimationButton();
@@ -671,6 +692,9 @@ public class YSMBinaryDeserializer implements AutoCloseable{
         }
 
         if (format <= 15) return;
+
+        // C++ эталон (0.3.6): секция фоновых картинок присутствует только при непустых gui_foreground/gui_background
+        if (isEmpty(model.properties.guiForeground) && isEmpty(model.properties.guiBackground)) return;
 
         int backgroundImagesCount = reader.readVarInt();
         for (int i = 0; i < backgroundImagesCount; i++) {
@@ -754,7 +778,7 @@ public class YSMBinaryDeserializer implements AutoCloseable{
             }
 
             // Effects
-            if (format > 14) {
+            if (format > 9) { // C++ эталон: sound_effects в анимациях с format 10
                 int soundEffectsCount = reader.readVarInt();
                 for (int i = 0; i < soundEffectsCount; i++) {
                     RawYsmModel.RawSoundEffect sfx = new RawYsmModel.RawSoundEffect();
@@ -959,7 +983,7 @@ public class YSMBinaryDeserializer implements AutoCloseable{
         return new float[]{reader.readFloat(), reader.readFloat(), reader.readFloat()};
     }
 
-    private void assignMainModels(List<RawYsmModel.RawGeometry> tempMainModels) {
+    private void assignMainModels(List<RawYsmModel.RawGeometry> tempMainModels, boolean legacy) {
         for (RawYsmModel.RawGeometry tempMainModel : tempMainModels) {
             switch (tempMainModel.modelType) {
                 case 1:
@@ -969,6 +993,8 @@ public class YSMBinaryDeserializer implements AutoCloseable{
                     model.mainEntity.armModel = tempMainModel;
                     break;
                 case 3:
+                    // C++ эталон: в modern (format > 15) тип 3 в таблице моделей невалиден, стрелка идёт через projectiles
+                    if (!legacy) throw new RuntimeException("Unexpected arrow model in modern model table");
                     RawYsmModel.RawSubEntity subEntity = new RawYsmModel.RawSubEntity();
                     subEntity.model = tempMainModel;
                     subEntity.identifier = "minecraft:arrow";
@@ -1006,22 +1032,7 @@ public class YSMBinaryDeserializer implements AutoCloseable{
         }
     }
 
-    public static String getAnimKeyFromType(int type) {
-        return switch (type) {
-            case 1 -> "main";
-            case 2 -> "arm";
-            case 3 -> "extra";
-            case 4 -> "tac";
-            case 5 -> "arrow";
-            case 6 -> "carryon";
-            case 7 -> "parcool";
-            case 8 -> "swem";
-            case 9 -> "slashblade";
-            case 10 -> "tlm";
-            case 11 -> "fp_arm";
-            case 12 -> "immersive_melodies";
-            case 13 -> "irons_spell_books";
-            default -> "unknown";
-        };
+    private static boolean isEmpty(String s) {
+        return s == null || s.isEmpty();
     }
 }
