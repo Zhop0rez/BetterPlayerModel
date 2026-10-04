@@ -534,8 +534,7 @@ public class YSMBinarySerializer {
         }
 
         // иѓЊж™Їе›ѕ
-        // Симметрично десериализатору: секция пишется только при непустых guiForeground/guiBackground (как в C++ эталоне)
-        if (format > 15 && (!isBlank(props.guiForeground) || !isBlank(props.guiBackground))) {
+        if (format > 15) {
             buf.writeVarInt(props.backgroundImages.size());
             for (RawYsmModel.RawImage bg : props.backgroundImages) {
                 buf.writeString(bg.name != null ? bg.name : "");
@@ -552,10 +551,6 @@ public class YSMBinarySerializer {
                 buf.writeVarInt(bg.unknownFlag);
             }
         }
-    }
-
-    private static boolean isBlank(String s) {
-        return s == null || s.isEmpty();
     }
 
     private static byte[] convertRgbaToPng(byte[] rgbaData, int width, int height) {
