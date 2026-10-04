@@ -16,9 +16,9 @@ import rip.ysm.gui.ModernAnimationRouletteScreen;
 
 public final class AnimationRouletteKey {
 
-    public static final KeyMapping KEY_ROULETTE = KeyMappingFactory.createInGameNone("key.better_player_model.animation_roulette.desc", InputConstants.Type.KEYBOARD, 90, "key.category.better_player_model");
+    public static final KeyMapping KEY_ROULETTE = KeyMappingFactory.createInGameNone("key.better_player_model.animation_roulette.desc", InputConstants.Type.KEYBOARD, InputConstants.KEY_Z, "key.category.better_player_model");
 
-    public static final KeyMapping KEY_LOCK = KeyMappingFactory.createInGameAlt("key.better_player_model.lock_roulette.desc", InputConstants.Type.KEYBOARD, 76, "key.category.better_player_model");
+    public static final KeyMapping KEY_LOCK = KeyMappingFactory.createInGameAlt("key.better_player_model.lock_roulette.desc", InputConstants.Type.KEYBOARD, InputConstants.KEY_L, "key.category.better_player_model");
 
     private AnimationRouletteKey() {
     }

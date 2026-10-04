@@ -21,11 +21,11 @@ public final class KeyMappingFactoryImpl {
     }
 
     public static KeyMapping createInGameAlt(String name, InputConstants.Type type, int keyCode, String category) {
-        return new KeyMapping(name, type, keyCode, getOrCreateCategory(category));
+        return new KeyMapping(name, type, keyCode < 0 ? InputConstants.UNKNOWN.getValue() : keyCode, getOrCreateCategory(category));
     }
 
     public static KeyMapping createInGameNone(String name, InputConstants.Type type, int keyCode, String category) {
-        return new KeyMapping(name, type, keyCode, getOrCreateCategory(category));
+        return new KeyMapping(name, type, keyCode < 0 ? InputConstants.UNKNOWN.getValue() : keyCode, getOrCreateCategory(category));
     }
 
     public static boolean isActiveAndMatches(KeyMapping keyMapping, int keyCode, int scanCode) {
