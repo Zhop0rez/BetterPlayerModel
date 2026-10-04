@@ -693,9 +693,6 @@ public class YSMBinaryDeserializer implements AutoCloseable{
 
         if (format <= 15) return;
 
-        // C++ эталон (0.3.6): секция фоновых картинок присутствует только при непустых gui_foreground/gui_background
-        if (isEmpty(model.properties.guiForeground) && isEmpty(model.properties.guiBackground)) return;
-
         int backgroundImagesCount = reader.readVarInt();
         for (int i = 0; i < backgroundImagesCount; i++) {
             RawYsmModel.RawImage bg = new RawYsmModel.RawImage();
@@ -1030,9 +1027,5 @@ public class YSMBinaryDeserializer implements AutoCloseable{
         if (elements < 0 || elements * sizePerElement > reader.getRawBuf().readableBytes()) {
             throw new IllegalArgumentException("Invalid " + type + " count: " + elements);
         }
-    }
-
-    private static boolean isEmpty(String s) {
-        return s == null || s.isEmpty();
     }
 }
