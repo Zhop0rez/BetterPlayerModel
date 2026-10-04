@@ -18,6 +18,7 @@ public final class YesSteveModelFabricClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         ClientEventBootstrap.register();
+        rip.ysm.api.client.KeyMappingFactory.sanitizeBindings();
 
         HudOverlay debugOverlay = AnimationDebugOverlay.createOverlay();
         HudOverlay loadingOverlay = new ExtraPlayerOverlay();
