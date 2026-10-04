@@ -7,6 +7,7 @@ import dev.ysm.architectury.event.events.client.ClientRawInputEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.component.SwingAnimation;
 import rip.ysm.api.PlatformAPI;
 
 public class InputStateKey {
@@ -61,6 +62,6 @@ public class InputStateKey {
         if (player == null) {
             return;
         }
-        player.swing(InteractionHand.MAIN_HAND, false);
+        player.swing(InteractionHand.MAIN_HAND, SwingAnimation.DEFAULT, false);
     }
 }

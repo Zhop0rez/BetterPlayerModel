@@ -54,8 +54,8 @@ public class CustomPlayerParrotLayer extends GeoLayerRenderer<CustomPlayerEntity
         poseStack.pushPose();
         applyParrotTransform(poseStack, model, isLeftShoulder);
         poseStack.translate(0.0d, 1.5d, 0.0d);
-        poseStack.mulPose(Axis.ZP.rotationDegrees(180.0f));
-        bufferSource.submitModel(this.parrotModel, state, poseStack, RenderTypes.entityCutout(ParrotRenderer.getVariantTexture(variant)), packedLightIn, OverlayTexture.NO_OVERLAY, 0, null);
+        poseStack.rotate(Axis.ZP.rotationDegrees(180.0f));
+        bufferSource.submitModel(this.parrotModel, state, poseStack, RenderTypes.entityCutout(ParrotRenderer.getVariantTexture(variant)), packedLightIn, OverlayTexture.NO_OVERLAY, 0);
         poseStack.popPose();
     }
 

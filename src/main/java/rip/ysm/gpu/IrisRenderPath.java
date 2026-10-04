@@ -1,7 +1,7 @@
 package rip.ysm.gpu;
 
 import com.elfmcys.yesstevemodel.geckolib3.geo.render.built.GeoModel;
-import com.mojang.blaze3d.opengl.GlStateManager;
+import com.mojang.renderpearl.backend.opengl.GlStateManager;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.resources.Identifier;

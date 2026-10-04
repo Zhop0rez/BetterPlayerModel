@@ -110,7 +110,7 @@ public abstract class GeoReplacedEntityRenderer<TEntity extends LivingEntity, T 
                     if (cap.isModelReady()) {
                         Vector3f vector3f = cap.getExpressionOffset();
                         if (vector3f != null) {
-                            poseStack.mulPose(new Quaternionf().rotateZYX(vector3f.z, 0.0f, vector3f.x).invert());
+                            poseStack.rotate(new Quaternionf().rotateZYX(vector3f.z, 0.0f, vector3f.x).invert());
                         }
                     }
                 });
@@ -174,11 +174,11 @@ public abstract class GeoReplacedEntityRenderer<TEntity extends LivingEntity, T 
         if (tentity.getPose() == Pose.SLEEPING) {
             Direction bedOrientation = tentity.getBedOrientation();
             float sleepRotation = bedOrientation == null ? rotationYaw : sleepDirectionToRotation(bedOrientation);
-            poseStack.mulPose(Axis.YP.rotationDegrees(sleepRotation));
-            poseStack.mulPose(Axis.ZP.rotationDegrees(90.0f));
-            poseStack.mulPose(Axis.YP.rotationDegrees(270.0f));
+            poseStack.rotate(Axis.YP.rotationDegrees(sleepRotation));
+            poseStack.rotate(Axis.ZP.rotationDegrees(90.0f));
+            poseStack.rotate(Axis.YP.rotationDegrees(270.0f));
         } else {
-            poseStack.mulPose(Axis.YP.rotationDegrees(180.0f - rotationYaw));
+            poseStack.rotate(Axis.YP.rotationDegrees(180.0f - rotationYaw));
         }
         if (t > 0) {
             tentity.deathTime = t;

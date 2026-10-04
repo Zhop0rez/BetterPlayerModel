@@ -1,5 +1,7 @@
 package com.elfmcys.yesstevemodel.client.animation.predicate;
 
+import com.elfmcys.yesstevemodel.util.SwingUtil;
+
 import com.elfmcys.yesstevemodel.client.animation.IAnimationPredicate;
 import com.elfmcys.yesstevemodel.client.entity.LivingAnimatable;
 import com.elfmcys.yesstevemodel.client.animation.condition.ConditionHold;
@@ -55,7 +57,7 @@ public class OffHandHoldPredicate implements IAnimationPredicate<LivingAnimatabl
     }
 
     private boolean checkSwingAndUse(LivingEntity entity, InteractionHand hand) {
-        if (entity.swinging && entity.swingingArm == hand) {
+        if (SwingUtil.isSwinging(entity) && SwingUtil.getSwingingArm(entity) == hand) {
             return false;
         }
         return !entity.isUsingItem() || entity.getUsedItemHand() != hand;

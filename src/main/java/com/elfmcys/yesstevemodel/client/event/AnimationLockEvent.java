@@ -23,7 +23,7 @@ public class AnimationLockEvent {
     public static void register() {
         ClientRawInputEvent.KEY_PRESSED.register((client, action, event) -> {
             int keyCode = event.key();
-            int scanCode = event.scancode();
+            int scanCode = event.keycode();
             if (YesSteveModel.isAvailable() && InputUtil.isPlayerReady() && action == 1 && InputUtil.isKeyPressed(keyCode, scanCode, AnimationRouletteKey.KEY_LOCK)) {
                 animationLocked = !animationLocked;
             }

@@ -5,7 +5,7 @@ import com.elfmcys.yesstevemodel.client.texture.OuterFileTexture;
 import com.elfmcys.yesstevemodel.resource.models.ModelPackData;
 import com.elfmcys.yesstevemodel.client.gui.ModelMetadataPresenter;
 import com.elfmcys.yesstevemodel.util.FileTypeUtil;
-import com.mojang.blaze3d.opengl.GlStateManager;
+import com.mojang.renderpearl.backend.opengl.GlStateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;

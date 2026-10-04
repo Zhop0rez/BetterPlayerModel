@@ -139,9 +139,9 @@ public class ModernModelInfoScreen extends OptionScreen {
     public void openUrlWithConfirm(String url) {
         if (StringUtils.isBlank(url)) return;
         com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), new ConfirmLinkScreen(confirmed -> {
-            if (confirmed) PlatformUtil.openUri(url);
+                if (confirmed) PlatformUtil.openUri(url);
             com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), this);
-        }, url, true));
+        }, java.net.URI.create(url), true));
     }
 }
 

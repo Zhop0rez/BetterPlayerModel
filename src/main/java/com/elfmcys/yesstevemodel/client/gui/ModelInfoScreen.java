@@ -129,7 +129,7 @@ public class ModelInfoScreen extends Screen {
                     PlatformUtil.openUri(str);
                 }
                 com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), this);
-            }, str, true));
+            }, java.net.URI.create(str), true));
         }
     }
 

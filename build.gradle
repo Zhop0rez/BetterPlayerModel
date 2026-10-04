@@ -23,7 +23,7 @@ repositories {
     mavenCentral()
 }
 
-def ccaVersion = "8.0.0"
+def ccaVersion = "8.1.0"
 
 dependencies {
     mappings "net.fabricmc:intermediary:0.0.0:v2"
@@ -31,21 +31,17 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
 	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-    include "org.ladysnake.cardinal-components-api:cardinal-components-base:${ccaVersion}"
-    include "org.ladysnake.cardinal-components-api:cardinal-components-block:${ccaVersion}"
-    include "org.ladysnake.cardinal-components-api:cardinal-components-chunk:${ccaVersion}"
-    include "org.ladysnake.cardinal-components-api:cardinal-components-entity:${ccaVersion}"
-    include "org.ladysnake.cardinal-components-api:cardinal-components-item:${ccaVersion}"
-    include "org.ladysnake.cardinal-components-api:cardinal-components-level:${ccaVersion}"
-    include "org.ladysnake.cardinal-components-api:cardinal-components-scoreboard:${ccaVersion}"
-    include "org.ladysnake.cardinal-components-api:cardinal-components-world:${ccaVersion}"
-    modImplementation "maven.modrinth:forge-config-api-port:86ROVP2H"
-    include "maven.modrinth:forge-config-api-port:86ROVP2H"
+    // CCA 8.1.0: модульные джарники на maven.ladysnake залиты частично (world/base 404), используем официальный fat jar с Modrinth
+    modImplementation "maven.modrinth:cardinal-components-api:TPEXA0ew"
+    include "maven.modrinth:cardinal-components-api:TPEXA0ew"
+    modImplementation "maven.modrinth:forge-config-api-port:JpKvrr9J" // 26.3.1 Fabric-вариант (числовая координата тянет NeoForge-сборку)
+    include "maven.modrinth:forge-config-api-port:JpKvrr9J"
     implementation "com.electronwill.night-config:core:3.8.3"
     include "com.electronwill.night-config:core:3.8.3"
     implementation "com.electronwill.night-config:toml:3.8.3"
     include "com.electronwill.night-config:toml:3.8.3"
-    compileOnly "com.terraformersmc:modmenu:15.0.0"
+    // modmenu не используется в коде (проверено: нет импортов и entrypoint); убран — maven.terraformersmc.com недоступен
+    // compileOnly "com.terraformersmc:modmenu:15.0.0"
     
     implementation "com.github.TartaricAlkaline:ImageStream:-SNAPSHOT"
     include "com.github.TartaricAlkaline:ImageStream:-SNAPSHOT"

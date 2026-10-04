@@ -16,9 +16,9 @@ import rip.ysm.gui.ModernAnimationRouletteScreen;
 
 public final class AnimationRouletteKey {
 
-    public static final KeyMapping KEY_ROULETTE = KeyMappingFactory.createInGameNone("key.better_player_model.animation_roulette.desc", InputConstants.Type.KEYSYM, 90, "key.category.better_player_model");
+    public static final KeyMapping KEY_ROULETTE = KeyMappingFactory.createInGameNone("key.better_player_model.animation_roulette.desc", InputConstants.Type.KEYBOARD, 90, "key.category.better_player_model");
 
-    public static final KeyMapping KEY_LOCK = KeyMappingFactory.createInGameAlt("key.better_player_model.lock_roulette.desc", InputConstants.Type.KEYSYM, 76, "key.category.better_player_model");
+    public static final KeyMapping KEY_LOCK = KeyMappingFactory.createInGameAlt("key.better_player_model.lock_roulette.desc", InputConstants.Type.KEYBOARD, 76, "key.category.better_player_model");
 
     private AnimationRouletteKey() {
     }
@@ -29,7 +29,7 @@ public final class AnimationRouletteKey {
         }
         ClientRawInputEvent.KEY_PRESSED.register((client, action, event) -> {
             int keyCode = event.key();
-            int scanCode = event.scancode();
+            int scanCode = event.keycode();
             if (YesSteveModel.isAvailable() && InputUtil.isPlayerReady() && action == 1 && InputUtil.isKeyPressed(keyCode, scanCode, KEY_ROULETTE)) {
                 if (TouhouLittleMaidCompat.isMaidChatAvailable()) {
                     TouhouLittleMaidCompat.openMaidChat();

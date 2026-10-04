@@ -37,7 +37,7 @@ public final class ClientTickEvent {
             ClientModelManager.trimUnusedGpuCaches();
         }
         ObjectPool.cleanup();
-        refreshRate = Math.max(60, client.getWindow().getRefreshRate());
+        refreshRate = 60; // 26.3 (SDL): Window больше не даёт частоту монитора, оставляем безопасный минимум
         LocalPlayer localPlayer = client.player;
         if (localPlayer != null) {
             PlayerCapability.get(localPlayer).ifPresent(cap -> cap.tickAnimations());

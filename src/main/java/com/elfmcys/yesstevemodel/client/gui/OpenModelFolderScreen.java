@@ -2,6 +2,7 @@ package com.elfmcys.yesstevemodel.client.gui;
 
 import com.elfmcys.yesstevemodel.model.ServerModelManager;
 import net.minecraft.util.Util;
+import com.elfmcys.yesstevemodel.util.PlatformUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -23,7 +24,7 @@ public class OpenModelFolderScreen extends Screen {
         int y = (this.height / 2) + 60;
         clearWidgets();
         addRenderableWidget(Button.builder(Component.translatable("gui.better_player_model.open_model_folder.open"), button -> {
-            Util.getPlatform().openFile(ServerModelManager.CUSTOM.toFile());
+            PlatformUtil.openFile(ServerModelManager.CUSTOM.toFile());
         }).bounds(x, y, 150, 20).build());
         addRenderableWidget(Button.builder(Component.translatable("gui.better_player_model.model.return"), button2 -> {
             com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), this.parentScreen);

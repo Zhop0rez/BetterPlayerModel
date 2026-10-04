@@ -12,7 +12,7 @@ import rip.ysm.api.client.KeyMappingFactory;
 
 public final class DebugAnimationKey {
 
-    public static final KeyMapping KEY_MAPPING = KeyMappingFactory.createInGameAlt("key.better_player_model.debug_animation.desc", InputConstants.Type.KEYSYM, 66, "key.category.better_player_model");
+    public static final KeyMapping KEY_MAPPING = KeyMappingFactory.createInGameAlt("key.better_player_model.debug_animation.desc", InputConstants.Type.KEYBOARD, 66, "key.category.better_player_model");
 
     private DebugAnimationKey() {
     }
@@ -23,7 +23,7 @@ public final class DebugAnimationKey {
         }
         ClientRawInputEvent.KEY_PRESSED.register((client, action, event) -> {
             int keyCode = event.key();
-            int scanCode = event.scancode();
+            int scanCode = event.keycode();
             if (YesSteveModel.isAvailable() && InputUtil.isPlayerReady() && action == 1 && InputUtil.isKeyPressed(keyCode, scanCode, KEY_MAPPING)) {
                 if (!AnimationDebugOverlay.isDebugActive()) {
                     AnimationDebugOverlay.tryUpdateFromHitResult();

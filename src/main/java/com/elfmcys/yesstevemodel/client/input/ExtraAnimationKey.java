@@ -37,7 +37,7 @@ public final class ExtraAnimationKey {
             initialized = true;
             if (YesSteveModel.isAvailable()) {
                 for (int i = 0; i <= 7; i++) {
-                    KeyMapping eventMapping = KeyMappingFactory.createInGameNone(String.format("key.better_player_model.extra_animation.%d.desc", Integer.valueOf(i)), InputConstants.Type.KEYSYM, -1, "key.category.better_player_model");
+                    KeyMapping eventMapping = KeyMappingFactory.createInGameNone(String.format("key.better_player_model.extra_animation.%d.desc", Integer.valueOf(i)), InputConstants.Type.KEYBOARD, -1, "key.category.better_player_model");
                     KEY_MAPPINGS.add(eventMapping);
                 }
             }
@@ -50,7 +50,7 @@ public final class ExtraAnimationKey {
             return;
         }
         ClientRawInputEvent.KEY_PRESSED.register((client, action, event) -> {
-            onKeyInput(action, event.key(), event.scancode());
+            onKeyInput(action, event.key(), event.keycode());
             return EventResult.pass();
         });
     }

@@ -179,7 +179,7 @@ public class AuthorButton extends Button {
                     PlatformUtil.openUri(link);
                 }
                 com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), this.parentScreen);
-            }, link, true));
+            }, java.net.URI.create(link), true));
             return;
         }
         Minecraft.getInstance().keyboardHandler.setClipboard(link);

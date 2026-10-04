@@ -41,7 +41,7 @@ public class CustomPlayerRenderer extends GeoReplacedEntityRenderer<Player, Cust
 
     public CustomPlayerRenderer(EntityRendererProvider.Context context) {
         super(context);
-        addLayerRenderer(new CustomPlayerItemInHandLayer(context.getEntityRenderDispatcher().getItemInHandRenderer()));
+        addLayerRenderer(new CustomPlayerItemInHandLayer());
         addLayerRenderer(new CustomPlayerElytraLayer(context));
         addLayerRenderer(new CustomPlayerParrotLayer(context));
         addLayerRenderer(new CustomPlayerArmorLayer(context));

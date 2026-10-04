@@ -271,7 +271,7 @@ public final class ModelPreviewRenderer {
         Quaternionf rotationZ = Axis.ZP.rotationDegrees(180.0f);
         Quaternionf rotationX = Axis.XP.rotationDegrees(disablePreviewRotation ? 0.0f : -10.0f);
         rotationZ.mul(rotationX);
-        poseStack.mulPose(rotationZ);
+        poseStack.rotate(rotationZ);
 
         float oldBodyRot = livingEntity.yBodyRot;
         float oldBodyRotO = livingEntity.yBodyRotO;
@@ -308,7 +308,7 @@ public final class ModelPreviewRenderer {
         Entity vehicle = livingEntity.getVehicle();
         if (vehicle instanceof LivingEntity) {
             float vehicleYaw = vehicle.getYRot();
-            poseStack.mulPose(Axis.YP.rotationDegrees(vehicleYaw - previewYaw));
+            poseStack.rotate(Axis.YP.rotationDegrees(vehicleYaw - previewYaw));
             livingEntity.yHeadRot = vehicleYaw;
             livingEntity.yHeadRotO = vehicleYaw;
         }
@@ -350,7 +350,7 @@ public final class ModelPreviewRenderer {
         Quaternionf rotationZ = Axis.ZP.rotationDegrees(180.0f);
         Quaternionf rotationX = Axis.XP.rotationDegrees((-10.0f) + pitch);
         rotationZ.mul(rotationX);
-        poseStack.mulPose(rotationZ);
+        poseStack.rotate(rotationZ);
 
         float oldBodyRot = livingEntity.yBodyRot;
         float oldBodyRotO = livingEntity.yBodyRotO;
@@ -375,7 +375,7 @@ public final class ModelPreviewRenderer {
             // lighting setup removed in 26.2
             AnimationTracker animationTracker = getPreviewAnimationTracker(animatableEntity);
             if (isPreviewAnimation(animationTracker, "sleep")) {
-                poseStack.mulPose(Axis.YP.rotationDegrees(yaw - 90.0f));
+                poseStack.rotate(Axis.YP.rotationDegrees(yaw - 90.0f));
                 poseStack.translate(0.5d, 0.5625d, 0.0d);
                 livingEntity.setPose(Pose.SLEEPING);
             }
@@ -436,9 +436,9 @@ public final class ModelPreviewRenderer {
                     return;
                 }
                 float bodyRotation = CustomVehicleRenderer.getBodyRotation(vehicle, Mth.lerp(partialTick, vehicle.yRotO, vehicle.getYRot()), partialTick);
-                poseStack.mulPose(Axis.YP.rotationDegrees(180.0f - bodyRotation));
+                poseStack.rotate(Axis.YP.rotationDegrees(180.0f - bodyRotation));
                 RenderUtils.prepMatrixForLocator(poseStack, list);
-                poseStack.mulPose(Axis.YN.rotationDegrees(180.0f - bodyRotation));
+                poseStack.rotate(Axis.YN.rotationDegrees(180.0f - bodyRotation));
                 Vec3 passengerAttachment = ((EntityRidingAccessor) vehicle).invokeGetPassengerAttachmentPoint(entity, entity.getDimensions(entity.getPose()), 1.0F);
                 double myRidingOffset = -passengerAttachment.y();
                 poseStack.translate(0.0d, myRidingOffset, 0.0d);
@@ -453,15 +453,15 @@ public final class ModelPreviewRenderer {
         poseStack.translate(0.0d, 0.8d, 0.0d);
         Quaternionf rotationZ = Axis.ZP.rotationDegrees(180.0f);
         rotationZ.mul(Axis.XP.rotationDegrees((-10.0f) + pitch));
-        poseStack.mulPose(rotationZ);
-        poseStack.mulPose(Axis.YP.rotationDegrees(yaw + 180.0f));
+        poseStack.rotate(rotationZ);
+        poseStack.rotate(Axis.YP.rotationDegrees(yaw + 180.0f));
         poseStack.translate(-0.5d, 0.0d, 0.5d);
         renderSimpleBed(poseStack, bufferSource);
     }
 
     private static void renderBedPreview(PoseStack poseStack, float yaw, SubmitNodeCollector bufferSource) {
         poseStack.pushPose();
-        poseStack.mulPose(Axis.YP.rotationDegrees(yaw + 180.0f));
+        poseStack.rotate(Axis.YP.rotationDegrees(yaw + 180.0f));
         poseStack.translate(-0.5d, 0.0d, 0.5d);
         renderSimpleBed(poseStack, bufferSource);
         poseStack.popPose();
@@ -474,15 +474,15 @@ public final class ModelPreviewRenderer {
         poseStack.translate(0.0d, 0.8d, 0.0d);
         Quaternionf rotationZ = Axis.ZP.rotationDegrees(180.0f);
         rotationZ.mul(Axis.XP.rotationDegrees((-10.0f) + pitch));
-        poseStack.mulPose(rotationZ);
-        poseStack.mulPose(Axis.YP.rotationDegrees(yaw));
+        poseStack.rotate(rotationZ);
+        poseStack.rotate(Axis.YP.rotationDegrees(yaw));
         poseStack.translate(-1.5d, -1.0d, -2.5d);
         renderSimpleGround(poseStack, bufferSource);
     }
 
     private static void renderGroundPreview(PoseStack poseStack, float yaw, SubmitNodeCollector bufferSource) {
         poseStack.pushPose();
-        poseStack.mulPose(Axis.YP.rotationDegrees(yaw));
+        poseStack.rotate(Axis.YP.rotationDegrees(yaw));
         poseStack.translate(-1.5d, -1.0d, -2.5d);
         renderSimpleGround(poseStack, bufferSource);
         poseStack.popPose();
@@ -573,7 +573,7 @@ public final class ModelPreviewRenderer {
 
     private static void renderVehicleEntity(float yaw, Entity riderEntity, PoseStack poseStack, EntityRenderDispatcher entityRenderDispatcher, SubmitNodeCollector bufferSource, Entity vehicleEntity, float partialTick) {
         poseStack.pushPose();
-        poseStack.mulPose(Axis.YP.rotationDegrees(yaw));
+        poseStack.rotate(Axis.YP.rotationDegrees(yaw));
         Vec3 passengerAttachment = ((EntityRidingAccessor) vehicleEntity).invokeGetPassengerAttachmentPoint(riderEntity, riderEntity.getDimensions(riderEntity.getPose()), 1.0F);
         // MC 26.x: EntityRenderDispatcher.render() signature changed
         // entityRenderDispatcher.render(vehicleEntity, 0.0d, passengerAttachment.y(), 0.0d, 0.0f, partialTick, poseStack, bufferSource, 15728880);

@@ -1,5 +1,7 @@
 package rip.ysm.compat.gun.common;
 
+import com.elfmcys.yesstevemodel.util.SwingUtil;
+
 import com.elfmcys.yesstevemodel.client.animation.IAnimationPredicate;
 import com.elfmcys.yesstevemodel.client.entity.IPreviewAnimatable;
 import com.elfmcys.yesstevemodel.client.entity.LivingAnimatable;
@@ -21,7 +23,7 @@ public class ItemUseAnimationPredicate implements IAnimationPredicate<LivingAnim
         if (livingEntity == null || (event.getAnimatable() instanceof IPreviewAnimatable)) {
             return PlayState.STOP;
         }
-        if (!livingEntity.swinging && !livingEntity.isUsingItem()) {
+        if (!SwingUtil.isSwinging(livingEntity) && !livingEntity.isUsingItem()) {
             ItemStack itemInHand = livingEntity.getItemInHand(InteractionHand.MAIN_HAND);
             PlayState playState = TacCompat.handleGunActionAnimState(itemInHand, event);
             if (playState == null) {

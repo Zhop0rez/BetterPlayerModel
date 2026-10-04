@@ -1,5 +1,7 @@
 package com.elfmcys.yesstevemodel.client.animation.molang.functions.ctrl;
 
+import com.elfmcys.yesstevemodel.util.SwingUtil;
+
 import com.elfmcys.yesstevemodel.geckolib3.core.molang.context.IContext;
 import com.elfmcys.yesstevemodel.geckolib3.util.MolangUtils;
 import com.elfmcys.yesstevemodel.geckolib3.core.molang.funciton.entity.LivingEntityFunction;
@@ -47,7 +49,7 @@ public class HandRenderFunction extends LivingEntityFunction {
     }
 
     public static HandRenderFunction createWhenSwinging() {
-        return new HandRenderFunction((entity, interactionHand) -> entity.swinging && entity.swingingArm == interactionHand && !entity.isSleeping());
+        return new HandRenderFunction((entity, interactionHand) -> SwingUtil.isSwinging(entity) && SwingUtil.getSwingingArm(entity) == interactionHand && !entity.isSleeping());
     }
 
     public static HandRenderFunction createWhenUsing() {

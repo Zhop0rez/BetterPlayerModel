@@ -5,9 +5,9 @@ import com.elfmcys.yesstevemodel.util.ModelMemoryProfiler;
 import rip.ysm.compat.oculus.ShadersTextureType;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.textures.FilterMode;
-import com.mojang.blaze3d.textures.GpuTexture;
-import com.mojang.blaze3d.textures.GpuTextureView;
+import com.mojang.renderpearl.api.textures.FilterMode;
+import com.mojang.renderpearl.api.textures.GpuTexture;
+import com.mojang.renderpearl.api.textures.GpuTextureView;
 
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceMaps;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
@@ -86,7 +86,7 @@ public class OuterFileTexture extends AbstractTexture implements ITextureMap {
             this.texture = device.createTexture(
                     () -> "YSM outer texture",
                     GpuTexture.USAGE_TEXTURE_BINDING | GpuTexture.USAGE_COPY_DST,
-                    com.mojang.blaze3d.GpuFormat.RGBA8_UNORM,
+                    com.mojang.renderpearl.api.GpuFormat.RGBA8_UNORM,
                     width,
                     height,
                     1,

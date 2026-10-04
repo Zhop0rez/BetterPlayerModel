@@ -1,5 +1,7 @@
 package rip.ysm.api.item.fabric;
 
+import com.elfmcys.yesstevemodel.util.SwingUtil;
+
 import com.elfmcys.yesstevemodel.client.animation.condition.InnerClassify;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -99,7 +101,7 @@ public final class WeaponActionBridgeImpl {
     }
 
     private static boolean isAttackingMainHand(LivingEntity entity) {
-        return entity.swinging && entity.swingingArm == InteractionHand.MAIN_HAND;
+        return SwingUtil.isSwinging(entity) && SwingUtil.getSwingingArm(entity) == InteractionHand.MAIN_HAND;
     }
 
     private static float getUseTicks(LivingEntity entity, boolean using, float partialTick) {
@@ -107,7 +109,7 @@ public final class WeaponActionBridgeImpl {
     }
 
     private static float getAttackTicks(LivingEntity entity, boolean attacking, float partialTick) {
-        return attacking ? Math.max(0.0f, entity.swingTime + partialTick) : 0.0f;
+        return attacking ? Math.max(0.0f, SwingUtil.getSwingTime(entity) + partialTick) : 0.0f;
     }
 
     private static float getChargeProgress(LivingEntity entity, ItemStack stack, boolean using, float partialTick) {

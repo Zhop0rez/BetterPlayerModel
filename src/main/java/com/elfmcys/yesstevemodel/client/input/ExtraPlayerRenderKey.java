@@ -13,7 +13,7 @@ import rip.ysm.api.client.KeyMappingFactory;
 
 public final class ExtraPlayerRenderKey {
 
-    public static final KeyMapping KEY_MAPPING = KeyMappingFactory.createInGameAlt("key.better_player_model.open_extra_player_render.desc", InputConstants.Type.KEYSYM, 80, "key.category.better_player_model");
+    public static final KeyMapping KEY_MAPPING = KeyMappingFactory.createInGameAlt("key.better_player_model.open_extra_player_render.desc", InputConstants.Type.KEYBOARD, 80, "key.category.better_player_model");
 
     private ExtraPlayerRenderKey() {
     }
@@ -24,7 +24,7 @@ public final class ExtraPlayerRenderKey {
         }
         ClientRawInputEvent.KEY_PRESSED.register((client, action, event) -> {
             int keyCode = event.key();
-            int scanCode = event.scancode();
+            int scanCode = event.keycode();
             if (YesSteveModel.isAvailable() && InputUtil.isPlayerReady() && action == 1 && InputUtil.isKeyPressed(keyCode, scanCode, KEY_MAPPING)) {
                 com.elfmcys.yesstevemodel.client.ScreenFixer.setScreen(Minecraft.getInstance(), new ExtraPlayerRenderScreen());
             }

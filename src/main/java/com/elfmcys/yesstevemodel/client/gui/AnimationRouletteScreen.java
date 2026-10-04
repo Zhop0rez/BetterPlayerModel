@@ -31,7 +31,7 @@ import com.elfmcys.yesstevemodel.util.data.OrderedStringMap;
 import com.elfmcys.yesstevemodel.molang.runtime.Struct;
 import com.elfmcys.yesstevemodel.client.animation.molang.struct.RoamingStruct;
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.opengl.GlStateManager;
+import com.mojang.renderpearl.backend.opengl.GlStateManager;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
@@ -551,7 +551,7 @@ public class AnimationRouletteScreen extends Screen {
 
     @Override
     public boolean keyPressed(KeyEvent event) {
-        if (KeyMappingFactory.isActiveAndMatches(AnimationRouletteKey.KEY_ROULETTE, event.key(), event.scancode())) {
+        if (KeyMappingFactory.isActiveAndMatches(AnimationRouletteKey.KEY_ROULETTE, event.key(), event.keycode())) {
             onClose();
             return true;
         }

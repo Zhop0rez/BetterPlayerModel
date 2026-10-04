@@ -1,5 +1,7 @@
 package com.elfmcys.yesstevemodel.client.animation.molang;
 
+import com.elfmcys.yesstevemodel.util.SwingUtil;
+
 import com.elfmcys.yesstevemodel.capability.PlayerCapability;
 import com.elfmcys.yesstevemodel.client.animation.ControllerActionResolver;
 import rip.ysm.compat.touhoulittlemaid.TouhouLittleMaidCompat;
@@ -201,10 +203,10 @@ public class YSMBinding extends ContextBinding {
         livingEntityVar("mace_smash_progress", ctx -> getWeaponState(ctx).mace().smashProgress());
 
         livingEntityVar("is_fishing", YSMBinding::isFishing);
-        livingEntityVar("swinging", ctx -> ctx.entity().swinging);
-        livingEntityVar("swing_time", ctx -> ctx.entity().swingTime);
-        livingEntityVar("swinging_arm", ctx -> ctx.entity().swingingArm == InteractionHand.MAIN_HAND ? 0 : 1);
-        livingEntityVar("attack_time", ctx -> ctx.entity().getAttackAnim(ctx.animationEvent().getFrameTime()));
+        livingEntityVar("swinging", ctx -> SwingUtil.isSwinging(ctx.entity()));
+        livingEntityVar("swing_time", ctx -> SwingUtil.getSwingTime(ctx.entity()));
+        livingEntityVar("swinging_arm", ctx -> SwingUtil.getSwingingArm(ctx.entity()) == InteractionHand.MAIN_HAND ? 0 : 1);
+        livingEntityVar("attack_time", ctx -> SwingUtil.getSwingProgress(ctx.entity(), ctx.animationEvent().getFrameTime()));
         playerEntityVar("texture_name", new TextureName());
         playerEntityVar("first_person_mod_hide", new FirstPersonModHide());
 

@@ -17,7 +17,7 @@ import rip.ysm.api.client.KeyMappingFactory;
 
 public final class PlayerModelToggleKey {
 
-    public static final KeyMapping KEY_MAPPING = KeyMappingFactory.createInGameAlt("key.better_player_model.player_model.desc", InputConstants.Type.KEYSYM, 89, "key.category.better_player_model");
+    public static final KeyMapping KEY_MAPPING = KeyMappingFactory.createInGameAlt("key.better_player_model.player_model.desc", InputConstants.Type.KEYBOARD, 89, "key.category.better_player_model");
 
     private PlayerModelToggleKey() {
     }
@@ -27,7 +27,7 @@ public final class PlayerModelToggleKey {
             return;
         }
         ClientRawInputEvent.KEY_PRESSED.register((client, action, event) -> {
-            return onKeyInput(action, event.key(), event.scancode()) ? EventResult.interruptFalse() : EventResult.pass();
+            return onKeyInput(action, event.key(), event.keycode()) ? EventResult.interruptFalse() : EventResult.pass();
         });
     }
 

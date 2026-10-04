@@ -1,5 +1,7 @@
 package com.elfmcys.yesstevemodel.client.renderer;
 
+import com.elfmcys.yesstevemodel.util.SwingUtil;
+
 import com.elfmcys.yesstevemodel.capability.ProjectileCapability;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -46,7 +48,7 @@ public class CustomFishingHookRenderer {
         if (!ToolActionBridge.canFishingRodCast(player.getMainHandItem())) {
             hand = -hand;
         }
-        float swingProgressSqrt = Mth.sin(Mth.sqrt(player.getAttackAnim(partialTick)) * 3.1415927f);
+        float swingProgressSqrt = Mth.sin(Mth.sqrt(SwingUtil.getSwingProgress(player, partialTick)) * 3.1415927f);
         float yawOffset = Mth.lerp(partialTick, player.yBodyRotO, player.yBodyRot) * 0.017453292f;
         double dSin = Mth.sin(yawOffset);
         double dCos = Mth.cos(yawOffset);

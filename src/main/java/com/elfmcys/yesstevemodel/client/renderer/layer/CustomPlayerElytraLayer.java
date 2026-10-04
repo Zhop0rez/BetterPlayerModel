@@ -62,7 +62,7 @@ public class CustomPlayerElytraLayer extends GeoLayerRenderer<CustomPlayerEntity
         }
         if (!hidden) {
             this.elytraModel.setupAnim(createElytraState(entity, partialTick, ageInTicks));
-            bufferSource.submitModel(this.elytraModel, createElytraState(entity, partialTick, ageInTicks), poseStack, RenderTypes.armorCutoutNoCull(cloakTextureLocation), packedLightIn, OverlayTexture.NO_OVERLAY, 0, null);
+            bufferSource.submitModel(this.elytraModel, createElytraState(entity, partialTick, ageInTicks), poseStack, RenderTypes.armorCutoutNoCull(cloakTextureLocation), packedLightIn, OverlayTexture.NO_OVERLAY, 0);
         }
         poseStack.popPose();
     }
@@ -81,7 +81,7 @@ public class CustomPlayerElytraLayer extends GeoLayerRenderer<CustomPlayerEntity
 
     private boolean renderLocatorElytra(PoseStack poseStack, AnimatedGeoModel model) {
         boolean hidden = RenderUtils.prepMatrixForEquipmentLocator(poseStack, model.elytraBones());
-        poseStack.mulPose(Axis.ZP.rotationDegrees(180.0f));
+        poseStack.rotate(Axis.ZP.rotationDegrees(180.0f));
         return hidden;
     }
 

@@ -1,14 +1,10 @@
 package com.elfmcys.yesstevemodel.network.message;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.protocol.game.ClientboundAnimatePacket;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.effect.MobEffectUtil;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.SwingAnimation;
 import rip.ysm.api.item.ToolActionBridge;
 import rip.ysm.api.network.PacketContext;
 
@@ -39,23 +35,8 @@ public class C2SSwingArmPacket {
         InteractionHand interactionHand = message.hand;
         ItemStack itemInHand = sender.getItemInHand(interactionHand);
         if (itemInHand.isEmpty() || !ToolActionBridge.onEntitySwing(itemInHand, sender)) {
-            if (!sender.swinging || sender.swingTime >= getSwingDuration(sender) / 2 || sender.swingTime < 0) {
-                sender.swingTime = -1;
-                sender.swinging = true;
-                sender.swingingArm = interactionHand;
-                if (sender.level() instanceof ServerLevel serverLevel) {
-                    serverLevel.getChunkSource().sendToTrackingPlayers(sender, new ClientboundAnimatePacket(sender, interactionHand == InteractionHand.MAIN_HAND ? 0 : 3));
-                }
-            }
+            // 26.3: swing() сам проверяет старт/повтор свинга и шлёт ClientboundSwingAnimationPacket трекинг-игрокам
+            sender.swing(interactionHand, SwingAnimation.DEFAULT, false);
         }
-    }
-    private static int getSwingDuration(LivingEntity entity) {
-        if (MobEffectUtil.hasDigSpeed(entity)) {
-            return 6 - (1 + MobEffectUtil.getDigSpeedAmplification(entity));
-        }
-        if (entity.hasEffect(MobEffects.MINING_FATIGUE)) {
-            return 6 + ((1 + entity.getEffect(MobEffects.MINING_FATIGUE).getAmplifier()) * 2);
-        }
-        return 6;
     }
 }

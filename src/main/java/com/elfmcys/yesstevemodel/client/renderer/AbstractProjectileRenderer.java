@@ -56,12 +56,12 @@ public abstract class AbstractProjectileRenderer<TEntity extends Projectile, T e
                 this.modelViewMatrix = new Matrix4f(poseStack.last().pose());
                 setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
                 poseStack.pushPose();
-                poseStack.mulPose(Axis.YP.rotationDegrees(projectile.getYRot(partialTick) - 90.0f));
+                poseStack.rotate(Axis.YP.rotationDegrees(projectile.getYRot(partialTick) - 90.0f));
                 float xRot = projectile.getXRot(partialTick);
                 if (projectile instanceof ThrownTrident) {
                     xRot += 90.0f;
                 }
-                poseStack.mulPose(Axis.ZP.rotationDegrees(xRot));
+                poseStack.rotate(Axis.ZP.rotationDegrees(xRot));
                 float width = animatable.getWidthScale();
                 float height = animatable.getHeightScale();
                 poseStack.scale(width, height, width);

@@ -13,7 +13,6 @@ import com.elfmcys.yesstevemodel.geckolib3.util.RenderUtils;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.effects.SpearAnimations;
-import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -32,10 +31,7 @@ import rip.ysm.api.item.WeaponKind;
 
 public class CustomPlayerItemInHandLayer extends GeoLayerRenderer<CustomPlayerEntity> {
 
-    private final ItemInHandRenderer itemRenderer;
-
-    public CustomPlayerItemInHandLayer(ItemInHandRenderer itemInHandRenderer) {
-        this.itemRenderer = itemInHandRenderer;
+    public CustomPlayerItemInHandLayer() {
     }
 
     @Override
@@ -131,7 +127,7 @@ public class CustomPlayerItemInHandLayer extends GeoLayerRenderer<CustomPlayerEn
 
     private void applyDefaultHandTransform(PoseStack poseStack) {
         poseStack.translate(0.0d, -0.0625d, -0.1d);
-        poseStack.mulPose(Axis.XP.rotationDegrees(-90.0f));
+        poseStack.rotate(Axis.XP.rotationDegrees(-90.0f));
     }
 
     private void renderVanillaItemWithUseOrientation(LivingEntity livingEntity, ItemStack itemStack, ItemDisplayContext itemDisplayContext, HumanoidArm humanoidArm, PoseStack poseStack, int packedLight, float partialTick) {
@@ -140,9 +136,9 @@ public class CustomPlayerItemInHandLayer extends GeoLayerRenderer<CustomPlayerEn
         }
         if (shouldApplySpearUseItemTransform(livingEntity, itemStack, humanoidArm)) {
             float ticksUsingItem = clampSpearUseTicksBeforeVanillaSway(itemStack, livingEntity.getTicksUsingItem(partialTick));
-            poseStack.mulPose(Axis.YP.rotationDegrees(180.0f));
+            poseStack.rotate(Axis.YP.rotationDegrees(180.0f));
             ArmedEntityRenderState renderState = new ArmedEntityRenderState();
-            renderState.attackTime = livingEntity.getAttackAnim(partialTick);
+            renderState.swingAnimation = livingEntity.getSwingAnimation(partialTick);
             renderState.ticksSinceKineticHitFeedback = livingEntity.getTicksSinceLastKineticHitFeedback(partialTick);
             SpearAnimations.thirdPersonUseItem(renderState, poseStack, ticksUsingItem, humanoidArm, itemStack);
         }
@@ -213,7 +209,7 @@ public class CustomPlayerItemInHandLayer extends GeoLayerRenderer<CustomPlayerEn
     private void renderVanillaItem(LivingEntity livingEntity, ItemStack itemStack, ItemDisplayContext itemDisplayContext, HumanoidArm humanoidArm, PoseStack poseStack, int packedLight) {
         SubmitNodeCollector collector = SubmitRenderContext.get();
         if (collector != null) {
-            this.itemRenderer.renderItem(livingEntity, itemStack, itemDisplayContext, poseStack, collector, packedLight);
+            SubmitRenderContext.renderItemStack(livingEntity, itemStack, itemDisplayContext, poseStack, collector, packedLight);
         }
     }
 

@@ -1,5 +1,7 @@
 package com.elfmcys.yesstevemodel.client.animation.predicate;
 
+import com.elfmcys.yesstevemodel.util.SwingUtil;
+
 import com.elfmcys.yesstevemodel.client.animation.IAnimationPredicate;
 import com.elfmcys.yesstevemodel.client.entity.PlayerGeoEntity;
 import com.elfmcys.yesstevemodel.geckolib3.core.builder.Animation;
@@ -38,7 +40,7 @@ public class FirstPersonLanceAnimationPredicate implements IAnimationPredicate<P
         }
 
         if (lance.jabbing() || lance.lunging()) {
-            if (player.swingTime == 0 && player.swingingArm == InteractionHand.MAIN_HAND && animatable.getPositionTracker().markProcessed(LANCE_ATTACK_MARKER)) {
+            if (SwingUtil.getSwingTime(player) == 0 && SwingUtil.getSwingingArm(player) == InteractionHand.MAIN_HAND && animatable.getPositionTracker().markProcessed(LANCE_ATTACK_MARKER)) {
                 event.getController().stopTransition();
             }
             String animation = lance.lunging()

@@ -23,7 +23,7 @@ import com.elfmcys.yesstevemodel.network.NetworkHandler;
 import com.elfmcys.yesstevemodel.network.message.C2SRequestSwitchModelPacket;
 import com.elfmcys.yesstevemodel.util.FileTypeUtil;
 import com.elfmcys.yesstevemodel.util.PlatformUtil;
-import com.mojang.blaze3d.opengl.GlStateManager;
+import com.mojang.renderpearl.backend.opengl.GlStateManager;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import dev.ysm.architectury.utils.GameInstance;
@@ -274,8 +274,8 @@ public class ModelButton extends Button {
 
     private static boolean isShiftDown(Minecraft minecraft) {
         Window window = minecraft.getWindow();
-        return InputConstants.isKeyDown(window, InputConstants.KEY_LSHIFT)
-                || InputConstants.isKeyDown(window, InputConstants.KEY_RSHIFT);
+        return InputConstants.isKeyDown(InputConstants.KEY_LSHIFT)
+                || InputConstants.isKeyDown(InputConstants.KEY_RSHIFT);
     }
 
     public void renderTooltip(GuiGraphicsExtractor GuiGraphicsExtractor, Screen screen, int mouseX, int mouseY) {
