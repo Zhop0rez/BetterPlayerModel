@@ -60,6 +60,14 @@ dependencies {
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
 }
 
+processResources {
+    inputs.property "version", project.version
+    inputs.property "minecraft_version", project.minecraft_version
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version, "minecraft_version": project.minecraft_version
+    }
+}
+
 tasks.withType(JavaCompile).configureEach {
 	it.options.release = 21
     it.options.encoding = "UTF-8"
