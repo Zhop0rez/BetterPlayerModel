@@ -51,7 +51,7 @@ public class LinearKeyframeInterpolator implements IInterpolable {
             return segment.startValue + segment.valueDelta;
         }
 
-        // е€†ж®µзєїжЂ§жЏ’еЂји®Ўз®—
+        // Piecewise linear interpolation
         return segment.startValue + (segment.valueDelta * ((time - segment.startTime) / segment.duration));
     }
 

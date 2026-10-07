@@ -533,7 +533,7 @@ ClientModelManager.ensureLocalModelsLoaded();
         GuiGraphicsExtractor.pose().popMatrix();
         if (StringUtils.isNotBlank(currentPath)) {
             int lineIndex = 0;
-            List listSplit = this.font.split(Component.literal("рџ“‚ " + currentPath).withStyle(ChatFormatting.GRAY), 270);
+            List listSplit = this.font.split(Component.literal("📂 " + currentPath).withStyle(ChatFormatting.GRAY), 270);
             Iterator it = listSplit.iterator();
             while (it.hasNext()) {
                 GuiGraphicsExtractor.text(this.font, (FormattedCharSequence) it.next(), this.guiLeft + 142, this.guiTop + (((-(listSplit.size() - lineIndex)) * 10) - 2), 0xFFF3F3E0);

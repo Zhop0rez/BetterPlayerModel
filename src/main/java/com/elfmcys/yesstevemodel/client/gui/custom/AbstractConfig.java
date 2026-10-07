@@ -3,8 +3,8 @@ package com.elfmcys.yesstevemodel.client.gui.custom;
 public abstract class AbstractConfig {
     //          {
     //            "type": "checkbox",
-    //            "title": "headdress/е¤ґйҐ°",
-    //            "description": "Used to hide/show the red bow headdress (з”ЁжќҐжѕз¤єж€–ејЂеђЇзЋ©е®¶е¤ґйҐ°)",
+    //            "title": "headdress/headwear",
+    //            "description": "Used to hide/show the red bow headdress (to show or enable the player headwear)",
     //            "value": "v.roaming.red_bow_headdress"
     //          }
 

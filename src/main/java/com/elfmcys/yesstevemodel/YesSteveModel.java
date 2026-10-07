@@ -20,8 +20,8 @@ import java.io.IOException;
 
 /**
  * TODO:
- * ж¦›жЁїо…»е¦ЇвЂізЂ·жђґж—‡о‡љзЃЏеЌћж№Єе¦Їпј„зІЌйЏ‹и·єе§ћжќћз•Њж®‘йЏѓи·єв‚¬ж¬Џж°ЁжЈ°е‹«е§ћжќћж€’з°Ў
- * йЌЏи·єз• е¦ЇвЂізЂ·зјЃз†єзІєй–®иЉҐж§ёжќ©ж¶еЏ†ж¶“ж «ж™«йЌљеєЎе§ћжќћ? */
+ * The default model should already be preloaded when the mod group is loaded
+ * All other models are loaded after entering the world */
 public class YesSteveModel {
 
     public static final String MOD_ID = "better_player_model";

@@ -7502,9 +7502,9 @@
 			"bones": {
 				"RightArm": {
 					"rotation": [
-						"10+math.sin(query.anim_time*90)+ysm.second_order('й‡Ќй”¤', math.clamp(-3*q.vertical_speed,-10,120), 2, 0.8, 0)",
+						"10+math.sin(query.anim_time*90)+ysm.second_order('重锤', math.clamp(-3*q.vertical_speed,-10,120), 2, 0.8, 0)",
 						0,
-						"0.2*ysm.second_order('й‡Ќй”¤', math.clamp(-3*q.vertical_speed,-10,120), 2, 0.8, 0)"
+						"0.2*ysm.second_order('重锤', math.clamp(-3*q.vertical_speed,-10,120), 2, 0.8, 0)"
 					]
 				},
 				"RightForeArm": {
@@ -7514,7 +7514,7 @@
 					"rotation": [30, 0, 0]
 				},
 				"RightHandLocator": {
-					"scale": "1+0.02*ysm.second_order('й‡Ќй”¤зј©ж”ѕ', math.clamp(-2*q.vertical_speed,-10,60), 2, 0.8, 0)"
+					"scale": "1+0.02*ysm.second_order('重锤缩放', math.clamp(-2*q.vertical_speed,-10,60), 2, 0.8, 0)"
 				}
 			}
 		},

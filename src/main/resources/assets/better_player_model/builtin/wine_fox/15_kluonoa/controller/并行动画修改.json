@@ -2,30 +2,30 @@
 	"format_version": "1.19.0",
 	"animation_controllers": {
 		"player.parallel_2": {
-			"initial_state": "йљђи—Џе…‰зЋЇ",
+			"initial_state": "隐藏光环",
 			"states": {
-				"йљђи—Џе…‰зЋЇ": {
-					"animations": ["е…‰зЋЇйљђи—Џ"],
+				"隐藏光环": {
+					"animations": ["光环隐藏"],
 					"transitions": [
-						{"ејЂжњє": "!ctrl.sleep"}
+						{"开机": "!ctrl.sleep"}
 					]
 				},
-				"ејЂжњє": {
-					"animations": ["е…‰зЋЇејЂжњє"],
+				"开机": {
+					"animations": ["光环开机"],
 					"transitions": [
-						{"еёёжЂЃ": "q.all_animations_finished"}
+						{"常态": "q.all_animations_finished"}
 					]
 				},
-				"еёёжЂЃ": {
-					"animations": ["е…‰зЋЇеёёжЂЃ"],
+				"常态": {
+					"animations": ["光环常态"],
 					"transitions": [
-						{"е…іжњє": "ctrl.sleep"}
+						{"关机": "ctrl.sleep"}
 					]
 				},
-				"е…іжњє": {
-					"animations": ["е…‰зЋЇе…іжњє"],
+				"关机": {
+					"animations": ["光环关机"],
 					"transitions": [
-						{"йљђи—Џе…‰зЋЇ": "q.all_animations_finished"}
+						{"隐藏光环": "q.all_animations_finished"}
 					]
 				}
 			}
@@ -35,11 +35,11 @@
 				"default": {
 					"animations": [
 						{"empty": "v.roaming.emotion==0||ysm.rendering_in_inventory"},
-						{"иЎЁжѓ…_з–‘жѓ‘": "v.roaming.emotion==1"},
-						{"иЎЁжѓ…_е№Ід»Ђд№€": "v.roaming.emotion==2"},
-						{"иЎЁжѓ…_е®іжЂ•": "v.roaming.emotion==3"},
-						{"иЎЁжѓ…_е§”е±€е·ґе·ґ": "v.roaming.emotion==4"},
-						{"иЎЁжѓ…_и‹¦е‘ЂиҐї": "v.roaming.emotion==5"}
+						{"表情_疑惑": "v.roaming.emotion==1"},
+						{"表情_干什么": "v.roaming.emotion==2"},
+						{"表情_害怕": "v.roaming.emotion==3"},
+						{"表情_委屈巴巴": "v.roaming.emotion==4"},
+						{"表情_苦呀西": "v.roaming.emotion==5"}
 					]
 				}
 			}
@@ -49,11 +49,11 @@
 				"default": {
 					"animations": ["empty"],
 					"transitions": [
-						{"й›Ёе€®": "v.show_car&&ysm.weather>=1&&ysm.is_open_air"}
+						{"雨刮": "v.show_car&&ysm.weather>=1&&ysm.is_open_air"}
 					]
 				},
-				"й›Ёе€®": {
-					"animations": ["й›Ёе€®е™Ё"],
+				"雨刮": {
+					"animations": ["雨刮器"],
 					"transitions": [
 						{"default": "!(v.show_car&&ysm.weather>=1&&ysm.is_open_air)&&q.all_animations_finished"}
 					]

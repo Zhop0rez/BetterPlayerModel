@@ -40,12 +40,12 @@ public class YSMBinaryDeserializer implements AutoCloseable{
             deserializeModern();
         }
 
-        model.projectiles.entrySet().removeIf(entry -> { // иЂЃз‰€жњ¬ж јејЏеЏЇиѓЅжњ‰еЉЁз”»жІЎжЁЎећ‹жІЎзє№зђ†
+        model.projectiles.entrySet().removeIf(entry -> { // Legacy formats may have animations without models or textures
             RawYsmModel.RawSubEntity sub = entry.getValue();
             return sub.model == null || sub.textures.isEmpty();
         });
 
-        int offset = reader.getOffset(); // е…ій—­е‰ЌиЋ·еЏ–еЃЏз§»й‡Џ
+        int offset = reader.getOffset(); // Get the offset before closing
         if (closeOnExit) {
             this.reader.close();
         }
@@ -63,10 +63,10 @@ public class YSMBinaryDeserializer implements AutoCloseable{
 
     public void parseYSMFooter(RawYsmModel footer) {
         try {
-            if (format < 9) { // гЂЉ9жІЎжњ‰
+            if (format < 9) { // <9 has none
                 return;
             }
-            if (format > 26) { // >26 иї™й‡Њжњ‰дёЄз‰€жњ¬еЏ·
+            if (format > 26) { // >26 there is a version number here
                 model.footer.version = reader.readVarInt();
             } else {
                 model.footer.version = format;
@@ -74,14 +74,14 @@ public class YSMBinaryDeserializer implements AutoCloseable{
 
             model.footer.unkInt1 = reader.readVarInt(); // always 1
 
-            model.footer.rand = reader.readString(); // йљЏжњєе­—з¬¦дёІ
+            model.footer.rand = reader.readString(); // Random string
 
-            model.footer.time = reader.readVarLong(); // Unix ж—¶й—ґж€і е¦‚ 1775738769
+            model.footer.time = reader.readVarLong(); // Unix timestamp, e.g. 1775738769
 
-            model.footer.extra = reader.readString(); // еЇје‡єж—¶зљ„йўќе¤–е­—з¬¦дёІ
+            model.footer.extra = reader.readString(); // Extra string at export time
 
-            if (format >= 24) { // TODO: иї™дёЄжЇд»Ђд№€ж•°жЌ®пјџ
-                model.footer.unkInt2 = reader.readVarInt(); // always 0пјЊжљ‚ж—¶жІЎзњ‹е€°иї‡е…¶д»–зљ„жѓ…е†µпјЊдјјд№ЋжЇе­—з¬¦дёІ
+            if (format >= 24) { // TODO: what is this data?
+                model.footer.unkInt2 = reader.readVarInt(); // always 0; no other cases seen so far; appears to be a string
             }
 
         } catch (Throwable t) {
@@ -97,7 +97,7 @@ public class YSMBinaryDeserializer implements AutoCloseable{
         List<RawYsmModel.RawGeometry> tempModels = new ArrayList<>();
         int modelCount = reader.readVarInt();
         for (int i = 0; i < modelCount; ++i) {
-            int modelId = reader.readVarInt(); // жЈ„з”Ёж€–еѓ…дЅњз‚єе…§йѓЁID
+            int modelId = reader.readVarInt(); // Deprecated or used only as an internal ID
             int unknownMustBeOneFlag = reader.readVarInt();
             if (unknownMustBeOneFlag != 1) throw new RuntimeException("Expected 1");
             RawYsmModel.RawGeometry rawGeometry = parseModels();
@@ -160,7 +160,7 @@ public class YSMBinaryDeserializer implements AutoCloseable{
             tempTextures.add(tex);
         }
 
-        // Tablesе›ћеЎ«Hash
+        // Tables backfill Hash
         int modelTableSize = reader.readVarInt();
         for (int i = 0; i < modelTableSize; ++i) {
             int modelId = reader.readVarInt();
@@ -265,7 +265,7 @@ public class YSMBinaryDeserializer implements AutoCloseable{
                 tex.subTextures.add(sub);
             }
 
-            // з‰№ж®Љи™•зђ†дёЂдё‹
+            // Special handling
             if ("/ARROW\\".equals(tex.name)) {
                 RawYsmModel.RawSubEntity arrowEntity = model.projectiles.computeIfAbsent("minecraft:arrow", k -> {
                     RawYsmModel.RawSubEntity newSub = new RawYsmModel.RawSubEntity();
@@ -298,11 +298,11 @@ public class YSMBinaryDeserializer implements AutoCloseable{
             avatar.data = reader.readByteArray();
             avatar.width = reader.readVarInt();
             avatar.height = reader.readVarInt();
-            avatar.format = -1; // е…је®№ж—§з‰€й»и®¤ RGBA
+            avatar.format = -1; // Compatible with the legacy default RGBA
             tempAvatars.add(avatar);
         }
 
-        // Tablesе›ћеЎ«Hash
+        // Tables backfill Hash
         int modelTableSize = reader.readVarInt();
         for (int i = 0; i < modelTableSize; ++i) {
             int modelId = reader.readVarInt();
@@ -336,7 +336,7 @@ public class YSMBinaryDeserializer implements AutoCloseable{
             for (int j = 0; j < subTextureSize; ++j) {
                 int specularType = reader.readVarInt();
                 String specialImageHash = reader.readString();
-                // дї®еѕ©и€Љз‰€дёџжЈ„е­ђзґ‹зђ†Hash
+                // Fix legacy versions discarding the sub-texture Hash
                 if (tex != null) {
                     for (RawYsmModel.RawTexture.SubTexture sub : tex.subTextures) {
                         if (sub.specularType == specularType) {
@@ -430,7 +430,7 @@ public class YSMBinaryDeserializer implements AutoCloseable{
             subModuleName = reader.readString();
             subEntity.identifier = subModuleName;
         } else {
-            subEntity.identifier = categoryName + "_" + index; // >=26жІ’жњ‰Header Name
+            subEntity.identifier = categoryName + "_" + index; // >=26 has no Header Name
         }
         int animationCount = reader.readVarInt();
         for (int i = 0; i < animationCount; ++i) {

@@ -30,7 +30,7 @@ public class Event<T> {
         }
     }
 
-    /** Invoke handlers returning boolean вЂ” returns true if any handler returns true. */
+    /** Invoke handlers returning boolean — returns true if any handler returns true. */
     public boolean fireBoolean(Function<T, Boolean> action) {
         for (T handler : handlers) {
             if (action.apply(handler)) return true;

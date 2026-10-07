@@ -1,7 +1,7 @@
 ﻿{
 	"format_version": "1.8.0",
 	"animations": {
-		"ж”ѕйЈће­”жЋзЃЇ": {
+		"放飞孔明灯": {
 			"animation_length": 3.0625,
 			"bones": {
 				"AllHead": {
@@ -237,21 +237,21 @@
 				]
 			}
 		},
-		"е€‡жЌўе…ЅиЂі": {
+		"切换兽耳": {
 			"animation_length": 2.9167,
 			"timeline": {
 				"0.0833": "v.roaming.w=1-v.roaming.g;",
 				"0.125": "v.roaming.g=v.roaming.w;"
 			}
 		},
-		"е€‡жЌўе°ѕе·ґ": {
+		"切换尾巴": {
 			"animation_length": 2.9167,
 			"timeline": {
 				"0.0833": "v.roaming.wb=1-v.roaming.f;",
 				"0.125": "v.roaming.f=v.roaming.wb;"
 			}
 		},
-		"ж‹›ж‰‹": {
+		"招手": {
 			"animation_length": 1.5,
 			"bones": {
 				"Root": {
@@ -536,7 +536,7 @@
 				}
 			}
 		},
-		"йј“жЋЊ": {
+		"鼓掌": {
 			"animation_length": 1.5,
 			"bones": {
 				"Root": {
@@ -864,7 +864,7 @@
 				}
 			}
 		},
-		"з‚№е¤ґ": {
+		"点头": {
 			"animation_length": 1.5,
 			"bones": {
 				"Root": {
@@ -1180,7 +1180,7 @@
 				}
 			}
 		},
-		"ж‘‡е¤ґ": {
+		"摇头": {
 			"animation_length": 1.5,
 			"bones": {
 				"Root": {
@@ -1496,7 +1496,7 @@
 				}
 			}
 		},
-		"жЉ•й™Ќ": {
+		"投降": {
 			"loop": true,
 			"bones": {
 				"1": {
@@ -1563,7 +1563,7 @@
 				}
 			}
 		},
-		"иєє": {
+		"躺": {
 			"loop": true,
 			"bones": {
 				"tushetou": {
@@ -1627,7 +1627,7 @@
 				}
 			}
 		},
-		"иєє2": {
+		"躺2": {
 			"loop": true,
 			"bones": {
 				"1": {
@@ -1703,7 +1703,7 @@
 				}
 			}
 		},
-		"дёЌж»Ў": {
+		"不满": {
 			"loop": true,
 			"bones": {
 				"Face": {
@@ -1720,7 +1720,7 @@
 				}
 			}
 		},
-		"жѓЉи®¶": {
+		"惊讶": {
 			"loop": true,
 			"bones": {
 				"Head": {
@@ -1755,7 +1755,7 @@
 				}
 			}
 		},
-		"з¬‘": {
+		"笑": {
 			"loop": true,
 			"bones": {
 				"Eyes": {
@@ -1775,7 +1775,7 @@
 				}
 			}
 		},
-		"еЉЁдЅњ2": {
+		"动作2": {
 			"loop": true,
 			"bones": {
 				"Root": {
@@ -1853,7 +1853,7 @@
 				}
 			}
 		},
-		"еќђ": {
+		"坐": {
 			"loop": true,
 			"animation_length": 0.5417,
 			"bones": {
@@ -1926,7 +1926,7 @@
 				}
 			}
 		},
-		"еЉЁжЂЃpose": {
+		"动态pose": {
 			"loop": true,
 			"animation_length": 6,
 			"bones": {
@@ -2157,7 +2157,7 @@
 				}
 			}
 		},
-		"еќђе§ї ": {
+		"坐姿 ": {
 			"loop": true,
 			"bones": {
 				"1": {

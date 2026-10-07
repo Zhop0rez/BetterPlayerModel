@@ -13,9 +13,9 @@
   "metadata.authors.3.name": "Baifan Xiaomiao",
   "metadata.authors.3.role": "Texture",
   "metadata.authors.3.comment": "meow",
-  "properties.extra_animation.ж‘‡": "Shake",
-  "properties.extra_animation.иЅ¬ењ€ењ€": "Spin Around",
-  "properties.extra_animation.её­ењ°иЂЊеќђ": "Sit on Ground",
-  "properties.extra_animation.ж–°е№ґеї«д№ђ": "Happy New Year",
+  "properties.extra_animation.摇": "Shake",
+  "properties.extra_animation.转圈圈": "Spin Around",
+  "properties.extra_animation.席地而坐": "Sit on Ground",
+  "properties.extra_animation.新年快乐": "Happy New Year",
   "files.player.texture.texture": "Default"
 }

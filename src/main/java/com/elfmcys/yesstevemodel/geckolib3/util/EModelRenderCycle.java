@@ -5,6 +5,6 @@ package com.elfmcys.yesstevemodel.geckolib3.util;
  * GitHub: <a href="https://github.com/DerToaster98">https://github.com/DerToaster98</a>
  */
 public enum EModelRenderCycle implements IRenderCycle {
-    // дѕ›з”Ёж€·з‰№ж®ЉдЅїз”Ё
+    // For special user use
     INITIAL, REPEATED, SPECIAL
 }

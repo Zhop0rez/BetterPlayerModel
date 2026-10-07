@@ -350,7 +350,7 @@ public class YSMFolderDeserializer implements AutoCloseable {
                 if (texData != null) {
                     ImageMeta meta = parseImageMeta(texData, texPath);
                     RawYsmModel.RawTexture rt = new RawYsmModel.RawTexture();
-                    rt.hash = sha256Hex(texData); // и®Ўз®—еЋџе§‹ж•°жЌ®зљ„ hash
+                    rt.hash = sha256Hex(texData); // Compute the hash of the raw data
                     rt.width = meta.width();
                     rt.height = meta.height();
                     rt.imageFormat = meta.format();
@@ -1177,7 +1177,7 @@ public class YSMFolderDeserializer implements AutoCloseable {
             throw new RuntimeException("arrow.json is present but arrow.png is missing.");
         }
 
-        // иї™дёЄеЏЇиѓЅдёЌе­ењЁ
+        // This may not exist
         byte[] infoData = readResource("info.json");
         if (infoData != null) {
             try {
@@ -1226,7 +1226,7 @@ public class YSMFolderDeserializer implements AutoCloseable {
             }
         }
 
-        // з®­зџў
+        // Arrow
         if (arrowData != null) {
             RawYsmModel.RawSubEntity arrowSub = new RawYsmModel.RawSubEntity();
             arrowSub.identifier = "arrow";

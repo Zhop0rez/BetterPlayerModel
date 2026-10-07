@@ -90,7 +90,7 @@ public class ModelMetadataPresenter {
             if (!extraInfo.getAuthors().isEmpty()) {
                 String authorsString = StringUtils.join(extraInfo.getAuthors().stream()
                         .map(createAuthorNameMapper(modelAssembly, locale, new int[]{-1}))
-                        .toArray(String[]::new), "дёЁ");
+                        .toArray(String[]::new), "丨");
 
                 tooltipLines.add(Component.translatable("gui.better_player_model.model.authors",
                         Component.literal(authorsString).withStyle(ChatFormatting.DARK_GRAY)));
