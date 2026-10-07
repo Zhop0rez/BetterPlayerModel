@@ -46,8 +46,8 @@ public class SoundFunction {
                 return false;
             }
 
-            // global = 1пјљеЃњж­ўе…Ёе±ЂдёЉдё‹ж–‡зљ„ж’­ж”ѕе®ћдѕ‹
-            // global = 0 ж€–дёЌе†™пјљеЃњж­ўеЅ“е‰ЌдёЉдё‹ж–‡зљ„ж’­ж”ѕе®ћдѕ‹
+            // global = 1: stop the play instance of the global context
+            // global = 0 or omitted: stop the play instance of the current context
             AudioPlayerManager audioPlayerManager = context.entity().getAudioPlayerManager(arguments.size() > 0 && arguments.getAsBoolean(context, 0));
             if (audioPlayerManager != null) {
                 audioPlayerManager.stopAll();

@@ -8,8 +8,8 @@ public class ExtraAnimationButtons {
     //        "config_forms": [
     //          {
     //            "type": "checkbox",
-    //            "title": "headdress/е¤ґйҐ°",
-    //            "description": "Used to hide/show the red bow headdress (з”ЁжќҐжѕз¤єж€–ејЂеђЇзЋ©е®¶е¤ґйҐ°)",
+    //            "title": "headdress/headwear",
+    //            "description": "Used to hide/show the red bow headdress (to show or enable the player headwear)",
     //            "value": "v.roaming.red_bow_headdress"
     //          }
     //        ]
@@ -20,7 +20,7 @@ public class ExtraAnimationButtons {
 
     private final String name; // name
 
-    private final String description; // еҐЅеѓЏдёЌе­ењЁ
+    private final String description; // Seems not to exist
 
     private final AbstractConfig[] configForms;
 

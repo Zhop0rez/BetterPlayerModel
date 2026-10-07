@@ -44,7 +44,7 @@ public class VariableStorage implements IScopedVariableStorage, IForeignVariable
         return this.localVariables;
     }
 
-    // жіЁж„Џthis.publicMapзєїзЁ‹е®‰е…Ё
+    // Note: this.publicMap thread safety
     public void initialize(@Nullable PooledStringHashSet publicVariableNames) {
         this.scopedMap.clear();
 

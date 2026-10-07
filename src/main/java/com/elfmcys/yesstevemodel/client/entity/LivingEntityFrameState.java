@@ -31,7 +31,7 @@ public class LivingEntityFrameState<T extends LivingEntity> extends EntityFrameS
     @Override
     public void onTimeUpdate(float currentTick, float deltaTick, float partialTick) {
         super.onTimeUpdate(currentTick, deltaTick, partialTick);
-        // ж›ґж–°жІ‰жµёејЏеҐЏд№ђж•°жЌ®
+        // Update immersive music-playing data
         ImmersiveMelodiesCompat.updateMelodyProgress(this.entity, this.imData);
     }
 

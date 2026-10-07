@@ -6292,7 +6292,7 @@
 					}
 				},
 				"AllBody": {
-					"rotation": [0, "-1.5*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.6*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)"]
+					"rotation": [0, "-1.5*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.6*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)"]
 				},
 				"AllHead": {
 					"rotation": {
@@ -6359,7 +6359,7 @@
 					"rotation": [30, 0, 0]
 				},
 				"MAllBody": {
-					"rotation": ["ysm.second_order('йћзї…pitch', -ysm.head_pitch, 1, 0.8, 0)", 0, 0]
+					"rotation": ["ysm.second_order('鞘翅pitch', -ysm.head_pitch, 1, 0.8, 0)", 0, 0]
 				},
 				"MHead": {
 					"rotation": ["ysm.head_pitch", "math.clamp(ysm.head_yaw,-60,60)", 0]
@@ -7295,7 +7295,7 @@
 					"position": [0, 0, 0]
 				},
 				"AllBody": {
-					"rotation": [0, "-1.5*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.6*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)"]
+					"rotation": [0, "-1.5*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.6*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)"]
 				},
 				"AllHead": {
 					"rotation": [-60, 0, 0]
@@ -7325,7 +7325,7 @@
 					"rotation": ["v.bv=math.sin(query.life_time*2000)*3", 0, 0]
 				},
 				"MAllBody": {
-					"rotation": ["ysm.second_order('йћзї…pitch', -ysm.head_pitch, 1, 0.8, 0)", 0, 0]
+					"rotation": ["ysm.second_order('鞘翅pitch', -ysm.head_pitch, 1, 0.8, 0)", 0, 0]
 				}
 			}
 		},
@@ -11641,7 +11641,7 @@
 				}
 			}
 		},
-		"вЂ”вЂ”з‰©зђ†жЁЎж‹џвЂ”вЂ”": {
+		"——物理模拟——": {
 			"loop": true
 		},
 		"parallel0": {
@@ -11717,7 +11717,7 @@
 			"bones": {
 				"FLongHair": {
 					"rotation": [
-						"ysm.second_order('жЉ¬е¤ґе¤ґеЏ‘йІз©їжЁЎ', ysm.head_pitch>-40?ysm.head_pitch:-40, 2, 0.6, 0)",
+						"ysm.second_order('抬头头发防穿模', ysm.head_pitch>-40?ysm.head_pitch:-40, 2, 0.6, 0)",
 						0,
 						"ysm.second_order('LongHair_r_z', -q.yaw_speed*0.05, 1, 0.6, 0)"
 					],
@@ -11725,16 +11725,16 @@
 				},
 				"ElytraLocator": {
 					"rotation": [
-						"0.6*ysm.second_order('е¤ґеЏ‘ећ‚з›ґ', math.clamp(-3*q.vertical_speed+v.hv,-10,120), 2, 0.6, 0)+0.6*ysm.second_order('е¤ґеЏ‘ж°ґе№і', math.clamp(q.ground_speed+v.hg,0,20), 2, 0.6, 0)",
+						"0.6*ysm.second_order('头发垂直', math.clamp(-3*q.vertical_speed+v.hv,-10,120), 2, 0.6, 0)+0.6*ysm.second_order('头发水平', math.clamp(q.ground_speed+v.hg,0,20), 2, 0.6, 0)",
 						0,
-						"ysm.second_order('е¤ґеЏ‘и§’йЂџеє¦', math.clamp(-0.02*q.yaw_speed,-60,60), 2, 0.6, 0)"
+						"ysm.second_order('头发角速度', math.clamp(-0.02*q.yaw_speed,-60,60), 2, 0.6, 0)"
 					]
 				},
 				"MLongHair": {
 					"rotation": [
-						"ysm.second_order('е¤ґеЏ‘ећ‚з›ґ', math.clamp(-3*q.vertical_speed+v.hv,-10,120), 2, 0.6, 0)+ysm.second_order('е¤ґеЏ‘ж°ґе№і', math.clamp(q.ground_speed+v.hg,0,20), 2, 0.6, 0)",
+						"ysm.second_order('头发垂直', math.clamp(-3*q.vertical_speed+v.hv,-10,120), 2, 0.6, 0)+ysm.second_order('头发水平', math.clamp(q.ground_speed+v.hg,0,20), 2, 0.6, 0)",
 						0,
-						"ysm.second_order('е¤ґеЏ‘и§’йЂџеє¦', math.clamp(0.02*q.yaw_speed,-60,60), 2, 0.6, 0)"
+						"ysm.second_order('头发角速度', math.clamp(0.02*q.yaw_speed,-60,60), 2, 0.6, 0)"
 					]
 				},
 				"Turret": {
@@ -11766,7 +11766,7 @@
 				"0.0": "v.roaming.player=1;v.roaming.car=0;"
 			}
 		},
-		"вЂ”вЂ”зњЁзњјеЉЁз”»вЂ”вЂ”": {
+		"——眨眼动画——": {
 			"loop": true
 		},
 		"pre_parallel1": {
@@ -11855,7 +11855,7 @@
 				}
 			}
 		},
-		"вЂ”вЂ”е№¶иЎЊеЉЁз”»вЂ”вЂ”": {
+		"——并行动画——": {
 			"loop": true
 		},
 		"parallel1": {
@@ -12002,7 +12002,7 @@
 		"parallel7": {
 			"loop": true
 		},
-		"вЂ”вЂ”дЅЋдје…€зє§е№¶иЎЊеЉЁз”»вЂ”вЂ”": {
+		"——低优先级并行动画——": {
 			"loop": true
 		},
 		"pre_parallel2": {

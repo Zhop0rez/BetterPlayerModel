@@ -11,13 +11,13 @@ public class ModelResourceBundle {
 
     private final Map<String, AudioTrackData> soundEffects;
 
-    // setup@player_init.molangеЌіеЏЇе€›е»єдёЂдёЄеђЌдёєsetupзљ„е‡Ѕж•°пјЊе№¶и®ўй…player_initдє‹д»¶
-    // иї™й‡ЊжЇе‡Ѕж•°StringжЇ@е‰Ќйќўзљ„
+    // setup@player_init.molang creates a function named setup and subscribes to the player_init event
+    // This is the function String, i.e. the part before the @
     private final Object2ReferenceOpenHashMap<String, IValue> functions;
 
-    // setup@player_init.molangеЌіеЏЇе€›е»єдёЂдёЄеђЌдёєsetupзљ„е‡Ѕж•°пјЊе№¶и®ўй…player_initдє‹д»¶
-    // иї™й‡ЊжЇдє‹д»¶@еђЋйќўзљ„
-    // е¦‚жћњжњ‰е¤љдёЄе°±еЉ е…Ґlist
+    // setup@player_init.molang creates a function named setup and subscribes to the player_init event
+    // This is the part after the @ in the event
+    // If there are multiple, add them to the list
     private final Object2ReferenceOpenHashMap<String, List<IValue>> events;
 
     private final Map<String, Map<String, String>> translations;

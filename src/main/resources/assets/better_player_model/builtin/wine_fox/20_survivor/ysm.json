@@ -1,34 +1,34 @@
 ﻿{
   "spec": 2,
   "metadata": {
-    "name": "е№ёе­иЂ…й…’з‹ђ",
-    "tips": "A fox girl who loves to drink wine.\nдёЂеЏЄењЁжњ«ж—Ґж‹ѕиЌ’зљ„з‹ђеЁгЂ‚",
+    "name": "幸存者酒狐",
+    "tips": "A fox girl who loves to drink wine.\n一只在末日拾荒的狐娘。",
     "license": {
       "type": "CC BY-NC-SA 4.0"
     },
     "authors": [
       {
-        "name": "зЋ«й—ґйњ‚з»’",
-        "role": "жЁЎећ‹",
+        "name": "玫间霂绒",
+        "role": "模型",
         "avatar": "avatar/mjmr.png",
         "contact": {
           "Afdian": "https://afdian.com/a/6TGESILA",
           "Bilibili": "https://space.bilibili.com/17798027"
         },
-        "comment": "дёЂеЏЄжЁЎећ‹/YSMдЅњиЂ…пјЊзђ†жѓіеѕ€е¤љдЅ†еѕ€з€±ж‘ёй±ј"
+        "comment": "一只模型/YSM作者，理想很多但很爱摸鱼"
       }
     ]
   },
   "properties": {
     "extra_animation": {
-      "extra0": "еЏеЅў",
-      "extra1": "ж‰“ж‹›е‘ј",
-      "extra2": "жЈЂи§†",
-      "extra3": "жЇзљ„",
-      "extra4": "ж€ґе¤ґз›”",
-      "extra5": "ж€ґйќўзЅ©",
-      "extra6": "ж‘е¤ґз›”",
-      "extra7": "и€ћи№€"
+      "extra0": "变形",
+      "extra1": "打招呼",
+      "extra2": "检视",
+      "extra3": "是的",
+      "extra4": "戴头盔",
+      "extra5": "戴面罩",
+      "extra6": "摘头盔",
+      "extra7": "舞蹈"
     },
     "preview_animation": "gui",
     "free": true,

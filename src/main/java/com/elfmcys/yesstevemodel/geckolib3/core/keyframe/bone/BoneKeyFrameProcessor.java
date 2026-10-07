@@ -16,7 +16,7 @@ public class BoneKeyFrameProcessor {
         BoneKeyFrame[] list = new BoneKeyFrame[frames.size()];
         for (int i = 0; i < frames.size(); i++) {
             RawBoneKeyFrame end = frames.get(i);
-            // и™Ѕз„¶ж„џи§‰дёЌе¤Єеђ€зђ†пјЊдЅ†иїжЇе’Њ BlockBench дїќжЊЃдёЂи‡ґжЇ”иѕѓеҐЅ
+            // Feels a bit odd, but better to stay consistent with BlockBench
             EasingType easingType;
             if (end.easingType() == EasingType.CATMULLROM || i == 0) {
                 easingType = end.easingType();

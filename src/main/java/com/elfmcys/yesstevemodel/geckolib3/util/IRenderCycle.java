@@ -10,9 +10,9 @@ import com.elfmcys.yesstevemodel.util.obfuscate.Keep;
 
 public interface IRenderCycle {
     /**
-     * IRenderCycle еђЌз§°
+     * IRenderCycle name
      *
-     * @return еђЌз§°
+     * @return the name
      */
 
     @Keep

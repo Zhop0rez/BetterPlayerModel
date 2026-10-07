@@ -2,30 +2,30 @@
   "spec": 2,
   "metadata": {
     "name": "Default Controllers Model",
-    "tips": "й»и®¤жЋ§е€¶е™Ёжµ‹иЇ•жЁЎећ‹",
+    "tips": "默认控制器测试模型",
     "license": {
       "type": "CC 0"
     },
     "authors": [
       {
-        "name": "е“Ґж–Їж‹‰",
-        "role": "жЁЎећ‹",
+        "name": "哥斯拉",
+        "role": "模型",
         "avatar": "avatar/gsl.png",
         "contact": {
           "Afdian": "https://afdian.com/a/6TGESILA",
           "Bilibili": "https://space.bilibili.com/17798027"
         },
-        "comment": "дёЂдёЄMCжЁЎећ‹/YSMдЅњиЂ…пјЊжѓіжі•еѕ€е¤љпјЊж—¶й—ґеѕ€е°‘"
+        "comment": "一个MC模型/YSM作者，想法很多，时间很少"
       },
       {
-        "name": "жџе±‘жµ·ићє",
-        "role": "еЉЁз”»",
+        "name": "星屑海螺",
+        "role": "动画",
         "avatar": "avatar/hl.png",
         "contact": {
           "Afdian": "https://afdian.com/a/lucia2048",
           "Bilibili": "https://space.bilibili.com/14975572"
         },
-        "comment": "жј‚жіЉдєЋзѕ¤жџд№‹дё­"
+        "comment": "漂泊于群星之中"
       }
     ],
     "link": {
@@ -53,8 +53,8 @@
         "config_forms": [
           {
             "type": "range",
-            "title": "Size/е¤§е°Џ: ",
-            "description": "Change the player size (ж”№еЏзЋ©е®¶е¤§е°Џ)",
+            "title": "Size/大小: ",
+            "description": "Change the player size (改变玩家大小)",
             "value": "v.player_size",
             "step": 0.05,
             "min": 0.2,

@@ -62,7 +62,7 @@ public class AnimationProcessor<TEntity extends Entity> {
 
     private boolean needsInit = false;
 
-    // tickAnimation з»™жЇЏеё§ forEachTransform е¤Ќз”ЁеђЊдёЂдёЄ Consumer
+    // tickAnimation reuses the same Consumer for forEachTransform on every frame
     private final Consumer<BoneTransformProvider> transformConsumer = this::applyTransform;
     private ExpressionEvaluator<AnimationContext<?>> currentEvaluator;
     private float currentSeekTime;

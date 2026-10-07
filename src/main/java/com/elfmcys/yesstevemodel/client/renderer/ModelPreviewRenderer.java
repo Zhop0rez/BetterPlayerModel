@@ -580,7 +580,7 @@ public final class ModelPreviewRenderer {
         poseStack.popPose();
     }
 
-    // жЁЎећ‹йў„и§€йЎµйќў
+    // Model preview page
 
     public static void renderPlayerOverlay(GuiGraphicsExtractor GuiGraphicsExtractor, LocalPlayer localPlayer, double x, double y, float scale, float yawOffset, int zDepth, float partialTick) {
         renderPlayerOverlay(GuiGraphicsExtractor, localPlayer, x, y, scale, yawOffset, zDepth, partialTick, true);

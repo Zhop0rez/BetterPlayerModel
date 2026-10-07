@@ -6,10 +6,10 @@
 				"default": {
 					"animations": ["state"],
 					"transitions": [
-						{"з‹ђз‹ђеёЅе­ђ": "ysm.has_helmet"}
+						{"狐狐帽子": "ysm.has_helmet"}
 					]
 				},
-				"з‹ђз‹ђеёЅе­ђ": {
+				"狐狐帽子": {
 					"animations": [
 						{"ctrl:small_huhu": "1-v.roaming.smallfox_size"}
 					],

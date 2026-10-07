@@ -18,7 +18,7 @@ import java.nio.ByteOrder;
 import java.util.List;
 
 /**
- * Bedrockзљ„.geoжЁЎећ‹ж–‡д»¶
+ * Bedrock .geo model file
  */
 public class GeoModel {
 
