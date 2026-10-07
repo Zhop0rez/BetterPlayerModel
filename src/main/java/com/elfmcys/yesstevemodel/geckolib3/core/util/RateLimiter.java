@@ -9,8 +9,8 @@ public class RateLimiter {
     private float lastRequestTime = 0.0f;
 
     /**
-     * и®ѕзЅ®еЉЁз”»зљ„з›®ж ‡её§зЋ‡
-     * @param limitPerSec жЇЏз§’ж›ґж–°зљ„её§ж•° (дѕ‹е¦‚: 24, 30, 60)
+     * Set the target frame rate of the animation
+     * @param limitPerSec updates per second (e.g. 24, 30, 60)
      */
     public void setRefreshRate(int limitPerSec) {
         this.interval = 1.0f / limitPerSec;

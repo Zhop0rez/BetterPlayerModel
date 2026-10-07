@@ -4,9 +4,9 @@ package rip.ysm.algorithms;/* Luis Bodart A01635000 */
 
 /**
  * w - Rango de valores generados (bits), 2^w
- * n - Grado de recurrencia (tamaГ±o de la reserva de bytes)
- * m - Desplazamiento utilizado en la relaciГіn de recurrencia que define la serie x, 1 в‰¤ m < n
- * r - NГєmero de bits de la lower bit-mask (twist value/valor de giro), 0 в‰¤ r в‰¤ w - 1
+ * n - Grado de recurrencia (tamaño de la reserva de bytes)
+ * m - Desplazamiento utilizado en la relación de recurrencia que define la serie x, 1 ≤ m < n
+ * r - Número de bits de la lower bit-mask (twist value/valor de giro), 0 ≤ r ≤ w - 1
  * a - Coeficientes de la matriz de giro de forma normal racional
  * u - Componente 1 de la matriz de bit-scrambling (templado)
  * d - Componente 2 de la matriz de bit-scrambling (templado)
@@ -15,11 +15,11 @@ package rip.ysm.algorithms;/* Luis Bodart A01635000 */
  * t - Componente 5 de la matriz de bit-scrambling (templado)
  * c - Componente 6 de la matriz de bit-scrambling (templado)
  * l - Componente 7 de la matriz de bit-scrambling (templado)
- * f - Multiplicador de inicializaciГіn
+ * f - Multiplicador de inicialización
  * lower_mask - 31 bits menos significativos
- * upper_mask - 33 bits mГЎs significativos
+ * upper_mask - 33 bits más significativos
  * MT - arreglo de estado interno
- * index - ГЌndice actual en la reserva de bytes
+ * index - Índice actual en la reserva de bytes
  */
 
 /**
@@ -76,7 +76,7 @@ public class MT19937 {
     /**
      * Inicializa el generador a partir de una semilla
      *
-     * @param seed semilla para la creaciГіn de los nГєmeros aleatorios
+     * @param seed semilla para la creación de los números aleatorios
      */
     private void setSeed(long seed) {
         this.MT[0] = seed;
@@ -128,7 +128,7 @@ public class MT19937 {
     /**
      * Genera un valor entero pseudoaleatorio entre [0, x)
      *
-     * @param x NГєmero entero lГ­mite, x > 0
+     * @param x Número entero límite, x > 0
      * @return Valor entero entre [0, x)
      * @throws IllegalArgumentException Si x <= 0
      */
@@ -147,7 +147,7 @@ public class MT19937 {
     /**
      * Genera un valor float pseudoaleatorio entre [0.0, x)
      *
-     * @param x NГєmero float lГ­mite, x > 0.0
+     * @param x Número float límite, x > 0.0
      * @return Valor float entre [0.0, x)
      * @throws IllegalArgumentException Si x <= 0
      */
@@ -161,7 +161,7 @@ public class MT19937 {
     /**
      * Genera un valor double pseudoaleatorio entre [0.0, x)
      *
-     * @param x NГєmero double lГ­mite, x > 0.0
+     * @param x Número double límite, x > 0.0
      * @return Valor double entre [0.0, x)
      * @throws IllegalArgumentException Si x <= 0.0
      */
@@ -173,10 +173,10 @@ public class MT19937 {
     }
 
     /**
-     * Genera un nГєmero entero aleatorio entre [min, max - 1]
+     * Genera un número entero aleatorio entre [min, max - 1]
      *
-     * @param min NГєmero entero incial, min < max
-     * @param max NГєmero entero final
+     * @param min Número entero incial, min < max
+     * @param max Número entero final
      * @return Valor entero entre [min, max - 1]
      * @throws IllegalArgumentException Si min >= max
      */

@@ -50,8 +50,8 @@ public class RawYsmModel {
         public float[] visibleBoundsOffset;
         public float unkFloat1, unkFloat2;
 
-        // йЂ™дё‰еЂ‹еЂјењЁи§ЈжћђеѕЊз›ґжЋҐи®ЂеЏ–дЅ†жњЄдЅїз”ЁпјЊдё”йЂљеёёз‚є0гЂ‚
-        // дЅњз”Ёжљ«ж™‚дёЌжЋзўє
+        // These three values are read directly after parsing but unused, and are usually 0.
+        // Purpose currently unclear
         public int footerPad1, footerPad2, footerPad3;
 
         public List<RawBone> bones = new ArrayList<>();
@@ -68,13 +68,13 @@ public class RawYsmModel {
 
     public static class RawCube {
         public List<RawFace> faces = new ArrayList<>();
-        // дЅњз”Ёжљ«ж™‚дёЌжЋзўєпјЊдё”йЂљеёёз‚є0
+        // Purpose currently unclear, and usually 0
         public int unkInt1, unkInt2, unkInt3;
     }
 
     public static class RawFace {
         public float[] normal = new float[3];
-        public float[][] positions = new float[4][3]; //4 еЂ‹й ‚й»ћзљ„ xyz еє§жЁ™
+        public float[][] positions = new float[4][3]; // xyz coordinates of the 4 vertices
         public float[] u = new float[4];
         public float[] v = new float[4];
     }
@@ -105,7 +105,7 @@ public class RawYsmModel {
         // Float or String
         public Object blendWeight;
 
-        // дЅњз”Ёжљ«ж™‚дёЌжЋзўєпјЊдё”йЂљеёёз‚є0
+        // Purpose currently unclear, and usually 0
         public int unkInt1, unkInt2, unkInt4;
 
         public List<RawBoneAnimation> boneAnimations = new ArrayList<>();
@@ -147,25 +147,25 @@ public class RawYsmModel {
         public byte[] data;
 
         /**
-         * зјєзњЃеЂјз‚є1пј€иЎЁз¤єж­Јеёёзґ‹зђ†пј‰
-         * ењЁи€Љж јејЏжЁЎећ‹пј€в‰¤15пј‰дё­еёёе‡єзЏѕ0
-         * зЏѕд»Јж јејЏпј€в‰Ґ26пј‰е№ѕд№Ће…Ёз‚є1
+         * Defaults to 1 (indicates a normal texture)
+         * Often 0 in legacy-format models (<=15)
+         * Almost always 1 in modern-format models (>=26)
          */
         public int unknownFlag;
         public List<SubTexture> subTextures = new ArrayList<>();
 
         public static class SubTexture {
             public String hash;
-            // 1=жі•з·љиІјењ–пјЊ2=й«е…‰иІјењ–
+            // 1 = normal map, 2 = specular map
             public int specularType;
             public int width;
             public int height;
 
-            // е­ђзґ‹зђ†ењ–еѓЏж јејЏ
+            // Sub-texture image format
             public int imageFormat;
             public byte[] data;
 
-            // дЅњз”Ёжљ«ж™‚дёЌжЋзўєпјЊдё”йЂљеёёз‚є1
+            // Purpose currently unclear, and usually 1
             public int unknownFlag;
         }
     }
@@ -215,7 +215,7 @@ public class RawYsmModel {
         public int height;
         public int format;
 
-        // дЅњз”Ёжљ«ж™‚дёЌжЋзўєпјЊдё”йЂљеёёз‚є1
+        // Purpose currently unclear, and usually 1
         public int unknownFlag;
     }
 
@@ -231,7 +231,7 @@ public class RawYsmModel {
         public boolean allCutout = false;
         public boolean disablePreviewRotation = false;
         public boolean guiNoLighting = false;
-        public boolean mergeMultilineExpr = false; // TODO:д»Ђд№€ж—¶еЂ™й»и®¤дёєtrue
+        public boolean mergeMultilineExpr = false; // TODO: when does it default to true
 
         public String guiForeground = "";
         public String guiBackground = "";
@@ -287,7 +287,7 @@ public class RawYsmModel {
 
     public static class RawFooter {
         public int version = 65535;
-        public int unkInt1 = 1;// йЂљеёёдёє1
+        public int unkInt1 = 1;// Usually 1
         public String rand = "";
         public long time = 0;
         public String extra = "";

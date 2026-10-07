@@ -92,7 +92,7 @@ public class PlayerModelBundle {
         return this.modelProcessor;
     }
 
-    public Object2ReferenceMap<String, AnimationController> getAnimationEntries() { // еЉЁз”»жЋ§е€¶е™Ё
+    public Object2ReferenceMap<String, AnimationController> getAnimationEntries() { // Animation controller
         return this.animationEntries;
     }
 

@@ -18,7 +18,7 @@ public class YSMBinarySerializer {
             writeModern(buf, model, format);
 
             if (writeFooter) {
-                writeFooter(buf, model); // иї™дёЄжЇжњЌеЉЎе™ЁжЁЎећ‹жЁЎећ‹дё‹еЏ‘зљ„пјЊдёЌжЇеЇје‡є.ysmзљ„пјЊдё¤дёЄеѕ€еѓЏпјЊеѕ…е€†жћђе°ќиЇ•еђ€е№¶
+                writeFooter(buf, model); // This one is sent by the server model sync, not an exported .ysm; the two are very similar, TBD whether to merge
             }
 
         } else {
@@ -28,9 +28,9 @@ public class YSMBinarySerializer {
     }
 
     private static void writeFooter(YSMByteBuf buf, RawYsmModel model) {
-        // е¦‚жћњжІЎжњ‰footerж•°жЌ®пј€жЇ”е¦‚зєЇжњ¬ењ°jsonеЉ иЅЅзљ„ж•Јд»¶жЁЎећ‹пј‰
+        // If there is no footer data (e.g. a plain local json loose-parts model)
         if (model.footer == null || model.footer.version == 65535) {
-            buf.writeVarInt(65535); // й»и®¤жњЄеЉ еЇ†ж ‡иЇ†з‰€жњ¬еЏ·
+            buf.writeVarInt(65535); // Default unencrypted marker version number
             buf.writeVarInt(0);
             buf.writeVarLong(0L);
             return;
@@ -194,7 +194,7 @@ public class YSMBinarySerializer {
         buf.writeVarInt(animFile.animations.size());
         for (RawYsmModel.RawAnimation anim : animFile.animations.values()) {
             buf.writeString(anim.name);
-            buf.writeFloat(anim.length * 20f); // иїеЋџticks
+            buf.writeFloat(anim.length * 20f); // Restore ticks
             buf.writeVarInt(anim.loopMode);
 
             if (format > 9) {
@@ -209,7 +209,7 @@ public class YSMBinarySerializer {
                 buf.writeVarInt(anim.unkInt4);
             }
 
-            // йЄЁйЄјеЉЁз”»
+            // Skeletal animation
             buf.writeVarInt(anim.boneAnimations.size());
             for (RawYsmModel.RawBoneAnimation ba : anim.boneAnimations) {
                 buf.writeString(ba.boneName);
@@ -277,7 +277,7 @@ public class YSMBinarySerializer {
     }
 
     private static void writeAnimationControllerBody(YSMByteBuf buf, Map<String, RawYsmModel.RawAnimationController> controllers, int format) {
-        buf.writeVarInt(controllers.size()); // еЇ№еє” animationCount
+        buf.writeVarInt(controllers.size()); // Corresponds to animationCount
         for (RawYsmModel.RawAnimationController ac : controllers.values()) {
             buf.writeString(ac.animationName);
             buf.writeString(ac.initialState != null ? ac.initialState : "");
@@ -508,7 +508,7 @@ public class YSMBinarySerializer {
             buf.writeString(props.guiForeground != null ? props.guiForeground : "");
             buf.writeString(props.guiBackground != null ? props.guiBackground : "");
 
-            // е¤ґеѓЏ
+            // Avatar
             List<RawYsmModel.RawImage> avatars = new ArrayList<>();
             for (RawYsmModel.RawMetadata.Author author : meta.authors) {
                 if (author.avatarImage != null) {
@@ -533,7 +533,7 @@ public class YSMBinarySerializer {
             }
         }
 
-        // иѓЊж™Їе›ѕ
+        // Background image
         if (format > 15) {
             buf.writeVarInt(props.backgroundImages.size());
             for (RawYsmModel.RawImage bg : props.backgroundImages) {

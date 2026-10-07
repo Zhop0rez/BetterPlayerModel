@@ -9,10 +9,10 @@ import java.util.stream.Collectors;
 
 public class ServerAnimationInfo {
 
-    // еЉЁз”»зљ„ж–‡д»¶е‰ЌзјЂ + й‡Њйќўж‰Ђжњ‰зљ„еЉЁз”»еђЌе­—
+    // Animation file prefix + all animation names inside it
     private final Map<String, Set<String>> animations;
 
-    // жЁЎећ‹зљ„жќђиґЁеђЌе­—
+    // The model's texture name
     private final List<String> textures;
 
     public ServerAnimationInfo(Map<String, String[]> animations, String[] textures) {

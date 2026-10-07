@@ -5,6 +5,6 @@ public interface Struct {
 
     void putProperty(int name, Object value);
 
-    // FIXME: дЅњдёє foreign еЏй‡Џиў«и®їй—®ж—¶жњ‰зєїзЁ‹е®‰е…Ёй—®йў
+    // FIXME: thread-safety issue when accessed as a foreign variable
     Struct copy();
 }

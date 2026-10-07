@@ -8,7 +8,7 @@ import com.google.gson.JsonElement;
 import org.jetbrains.annotations.Nullable;
 
 public class JsonMolangUtils {
-    // й»и®¤дёЌеђ€е№¶
+    // Merge off by default
     public static IValue[] getExpressions(@Nullable JsonElement element, MolangParser parser, boolean mergeMultilineExpr) {
         if (element == null) return new IValue[]{};
 
@@ -24,7 +24,7 @@ public class JsonMolangUtils {
 
             for (int i = 0; i < array.size(); i++) {
                 parserText.append(getJsonString(array.get(i)));
-                // е¦‚жћњдёЌжЇжњЂеђЋдёЂиЎЊпјЊе°±иїЅеЉ дёЂдёЄжЌўиЎЊз¬¦
+                // If not the last line, append a newline
                 if (i < array.size() - 1) {
                     parserText.append("\n");
                 }

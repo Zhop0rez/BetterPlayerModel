@@ -1,7 +1,7 @@
 ﻿{
 	"format_version": "1.8.0",
 	"animations": {
-		"ж‘‡": {
+		"摇": {
 			"loop": true,
 			"animation_length": 2,
 			"bones": {
@@ -683,7 +683,7 @@
 				}
 			}
 		},
-		"иЅ¬ењ€ењ€": {
+		"转圈圈": {
 			"loop": true,
 			"animation_length": 2.5,
 			"bones": {
@@ -1558,7 +1558,7 @@
 				}
 			}
 		},
-		"её­ењ°иЂЊеќђ": {
+		"席地而坐": {
 			"loop": true,
 			"bones": {
 				"Root": {
@@ -1679,7 +1679,7 @@
 				}
 			}
 		},
-		"ж–°е№ґеї«д№ђ": {
+		"新年快乐": {
 			"loop": true,
 			"animation_length": 3,
 			"bones": {

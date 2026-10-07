@@ -18,7 +18,7 @@ public class MolangValue implements IValue {
     private final float constFloat;
     private final Float constBoxed;
 
-    // йќћ script дё”еЏЄжњ‰дёЂжќЎиЎЁиѕѕејЏж—¶иµ° primitive и·Їеѕ„пјЊзњЃжЋ‰дё­й—ґиЈ…з®±
+    // When not a script and there is only one expression, use the primitive path to avoid intermediate boxing
     private final Expression single;
 
     public MolangValue(List<Expression> list, boolean isScript) {

@@ -2,7 +2,7 @@ package com.elfmcys.yesstevemodel.geckolib3.util;
 
 public class MathHelper {
     /**
-     * е°†и§’еє¦е‡Џе°Џе€° -180 е€° +180 д№‹й—ґзљ„и§’еє¦пјЊе№¶иї›иЎЊ 360 еє¦жЈЂжџҐ
+     * Reduce an angle to the range -180..+180, with a 360-degree check
      */
     public static float wrapDegrees(float value) {
         value = value % 360.0F;
@@ -16,7 +16,7 @@ public class MathHelper {
     }
 
     /**
-     * е°†и§’еє¦е‡Џе°Џе€° -180 е€° +180 д№‹й—ґзљ„и§’еє¦пјЊе№¶иї›иЎЊ 360 еє¦жЈЂжџҐ
+     * Reduce an angle to the range -180..+180, with a 360-degree check
      */
     public static double wrapDegrees(double value) {
         value = value % 360.0D;
@@ -30,7 +30,7 @@ public class MathHelper {
     }
 
     /**
-     * и°ѓж•ґи§’еє¦пјЊдЅїе…¶еЂјењЁ [-180, 180]
+     * Adjust the angle so that its value is in [-180, 180]
      */
     public static int wrapDegrees(int angle) {
         angle = angle % 360;

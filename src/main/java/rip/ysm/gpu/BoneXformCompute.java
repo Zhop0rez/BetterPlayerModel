@@ -47,7 +47,7 @@ public final class BoneXformCompute {
     public static int locOverlay() {
         return locOverlay;
     }
-    public static int locModelView() { return locModelView; } // ж–°еўћ getter
+    public static int locModelView() { return locModelView; } // New getter
 
     public static int dispatchGroupCount(int vertexCount) {
         return (vertexCount + 64 - 1) / 64;

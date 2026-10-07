@@ -73,7 +73,7 @@
 					}
 				},
 				"AllBody": {
-					"rotation": [0, "-0.5*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.2*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)"]
+					"rotation": [0, "-0.5*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.2*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)"]
 				},
 				"layer4": {
 					"rotation": ["(math.clamp(query.ground_speed*9,0,40))*(ysm.input_vertical<-0.05?0:-1)", 0, 0]
@@ -264,7 +264,7 @@
 					"position": [0, 5, 0]
 				},
 				"AllBody": {
-					"rotation": [0, "-0.5*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.2*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)"]
+					"rotation": [0, "-0.5*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.2*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)"]
 				},
 				"Mtail": {
 					"rotation": [
@@ -815,7 +815,7 @@
 					"position": [0, 5, 0]
 				},
 				"AllBody": {
-					"rotation": [0, "-0.5*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.2*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)"]
+					"rotation": [0, "-0.5*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.2*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)"]
 				},
 				"Mtail": {
 					"rotation": [
@@ -988,7 +988,7 @@
 					"position": [0, 5, 0]
 				},
 				"AllBody": {
-					"rotation": [0, "-0.5*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.2*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)"]
+					"rotation": [0, "-0.5*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.2*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)"]
 				},
 				"UpBody": {
 					"rotation": {
@@ -1197,7 +1197,7 @@
 					"rotation": ["(math.clamp(query.ground_speed*9,0,60))*(ysm.input_vertical<-0.05?-1:1)", 0, 0]
 				},
 				"AllBody": {
-					"rotation": [0, "-0.5*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.2*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)"]
+					"rotation": [0, "-0.5*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.2*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)"]
 				},
 				"WeiBa": {
 					"scale": 0
@@ -1405,7 +1405,7 @@
 					"position": [0, 5, 0]
 				},
 				"AllBody": {
-					"rotation": [0, "-0.5*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.2*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)"]
+					"rotation": [0, "-0.5*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.2*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)"]
 				},
 				"Mtail": {
 					"rotation": [
@@ -1617,7 +1617,7 @@
 					"position": [0, 5, 0]
 				},
 				"AllBody": {
-					"rotation": [0, "-0.5*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.2*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)"]
+					"rotation": [0, "-0.5*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.2*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)"]
 				},
 				"Mtail": {
 					"rotation": [
@@ -1873,7 +1873,7 @@
 					"position": [0, 5, 0]
 				},
 				"AllBody": {
-					"rotation": [0, "-0.5*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.2*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)"]
+					"rotation": [0, "-0.5*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.2*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)"]
 				},
 				"Mtail": {
 					"rotation": [
@@ -2159,7 +2159,7 @@
 					"position": [0, 5, 0]
 				},
 				"AllBody": {
-					"rotation": [0, "-0.5*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.2*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)"]
+					"rotation": [0, "-0.5*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.2*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)"]
 				},
 				"Mtail": {
 					"rotation": [
@@ -2432,7 +2432,7 @@
 					"position": [0, 5, 0]
 				},
 				"AllBody": {
-					"rotation": [0, "-0.5*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.2*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)"]
+					"rotation": [0, "-0.5*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.2*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)"]
 				},
 				"Mtail": {
 					"rotation": [
@@ -3062,7 +3062,7 @@
 					"position": [0, 5, 0]
 				},
 				"AllBody": {
-					"rotation": [0, "-0.5*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.2*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)"]
+					"rotation": [0, "-0.5*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.2*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)"]
 				},
 				"Mtail": {
 					"rotation": [
@@ -3542,7 +3542,7 @@
 					"position": [0, 5, 0]
 				},
 				"AllBody": {
-					"rotation": [0, "-0.5*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.2*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)"]
+					"rotation": [0, "-0.5*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.2*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)"]
 				},
 				"Mtail": {
 					"rotation": [
@@ -4343,7 +4343,7 @@
 					"position": [0, 5, 0]
 				},
 				"AllBody": {
-					"rotation": [0, "-0.5*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.2*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)"]
+					"rotation": [0, "-0.5*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.2*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)"]
 				},
 				"Mtail": {
 					"rotation": [
@@ -4922,7 +4922,7 @@
 					"position": [0, 5, 0]
 				},
 				"AllBody": {
-					"rotation": [0, "-0.5*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.2*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)"]
+					"rotation": [0, "-0.5*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.2*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)"]
 				},
 				"Mtail": {
 					"rotation": [
