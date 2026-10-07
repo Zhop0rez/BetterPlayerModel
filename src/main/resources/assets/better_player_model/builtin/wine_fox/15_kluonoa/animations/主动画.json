@@ -1,10 +1,10 @@
 ﻿{
 	"format_version": "1.8.0",
 	"animations": {
-		"е°Ѓйќў": {
+		"封面": {
 			"loop": true
 		},
-		"дЅЋз”µй‡Џ": {
+		"低电量": {
 			"loop": true,
 			"bones": {
 				"UpBody": {
@@ -39,7 +39,7 @@
 				}
 			}
 		},
-		"з”µй‡Џиї‡дЅЋ": {
+		"电量过低": {
 			"loop": true,
 			"bones": {
 				"UpBody": {
@@ -82,7 +82,7 @@
 				}
 			}
 		},
-		"ж­Јеёё_еѕ…е‘Ѕ": {
+		"正常_待命": {
 			"loop": true,
 			"bones": {
 				"wei_xiao": {
@@ -100,7 +100,7 @@
 				}
 			}
 		},
-		"ејЂиЅ¦_еѕ…е‘Ѕ": {
+		"开车_待命": {
 			"loop": true,
 			"bones": {
 				"wei_xiao": {
@@ -142,7 +142,7 @@
 				}
 			}
 		},
-		"ж­Јеёё_иЎЊиµ°": {
+		"正常_行走": {
 			"loop": true,
 			"animation_length": 1,
 			"blend_weight": "ysm.second_order('walk',math.clamp(ysm.ground_speed2/4,0.3,1),1,1,0)",
@@ -1659,7 +1659,7 @@
 				}
 			}
 		},
-		"ејЂиЅ¦_иЎЊиµ°": {
+		"开车_行走": {
 			"loop": true,
 			"bones": {
 				"wei_xiao": {
@@ -1728,7 +1728,7 @@
 				}
 			}
 		},
-		"ж­Јеёё_еҐ”и·‘": {
+		"正常_奔跑": {
 			"loop": true,
 			"animation_length": 0.5833,
 			"blend_weight": "ysm.second_order('walk',math.clamp(ysm.ground_speed2/4,0.3,1),1,1,0)",
@@ -2389,7 +2389,7 @@
 				}
 			}
 		},
-		"ејЂиЅ¦_еҐ”и·‘": {
+		"开车_奔跑": {
 			"loop": true,
 			"bones": {
 				"LeftArm": {
@@ -2458,7 +2458,7 @@
 				}
 			}
 		},
-		"ж­Јеёё_и·іи·ѓ": {
+		"正常_跳跃": {
 			"loop": true,
 			"animation_length": 0.75,
 			"bones": {
@@ -2715,7 +2715,7 @@
 				}
 			}
 		},
-		"ејЂиЅ¦_и·іи·ѓ": {
+		"开车_跳跃": {
 			"loop": true,
 			"bones": {
 				"UpBody": {
@@ -2781,7 +2781,7 @@
 				}
 			}
 		},
-		"ж­Јеёё_йЈћиЎЊ": {
+		"正常_飞行": {
 			"loop": true,
 			"animation_length": 0.75,
 			"blend_weight": "ysm.second_order('walk',math.clamp(ysm.ground_speed2/2,0.3,1),1,1,0)",
@@ -3039,7 +3039,7 @@
 				}
 			}
 		},
-		"ејЂиЅ¦_йЈћиЎЊ": {
+		"开车_飞行": {
 			"loop": true,
 			"bones": {
 				"LeftArm": {
@@ -3113,7 +3113,7 @@
 				}
 			}
 		},
-		"ж­Јеёё_йћзї…йЈћиЎЊ": {
+		"正常_鞘翅飞行": {
 			"loop": true,
 			"animation_length": 0.3333,
 			"bones": {
@@ -3123,10 +3123,10 @@
 					"scale": 1
 				},
 				"MAllBody": {
-					"rotation": ["ysm.second_order('йћзї…pitch', -ysm.head_pitch, 1, 0.8, 0)", 0, 0]
+					"rotation": ["ysm.second_order('鞘翅pitch', -ysm.head_pitch, 1, 0.8, 0)", 0, 0]
 				},
 				"AllBody": {
-					"rotation": [0, "-1.5*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.6*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)"]
+					"rotation": [0, "-1.5*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.6*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)"]
 				},
 				"UpBody": {
 					"rotation": [0, 0, 0],
@@ -3252,7 +3252,7 @@
 				}
 			}
 		},
-		"ејЂиЅ¦_йћзї…йЈћиЎЊ": {
+		"开车_鞘翅飞行": {
 			"loop": true,
 			"bones": {
 				"LeftArm": {
@@ -3283,7 +3283,7 @@
 					"rotation": [67.5, 0, 0]
 				},
 				"Root": {
-					"rotation": ["ysm.second_order('йћзї…pitch', -ysm.head_pitch, 1, 0.8, 0)", 0, 0],
+					"rotation": ["ysm.second_order('鞘翅pitch', -ysm.head_pitch, 1, 0.8, 0)", 0, 0],
 					"position": [0, "math.sin(q.anim_time*180)", 0]
 				},
 				"xiao": {
@@ -3327,7 +3327,7 @@
 				}
 			}
 		},
-		"ж­Јеёё_ж°ґдё­жј‚жµ®": {
+		"正常_水中漂浮": {
 			"loop": true,
 			"animation_length": 1.3333,
 			"bones": {
@@ -4015,7 +4015,7 @@
 				}
 			}
 		},
-		"ејЂиЅ¦_ж°ґдё­жј‚жµ®": {
+		"开车_水中漂浮": {
 			"loop": true,
 			"bones": {
 				"LeftArm": {
@@ -4086,7 +4086,7 @@
 				}
 			}
 		},
-		"ж­Јеёё_жёёжіі": {
+		"正常_游泳": {
 			"loop": true,
 			"animation_length": 1.3333,
 			"bones": {
@@ -4503,7 +4503,7 @@
 					}
 				},
 				"AllBody": {
-					"rotation": [0, "-1.5*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.6*ysm.second_order('йћзї…yaw', -ysm.head_yaw, 1, 0.8, 0)"],
+					"rotation": [0, "-1.5*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)", "0.6*ysm.second_order('鞘翅yaw', -ysm.head_yaw, 1, 0.8, 0)"],
 					"position": {
 						"0.0": [0, 0, 0],
 						"0.0417": [0, 0, 0.09],
@@ -4548,7 +4548,7 @@
 					"rotation": ["math.abs(ysm.head_yaw)", 0, 0]
 				},
 				"MAllBody": {
-					"rotation": ["ysm.second_order('йћзї…pitch', -ysm.head_pitch, 1, 0.8, 0)", 0, 0]
+					"rotation": ["ysm.second_order('鞘翅pitch', -ysm.head_pitch, 1, 0.8, 0)", 0, 0]
 				},
 				"molang": {
 					"rotation": ["v.bv=math.cos(2*query.anim_time*360/(24/24))*3", 0, 0]
@@ -4748,7 +4748,7 @@
 				}
 			}
 		},
-		"ејЂиЅ¦_жёёжіі": {
+		"开车_游泳": {
 			"loop": true,
 			"bones": {
 				"LeftArm": {
@@ -4779,7 +4779,7 @@
 					"rotation": [67.5, 0, 0]
 				},
 				"Root": {
-					"rotation": ["ysm.second_order('йћзї…pitch', -ysm.head_pitch, 1, 0.8, 0)", 0, 0],
+					"rotation": ["ysm.second_order('鞘翅pitch', -ysm.head_pitch, 1, 0.8, 0)", 0, 0],
 					"position": [0, "-20+math.sin(q.anim_time*180)", 0]
 				},
 				"LeftFrontWheel": {
@@ -4819,7 +4819,7 @@
 				}
 			}
 		},
-		"ж­Јеёё_еЏ—дј¤": {
+		"正常_受伤": {
 			"animation_length": 0.4583,
 			"bones": {
 				"Root": {
@@ -5203,7 +5203,7 @@
 				}
 			}
 		},
-		"ејЂиЅ¦_еЏ—дј¤": {
+		"开车_受伤": {
 			"animation_length": 0.4583,
 			"bones": {
 				"UpBody": {
@@ -5362,7 +5362,7 @@
 				}
 			}
 		},
-		"ж­Јеёё_ж­»дєЎ": {
+		"正常_死亡": {
 			"loop": "hold_on_last_frame",
 			"animation_length": 1,
 			"bones": {
@@ -5688,7 +5688,7 @@
 				}
 			}
 		},
-		"ејЂиЅ¦_ж­»дєЎ": {
+		"开车_死亡": {
 			"loop": "hold_on_last_frame",
 			"animation_length": 1,
 			"bones": {
@@ -10302,7 +10302,7 @@
 				}
 			}
 		},
-		"вЂ”вЂ”з‰©зђ†": {
+		"——物理": {
 			"loop": true
 		},
 		"parallel0": {
@@ -10318,182 +10318,182 @@
 				},
 				"HairA1": {
 					"rotation": [
-						"ysm.second_order('жЉ¬е¤ґе¤ґеЏ‘йІз©їжЁЎ', 0.8*ysm.head_pitch, 1, 0.6, 0)+ysm.second_order('е¤ґеЏ‘ећ‚з›ґ', math.clamp(-3*q.vertical_speed+v.hv,-10,120), 1.5, 0.6, 0)+ysm.second_order('е¤ґеЏ‘ж°ґе№і', math.clamp(ysm.ground_speed2/2+v.hg,0,20), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').x",
+						"ysm.second_order('抬头头发防穿模', 0.8*ysm.head_pitch, 1, 0.6, 0)+ysm.second_order('头发垂直', math.clamp(-3*q.vertical_speed+v.hv,-10,120), 1.5, 0.6, 0)+ysm.second_order('头发水平', math.clamp(ysm.ground_speed2/2+v.hg,0,20), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').x",
 						0,
-						"ysm.second_order('е¤ґеЏ‘и§’йЂџеє¦', math.clamp(0.05*q.yaw_speed,-80,80), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').z"
+						"ysm.second_order('头发角速度', math.clamp(0.05*q.yaw_speed,-80,80), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').z"
 					]
 				},
 				"HairB1": {
 					"rotation": [
-						"3*ysm.second_order('M1xеўћй‡Џ',v.MHair1_x,1,0.5,0)+ysm.bone_rot('fakehair').x",
+						"3*ysm.second_order('M1x增量',v.MHair1_x,1,0.5,0)+ysm.bone_rot('fakehair').x",
 						0,
-						"3*ysm.second_order('M1zеўћй‡Џ',v.MHair1_z,1,0.5,0)+ysm.bone_rot('fakehair').z"
+						"3*ysm.second_order('M1z增量',v.MHair1_z,1,0.5,0)+ysm.bone_rot('fakehair').z"
 					]
 				},
 				"HairC1": {
-					"rotation": ["ysm.second_order('B1xеўћй‡Џ',ysm.bone_rot('HairB1').x,2,0.5,0.2)", 0, "ysm.second_order('B1zеўћй‡Џ',ysm.bone_rot('HairB1').z,2,0.5,0.2)"]
+					"rotation": ["ysm.second_order('B1x增量',ysm.bone_rot('HairB1').x,2,0.5,0.2)", 0, "ysm.second_order('B1z增量',ysm.bone_rot('HairB1').z,2,0.5,0.2)"]
 				},
 				"HairD1": {
-					"rotation": ["ysm.second_order('C1xеўћй‡Џ',ysm.bone_rot('HairC1').x,2,0.5,0.5)", 0, "ysm.second_order('C1zеўћй‡Џ',ysm.bone_rot('HairC1').z,2,0.5,0.5)"]
+					"rotation": ["ysm.second_order('C1x增量',ysm.bone_rot('HairC1').x,2,0.5,0.5)", 0, "ysm.second_order('C1z增量',ysm.bone_rot('HairC1').z,2,0.5,0.5)"]
 				},
 				"HairA2": {
 					"rotation": [
-						"ysm.second_order('жЉ¬е¤ґе¤ґеЏ‘йІз©їжЁЎ', 0.8*ysm.head_pitch, 1, 0.6, 0)+ysm.second_order('е¤ґеЏ‘ећ‚з›ґ', math.clamp(-3*q.vertical_speed+v.hv,-10,120), 1.5, 0.6, 0)+ysm.second_order('е¤ґеЏ‘ж°ґе№і', math.clamp(ysm.ground_speed2/2+v.hg,0,20), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').x",
+						"ysm.second_order('抬头头发防穿模', 0.8*ysm.head_pitch, 1, 0.6, 0)+ysm.second_order('头发垂直', math.clamp(-3*q.vertical_speed+v.hv,-10,120), 1.5, 0.6, 0)+ysm.second_order('头发水平', math.clamp(ysm.ground_speed2/2+v.hg,0,20), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').x",
 						0,
-						"ysm.second_order('е¤ґеЏ‘и§’йЂџеє¦', math.clamp(0.05*q.yaw_speed,-80,80), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').z"
+						"ysm.second_order('头发角速度', math.clamp(0.05*q.yaw_speed,-80,80), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').z"
 					]
 				},
 				"HairB2": {
 					"rotation": [
-						"3*ysm.second_order('M1xеўћй‡Џ',v.MHair1_x,1,0.5,0)+ysm.bone_rot('fakehair').x",
+						"3*ysm.second_order('M1x增量',v.MHair1_x,1,0.5,0)+ysm.bone_rot('fakehair').x",
 						0,
-						"3*ysm.second_order('M1zеўћй‡Џ',v.MHair1_z,1,0.5,0)+ysm.bone_rot('fakehair').z"
+						"3*ysm.second_order('M1z增量',v.MHair1_z,1,0.5,0)+ysm.bone_rot('fakehair').z"
 					]
 				},
 				"HairC2": {
-					"rotation": ["ysm.second_order('B1xеўћй‡Џ',ysm.bone_rot('HairB1').x,2,0.5,0.2)", 0, "ysm.second_order('B1zеўћй‡Џ',ysm.bone_rot('HairB1').z,2,0.5,0.2)"]
+					"rotation": ["ysm.second_order('B1x增量',ysm.bone_rot('HairB1').x,2,0.5,0.2)", 0, "ysm.second_order('B1z增量',ysm.bone_rot('HairB1').z,2,0.5,0.2)"]
 				},
 				"HairD2": {
-					"rotation": ["ysm.second_order('C1xеўћй‡Џ',ysm.bone_rot('HairC1').x,2,0.5,0.5)", 0, "ysm.second_order('C1zеўћй‡Џ',ysm.bone_rot('HairC1').z,2,0.5,0.5)"]
+					"rotation": ["ysm.second_order('C1x增量',ysm.bone_rot('HairC1').x,2,0.5,0.5)", 0, "ysm.second_order('C1z增量',ysm.bone_rot('HairC1').z,2,0.5,0.5)"]
 				},
 				"HairB7": {
 					"rotation": [
-						"3*ysm.second_order('M1xеўћй‡Џ',v.MHair1_x,1,0.5,0)+ysm.bone_rot('fakehair').x",
+						"3*ysm.second_order('M1x增量',v.MHair1_x,1,0.5,0)+ysm.bone_rot('fakehair').x",
 						0,
-						"3*ysm.second_order('M1zеўћй‡Џ',v.MHair1_z,1,0.5,0)+ysm.bone_rot('fakehair').z"
+						"3*ysm.second_order('M1z增量',v.MHair1_z,1,0.5,0)+ysm.bone_rot('fakehair').z"
 					]
 				},
 				"HairC7": {
-					"rotation": ["ysm.second_order('B1xеўћй‡Џ',ysm.bone_rot('HairB1').x,2,0.5,0.2)", 0, "ysm.second_order('B1zеўћй‡Џ',ysm.bone_rot('HairB1').z,2,0.5,0.2)"]
+					"rotation": ["ysm.second_order('B1x增量',ysm.bone_rot('HairB1').x,2,0.5,0.2)", 0, "ysm.second_order('B1z增量',ysm.bone_rot('HairB1').z,2,0.5,0.2)"]
 				},
 				"HairD7": {
-					"rotation": ["ysm.second_order('C1xеўћй‡Џ',ysm.bone_rot('HairC1').x,2,0.5,0.5)", 0, "ysm.second_order('C1zеўћй‡Џ',ysm.bone_rot('HairC1').z,2,0.5,0.5)"]
+					"rotation": ["ysm.second_order('C1x增量',ysm.bone_rot('HairC1').x,2,0.5,0.5)", 0, "ysm.second_order('C1z增量',ysm.bone_rot('HairC1').z,2,0.5,0.5)"]
 				},
 				"HairA3": {
 					"rotation": [
-						"ysm.second_order('жЉ¬е¤ґе¤ґеЏ‘йІз©їжЁЎ', 0.8*ysm.head_pitch, 1, 0.6, 0)+ysm.second_order('е¤ґеЏ‘ећ‚з›ґ', math.clamp(-3*q.vertical_speed+v.hv,-10,120), 1.5, 0.6, 0)+ysm.second_order('е¤ґеЏ‘ж°ґе№і', math.clamp(ysm.ground_speed2/2+v.hg,0,20), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').x",
+						"ysm.second_order('抬头头发防穿模', 0.8*ysm.head_pitch, 1, 0.6, 0)+ysm.second_order('头发垂直', math.clamp(-3*q.vertical_speed+v.hv,-10,120), 1.5, 0.6, 0)+ysm.second_order('头发水平', math.clamp(ysm.ground_speed2/2+v.hg,0,20), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').x",
 						0,
-						"ysm.second_order('е¤ґеЏ‘и§’йЂџеє¦', math.clamp(0.05*q.yaw_speed,-80,80), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').z"
+						"ysm.second_order('头发角速度', math.clamp(0.05*q.yaw_speed,-80,80), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').z"
 					]
 				},
 				"HairB3": {
 					"rotation": [
-						"3*ysm.second_order('M1xеўћй‡Џ',v.MHair1_x,1,0.5,0)+ysm.bone_rot('fakehair').x",
+						"3*ysm.second_order('M1x增量',v.MHair1_x,1,0.5,0)+ysm.bone_rot('fakehair').x",
 						0,
-						"3*ysm.second_order('M1zеўћй‡Џ',v.MHair1_z,1,0.5,0)+ysm.bone_rot('fakehair').z"
+						"3*ysm.second_order('M1z增量',v.MHair1_z,1,0.5,0)+ysm.bone_rot('fakehair').z"
 					]
 				},
 				"HairC3": {
-					"rotation": ["ysm.second_order('B1xеўћй‡Џ',ysm.bone_rot('HairB1').x,2,0.5,0.2)", 0, "ysm.second_order('B1zеўћй‡Џ',ysm.bone_rot('HairB1').z,2,0.5,0.2)"]
+					"rotation": ["ysm.second_order('B1x增量',ysm.bone_rot('HairB1').x,2,0.5,0.2)", 0, "ysm.second_order('B1z增量',ysm.bone_rot('HairB1').z,2,0.5,0.2)"]
 				},
 				"HairD3": {
-					"rotation": ["ysm.second_order('C1xеўћй‡Џ',ysm.bone_rot('HairC1').x,2,0.5,0.5)", 0, "ysm.second_order('C1zеўћй‡Џ',ysm.bone_rot('HairC1').z,2,0.5,0.5)"]
+					"rotation": ["ysm.second_order('C1x增量',ysm.bone_rot('HairC1').x,2,0.5,0.5)", 0, "ysm.second_order('C1z增量',ysm.bone_rot('HairC1').z,2,0.5,0.5)"]
 				},
 				"HairB6": {
 					"rotation": [
-						"3*ysm.second_order('M1xеўћй‡Џ',v.MHair1_x,1,0.5,0)+ysm.bone_rot('fakehair').x",
+						"3*ysm.second_order('M1x增量',v.MHair1_x,1,0.5,0)+ysm.bone_rot('fakehair').x",
 						0,
-						"3*ysm.second_order('M1zеўћй‡Џ',v.MHair1_z,1,0.5,0)+ysm.bone_rot('fakehair').z"
+						"3*ysm.second_order('M1z增量',v.MHair1_z,1,0.5,0)+ysm.bone_rot('fakehair').z"
 					]
 				},
 				"HairC6": {
-					"rotation": ["ysm.second_order('B1xеўћй‡Џ',ysm.bone_rot('HairB1').x,2,0.5,0.2)", 0, "ysm.second_order('B1zеўћй‡Џ',ysm.bone_rot('HairB1').z,2,0.5,0.2)"]
+					"rotation": ["ysm.second_order('B1x增量',ysm.bone_rot('HairB1').x,2,0.5,0.2)", 0, "ysm.second_order('B1z增量',ysm.bone_rot('HairB1').z,2,0.5,0.2)"]
 				},
 				"HairD6": {
-					"rotation": ["ysm.second_order('C1xеўћй‡Џ',ysm.bone_rot('HairC1').x,2,0.5,0.5)", 0, "ysm.second_order('C1zеўћй‡Џ',ysm.bone_rot('HairC1').z,2,0.5,0.5)"]
+					"rotation": ["ysm.second_order('C1x增量',ysm.bone_rot('HairC1').x,2,0.5,0.5)", 0, "ysm.second_order('C1z增量',ysm.bone_rot('HairC1').z,2,0.5,0.5)"]
 				},
 				"HairA4": {
 					"rotation": [
-						"ysm.second_order('жЉ¬е¤ґе¤ґеЏ‘йІз©їжЁЎ', 0.8*ysm.head_pitch, 1, 0.6, 0)+ysm.second_order('е¤ґеЏ‘ећ‚з›ґ', math.clamp(-3*q.vertical_speed+v.hv,-10,120), 1.5, 0.6, 0)+ysm.second_order('е¤ґеЏ‘ж°ґе№і', math.clamp(ysm.ground_speed2/2+v.hg,0,20), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').x",
+						"ysm.second_order('抬头头发防穿模', 0.8*ysm.head_pitch, 1, 0.6, 0)+ysm.second_order('头发垂直', math.clamp(-3*q.vertical_speed+v.hv,-10,120), 1.5, 0.6, 0)+ysm.second_order('头发水平', math.clamp(ysm.ground_speed2/2+v.hg,0,20), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').x",
 						0,
-						"ysm.second_order('е¤ґеЏ‘и§’йЂџеє¦', math.clamp(0.05*q.yaw_speed,-80,80), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').z"
+						"ysm.second_order('头发角速度', math.clamp(0.05*q.yaw_speed,-80,80), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').z"
 					]
 				},
 				"HairB4": {
 					"rotation": [
-						"3*ysm.second_order('M1xеўћй‡Џ',v.MHair1_x,1,0.5,0)+ysm.bone_rot('fakehair').x",
+						"3*ysm.second_order('M1x增量',v.MHair1_x,1,0.5,0)+ysm.bone_rot('fakehair').x",
 						0,
-						"3*ysm.second_order('M1zеўћй‡Џ',v.MHair1_z,1,0.5,0)+ysm.bone_rot('fakehair').z"
+						"3*ysm.second_order('M1z增量',v.MHair1_z,1,0.5,0)+ysm.bone_rot('fakehair').z"
 					]
 				},
 				"HairC4": {
-					"rotation": ["ysm.second_order('B1xеўћй‡Џ',ysm.bone_rot('HairB1').x,2,0.5,0.2)", 0, "ysm.second_order('B1zеўћй‡Џ',ysm.bone_rot('HairB1').z,2,0.5,0.2)"]
+					"rotation": ["ysm.second_order('B1x增量',ysm.bone_rot('HairB1').x,2,0.5,0.2)", 0, "ysm.second_order('B1z增量',ysm.bone_rot('HairB1').z,2,0.5,0.2)"]
 				},
 				"HairD4": {
-					"rotation": ["ysm.second_order('C1xеўћй‡Џ',ysm.bone_rot('HairC1').x,2,0.5,0.5)", 0, "ysm.second_order('C1zеўћй‡Џ',ysm.bone_rot('HairC1').z,2,0.5,0.5)"]
+					"rotation": ["ysm.second_order('C1x增量',ysm.bone_rot('HairC1').x,2,0.5,0.5)", 0, "ysm.second_order('C1z增量',ysm.bone_rot('HairC1').z,2,0.5,0.5)"]
 				},
 				"HairA5": {
 					"rotation": [
-						"ysm.second_order('жЉ¬е¤ґе¤ґеЏ‘йІз©їжЁЎ', 0.8*ysm.head_pitch, 1, 0.6, 0)+ysm.second_order('е¤ґеЏ‘ећ‚з›ґ', math.clamp(-3*q.vertical_speed+v.hv,-10,120), 1.5, 0.6, 0)+ysm.second_order('е¤ґеЏ‘ж°ґе№і', math.clamp(ysm.ground_speed2/2+v.hg,0,20), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').x",
+						"ysm.second_order('抬头头发防穿模', 0.8*ysm.head_pitch, 1, 0.6, 0)+ysm.second_order('头发垂直', math.clamp(-3*q.vertical_speed+v.hv,-10,120), 1.5, 0.6, 0)+ysm.second_order('头发水平', math.clamp(ysm.ground_speed2/2+v.hg,0,20), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').x",
 						0,
-						"ysm.second_order('е¤ґеЏ‘и§’йЂџеє¦', math.clamp(0.05*q.yaw_speed,-80,80), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').z"
+						"ysm.second_order('头发角速度', math.clamp(0.05*q.yaw_speed,-80,80), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').z"
 					]
 				},
 				"HairB5": {
 					"rotation": [
-						"3*ysm.second_order('M1xеўћй‡Џ',v.MHair1_x,1,0.5,0)+ysm.bone_rot('fakehair').x",
+						"3*ysm.second_order('M1x增量',v.MHair1_x,1,0.5,0)+ysm.bone_rot('fakehair').x",
 						0,
-						"3*ysm.second_order('M1zеўћй‡Џ',v.MHair1_z,1,0.5,0)+ysm.bone_rot('fakehair').z"
+						"3*ysm.second_order('M1z增量',v.MHair1_z,1,0.5,0)+ysm.bone_rot('fakehair').z"
 					]
 				},
 				"HairC5": {
-					"rotation": ["ysm.second_order('B1xеўћй‡Џ',ysm.bone_rot('HairB1').x,2,0.5,0.2)", 0, "ysm.second_order('B1zеўћй‡Џ',ysm.bone_rot('HairB1').z,2,0.5,0.2)"]
+					"rotation": ["ysm.second_order('B1x增量',ysm.bone_rot('HairB1').x,2,0.5,0.2)", 0, "ysm.second_order('B1z增量',ysm.bone_rot('HairB1').z,2,0.5,0.2)"]
 				},
 				"HairD5": {
-					"rotation": ["ysm.second_order('C1xеўћй‡Џ',ysm.bone_rot('HairC1').x,2,0.5,0.5)", 0, "ysm.second_order('C1zеўћй‡Џ',ysm.bone_rot('HairC1').z,2,0.5,0.5)"]
+					"rotation": ["ysm.second_order('C1x增量',ysm.bone_rot('HairC1').x,2,0.5,0.5)", 0, "ysm.second_order('C1z增量',ysm.bone_rot('HairC1').z,2,0.5,0.5)"]
 				},
 				"HairA6": {
 					"rotation": [
-						"ysm.second_order('жЉ¬е¤ґе¤ґеЏ‘йІз©їжЁЎ', 0.8*ysm.head_pitch, 1, 0.6, 0)+ysm.second_order('е¤ґеЏ‘ећ‚з›ґ', math.clamp(-3*q.vertical_speed+v.hv,-10,120), 1.5, 0.6, 0)+ysm.second_order('е¤ґеЏ‘ж°ґе№і', math.clamp(ysm.ground_speed2/2+v.hg,0,20), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').x",
+						"ysm.second_order('抬头头发防穿模', 0.8*ysm.head_pitch, 1, 0.6, 0)+ysm.second_order('头发垂直', math.clamp(-3*q.vertical_speed+v.hv,-10,120), 1.5, 0.6, 0)+ysm.second_order('头发水平', math.clamp(ysm.ground_speed2/2+v.hg,0,20), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').x",
 						0,
-						"ysm.second_order('е¤ґеЏ‘и§’йЂџеє¦', math.clamp(0.05*q.yaw_speed,-80,80), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').z"
+						"ysm.second_order('头发角速度', math.clamp(0.05*q.yaw_speed,-80,80), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').z"
 					]
 				},
 				"HairB8": {
 					"rotation": [
-						"3*ysm.second_order('M1xеўћй‡Џ',v.MHair1_x,1,0.5,0)+ysm.bone_rot('fakehair').x",
+						"3*ysm.second_order('M1x增量',v.MHair1_x,1,0.5,0)+ysm.bone_rot('fakehair').x",
 						0,
-						"3*ysm.second_order('M1zеўћй‡Џ',v.MHair1_z,1,0.5,0)+ysm.bone_rot('fakehair').z"
+						"3*ysm.second_order('M1z增量',v.MHair1_z,1,0.5,0)+ysm.bone_rot('fakehair').z"
 					]
 				},
 				"HairC8": {
-					"rotation": ["ysm.second_order('B1xеўћй‡Џ',ysm.bone_rot('HairB1').x,2,0.5,0.2)", 0, "ysm.second_order('B1zеўћй‡Џ',ysm.bone_rot('HairB1').z,2,0.5,0.2)"]
+					"rotation": ["ysm.second_order('B1x增量',ysm.bone_rot('HairB1').x,2,0.5,0.2)", 0, "ysm.second_order('B1z增量',ysm.bone_rot('HairB1').z,2,0.5,0.2)"]
 				},
 				"HairD8": {
-					"rotation": ["ysm.second_order('C1xеўћй‡Џ',ysm.bone_rot('HairC1').x,2,0.5,0.5)", 0, "ysm.second_order('C1zеўћй‡Џ',ysm.bone_rot('HairC1').z,2,0.5,0.5)"]
+					"rotation": ["ysm.second_order('C1x增量',ysm.bone_rot('HairC1').x,2,0.5,0.5)", 0, "ysm.second_order('C1z增量',ysm.bone_rot('HairC1').z,2,0.5,0.5)"]
 				},
 				"HairA7": {
 					"rotation": [
-						"ysm.second_order('жЉ¬е¤ґе¤ґеЏ‘йІз©їжЁЎ', 0.8*ysm.head_pitch, 1, 0.6, 0)+ysm.second_order('е¤ґеЏ‘ећ‚з›ґ', math.clamp(-3*q.vertical_speed+v.hv,-10,120), 1.5, 0.6, 0)+ysm.second_order('е¤ґеЏ‘ж°ґе№і', math.clamp(ysm.ground_speed2/2+v.hg,0,20), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').x",
+						"ysm.second_order('抬头头发防穿模', 0.8*ysm.head_pitch, 1, 0.6, 0)+ysm.second_order('头发垂直', math.clamp(-3*q.vertical_speed+v.hv,-10,120), 1.5, 0.6, 0)+ysm.second_order('头发水平', math.clamp(ysm.ground_speed2/2+v.hg,0,20), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').x",
 						0,
-						"ysm.second_order('е¤ґеЏ‘и§’йЂџеє¦', math.clamp(0.05*q.yaw_speed,-80,80), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').z"
+						"ysm.second_order('头发角速度', math.clamp(0.05*q.yaw_speed,-80,80), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').z"
 					]
 				},
 				"HairB9": {
 					"rotation": [
-						"3*ysm.second_order('M1xеўћй‡Џ',v.MHair1_x,1,0.5,0)+ysm.bone_rot('fakehair').x",
+						"3*ysm.second_order('M1x增量',v.MHair1_x,1,0.5,0)+ysm.bone_rot('fakehair').x",
 						0,
-						"3*ysm.second_order('M1zеўћй‡Џ',v.MHair1_z,1,0.5,0)+ysm.bone_rot('fakehair').z"
+						"3*ysm.second_order('M1z增量',v.MHair1_z,1,0.5,0)+ysm.bone_rot('fakehair').z"
 					]
 				},
 				"HairC9": {
-					"rotation": ["ysm.second_order('B1xеўћй‡Џ',ysm.bone_rot('HairB1').x,2,0.5,0.2)", 0, "ysm.second_order('B1zеўћй‡Џ',ysm.bone_rot('HairB1').z,2,0.5,0.2)"]
+					"rotation": ["ysm.second_order('B1x增量',ysm.bone_rot('HairB1').x,2,0.5,0.2)", 0, "ysm.second_order('B1z增量',ysm.bone_rot('HairB1').z,2,0.5,0.2)"]
 				},
 				"HairD9": {
-					"rotation": ["ysm.second_order('C1xеўћй‡Џ',ysm.bone_rot('HairC1').x,2,0.5,0.5)", 0, "ysm.second_order('C1zеўћй‡Џ',ysm.bone_rot('HairC1').z,2,0.5,0.5)"]
+					"rotation": ["ysm.second_order('C1x增量',ysm.bone_rot('HairC1').x,2,0.5,0.5)", 0, "ysm.second_order('C1z增量',ysm.bone_rot('HairC1').z,2,0.5,0.5)"]
 				},
 				"LeftSideHair2": {
 					"rotation": [
-						"ysm.second_order('жЉ¬е¤ґе¤ґеЏ‘йІз©їжЁЎ', 0.8*ysm.head_pitch, 1, 0.6, 0)+ysm.second_order('е¤ґеЏ‘ећ‚з›ґ', math.clamp(-3*q.vertical_speed+v.hv,-10,120), 1.5, 0.6, 0)+ysm.second_order('е¤ґеЏ‘ж°ґе№і', math.clamp(ysm.ground_speed2/2+v.hg,0,20), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').x",
+						"ysm.second_order('抬头头发防穿模', 0.8*ysm.head_pitch, 1, 0.6, 0)+ysm.second_order('头发垂直', math.clamp(-3*q.vertical_speed+v.hv,-10,120), 1.5, 0.6, 0)+ysm.second_order('头发水平', math.clamp(ysm.ground_speed2/2+v.hg,0,20), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').x",
 						0,
-						"ysm.second_order('е¤ґеЏ‘и§’йЂџеє¦', math.clamp(0.05*q.yaw_speed,-80,80), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').z"
+						"ysm.second_order('头发角速度', math.clamp(0.05*q.yaw_speed,-80,80), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').z"
 					]
 				},
 				"RightSideHair2": {
 					"rotation": [
-						"ysm.second_order('жЉ¬е¤ґе¤ґеЏ‘йІз©їжЁЎ', 0.8*ysm.head_pitch, 1, 0.6, 0)+ysm.second_order('е¤ґеЏ‘ећ‚з›ґ', math.clamp(-3*q.vertical_speed+v.hv,-10,120), 1.5, 0.6, 0)+ysm.second_order('е¤ґеЏ‘ж°ґе№і', math.clamp(ysm.ground_speed2/2+v.hg,0,20), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').x",
+						"ysm.second_order('抬头头发防穿模', 0.8*ysm.head_pitch, 1, 0.6, 0)+ysm.second_order('头发垂直', math.clamp(-3*q.vertical_speed+v.hv,-10,120), 1.5, 0.6, 0)+ysm.second_order('头发水平', math.clamp(ysm.ground_speed2/2+v.hg,0,20), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').x",
 						0,
-						"ysm.second_order('е¤ґеЏ‘и§’йЂџеє¦', math.clamp(0.05*q.yaw_speed,-80,80), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').z"
+						"ysm.second_order('头发角速度', math.clamp(0.05*q.yaw_speed,-80,80), 1.5, 0.6, 0)+ysm.bone_rot('fakehair').z"
 					]
 				}
 			},
@@ -10507,7 +10507,7 @@
 				"0.0101": ["v.MHair1_x_1=v.MHair1_x_0;", "v.MHair1_z_1=v.MHair1_z_0;"]
 			}
 		},
-		"вЂ”вЂ”е№¶иЎЊ": {
+		"——并行": {
 			"loop": true
 		},
 		"parallel1": {
@@ -10526,9 +10526,9 @@
 			},
 			"timeline": {
 				"0.0": [
-					"v.input_y=ysm.second_order('ећ‚з›ґе€†й‡Џ', math.clamp(0.1*q.vertical_speed,-1,1), 1, 0.5, 0);",
-					"v.input_vertical=ysm.second_order('е‰Ќиї›е€†й‡Џ', ysm.input_vertical, 1, 0.5, 0);",
-					"v.input_horizontal=ysm.second_order('е·¦еЏіе€†й‡Џ', ysm.input_horizontal, 1, 0.5, 0);"
+					"v.input_y=ysm.second_order('垂直分量', math.clamp(0.1*q.vertical_speed,-1,1), 1, 0.5, 0);",
+					"v.input_vertical=ysm.second_order('前进分量', ysm.input_vertical, 1, 0.5, 0);",
+					"v.input_horizontal=ysm.second_order('左右分量', ysm.input_horizontal, 1, 0.5, 0);"
 				]
 			}
 		},
@@ -10538,7 +10538,7 @@
 		"parallel3": {
 			"loop": true
 		},
-		"вЂ”вЂ”иЅ¦иѕ†з›ёе…іеЉЁз”»": {
+		"——车辆相关动画": {
 			"loop": true
 		},
 		"parallel4": {
@@ -10579,7 +10579,7 @@
 		"parallel7": {
 			"loop": true
 		},
-		"вЂ”вЂ”зњЁзњј": {
+		"——眨眼": {
 			"loop": true
 		},
 		"pre_parallel1": {
@@ -10700,7 +10700,7 @@
 				}
 			}
 		},
-		"вЂ”вЂ”дЅЋе№¶иЎЊ": {
+		"——低并行": {
 			"loop": true
 		},
 		"pre_parallel2": {
@@ -10866,7 +10866,7 @@
 				}
 			}
 		},
-		"й›Ёе€®е™Ё": {
+		"雨刮器": {
 			"loop": true,
 			"animation_length": 1.0833,
 			"bones": {
@@ -10922,7 +10922,7 @@
 				}
 			}
 		},
-		"е…‰зЋЇејЂжњє": {
+		"光环开机": {
 			"animation_length": 4,
 			"bones": {
 				"Halo": {
@@ -11168,7 +11168,7 @@
 				}
 			}
 		},
-		"е…‰зЋЇеёёжЂЃ": {
+		"光环常态": {
 			"loop": true,
 			"bones": {
 				"Halo": {
@@ -11251,7 +11251,7 @@
 				}
 			}
 		},
-		"е…‰зЋЇе…іжњє": {
+		"光环关机": {
 			"animation_length": 1,
 			"bones": {
 				"ysmGlow_nei": {
@@ -11298,7 +11298,7 @@
 				}
 			}
 		},
-		"е…‰зЋЇйљђи—Џ": {
+		"光环隐藏": {
 			"loop": true,
 			"bones": {
 				"Halo": {
@@ -11306,7 +11306,7 @@
 				}
 			}
 		},
-		"йЂ‰ж‹©еЉЁз”»": {
+		"选择动画": {
 			"animation_length": 5,
 			"bones": {
 				"Player_Size": {
@@ -11713,7 +11713,7 @@
 				}
 			}
 		},
-		"иЎЁжѓ…_з–‘жѓ‘": {
+		"表情_疑惑": {
 			"loop": true,
 			"bones": {
 				"gan_tan_hao": {
@@ -11744,7 +11744,7 @@
 				}
 			}
 		},
-		"иЎЁжѓ…_е№Ід»Ђд№€": {
+		"表情_干什么": {
 			"loop": true,
 			"bones": {
 				"RightEyebrow2": {
@@ -11793,7 +11793,7 @@
 				}
 			}
 		},
-		"иЎЁжѓ…_е®іжЂ•": {
+		"表情_害怕": {
 			"loop": true,
 			"bones": {
 				"RightEyebrow2": {
@@ -11846,7 +11846,7 @@
 				}
 			}
 		},
-		"иЎЁжѓ…_е§”е±€е·ґе·ґ": {
+		"表情_委屈巴巴": {
 			"loop": true,
 			"bones": {
 				"LeftEyebrow": {
@@ -11887,7 +11887,7 @@
 				}
 			}
 		},
-		"иЎЁжѓ…_и‹¦е‘ЂиҐї": {
+		"表情_苦呀西": {
 			"loop": true,
 			"bones": {
 				"Eyes": {
@@ -11920,7 +11920,7 @@
 				}
 			}
 		},
-		"ејЂе‰Ќе¤‡з®±": {
+		"开前备箱": {
 			"loop": "hold_on_last_frame",
 			"animation_length": 0.75,
 			"bones": {
@@ -11946,7 +11946,7 @@
 				}
 			}
 		},
-		"е…іе‰Ќе¤‡з®±": {
+		"关前备箱": {
 			"animation_length": 0.5833,
 			"bones": {
 				"CarRoot": {
@@ -12054,7 +12054,7 @@
 				}
 			}
 		},
-		"ејЂеђЋе¤‡з®±": {
+		"开后备箱": {
 			"animation_length": 0.75,
 			"bones": {
 				"Trunk": {
@@ -12079,7 +12079,7 @@
 				}
 			}
 		},
-		"е…іеђЋе¤‡з®±": {
+		"关后备箱": {
 			"animation_length": 0.5833,
 			"bones": {
 				"CarRoot": {
@@ -12187,7 +12187,7 @@
 				}
 			}
 		},
-		"ејЂе·¦иЅ¦й—Ё": {
+		"开左车门": {
 			"animation_length": 0.75,
 			"bones": {
 				"LeftFrontDoor": {
@@ -12212,7 +12212,7 @@
 				}
 			}
 		},
-		"е…іе·¦иЅ¦й—Ё": {
+		"关左车门": {
 			"animation_length": 0.5833,
 			"bones": {
 				"CarRoot": {
@@ -12314,7 +12314,7 @@
 				}
 			}
 		},
-		"ејЂеЏіиЅ¦й—Ё": {
+		"开右车门": {
 			"animation_length": 0.75,
 			"bones": {
 				"RightFrontDoor": {
@@ -12339,7 +12339,7 @@
 				}
 			}
 		},
-		"е…іеЏіиЅ¦й—Ё": {
+		"关右车门": {
 			"animation_length": 0.5833,
 			"bones": {
 				"CarRoot": {

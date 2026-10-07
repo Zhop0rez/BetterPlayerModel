@@ -57,7 +57,7 @@ public final class ExpressionEvaluatorImpl<TEntity> implements ExpressionEvaluat
                 float bv = ValueConversions.asFloat(b.visit(evaluator));
                 return av * bv;
             },
-            // molang й‡Њй™¤й›¶з»“жћњдёє 0
+            // division by zero yields 0 in molang
             (evaluator, a, b) -> {
                 float dividend = ValueConversions.asFloat(a.visit(evaluator));
                 float divisor = ValueConversions.asFloat(b.visit(evaluator));
@@ -92,7 +92,7 @@ public final class ExpressionEvaluatorImpl<TEntity> implements ExpressionEvaluat
                     var.assign(evaluator, val);
                 } else if (a instanceof StructAccessExpression exp) {
                     if (val instanceof Struct) {
-                        // дёЌе…Ѓи®ёз»“жћ„дЅ“еµЊеҐ—
+                        // Struct nesting is not allowed
                         return val;
                     }
                     Object value = exp.left().visit(evaluator);
@@ -197,7 +197,7 @@ public final class ExpressionEvaluatorImpl<TEntity> implements ExpressionEvaluat
         }
     }
 
-    // з®—жњЇе­ђж ‘еЋџз”џйЂ’еЅ’пјЊи·іиї‡дё­й—ґ Float иЈ…з®±пј›йЃ‡е€°дёЌиѓЅењЁ primitive еџџе¤„зђ†зљ„иЉ‚з‚№е›ћйЂЂе€° visit
+    // Arithmetic subtree recurses natively, skipping intermediate Float boxing; nodes that cannot be handled in the primitive domain fall back to visit
     private float evalFloat(@NotNull Expression expr) {
         if (expr instanceof FloatExpression fe) {
             return fe.value();

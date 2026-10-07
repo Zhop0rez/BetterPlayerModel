@@ -339,7 +339,7 @@ public class YSMClientMapper {
             bb.rotZ = rb.rotation[2];
             bb.parentIdx = -1;
 
-            // TODO: дјеЊ–з®—жі•
+            // TODO: optimize the algorithm
 
             boolean forceCull = allCutout;
 
@@ -422,7 +422,7 @@ public class YSMClientMapper {
             bakedBones.add(bb);
         }
 
-        // е›ћеЎ«з€¶зє§зґўеј•
+        // Backfill the parent index
         for (GeoModel.BakedBone b : bakedBones) {
             String parentName = parentMap.get(b.name);
             if (parentName != null && !parentName.isEmpty()) {
@@ -888,7 +888,7 @@ public class YSMClientMapper {
     private static String[][] buildBoneNameArrays(Map<String, String> parentMap) {
         String[][] arrays = new String[35][];
 
-        // жЁЎећ‹йЄЁйЄје¤§е…Ё
+        // All model bones
         String[] targetLocators = new String[]{
                 "LeftHandLocator",
                 "RightHandLocator",

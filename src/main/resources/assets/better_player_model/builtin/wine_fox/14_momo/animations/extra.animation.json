@@ -1,7 +1,7 @@
 ﻿{
 	"format_version": "1.8.0",
 	"animations": {
-		"з‹ђз‹ђж‘‡пј€е®Њж•ґпј‰": {
+		"狐狐摇（完整）": {
 			"loop": "hold_on_last_frame",
 			"animation_length": 173.4,
 			"sound_effects": {
@@ -57,7 +57,7 @@
 				"173.4": "v.owo=0;"
 			}
 		},
-		"з‹ђз‹ђж‘‡1": {
+		"狐狐摇1": {
 			"loop": true,
 			"animation_length": 0.96,
 			"bones": {
@@ -881,7 +881,7 @@
 				}
 			}
 		},
-		"з‹ђз‹ђж‘‡2": {
+		"狐狐摇2": {
 			"loop": true,
 			"animation_length": 0.96,
 			"bones": {
@@ -1605,7 +1605,7 @@
 				}
 			}
 		},
-		"з‹ђз‹ђж‘‡3": {
+		"狐狐摇3": {
 			"loop": true,
 			"animation_length": 0.96,
 			"bones": {
@@ -2479,7 +2479,7 @@
 				}
 			}
 		},
-		"з‹ђз‹ђж‘‡е€ќзЉ¶жЂЃ": {
+		"狐狐摇初状态": {
 			"loop": true,
 			"animation_length": 0.24,
 			"bones": {
@@ -2939,7 +2939,7 @@
 				}
 			}
 		},
-		"ж‹›ж‰‹": {
+		"招手": {
 			"loop": "hold_on_last_frame",
 			"animation_length": 1.5,
 			"bones": {
@@ -3225,7 +3225,7 @@
 				}
 			}
 		},
-		"еЌ–иђЊ": {
+		"卖萌": {
 			"loop": true,
 			"animation_length": 0.5,
 			"bones": {
@@ -3380,7 +3380,7 @@
 				}
 			}
 		},
-		"ж‘‡ж‘‡": {
+		"摇摇": {
 			"loop": true,
 			"animation_length": 0.6667,
 			"bones": {
@@ -3728,7 +3728,7 @@
 				}
 			}
 		},
-		"дёЌзџҐеђЌзљ„и€ћи№€пј€жњЄе®Њж€ђпј‰": {
+		"不知名的舞蹈（未完成）": {
 			"loop": true,
 			"animation_length": 7.5,
 			"bones": {
@@ -6878,7 +6878,7 @@
 				}
 			}
 		},
-		"еЏиє«": {
+		"变身": {
 			"animation_length": 3,
 			"bones": {
 				"Root": {
@@ -7233,7 +7233,7 @@
 				"1.2917": "v.roaming.c=0;"
 			}
 		},
-		"й…ЌзЅ®": {
+		"配置": {
 			"loop": "hold_on_last_frame",
 			"animation_length": 0.04
 		},
@@ -9673,7 +9673,7 @@
 				}
 			}
 		},
-		"дјёж‡’и…°": {
+		"伸懒腰": {
 			"animation_length": 5.76,
 			"bones": {
 				"MAllbody": {
@@ -9956,13 +9956,13 @@
 				"5.76": "v.roaming.d=0;"
 			}
 		},
-		"ж‰ѕдёЌе€°з‹ђж‰ѕдёЌе€°з‹ђ": {
+		"找不到狐找不到狐": {
 			"loop": true,
 			"timeline": {
 				"0.0": ["v.z_d = math.mod(((v.z_d ?? 0) + 1), 3);", "v.z_cs=1;"]
 			}
 		},
-		"пј€е…Ёиї›еЋ»дє†пј‰з‹ђз‹ђй’»ењ°еЉЁз”»": {
+		"（全进去了）狐狐钻地动画": {
 			"animation_length": 3,
 			"bones": {
 				"Root": {
@@ -10311,7 +10311,7 @@
 				"3.0": "v.in_land=-41;"
 			}
 		},
-		"пј€еЏЄй’»дє†дёЄе¤ґпј‰з‹ђз‹ђй’»ењ°еЉЁз”»": {
+		"（只钻了个头）狐狐钻地动画": {
 			"loop": "hold_on_last_frame",
 			"animation_length": 3.84,
 			"bones": {
@@ -10454,7 +10454,7 @@
 				"3.84": "v.in_land=-31;"
 			}
 		},
-		"пј€е‡єжќҐдє†пј‰з‹ђз‹ђй’»ењ°еЉЁз”»": {
+		"（出来了）狐狐钻地动画": {
 			"loop": "hold_on_last_frame",
 			"animation_length": 3.24,
 			"bones": {
@@ -10981,7 +10981,7 @@
 				"3.24": "v.in_land=0;"
 			}
 		},
-		"дё‰д»Ѕйє¦йњё": {
+		"三份麦霸": {
 			"animation_length": 99.84,
 			"sound_effects": {
 				"0.0": {

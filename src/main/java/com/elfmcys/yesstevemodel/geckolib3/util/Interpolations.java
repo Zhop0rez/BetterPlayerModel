@@ -2,14 +2,14 @@ package com.elfmcys.yesstevemodel.geckolib3.util;
 
 public class Interpolations {
     /**
-     * зєїжЂ§жЏ’еЂј
+     * Linear interpolation
      */
     public static float lerp(float a, float b, float position) {
         return a + (b - a) * position;
     }
 
     /**
-     * з”ЁдєЋжЏ’еЂј yaw зљ„з‰№ж®ЉжЏ’еЂјж–№жі•
+     * Special interpolation method used for yaw
      */
     public static float lerpYaw(float a, float b, float position) {
         a = MathHelper.wrapDegrees(a);
@@ -18,7 +18,7 @@ public class Interpolations {
     }
 
     /**
-     * ењЁ y1 е’Њ y2 д№‹й—ґдЅїз”Ё Hermite дё‰ж¬ЎжЏ’еЂј
+     * Hermite cubic interpolation between y1 and y2
      */
     public static double cubicHermite(double y0, double y1, double y2, double y3, double x) {
         double a = -0.5 * y0 + 1.5 * y1 - 1.5 * y2 + 0.5 * y3;
@@ -28,7 +28,7 @@ public class Interpolations {
     }
 
     /**
-     * Yaw зљ„ Hermite дё‰ж¬ЎжЏ’еЂј
+     * Hermite cubic interpolation of Yaw
      */
     public static double cubicHermiteYaw(float y0, float y1, float y2, float y3, float position) {
         y0 = MathHelper.wrapDegrees(y0);
@@ -42,7 +42,7 @@ public class Interpolations {
     }
 
     /**
-     * Yaw зљ„ Hermite дё‰ж¬ЎжЏ’еЂј
+     * Hermite cubic interpolation of Yaw
      */
     public static double cubicHermiteYaw(double y0, double y1, double y2, double y3, double position) {
         y0 = MathHelper.wrapDegrees(y0);
@@ -56,7 +56,7 @@ public class Interpolations {
     }
 
     /**
-     * y1 е’Њ y2 д№‹й—ґзљ„дё‰ж¬ЎжЏ’еЂј
+     * Cubic interpolation between y1 and y2
      */
     public static float cubic(float y0, float y1, float y2, float y3, float x) {
         float a = y3 - y2 - y0 + y1;
@@ -66,7 +66,7 @@ public class Interpolations {
     }
 
     /**
-     * Yaw зљ„дё‰ж¬ЎжЏ’еЂј
+     * Cubic interpolation of Yaw
      */
     public static float cubicYaw(float y0, float y1, float y2, float y3, float position) {
         y0 = MathHelper.wrapDegrees(y0);
@@ -133,7 +133,7 @@ public class Interpolations {
         return 1;
     }
 
-    /* --- double з‰€жњ¬зљ„е‡Ѕж•° --- */
+    /* --- double variants of the functions --- */
 
     public static double lerp(double a, double b, double position) {
         return a + (b - a) * position;

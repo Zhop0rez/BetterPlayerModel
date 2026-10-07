@@ -4,11 +4,11 @@ import com.elfmcys.yesstevemodel.client.gui.custom.AbstractConfig;
 
 public class RangeConfig extends AbstractConfig {
     //                {
-    //                        "description": "з”ЁжќҐе€‡жЌўзќЃзњје№…еє¦",
+    //                        "description": "used to toggle the eye-open amount",
     //                        "max": 50,
     //                        "min": -100,
     //                        "step": 1,
-    //                        "title": "зќЃзњје№…еє¦: ",
+    //                        "title": "Eye-open amount: ",
     //                        "type": "range",
     //                        "value": "v.player_eyeballs"
     //                    },

@@ -7,19 +7,19 @@ package com.ysm.parser;
  * directly to Java. All methods are static and thread-safe.
  */
 public class YSMNative {
-    // в”Ђв”Ђ CityHash в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+    // ── CityHash ──────────────────────────────────────────────────────────
 
     public static native long cityHash64(byte[] data);
     public static native long cityHash64WithSeed(byte[] data, long seed);
     public static native long[] cityHash128(byte[] data);
     public static native long[] cityHash128WithSeed(byte[] data, long seedLow, long seedHigh);
 
-    // в”Ђв”Ђ Zstd в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+    // ── Zstd ──────────────────────────────────────────────────────────────
 
     public static native byte[] zstdDecompress(byte[] data);
     public static native byte[] zstdCompress(byte[] data, int level);
 
-    // в”Ђв”Ђ XChaCha20 в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+    // ── XChaCha20 ─────────────────────────────────────────────────────────
 
     /**
      * @param key   32-byte key
@@ -42,7 +42,7 @@ public class YSMNative {
      */
     public static native byte[] modifiedChaChaDecrypt(byte[] data, byte[] key, byte[] iv, long seed);
 
-    // в”Ђв”Ђ MT19937 (stateful) в”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђв”Ђ
+    // ── MT19937 (stateful) ────────────────────────────────────────────────
 
     /**
      * Create a new MT19937-64 RNG instance.
@@ -60,25 +60,25 @@ public class YSMNative {
     public static native void mt19937Destroy(long handle);
 
     /**
-     * и§ЈеЋ‹ YSM й­”ж”№зљ„ ZSTD ж•°жЌ®гЂ‚
-     * еє•е±‚дјљи‡ЄеЉЁж‰§иЎЊ wash (жґ—з™Ѕ) ж“ЌдЅњпјЊз„¶еђЋиї›иЎЊж ‡е‡† ZSTD и§ЈеЋ‹гЂ‚
+     * Decompress the modified YSM ZSTD data.
+     * The underlying layer automatically performs the wash step, then standard ZSTD decompression.
      *
-     * @param data еЋ‹зј©дё”иў«ж··ж·†иї‡зљ„ byte ж•°з»„
-     * @return и§ЈеЋ‹еђЋзљ„еЋџе§‹ byte ж•°з»„
-     * @throws RuntimeException е¦‚жћњеє•е±‚и§Јз Ѓе¤±иґҐж€–е†…е­е€†й…Ќе¤±иґҐ
-     * @throws IllegalArgumentException е¦‚жћњдј е…Ґзљ„ж•°жЌ®дёє null
+     * @param data compressed and obfuscated byte array
+     * @return the decompressed raw byte array
+     * @throws RuntimeException if the underlying decode fails or memory allocation fails
+     * @throws IllegalArgumentException if the given data is null
      */
     public static native byte[] ysmZstdDecompress(byte[] data);
 
     /**
-     * е°†ж•°жЌ®иї›иЎЊж ‡е‡† ZSTD еЋ‹зј©пјЊе№¶ж··ж·†дёє YSM й­”ж”№ж јејЏгЂ‚
-     * еє•е±‚дјље…€иї›иЎЊж ‡е‡† ZSTD еЋ‹зј©пјЊз„¶еђЋи‡ЄеЉЁж‰§иЎЊ obfuscate (еј„и„Џ) ж“ЌдЅњгЂ‚
+     * Compress the data with standard ZSTD and obfuscate it into the modified YSM format.
+     * The underlying layer first performs standard ZSTD compression, then automatically performs the obfuscate (dirty) step.
      *
-     * @param data йњЂи¦ЃеЋ‹зј©зљ„еЋџе§‹ byte ж•°з»„
-     * @param level ZSTD еЋ‹зј©з­‰зє§ (йЂљеёёжЋЁиЌђ 3пјЊжњЂе¤§йЂљеёёж”ЇжЊЃе€° 22)
-     * @return еЋ‹зј©дё”ж··ж·†еђЋзљ„ byte ж•°з»„
-     * @throws RuntimeException е¦‚жћњеє•е±‚еЋ‹зј©е¤±иґҐ
-     * @throws IllegalArgumentException е¦‚жћњдј е…Ґзљ„ж•°жЌ®дёє null
+     * @param data raw byte array to compress
+     * @param level ZSTD compression level (3 is usually recommended, up to 22 is usually supported)
+     * @return the compressed and obfuscated byte array
+     * @throws RuntimeException if the underlying compression fails
+     * @throws IllegalArgumentException if the given data is null
      */
     public static native byte[] ysmZstdCompress(byte[] data, int level);
 }

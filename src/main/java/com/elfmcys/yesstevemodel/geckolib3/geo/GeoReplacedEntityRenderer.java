@@ -75,7 +75,7 @@ public abstract class GeoReplacedEntityRenderer<TEntity extends LivingEntity, T 
 
     @Override
     public void renderEarly(T animatable, PoseStack poseStack, float partialTick, MultiBufferSource bufferSource, VertexConsumer buffer, int packedLight, int packedOverlayIn, float red, float green, float blue, float alpha) {
-        // Р¶ВµР€РёВ·РЃР¶вЂўВ¤ .set Р№РЏвЂ°РіС“В©РґСВ©Р№РЊРЏРµВ¶вЂ Р·ВРЋРµРЃвЂ РІвЂћС“РёВ¦вЂ Р№РЏРЉР¶вЂ™С–РµС›В±РµР‡В¤Р·С“ВР¶СџР‰Р№С’РЃ?Matrix4f, Р№РЊвЂРµС—вЂњР·С™Р‡ allocation rate
+        // Use .set to avoid creating a new Matrix4f on every render, reducing allocation rate
         this.renderEarlyMat.set(poseStack.last().pose());
         IGeoRenderer.super.renderEarly(animatable, poseStack, partialTick, bufferSource, buffer, packedLight, packedOverlayIn, red, green, blue, alpha);
     }
@@ -94,7 +94,7 @@ public abstract class GeoReplacedEntityRenderer<TEntity extends LivingEntity, T 
         Minecraft minecraft = Minecraft.getInstance();
         if (event != null && minecraft.player != null) {
             EntityModelData modelData = event.getModelData();
-            // Р¶ВµР€РёВ·РЃР¶вЂўВ¤ .set Р№РЏвЂ°РіС“В©РґСВ©Р№РЊРЏРµВ¶вЂ Р·ВРЋРµРЃвЂ РІвЂћС“РёВ¦вЂ Р№РЏРЉР¶вЂ™С–РµС›В±РµР‡В¤Р·С“ВР¶СџР‰Р№С’РЃ?Matrix4f, Р№РЊвЂРµС—вЂњР·С™Р‡ allocation rate
+            // Use .set to avoid creating a new Matrix4f on every render, reducing allocation rate
             this.dispatchedMat.set(poseStack.last().pose());
             setCurrentModelRenderCycle(EModelRenderCycle.INITIAL);
             poseStack.pushPose();

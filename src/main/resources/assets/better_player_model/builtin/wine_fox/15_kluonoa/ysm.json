@@ -1,15 +1,15 @@
 ﻿{
 	"spec": 2,
 	"metadata": {
-		"name": "KићєиЇєдєљ",
-		"tips": "жџђAIе…¬еЏёе› иїќжі•иў«е…іеЃњи§Јж•ЈпјЊдёЂеЏ°жњ¬иЇҐиў«й”ЂжЇЃзљ„е®ље€¶жњєдЅ“жњЄиў«й”ЂжЇЃдё”йЃ­ж‰Ђжњ‰дєєйЃ—еїгЂ‚ж•°ж—Ґе‰ЌиЇҐжњєдЅ“иў«ж„Џе¤–е”¤й†’пјЊдёєи‡ЄдїќйЂѓз¦»и‡іе¤–ењ°пјЊењЁз”µй‡ЏиЂ—е°Ѕе‰Ќиў«жџе±‘жµ·ићєж”¶з•™е№¶еЏ–еђЌ вЂње°ЏићєвЂќгЂ‚е¦‚д»Ље°Џићєд»Ґе±…е®¶зЅ‘з»ње®ўжњЌзљ„иє«д»Ѕе·ҐдЅњпјЊж—ўеё®еЉ©д»–дєєпјЊд№џдёєи‡Єе·±з­№й›†з»ґжЉ¤иµ„й‡‘дёЋз”µиґ№гЂ‚",
+		"name": "K螺诺亚",
+		"tips": "某AI公司因违法被关停解散，一台本该被销毁的定制机体未被销毁且遭所有人遗忘。数日前该机体被意外唤醒，为自保逃离至外地，在电量耗尽前被星屑海螺收留并取名 “小螺”。如今小螺以居家网络客服的身份工作，既帮助他人，也为自己筹集维护资金与电费。",
 		"license": {
 			"type": "CC BY-NC-SA 4.0"
 		},
 		"authors": [
 			{
 				"name": "Sangjam",
-				"role": "еЋџи®ѕз”»её€",
+				"role": "原设画师",
 				"avatar": "avatar/Sangjam.avif",
 				"contact": {
 					"bilibili": "https://space.bilibili.com/474161531"
@@ -17,28 +17,28 @@
 			},
 			{
 				"name": "nona",
-				"role": "жЁЎећ‹",
+				"role": "模型",
 				"avatar": "avatar/Nona.avif"
 			},
 			{
-				"name": "жџе±‘жµ·ићє",
-				"role": "еЉЁз”»/ж”¶з•™иЂ…",
-				"avatar": "avatar/жџе±‘жµ·ићє.avif",
+				"name": "星屑海螺",
+				"role": "动画/收留者",
+				"avatar": "avatar/星屑海螺.avif",
 				"contact": {
 					"bilibili": "https://space.bilibili.com/14975572"
 				}
 			},
 			{
-				"name": "е’–е•Ўй±ј",
-				"avatar": "avatar/е’–е•Ўй±ј.avif",
-				"role": "йѓЁе€†еЉЁдЅњ",
+				"name": "咖啡鱼",
+				"avatar": "avatar/咖啡鱼.avif",
+				"role": "部分动作",
 				"contact": {
 					"bilibili": "https://space.bilibili.com/104972076"
 				}
 			},
 			{
-				"name": "й›…йџіе®«зѕЅ",
-				"role": "еЉЁз”»",
+				"name": "雅音宫羽",
+				"role": "动画",
 				"avatar": "avatar/MasaneMiyaPA.avif",
 				"contact": {
 					"bilibili": "https://space.bilibili.com/44218"
@@ -47,15 +47,15 @@
 			{
 				"name": "Dumnheint",
 				"avatar": "avatar/Dumnheint.avif",
-				"role": "дјеЊ–",
+				"role": "优化",
 				"contact": {
 					"bilibili": "https://space.bilibili.com/36644599"
 				}
 			},
 			{
-				"name": "з§‹йЈЋ",
-				"avatar": "avatar/з§‹йЈЋ.avif",
-				"role": "еЉЁз”»",
+				"name": "秋风",
+				"avatar": "avatar/秋风.avif",
+				"role": "动画",
 				"contact": {
 					"bilibili": "https://space.bilibili.com/375227559"
 				}
@@ -63,15 +63,15 @@
 			{
 				"name": "12ssssss",
 				"avatar": "avatar/12ssssss.avif",
-				"role": "PBRжќђиґЁ",
+				"role": "PBR材质",
 				"contact": {
 					"bilibili": "https://space.bilibili.com/14698522"
 				}
 			},
 			{
-				"name": "MaksжЂњж‚Ї",
-				"avatar": "avatar/MaksжЂњж‚Ї.avif",
-				"role": "иЅ¦иЅ¦жЁЎећ‹",
+				"name": "Maks怜悯",
+				"avatar": "avatar/Maks怜悯.avif",
+				"role": "车车模型",
 				"contact": {
 					"bilibili": "https://space.bilibili.com/352177387"
 				}
@@ -79,20 +79,20 @@
 			{
 				"name": "TKYHJ",
 				"avatar": "avatar/TKYHJ.avif",
-				"role": "PBRжќђиґЁ",
+				"role": "PBR材质",
 				"contact": {
 					"bilibili": "https://space.bilibili.com/449147184"
 				}
 			},
 			{
-				"name": "и‡ЄеЉЁжњЌеЉЎзЅ‘з»њ",
-				"avatar": "avatar/и‡ЄеЉЁжњЌеЉЎзЅ‘з»њ.avif",
-				"role": "йѓЁе€†еЉЁз”»"
+				"name": "自动服务网络",
+				"avatar": "avatar/自动服务网络.avif",
+				"role": "部分动画"
 			},
 			{
-				"name": "KићєиЇєдєљ",
+				"name": "K螺诺亚",
 				"avatar": "avatar/NEWKluoCat.avif",
-				"role": "еЋџи®ѕ",
+				"role": "原设",
 				"contact": {
 					"bilibili": "https://space.bilibili.com/3546599305251347"
 				}
@@ -116,16 +116,16 @@
 				}
 			],
 			"animation": {
-				"main": "animations/дё»еЉЁз”».json",
-				"arm": "animations/ж‰‹и‡‚еЉЁз”».json",
-				"extra": "animations/иЅ®з›еЉЁз”».json",
-				"tac": "animations/TACеЉЁз”».json",
-				"carryon": "animations/жђ¬иїђеЉЁз”».json",
-				"swem": "animations/й©¬жњЇеЉЁз”».json",
-				"parcool": "animations/и·‘й…·еЉЁз”».json",
-				"tlm": "animations/еҐід»†еЉЁз”».json"
+				"main": "animations/主动画.json",
+				"arm": "animations/手臂动画.json",
+				"extra": "animations/轮盘动画.json",
+				"tac": "animations/TAC动画.json",
+				"carryon": "animations/搬运动画.json",
+				"swem": "animations/马术动画.json",
+				"parcool": "animations/跑酷动画.json",
+				"tlm": "animations/女仆动画.json"
 			},
-			"animation_controllers": ["controller/дё»еЉЁз”»дї®ж”№.json", "controller/е№¶иЎЊеЉЁз”»дї®ж”№.json", "controller/иЅ¦иѕ†еЉЁз”»з›ёе…і.json"]
+			"animation_controllers": ["controller/主动画修改.json", "controller/并行动画修改.json", "controller/车辆动画相关.json"]
 		}
 	},
 	"properties": {
@@ -134,29 +134,29 @@
 		"extra_animation": {
 			"config": "#config",
 			"car_config": "#car_config",
-			"и°ўи°ў": "ж‹›ж‰‹",
-			"иµћж€ђ": "иµћж€ђ",
-			"еЏЌеЇ№": "еЏЌеЇ№",
-			"йј“жЋЊ": "йј“жЋЊ",
-			"з®—дє†": "з®—дє†",
-			"еҐЅиЂ¶": "еҐЅиЂ¶",
-			"иЇ·ж±‚ж”ЇжЏґ": "иЇ·ж±‚ж”ЇжЏґ",
-			"еЇ№дёЌиµ·": "еЇ№дёЌиµ·",
-			"й‡Ќдј¤еЂ’ењ°": "й‡Ќдј¤еЂ’ењ°",
-			"ејЂиЅ¦иЅ¦": "ејЂиЅ¦иЅ¦",
-			"иђќиЋ‰ж‘‡": "иђќиЋ‰ж‘‡",
-			"A Cup Of Liber-Tea": "и¶…зє§ж°”зђѓ",
-			"еЌЎе…¶и„±з¦»е¤Є": "еЌЎе…¶и„±з¦»е¤Є",
-			"е¤§йЈЋиЅ¦": "е¤§йЈЋиЅ¦"
+			"谢谢": "招手",
+			"赞成": "赞成",
+			"反对": "反对",
+			"鼓掌": "鼓掌",
+			"算了": "算了",
+			"好耶": "好耶",
+			"请求支援": "请求支援",
+			"对不起": "对不起",
+			"重伤倒地": "重伤倒地",
+			"开车车": "开车车",
+			"萝莉摇": "萝莉摇",
+			"A Cup Of Liber-Tea": "超级气球",
+			"卡其脱离太": "卡其脱离太",
+			"大风车": "大风车"
 		},
 		"extra_animation_buttons": [
 			{
 				"id": "config",
-				"name": "жЁЎећ‹и®ѕзЅ®",
+				"name": "模型设置",
 				"config_forms": [
 					{
 						"type": "range",
-						"title": "йљЏењ°е¤§е°ЏеЏ",
+						"title": "随地大小变",
 						"value": "v.player_scale",
 						"min": 0.1,
 						"max": 5,
@@ -164,76 +164,76 @@
 					},
 					{
 						"type": "radio",
-						"title": "иЎЁжѓ…",
+						"title": "表情",
 						"description": "",
 						"value": "v.roaming.emotion",
 						"labels": {
-							"ж­Јеёё": "v.roaming.emotion=0;",
-							"з–‘жѓ‘": "v.roaming.emotion=1;",
-							"е№Ід»Ђд№€пјЃ": "v.roaming.emotion=2;",
-							"е®іжЂ•": "v.roaming.emotion=3;",
-							"е§”е±€е·ґе·ґ": "v.roaming.emotion=4;",
-							"и‹¦е‘ЂиҐї": "v.roaming.emotion=5;"
+							"正常": "v.roaming.emotion=0;",
+							"疑惑": "v.roaming.emotion=1;",
+							"干什么！": "v.roaming.emotion=2;",
+							"害怕": "v.roaming.emotion=3;",
+							"委屈巴巴": "v.roaming.emotion=4;",
+							"苦呀西": "v.roaming.emotion=5;"
 						}
 					}
 				]
 			},
 			{
 				"id": "car_config",
-				"name": "иЅ¦иЅ¦",
+				"name": "车车",
 				"config_forms": [
 					{
 						"type": "checkbox",
-						"title": "ејЂиЅ¦",
+						"title": "开车",
 						"description": "",
 						"value": "v.roaming.car"
 					},
 					{
 						"type": "checkbox",
-						"title": "еј•ж“Ћз›–",
+						"title": "引擎盖",
 						"description": "",
 						"value": "v.roaming.car_hood"
 					},
 					{
 						"type": "checkbox",
-						"title": "еђЋе¤‡з®±",
+						"title": "后备箱",
 						"description": "",
 						"value": "v.roaming.car_trunk"
 					},
 					{
 						"type": "checkbox",
-						"title": "е·¦й—Ё",
+						"title": "左门",
 						"description": "",
 						"value": "v.roaming.car_left_door"
 					},
 					{
 						"type": "checkbox",
-						"title": "еЏій—Ё",
+						"title": "右门",
 						"description": "",
 						"value": "v.roaming.car_right_door"
 					},
 					{
 						"type": "checkbox",
-						"title": "е…ій—­йљЏжњєйёЈз¬›",
+						"title": "关闭随机鸣笛",
 						"description": "",
 						"value": "v.roaming.car_can_horn"
 					},
 					{
 						"type": "checkbox",
-						"title": "е…ій—­жЊ‰й”®йёЈз¬›",
-						"description": "жЊ‰Tabй”®йёЈз¬›",
+						"title": "关闭按键鸣笛",
+						"description": "按Tab键鸣笛",
 						"value": "v.roaming.car_can_horn1"
 					},
 					{
 						"type": "checkbox",
-						"title": "иµ›иЅ¦еҐ—д»¶",
+						"title": "赛车套件",
 						"description": "",
 						"value": "v.roaming.car_gt_suit"
 					}
 				]
 			}
 		],
-		"preview_animation": "йЂ‰ж‹©еЉЁз”»",
+		"preview_animation": "选择动画",
 		"default_texture": "texture",
 		"free": true,
 		"render_layers_first": false,

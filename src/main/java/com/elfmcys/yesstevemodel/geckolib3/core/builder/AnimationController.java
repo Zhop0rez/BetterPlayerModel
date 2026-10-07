@@ -9,13 +9,13 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 /**
- * еЉЁз”»жЋ§е€¶е™Ёи§Јжћђ
+ * Animation controller parsing
  */
 public class AnimationController {
     // initial_state
     private final int stateId;
 
-    // жЋ§е€¶е™Ёе†…е®№
+    // Controller contents
     private final Int2ReferenceMap<AnimationState> states;
 
     public AnimationController(String initialState, AnimationState[] animationStates) {

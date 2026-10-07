@@ -12,12 +12,12 @@ public class YSMByteBuf implements AutoCloseable {
     private final ByteBuf buf;
 
     public YSMByteBuf(ByteBuf buf) {
-        this.buf = buf.order(ByteOrder.LITTLE_ENDIAN); // YSMзљ„еџєж–јC++пјЊдЅїз”Ёе°Џз«ЇеєЏ
+        this.buf = buf.order(ByteOrder.LITTLE_ENDIAN); // YSM is based on C++ and uses little-endian
     }
 
     public ByteBuf getRawBuf() { return this.buf; }
 
-    // ж¶€иІ»ећѓењѕж•ёж“љй ­йѓЁпјЊйІж­ўи®ЂеЇ«е‡єе•ЏйЎЊ
+    // Consume the garbage data header to avoid read/write problems
     public int skipGarbageHeader() {
         if (buf.readableBytes() < 1) return 0;
         int garbageLen = buf.readByte() & 0x7F;

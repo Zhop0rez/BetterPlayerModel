@@ -2,60 +2,60 @@
   "spec": 2,
   "metadata": {
     "name": "Default",
-    "tips": "й»и®¤жЁЎећ‹пј€Default Modelпј‰",
+    "tips": "默认模型（Default Model）",
     "license": {
       "type": "CC 0"
     },
     "authors": [
       {
-        "name": "е“Ґж–Їж‹‰",
-        "role": "жЁЎећ‹",
+        "name": "哥斯拉",
+        "role": "模型",
         "avatar": "avatar/gsl.png",
         "contact": {
           "Afdian": "https://afdian.com/a/6TGESILA",
           "Bilibili": "https://space.bilibili.com/17798027"
         },
-        "comment": "дёЂдёЄMCжЁЎећ‹/YSMдЅњиЂ…пјЊжѓіжі•еѕ€е¤љпјЊж—¶й—ґеѕ€е°‘"
+        "comment": "一个MC模型/YSM作者，想法很多，时间很少"
       },
       {
-        "name": "з«ЇжњЁдёЂеЉЁдёЌеЉЁ",
-        "role": "еЉЁз”»",
+        "name": "端木一动不动",
+        "role": "动画",
         "avatar": "avatar/dm.png",
-        "comment": "ж°ёиїњйѓЅењЁing"
+        "comment": "永远都在ing"
       },
       {
-        "name": "з”њзІЅе­ђ",
-        "role": "еЉЁз”»",
+        "name": "甜粽子",
+        "role": "动画",
         "avatar": "avatar/tzz.png",
-        "comment": "(б—њЛ¬б—њ)"
+        "comment": "(ᗜˬᗜ)"
       },
       {
-        "name": "жџе±‘жµ·ићє",
-        "role": "еЉЁз”»",
+        "name": "星屑海螺",
+        "role": "动画",
         "avatar": "avatar/hl.png",
         "contact": {
           "Afdian": "https://afdian.com/a/lucia2048",
           "Bilibili": "https://space.bilibili.com/14975572"
         },
-        "comment": "жј‚жіЉдєЋзѕ¤жџд№‹дё­"
+        "comment": "漂泊于群星之中"
       },
       {
-        "name": "и“ќзЋ«з‘°",
-        "role": "жќђиґЁ/жЁЎећ‹",
+        "name": "蓝玫瑰",
+        "role": "材质/模型",
         "avatar": "avatar/lmg.png",
         "contact": {
           "Bilibili": "https://space.bilibili.com/11814817"
         },
-        "comment": "8жњ€24еЏ·пјЊдј еҐ‡ж°ёдёЌиђЅе№•"
+        "comment": "8月24号，传奇永不落幕"
       },
       {
-        "name": "и‰ѕй›·е…‹дєљ",
-        "role": "й“Ѓй­”жі•еЉЁз”»",
+        "name": "艾雷克亚",
+        "role": "铁魔法动画",
         "avatar": "avatar/arekya.jpg",
         "contact": {
           "Bilibili": "https://space.bilibili.com/480946180"
         },
-        "comment": "еЏ‘з™«"
+        "comment": "发癫"
       }
     ],
     "link": {
@@ -83,8 +83,8 @@
         "config_forms": [
           {
             "type": "checkbox",
-            "title": "headdress/е¤ґйҐ°",
-            "description": "Used to hide/show the red bow headdress (з”ЁжќҐжѕз¤єж€–ејЂеђЇзЋ©е®¶е¤ґйҐ°)",
+            "title": "headdress/头饰",
+            "description": "Used to hide/show the red bow headdress (用来显示或开启玩家头饰)",
             "value": "v.roaming.red_bow_headdress"
           }
         ]

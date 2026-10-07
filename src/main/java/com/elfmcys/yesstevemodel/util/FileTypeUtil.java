@@ -65,11 +65,11 @@ public final class FileTypeUtil {
     }
 
     /**
-     * з‘™пЅ†зЂЅ "match"зЂ›жҐЃо†ЊйђЁ?     *  "match": [
+     * Parse the "match" field:     *  "match": [
      *     "minecraft:arrow",
      *     "#minecraft:arrows"
      *  ],
-     *  з”Ї?йђЁе‹¬ж§ёзЂ№з‚°з¶‹ Tag
+     *  the following are entity Tags
      */
     public static Set<Identifier> resolveEntityTypes(String[] strArr) {
         HashSet<Identifier> hashSet = new HashSet<>();

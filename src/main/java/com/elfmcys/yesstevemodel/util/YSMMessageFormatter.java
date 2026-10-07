@@ -15,7 +15,7 @@ import rip.ysm.api.PlatformAPI;
 
 public class YSMMessageFormatter {
 
-    private static final String PREFIX = "В§6В§lгЂђВ§aYSMВ§6В§lгЂ‘В§r";
+    private static final String PREFIX = "§6§l【§aYSM§6§l】§r";
 
     public static Component withPrefix(Component component) {
         return Component.literal(PREFIX).append(component);

@@ -31,7 +31,7 @@ import java.util.Objects;
 
 public class PlayerTextureScreen extends Screen {
 
-    private static final String HIDDEN_PREFIX = "вЂ”";
+    private static final String HIDDEN_PREFIX = "—";
 
     private static final float MAX_ZOOM = 360.0f;
 

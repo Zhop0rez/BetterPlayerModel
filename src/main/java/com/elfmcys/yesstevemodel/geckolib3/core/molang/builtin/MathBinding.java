@@ -8,22 +8,22 @@ public class MathBinding extends ContextBinding {
     public static final MathBinding INSTANCE = new MathBinding();
 
     private MathBinding() {
-        /* еёёй‡Џ */
+        /* Constants */
         constValue("pi", Math.PI);
         constValue("e", Math.E);
 
-        /* еЏ–ж•ґе‡Ѕж•° */
+        /* Rounding functions */
         function("floor", new Floor());
         function("round", new Round());
         function("ceil", new Ceil());
         function("trunc", new Trunc());
 
-        /* жЇ”иѕѓе‡Ѕж•° */
+        /* Comparison functions */
         function("clamp", new Clamp());
         function("max", new Max());
         function("min", new Min());
 
-        /* з»Џе…ёж•°е­¦е‡Ѕж•° */
+        /* Classic math functions */
         function("abs", new Abs());
         function("exp", new Exp());
         function("ln", new Ln());
@@ -31,7 +31,7 @@ public class MathBinding extends ContextBinding {
         function("mod", new Mod());
         function("pow", new Pow());
 
-        /* дё‰и§’е‡Ѕж•° */
+        /* Trigonometric functions */
         function("sin", new Sin());     // degree
         function("cos", new Cos());     // degree
         function("acos", new ACos());
@@ -39,7 +39,7 @@ public class MathBinding extends ContextBinding {
         function("atan", new Atan());
         function("atan2", new ATan2());
 
-        /* е®ћз”Ёе·Ґе…· */
+        /* Utilities */
         function("lerp", new Lerp());
         function("lerprotate", new LerpRotate());
         function("random", new Random());
@@ -48,10 +48,10 @@ public class MathBinding extends ContextBinding {
         function("die_roll_integer", new DieRollInteger());
         function("hermite_blend", new HermitBlend());
 
-        /* е…¶е®ѓ */
+        /* Others */
         function("min_angle", new MinAngle());
 
-        /* йќћж ‡е‡†е‘ЅеђЌпјЊе…је®№еЋџ geckolib */
+        /* Non-standard naming, kept for compatibility with the original geckolib */
         function("randomi", new RandomInteger());
         function("roll", new DieRoll());
         function("rolli", new DieRollInteger());

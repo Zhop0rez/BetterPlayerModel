@@ -1,33 +1,33 @@
 ﻿{
   "spec": 2,
   "metadata": {
-    "name": "Steve пј€еЏІи’‚е¤«пј‰",
-    "tips": "еЋџз‰€еЏІи’‚е¤«жЁЎећ‹пј€Minecraft Steve Modelпј‰",
+    "name": "Steve （史蒂夫）",
+    "tips": "原版史蒂夫模型（Minecraft Steve Model）",
     "license": {
       "type": "CC 0"
     },
     "authors": [
       {
-        "name": "е“Ґж–Їж‹‰",
-        "role": "жЁЎећ‹",
+        "name": "哥斯拉",
+        "role": "模型",
         "avatar": "avatar/gsl.png",
         "contact": {
           "Afdian": "https://afdian.com/a/6TGESILA",
           "Bilibili": "https://space.bilibili.com/17798027"
         },
-        "comment": "дёЂдёЄMCжЁЎећ‹/YSMдЅњиЂ…пјЊжѓіжі•еѕ€е¤љпјЊж—¶й—ґеѕ€е°‘"
+        "comment": "一个MC模型/YSM作者，想法很多，时间很少"
       },
       {
-        "name": "з«ЇжњЁдёЂеЉЁдёЌеЉЁ",
-        "role": "еЉЁз”»",
+        "name": "端木一动不动",
+        "role": "动画",
         "avatar": "avatar/dm.png",
-        "comment": "ж°ёиїњйѓЅењЁing"
+        "comment": "永远都在ing"
       },
       {
-        "name": "з”њзІЅе­ђ",
-        "role": "еЉЁз”»",
+        "name": "甜粽子",
+        "role": "动画",
         "avatar": "avatar/tzz.png",
-        "comment": "(б—њЛ¬б—њ)"
+        "comment": "(ᗜˬᗜ)"
       }
     ],
     "link": {

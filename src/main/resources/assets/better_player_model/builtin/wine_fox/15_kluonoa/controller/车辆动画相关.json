@@ -11,7 +11,7 @@
 				},
 				"hood_open": {
 					"animations": [
-						{"ејЂе‰Ќе¤‡з®±": "v.show_car"}
+						{"开前备箱": "v.show_car"}
 					],
 					"on_entry": ["v.roaming.car_hood_state = v.roaming.car_hood;"],
 					"transitions": [
@@ -20,7 +20,7 @@
 				},
 				"hood_close": {
 					"animations": [
-						{"е…іе‰Ќе¤‡з®±": "v.show_car"}
+						{"关前备箱": "v.show_car"}
 					],
 					"on_entry": ["v.roaming.car_hood_state = v.roaming.car_hood;"],
 					"transitions": [
@@ -39,7 +39,7 @@
 				},
 				"trunk_open": {
 					"animations": [
-						{"ејЂеђЋе¤‡з®±": "v.show_car"}
+						{"开后备箱": "v.show_car"}
 					],
 					"on_entry": ["v.roaming.car_trunk_state = v.roaming.car_trunk;"],
 					"transitions": [
@@ -48,7 +48,7 @@
 				},
 				"trunk_close": {
 					"animations": [
-						{"е…іеђЋе¤‡з®±": "v.show_car"}
+						{"关后备箱": "v.show_car"}
 					],
 					"on_entry": ["v.roaming.car_trunk_state = v.roaming.car_trunk;"],
 					"transitions": [
@@ -67,7 +67,7 @@
 				},
 				"trunk_open": {
 					"animations": [
-						{"ејЂе·¦иЅ¦й—Ё": "v.show_car"}
+						{"开左车门": "v.show_car"}
 					],
 					"on_entry": ["v.roaming.car_left_door_state = v.roaming.car_left_door;"],
 					"transitions": [
@@ -76,7 +76,7 @@
 				},
 				"trunk_close": {
 					"animations": [
-						{"е…іе·¦иЅ¦й—Ё": "v.show_car"}
+						{"关左车门": "v.show_car"}
 					],
 					"on_entry": ["v.roaming.car_left_door_state = v.roaming.car_left_door;"],
 					"transitions": [
@@ -95,7 +95,7 @@
 				},
 				"trunk_open": {
 					"animations": [
-						{"ејЂеЏіиЅ¦й—Ё": "v.show_car"}
+						{"开右车门": "v.show_car"}
 					],
 					"on_entry": ["v.roaming.car_right_door_state = v.roaming.car_right_door;"],
 					"transitions": [
@@ -104,7 +104,7 @@
 				},
 				"trunk_close": {
 					"animations": [
-						{"е…іеЏіиЅ¦й—Ё": "v.show_car"}
+						{"关右车门": "v.show_car"}
 					],
 					"on_entry": ["v.roaming.car_right_door_state = v.roaming.car_right_door;"],
 					"transitions": [
