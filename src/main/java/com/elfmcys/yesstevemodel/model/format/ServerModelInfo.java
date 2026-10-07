@@ -15,11 +15,11 @@ public class ServerModelInfo {
 
     private final MainModelInfo mainModelInfo;
 
-    private final int formatVersion; // .ysmзљ„е†…йѓЁзљ„formatз‰€жњ¬еЏ· жІЎжњ‰е°±жЇ65535
+    private final int formatVersion; // Internal format version of the .ysm; if absent it is 65535
 
     private final String modelHash;
 
-    private final String extra; // е¤‡жіЁ
+    private final String extra; // Note
 
     private final long timestamp;
 

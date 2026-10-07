@@ -75,7 +75,7 @@ public class ModernModelInfoScreen extends OptionScreen {
         }
         StringPair license = meta.getLicense();
         if (license != null && StringUtils.isNotBlank(license.getFirst())) {
-            String licenseValue = StringUtils.isNotBlank(license.getSecond()) ? license.getFirst() + "  вЂ”  " + license.getSecond() : license.getFirst();
+            String licenseValue = StringUtils.isNotBlank(license.getSecond()) ? license.getFirst() + "  —  " + license.getSecond() : license.getFirst();
             page.add(new LabelValueRow("gui.better_player_model.model_info.license", licenseValue));
         }
         String tips = ModelMetadataPresenter.getLocalizedModelString(renderContext, "metadata.tips", meta.getTips());

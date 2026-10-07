@@ -687,7 +687,7 @@ public final class ModelPreviewRenderer {
         poseStack.popPose();
     }
 
-    // жЁЎећ‹йў„и§€йЎµйќў
+    // Model preview page
     public static <T extends LivingEntity, TAnimatable extends LivingAnimatable<T>> void renderLivingEntityPreview(float x, float y, float scale, float partialTick, TAnimatable animatable, GeoReplacedEntityRenderer<T, TAnimatable> renderer, boolean disablePreviewRotation, boolean hideEquipment) {
         if (!isDirectGuiPreviewSupported()) {
             return;

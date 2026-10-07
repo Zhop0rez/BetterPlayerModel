@@ -7,7 +7,7 @@ import com.elfmcys.yesstevemodel.molang.runtime.ExecutionContext;
 public class Random extends ContextFunction<Object> {
     @Override
     public boolean validateArgumentSize(int size) {
-        return size == 2 || size == 3;  // е‡єдєЋе…је®№жЂ§иЂѓи™‘пјЊе…Ѓи®ё3еЏ‚ж•°
+        return size == 2 || size == 3;  // For compatibility, allow 3 arguments
     }
 
     @Override

@@ -1,30 +1,30 @@
 ﻿{
   "spec": 2,
   "metadata": {
-    "name": "New Year Wine Foxпј€ж–°жҐй…’з‹ђпј‰",
-    "tips": "A fox girl who loves to drink wine.\nдёЂеЏЄз€±е–ќи‘Ўиђ„й…’зљ„з‹ђеЁгЂ‚",
+    "name": "New Year Wine Fox（新春酒狐）",
+    "tips": "A fox girl who loves to drink wine.\n一只爱喝葡萄酒的狐娘。",
     "license": {
       "type": "CC BY-NC-SA 4.0"
     },
     "authors": [
       {
-        "name": "е°±еЏ«зєёжќї",
-        "role": "жЁЎећ‹",
+        "name": "就叫纸板",
+        "role": "模型",
         "avatar": "avatar/zb.avif",
         "contact": {
           "Bilibili": "https://space.bilibili.com/29208164"
         },
-        "comment": "жќ‚й±ј~жќ‚й±ј~"
+        "comment": "杂鱼~杂鱼~"
       },
       {
-        "name": "жџе±‘жµ·ићє",
-        "role": "еЉЁз”»",
+        "name": "星屑海螺",
+        "role": "动画",
         "avatar": "avatar/hl.png",
         "contact": {
           "Afdian": "https://afdian.com/a/lucia2048",
           "Bilibili": "https://space.bilibili.com/14975572"
         },
-        "comment": "жј‚жіЉдєЋзѕ¤жџд№‹дё­"
+        "comment": "漂泊于群星之中"
       }
     ],
     "link": {
@@ -34,14 +34,14 @@
   },
   "properties": {
     "extra_animation": {
-      "extra0": "еЏиє«",
-      "extra1": "ж‰“ж‹›е‘ј",
-      "extra2": "йј“жЋЊ",
-      "extra3": "жЇзљ„",
-      "extra4": "дёЌиЎЊ",
-      "extra5": "еЌ–иђЊ",
-      "extra6": "еѕЎз¬”ж‘‡",
-      "extra7": "и€ћи№€"
+      "extra0": "变身",
+      "extra1": "打招呼",
+      "extra2": "鼓掌",
+      "extra3": "是的",
+      "extra4": "不行",
+      "extra5": "卖萌",
+      "extra6": "御笔摇",
+      "extra7": "舞蹈"
     },
     "preview_animation": "gui",
     "free": true

@@ -1,32 +1,32 @@
 ﻿{
 	"spec": 2,
 	"metadata": {
-		"name": "е®‡и€Єе‘й…’з‹ђ",
-		"tips": "жў¦жѓіжЇжџиѕ°е¤§жµ·",
+		"name": "宇航员酒狐",
+		"tips": "梦想是星辰大海",
 		"license": {
 			"type": "CC BY-NC-SA 4.0",
 			"desc:": ""
 		},
 		"authors": [
 			{
-				"name": "е®Ње…Ёе†»з»“",
+				"name": "完全冻结",
 				"avatar": "avatars/af.avif",
-				"role": "жЁЎећ‹"
+				"role": "模型"
 			},
 			{
-				"name": "жџе±‘жµ·ићє",
+				"name": "星屑海螺",
 				"avatar": "avatars/hl.png",
-				"role": "еЉЁз”»"
+				"role": "动画"
 			},
 			{
-				"name": "е“Ґж–Їж‹‰пј€ж зґ е›ўйџпј‰",
+				"name": "哥斯拉（映素团队）",
 				"avatar": "avatars/gsl.png",
-				"role": "жЁЎећ‹дї®ж”№"
+				"role": "模型修改"
 			},
 			{
-				"name": "зҐёеѕЎзҐћ",
+				"name": "祸御神",
 				"avatar": "avatars/hys.png",
-				"role": "GUI еЉЁз”»"
+				"role": "GUI 动画"
 			}
 		],
 		"link": {

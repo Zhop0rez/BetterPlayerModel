@@ -7,15 +7,15 @@ import org.joml.Vector3f;
 
 public abstract class AnimationPoint {
     /**
-     * еЅ“е‰Ќе…ій”®её§ж’­ж”ѕиї›еє¦
+     * Playback progress of the current keyframe
      */
     public final float currentTick;
     /**
-     * еЅ“е‰Ќе…ій”®её§жЂ»й•їеє¦
+     * Total length of the current keyframe
      */
     public final float totalTick;
     /**
-     * дёЋеЉЁз”»жЋ§е€¶е™Ёз›ёе…ізљ„ molang дёЉдё‹ж–‡
+     * Molang context related to the animation controller
      */
     private final AnimationControllerContext context;
 

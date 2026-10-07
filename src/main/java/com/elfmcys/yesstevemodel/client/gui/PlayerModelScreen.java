@@ -537,7 +537,7 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
         guiGraphics.pose().popMatrix();
         if (StringUtils.isNotBlank(currentPath)) {
             int lineIndex = 0;
-            List listSplit = this.font.split(Component.literal("рџ“‚ " + currentPath).withStyle(ChatFormatting.GRAY), 270);
+            List listSplit = this.font.split(Component.literal("📂 " + currentPath).withStyle(ChatFormatting.GRAY), 270);
             Iterator it = listSplit.iterator();
             while (it.hasNext()) {
                 guiGraphics.drawString(this.font, (FormattedCharSequence) it.next(), this.guiLeft + 142, this.guiTop + (((-(listSplit.size() - lineIndex)) * 10) - 2), 0xFFF3F3E0);

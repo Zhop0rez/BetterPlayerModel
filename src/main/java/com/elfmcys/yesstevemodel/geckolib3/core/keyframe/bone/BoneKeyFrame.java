@@ -31,7 +31,7 @@ public abstract class BoneKeyFrame {
         return this.endTick;
     }
 
-    // TODO еЏЇиѓЅе­ењЁзІѕеє¦й—®йў
+    // TODO possibly a precision issue
     // https://github.com/TartaricAcid/TouhouLittleMaid/blob/1.20/src/main/java/com/github/tartaricacid/touhoulittlemaid/geckolib3/core/keyframe/bone/BoneKeyFrame.java#L38
     public static boolean isBegin(float percentCompleted) {
         return percentCompleted < 0.00001f;

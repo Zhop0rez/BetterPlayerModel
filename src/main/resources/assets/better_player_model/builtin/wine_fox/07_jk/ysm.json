@@ -1,45 +1,45 @@
 ﻿{
   "spec": 2,
   "metadata": {
-    "name": "Wine Foxпј€й…’з‹ђпј‰",
-    "tips": "A fox girl who loves to drink wine.\nдёЂеЏЄз€±е–ќи‘Ўиђ„й…’зљ„з‹ђеЁгЂ‚",
+    "name": "Wine Fox（酒狐）",
+    "tips": "A fox girl who loves to drink wine.\n一只爱喝葡萄酒的狐娘。",
     "license": {
       "type": "CC BY-NC-SA 4.0"
     },
     "authors": [
       {
-        "name": "дјЉи•ѕеЁње®¶зљ„е’ёй±ј",
-        "role": "жЁЎећ‹",
+        "name": "伊蕾娜家的咸鱼",
+        "role": "模型",
         "avatar": "avatar/xy.png",
-        "comment": "е№ёз¦ЏеѕЂеѕЂжЇж‘ёеѕ—йЂЏеЅ»пјЊиЂЊж•¬дёљзљ„еїѓеЌґеёёеёёйљђи—Џ",
+        "comment": "幸福往往是摸得透彻，而敬业的心却常常隐藏",
         "contact": {
           "Bilibili": "https://space.bilibili.com/20682514"
         }
       },
       {
-        "name": "жµ…й™ЊиЏЊ",
-        "role": "жЁЎећ‹",
+        "name": "浅陌菌",
+        "role": "模型",
         "avatar": "avatar/nico.png",
-        "comment": "жњЂзѕЋеҐЅзљ„е‰ЌйЂ”пјЊеЏЇдёЌи¦ЃеЇ№ж€‘е†·й…·",
+        "comment": "最美好的前途，可不要对我冷酷",
         "contact": {
           "Bilibili": "https://space.bilibili.com/14975572"
         }
       },
       {
-        "name": "жџе±‘жµ·ићє",
-        "role": "еЉЁз”»",
+        "name": "星屑海螺",
+        "role": "动画",
         "avatar": "avatar/hl.png",
         "contact": {
           "Afdian": "https://afdian.com/a/lucia2048",
           "Bilibili": "https://space.bilibili.com/14975572"
         },
-        "comment": "жј‚жіЉдєЋзѕ¤жџд№‹дё­"
+        "comment": "漂泊于群星之中"
       },
       {
-        "name": "еўЁжџ“йЂќзѕЅ",
-        "role": "жЁЎећ‹",
+        "name": "墨染逝羽",
+        "role": "模型",
         "avatar": "avatar/mrsy.png",
-        "comment": "дє‹е€°е¦‚д»ЉпјЊе…€ж‘ёй±јеђ§",
+        "comment": "事到如今，先摸鱼吧",
         "contact": {
           "Bilibili": "https://space.bilibili.com/5718046"
         }
@@ -52,14 +52,14 @@
   },
   "properties": {
     "extra_animation": {
-      "extra0": "жЌўе¤ґйҐ°",
-      "extra1": "ж‰“ж‹›е‘ј",
-      "extra2": "йј“жЋЊ",
-      "extra3": "жЇзљ„",
-      "extra4": "дёЌиЎЊ",
-      "extra5": "еЌ–иђЊ",
-      "extra6": "еѕЎз¬”ж‘‡",
-      "extra7": "и€ћи№€"
+      "extra0": "换头饰",
+      "extra1": "打招呼",
+      "extra2": "鼓掌",
+      "extra3": "是的",
+      "extra4": "不行",
+      "extra5": "卖萌",
+      "extra6": "御笔摇",
+      "extra7": "舞蹈"
     },
     "preview_animation": "gui",
     "free": true,

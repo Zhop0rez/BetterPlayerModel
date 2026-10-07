@@ -340,7 +340,7 @@ public class ClientModelManager {
             boolean isAuth = buf.readVarInt() == 1;// isAuth
             int isCustomSkinModel = buf.readVarInt();// is misc/2_steve misc/1_alex
 //            System.out.println("Received model hash: " + mHash + ", id: " + modelId + ", unk1: " + isAuth + ", unk2: " + isCustomSkinModel);
-            int version = buf.readVarInt(); // зЂµйЂ›з°¬йЏ‚е›¦ж¬ўжѕ¶и§„ж№­йЌ”зЉІз‘йђЁе‹¬ДЃйЌЁе¬¶зґќж¶“?5535
+            int version = buf.readVarInt(); // For models whose folder is not encrypted, defaults to 65535
 
             ServerModelContext ctx = new ServerModelContext(hash1, hash2, modelId, isAuth, isCustomSkinModel, version);
             ServerModelContext existing = serverModels.putIfAbsent(ctx.uuid, ctx);
@@ -811,7 +811,7 @@ public class ClientModelManager {
             return model;
         }
 
-        // з‘™п№ЂеЅ‚жЈ°е‹«е§ћжќћ?        loadDefaultModel();
+        // Trigger preload        loadDefaultModel();
         model = localModelContext;
         if (model != null) {
             touchAssembly(model);
@@ -1552,7 +1552,7 @@ public class ClientModelManager {
 
                 if (!cacheDir.exists() || !cacheDir.isDirectory()) {
                     if (callback != null) {
-                        callback.accept(new ExportResult(false, Component.literal("зЃЏж°­ж№­йђўз†ёећљжµ и®із¶Ќзј‚ж’із“ЁйЋґж «зґ¦зЂ›жЁ»жћѓжµ и·єгЃ™ж¶“е¶…з“ЁйЌ¦? " + folder), "", "", 0));
+                        callback.accept(new ExportResult(false, Component.literal("尚未生成任何缓存或缓存文件夹不存在 " + folder), "", "", 0));
                     }
                     return;
                 }
@@ -1637,7 +1637,7 @@ public class ClientModelManager {
             } catch (Exception e) {
                 YesSteveModel.LOGGER.error("[BPM] Error during batch export", e);
                 if (callback != null) {
-                    callback.accept(new ExportResult(false, Component.literal("йЋµеЅ’е™єзЂµз…Ћељ­жќ©е›©в–јйЌ™ж€ ж•“ж¶“гѓ©е™ёй–їж¬’о‡¤: " + e.getMessage()), "", "", 0));
+                    callback.accept(new ExportResult(false, Component.literal("批量导出过程发生严重错误: " + e.getMessage()), "", "", 0));
                 }
             }
         });

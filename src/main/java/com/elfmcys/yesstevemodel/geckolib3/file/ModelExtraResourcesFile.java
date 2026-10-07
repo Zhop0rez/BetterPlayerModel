@@ -7,13 +7,13 @@ import java.util.Map;
 
 public class ModelExtraResourcesFile {
 
-    // soundsж–‡д»¶е¤№
+    // sounds folder
     private final Map<String, AudioTrackData> audioTracks;
 
-    // functionsж–‡д»¶е¤№ жіЁж„Џparse molangи®°еѕ—ж‰“дёЉtrueеЋ»жіЁй‡Љ
+    // functions folder; note: pass true to parse molang to strip comments
     private final Map<String, IValue> functions;
 
-    // langж–‡д»¶е¤№
+    // lang folder
     private final Map<String, Map<String, String>> translations;
 
     public ModelExtraResourcesFile(Map<String, AudioTrackData> audioTracks, Map<String, IValue> functions, Map<String, Map<String, String>> translations) {

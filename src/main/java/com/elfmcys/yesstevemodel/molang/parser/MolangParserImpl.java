@@ -17,7 +17,7 @@ import static java.util.Objects.requireNonNull;
 
 public final class MolangParserImpl implements MolangParser {
 
-    private static final int PRECEDENCE_QUES = 1400;   // дё‰е…ѓжќЎд»¶иїђз®—з¬¦дје…€зє§зљ„еЂјеї…йЎ»дёЋе…¶д»–иїђз®—з¬¦дёЌеђЊ
+    private static final int PRECEDENCE_QUES = 1400;   // The precedence value of the ternary conditional operator must differ from other operators
     private static final Object UNSET_FLAG = new Object();
 
     private final MolangLexer lexer;
@@ -170,7 +170,7 @@ public final class MolangParserImpl implements MolangParser {
     ) throws IOException {
         Token current = lexer.current();
 
-        // дїќз•™з¬¬дёЂдёЄзљ„йЂ»иѕ‘пјЊд»…дјеЊ–е†…йѓЁж··ж·†зљ„еЏй‡ЏеђЌ
+        // Keep the first one's logic; only optimize the internally obfuscated variable names
         if (left instanceof CallExpression callExpression) {
             if (current.kind() == TokenKind.LPAREN) {
                 if (callExpression.arguments() != CallExpression.EMPTY) {
@@ -178,7 +178,7 @@ public final class MolangParserImpl implements MolangParser {
                 }
                 lexer.next();
                 final List<Expression> arguments = new ArrayList<>();
-                current = lexer.current(); // ж›ґж–° current зЉ¶жЂЃ
+                current = lexer.current(); // Update the current state
 
                 if (current.kind() != TokenKind.RPAREN) {
                     while (true) {
@@ -225,7 +225,7 @@ public final class MolangParserImpl implements MolangParser {
             }
 
             case QUES: {
-                // еµЊеҐ—зљ„дё‰е…ѓжќЎд»¶иЎЁиѕѕејЏд»ЋеЏіеѕЂе·¦ж‰§иЎЊ
+                // Nested ternary conditional expressions evaluate from right to left
                 if (lastPrecedence > PRECEDENCE_QUES) {
                     return left;
                 }

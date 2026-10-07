@@ -82,12 +82,12 @@ public final class ServerModelManager {
     private static final String EXT_ZIP = ".zip";
     private static final String EXT_7Z = ".7z";
     /**
-     * й…ЌзЅ®з›ёе…іж–‡д»¶е¤№
+     * Config-related folder
      */
     public static final Path FOLDER = Platform.getConfigFolder().resolve(YesSteveModel.MOD_ID);
 
     /**
-     * и‡Єе®љд№‰жЁЎећ‹ж‰Ђж”ѕзЅ®зљ„ж–‡д»¶е¤№
+     * Folder where custom models are placed
      */
     public static final Path BUILT = FOLDER.resolve("built");
     public static final Path CUSTOM = FOLDER.resolve("custom");
@@ -95,7 +95,7 @@ public final class ServerModelManager {
     public static final Path EXPORT = FOLDER.resolve("export");
 
     /**
-     * з”џж€ђзј“е­ж–‡д»¶зљ„ж–‡д»¶е¤№
+     * Folder where cache files are generated
      */
     public static final Path CACHE = FOLDER.resolve("cache");
     public static final Path CACHE_SERVER_INDEX_FILE = CACHE.resolve("server_index");
@@ -103,17 +103,17 @@ public final class ServerModelManager {
     public static final Path CACHE_CLIENT = CACHE.resolve("client");
 
     /**
-     * жЁЎећ‹еђЌз§° -> жЁЎећ‹йўќе¤–дїЎжЃЇзј“е­
-     * еЏЇд»Ґж–№дѕїзљ„йЂљиї‡ж­¤зј“е­пјЊжќҐе€¤ж–­е®ўж€·з«ЇеЏ‘жќҐзљ„ MD5 ењЁдёЌењЁжњЌеЉЎз«Ї
-     * д»ЋиЂЊе°†жњЌеЉЎе™Ёж–‡д»¶еЏ‘йЂЃз»™зЋ©е®¶
-     * иїеЏЇд»ҐиЋ·еЏ–е…¶д»–жњЌеЉЎз«ЇжЁЎећ‹дїЎжЃЇ
+     * Model name -> model extra info cache
+     * This cache makes it easy to tell whether an MD5 sent by the client exists on the server
+     * so that the server file is sent to the player
+     * Also can retrieve other server-side model info
      */
     private static Map<String, ServerModelData> CACHE_NAME_INFO = Maps.newHashMap();
 
     private static IntOpenHashSet modelHashSet = new IntOpenHashSet();
 
     /**
-     * ж”ѕзЅ®жЋ€жќѓжЁЎећ‹еђЌз§°
+     * Name of the authorized model to assign
      */
     private static Set<String> AUTH_MODELS = Sets.newHashSet();
 
@@ -179,39 +179,39 @@ public final class ServerModelManager {
 
         Files.writeString(BUILT.resolve("notice.txt"),
                 "This directory is cleared every time the game starts!\n" +
-                        "иЇҐз›®еЅ•дјљењЁжЇЏж¬Ўжёёж€ЏеђЇеЉЁж—¶жё…з©єпјЃ",
+                        "该目录会在每次游戏启动时清空！",
                 StandardCharsets.UTF_8);
 
         Path blacklistFile = FOLDER.resolve("blacklist.txt");
         if (!Files.exists(blacklistFile)) {
             String content =
-                    "# Yes Steve Model жЁЎз»„ - е†…зЅ®жЁЎећ‹й»‘еђЌеЌ•й…ЌзЅ®ж–‡д»¶\n" +
+                    "# Yes Steve Model 模组 - 内置模型黑名单配置文件\n" +
                             "# Yes Steve Model Mod - Built-in Model Blacklist Configuration File\n" +
                             "\n" +
-                            "# еЉџиѓЅиЇґжЋпјљ\n" +
-                            "# йљЏзќЂе†…зЅ®жЁЎећ‹ж•°й‡Џзљ„еўћеЉ пјЊдёєдє†ж»Ўи¶ідёЄжЂ§еЊ–е®ље€¶йњЂж±‚пјЊжњ¬жЁЎз»„жЏђдѕ›дє†й»‘еђЌеЌ•еЉџиѓЅ\n" +
-                            "# е…Ѓи®ёз”Ёж€·йЂ‰ж‹©жЂ§ењ°з¦Ѓз”ЁдёЌйњЂи¦Ѓзљ„е†…зЅ®жЁЎећ‹пјЊд»ҐиЉ‚зњЃе­е‚Ёз©єй—ґе’ЊеЉ иЅЅж—¶й—ґ\n" +
+                            "# 功能说明：\n" +
+                            "# 随着内置模型数量的增加，为了满足个性化定制需求，本模组提供了黑名单功能\n" +
+                            "# 允许用户选择性地禁用不需要的内置模型，以节省存储空间和加载时间\n" +
                             "#\n" +
                             "# Feature Description:\n" +
                             "# As the number of built-in models increases, this mod provides blacklist functionality\n" +
                             "# to meet customization needs, allowing users to selectively disable unwanted built-in\n" +
                             "# models to save storage space and loading time.\n" +
                             "\n" +
-                            "# дЅїз”Ёж–№жі•пјљ\n" +
-                            "# 1. ењЁжёёж€ЏеђЇеЉЁе‰Ќзј–иѕ‘ж­¤ж–‡д»¶\n" +
-                            "# 2. жё…з©є <жёёж€Џз›®еЅ•>/config/better_player_model/builtin ж–‡д»¶е¤№дё­зљ„е·Іи§ЈеЋ‹жЁЎећ‹ж–‡д»¶\n" +
-                            "# 3. й‡Ќж–°еђЇеЉЁжёёж€ЏпјЊжЁЎз»„е°†ж №жЌ®й»‘еђЌеЌ•и§„е€™и·іиї‡жЊ‡е®љжЁЎећ‹зљ„и§ЈеЋ‹\n" +
+                            "# 使用方法：\n" +
+                            "# 1. 在游戏启动前编辑此文件\n" +
+                            "# 2. 清空 <游戏目录>/config/better_player_model/builtin 文件夹中的已解压模型文件\n" +
+                            "# 3. 重新启动游戏，模组将根据黑名单规则跳过指定模型的解压\n" +
                             "#\n" +
                             "# Usage Instructions:\n" +
                             "# 1. Edit this file before starting the game\n" +
                             "# 2. Clear extracted model files in <game_directory>/config/better_player_model/builtin folder\n" +
                             "# 3. Restart the game, the mod will skip extracting specified models based on blacklist rules\n" +
                             "\n" +
-                            "# жіЁж„Џдє‹йЎ№пјљ\n" +
-                            "# - default жЁЎећ‹й‡‡з”Ёз‰№ж®ЉеЉ иЅЅжњєе€¶пјЊж— жі•йЂљиї‡й»‘еђЌеЌ•з¦Ѓз”Ё\n" +
-                            "# - й…ЌзЅ®ж–‡д»¶дЅЌзЅ®пјљ<жёёж€Џз›®еЅ•>/config/better_player_model/blacklist.txt\n" +
-                            "# - д»Ґ # ејЂе¤ґзљ„иЎЊиў«и§†дёєжіЁй‡ЉпјЊдёЌдјљиў«е¤„зђ†\n" +
-                            "# - жЇЏиЎЊдёЂдёЄи§„е€™пјЊдЅїз”Ёж­Је€™иЎЁиѕѕејЏеЊ№й…ЌжЁЎећ‹зљ„е®Њж•ґи§ЈеЋ‹и·Їеѕ„\n" +
+                            "# 注意事项：\n" +
+                            "# - default 模型采用特殊加载机制，无法通过黑名单禁用\n" +
+                            "# - 配置文件位置：<游戏目录>/config/better_player_model/blacklist.txt\n" +
+                            "# - 以 # 开头的行被视为注释，不会被处理\n" +
+                            "# - 每行一个规则，使用正则表达式匹配模型的完整解压路径\n" +
                             "#\n" +
                             "# Important Notes:\n" +
                             "# - The default model uses special loading mechanism and cannot be disabled via blacklist\n" +
@@ -219,26 +219,26 @@ public final class ServerModelManager {
                             "# - Lines starting with # are comments and will not be processed\n" +
                             "# - One rule per line, using regular expressions to match the complete extraction path of models\n" +
                             "\n" +
-                            "# и·Їеѕ„еЊ№й…Ќи§„е€™пјљ\n" +
-                            "# жЁЎз»„и§ЈеЋ‹ж—¶дјљдЅїз”Ёд»Ґдё‹ж јејЏзљ„и·Їеѕ„иї›иЎЊж­Је€™иЎЁиѕѕејЏеЊ№й…Ќпјљ\n" +
+                            "# 路径匹配规则：\n" +
+                            "# 模组解压时会使用以下格式的路径进行正则表达式匹配：\n" +
                             "#\n" +
                             "# Path Matching Rules:\n" +
                             "# The mod will use the following path formats for regular expression matching during extraction:\n" +
                             "#\n" +
                             "# assets/better_player_model/builtin/misc/2_steve/ysm.json\n" +
                             "\n" +
-                            "# й…ЌзЅ®з¤єдѕ‹пјљ\n" +
-                            "# й‡Ќи¦ЃжЏђз¤єпјљдё‹йќўзљ„з¤єдѕ‹йѓЅд»Ґ # ејЂе¤ґпјЊиї™иЎЁз¤єе®ѓд»¬з›®е‰ЌжЇжіЁй‡ЉзЉ¶жЂЃпјЊдёЌдјљз”џж•€\n" +
-                            "# е¦‚жћњдЅ жѓіи¦ЃеђЇз”ЁжџђдёЄи§„е€™пјЊиЇ·е€ й™¤иЇҐиЎЊејЂе¤ґзљ„ # еЏ·е’Њз©єж ј\n" +
+                            "# 配置示例：\n" +
+                            "# 重要提示：下面的示例都以 # 开头，这表示它们目前是注释状态，不会生效\n" +
+                            "# 如果你想要启用某个规则，请删除该行开头的 # 号和空格\n" +
                             "#\n" +
                             "# Configuration Examples:\n" +
                             "# Important Notice: All examples below start with #, meaning they are currently commented out and inactive\n" +
                             "# To enable a rule, delete the # symbol and space at the beginning of that line\n" +
                             "\n" +
-                            "# з¤єдѕ‹1пјљз¦Ѓз”Ёжќ‚йЎ№жЁЎећ‹ж–‡д»¶е¤№дё‹зљ„ж‰Ђжњ‰жЁЎећ‹ | Example 1: Disable all models in misc folder\n" +
+                            "# 示例1：禁用杂项模型文件夹下的所有模型 | Example 1: Disable all models in misc folder\n" +
                             "# assets/better_player_model/builtin/misc/.*\n" +
                             "\n" +
-                            "# з¤єдѕ‹2пјљз¦Ѓз”Ёж‰Ђжњ‰е†…зЅ®жЁЎећ‹ | Example 2: Disable all built-in models\n" +
+                            "# 示例2：禁用所有内置模型 | Example 2: Disable all built-in models\n" +
                             "# .*";
             Files.writeString(blacklistFile, content, StandardCharsets.UTF_8);
         }
@@ -460,7 +460,7 @@ public final class ServerModelManager {
         long lastActiveMs = System.currentTimeMillis();
         RateLimiter playerBandwidthLimiter;
 
-        // TODO: 未来可基于UUID持久化，这里目前每次加入生成固定clientKey
+        // TODO: could be persisted by UUID in the future; for now a fixed clientKey is generated on each join
         PlayerSyncState() {
             new Random(114514).nextBytes(clientKey);
             try {
@@ -497,11 +497,11 @@ public final class ServerModelManager {
                 System.out.println("Server Handle packet, step=" + state.step + ", length=" + packetBytes.length);
 
                 if (state.step == 1) {
-                    // 等待Pong
+                    // Wait for Pong
                     byte[] decrypted = YsmCrypt.decrypt(packetBytes, state.key1);
                     if (decrypted == null || decrypted.length < 56) return;
 
-                    // 客户端生成的密钥
+                    // Key generated by the client
                     state.clientNextKey = Arrays.copyOfRange(decrypted, decrypted.length - 56, decrypted.length);
                     byte[] payload = Arrays.copyOfRange(decrypted, 0, decrypted.length - 56);
 
@@ -512,7 +512,7 @@ public final class ServerModelManager {
 
                     YesSteveModel.LOGGER.info("[BPM-NET] SERVER: Received Packet 02 (Pong) from player {}. Handshake step 1 complete, client next key exchanged. Decrypted packet length: {}", getPlayerName(uuid), packetBytes.length);
 
-                    // з™јйЂЃеЏЇз”ЁжЁЎећ‹
+                    // Send available models
                     state.step = 2;
                     sendPacket03(uuid, state, state.allowedModels);
                 } else if (state.step == 2 || state.step == 3) {
@@ -874,7 +874,7 @@ public final class ServerModelManager {
             }
             validCacheFiles.add(cacheFileName);
 
-            boolean isCustomSkinModel = "misc/2_steve".equals(modelId) || "misc/1_alex".equals(modelId); // еЇ№жІЎй”™е°±жЇе†™ж­»зљ„
+            boolean isCustomSkinModel = "misc/2_steve".equals(modelId) || "misc/1_alex".equals(modelId); // Yes, it is hardcoded
 
             return mapToDataClass(modelId, model, isAuth, isCustomSkinModel);
         } catch (Exception e) {
@@ -1017,7 +1017,7 @@ public final class ServerModelManager {
             for (ServerPackData pack : packs.values()) {
                 outBuf.writeString(pack.folderPath);
 
-                // еЇ«е…Ґењ–жЁ™иі‡иЁЉ
+                // Write icon info
                 if (pack.iconData != null) {
                     outBuf.writeVarInt(1);
                     outBuf.writeByteArray(pack.iconData);
@@ -1029,7 +1029,7 @@ public final class ServerModelManager {
                     outBuf.writeVarInt(0);
                 }
 
-                // еЇ«е…Ґеџєз¤Ћиі‡иЁЉ
+                // Write basic info
                 if (pack.name != null || pack.description != null) {
                     outBuf.writeVarInt(1);
                     outBuf.writeString(pack.name != null ? pack.name : "");
@@ -1038,7 +1038,7 @@ public final class ServerModelManager {
                     outBuf.writeVarInt(0);
                 }
 
-                // еЇ«е…ҐиЄћиЁЂжњ¬ењ°еЊ–
+                // Write language localization
                 if (pack.lang != null && !pack.lang.isEmpty()) {
                     outBuf.writeVarInt(pack.lang.size());
                     for (Map.Entry<String, Map<String, String>> langEntry : pack.lang.entrySet()) {

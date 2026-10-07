@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Map;
 
 /**
- * иЇ»еЏ–ysm_pack.jsonе†…е®№
+ * Read the contents of ysm_pack.json
  * https://ysm.cfpa.team/wiki/model-pack/#%E5%88%B6%E4%BD%9C%E6%A8%A1%E5%9E%8B%E5%8C%85
  */
 public class ModelPackData {

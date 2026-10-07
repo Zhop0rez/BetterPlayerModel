@@ -187,7 +187,7 @@ public class NativeModelRenderer {
 
         if (mesh.bakedBones == null || mesh.bakedBones.isEmpty()) return;
 
-        // TODO: ж·‡о†јдє¬GCжѕ№ж’іе§Џ
+        // TODO: fix GC pressure
         RenderScratch scratch = FALLBACK_SCRATCH.get();
         scratch.ensureBoneCapacity(mesh.bakedBones.size());
 
@@ -224,7 +224,7 @@ public class NativeModelRenderer {
             globalBoneMat.set(rootPoseMat).mul(localBoneMat);
             cullingBoneMat.set(projectionModelViewMatrix).mul(globalBoneMat);
 
-            // еЁ‰ж› зЄ”йЌЏг„Ґз…™йђ­в•…ж«Ќ
+            // Normal global matrix
             localBoneMat.normal(localNormalMat);
             globalNormalMat.set(rootNormalMC).mul(localNormalMat);
 

@@ -5,15 +5,15 @@ import com.elfmcys.yesstevemodel.util.data.OrderedStringMap;
 
 public class RadioConfig extends AbstractConfig {
 //        {
-//                        "description": "йЂ‰ж‹©жЁЎећ‹иѓЊеЊ…ledиЎЁжѓ…пј€йњЂжѕз¤єиѓЊеЊ…пј‰",
+//                        "description": "select the model backpack LED expression (backpack must be shown)",
 //                        "labels": {
 //                            "0.0": "v.roaming.bagemotion=2;",
 //                            "???": "v.roaming.bagemotion=3;",
-//                            "fumoз¬‘": "v.roaming.bagemotion=0;",
-//                            "ж— иЇ­": "v.roaming.bagemotion=1;",
-//                            "з€±еїѓ": "v.roaming.bagemotion=4;"
+//                            "fumo smile": "v.roaming.bagemotion=0;",
+//                            "speechless": "v.roaming.bagemotion=1;",
+//                            "heart": "v.roaming.bagemotion=4;"
 //                        },
-//                        "title": "йЂ‰ж‹©иѓЊеЊ…ledиЎЁжѓ…",
+//                        "title": "Select backpack LED expression",
 //                        "type": "radio",
 //                        "value": "v.roaming.bagemotion"
 //                    }
@@ -21,10 +21,10 @@ public class RadioConfig extends AbstractConfig {
 
     //ooOooO0OOo00O0oooo000oOO = {ooooOO0oooO0o000OOoOoOOo@81434}  size = 5
     // "0.0" -> "v.roaming.bagemotion=2;"
-    // "з€±еїѓ" -> "v.roaming.bagemotion=4;"
-    // "fumoз¬‘" -> "v.roaming.bagemotion=0;"
+    // "heart" -> "v.roaming.bagemotion=4;"
+    // "fumo smile" -> "v.roaming.bagemotion=0;"
     // "???" -> "v.roaming.bagemotion=3;"
-    // "ж— иЇ­" -> "v.roaming.bagemotion=1;"
+    // "speechless" -> "v.roaming.bagemotion=1;"
     private final OrderedStringMap<String, String> labels;
 
     public RadioConfig(String title, String description, String value, OrderedStringMap<String, String> labels) {

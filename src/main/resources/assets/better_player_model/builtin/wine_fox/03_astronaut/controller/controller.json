@@ -77,105 +77,105 @@
 			}
 		},
 		"player.post_main": {
-			"initial_state": "з©єй—І",
+			"initial_state": "空闲",
 			"states": {
-				"з©єй—І": {
+				"空闲": {
 					"animations": ["empty"],
 					"transitions": [
-						{"иµ·и·і": "!ctrl.fly&&!ctrl.elytra_fly&&ctrl.jump&&q.vertical_speed>0"},
-						{"дё‹иђЅе€ќжњџ": "!ctrl.fly&&!ctrl.elytra_fly&&ctrl.jump&&q.vertical_speed<=0"},
-						{"йћзї…": "ctrl.elytra_fly"},
-						{"еҐ”и·‘": "ctrl.run&&!ctrl.tac_hold_gun&&(ctrl.parcool_state=='')&&(!ctrl.hold('mainhand','$slashblade:slashblade'))"}
+						{"起跳": "!ctrl.fly&&!ctrl.elytra_fly&&ctrl.jump&&q.vertical_speed>0"},
+						{"下落初期": "!ctrl.fly&&!ctrl.elytra_fly&&ctrl.jump&&q.vertical_speed<=0"},
+						{"鞘翅": "ctrl.elytra_fly"},
+						{"奔跑": "ctrl.run&&!ctrl.tac_hold_gun&&(ctrl.parcool_state=='')&&(!ctrl.hold('mainhand','$slashblade:slashblade'))"}
 					],
 					"blend_transition": 0.1,
 					"blend_via_shortest_path": true
 				},
-				"иµ·и·і": {
-					"animations": ["иµ·и·і"],
+				"起跳": {
+					"animations": ["起跳"],
 					"transitions": [
-						{"дё‹иђЅ": "q.all_animations_finished||q.vertical_speed<-16"},
-						{"иђЅењ°": "q.is_on_ground&&q.ground_speed<1&&q.vertical_speed<-16"},
-						{"иђЅењ°зї»ж»љ": "q.is_on_ground&&q.ground_speed>=1&&q.vertical_speed<-16"},
-						{"з©єй—І": "(ctrl.fly||ctrl.elytra_fly||q.is_in_water||(ctrl.parcool_state!='')||ctrl.ladder_up||ctrl.ladder_down||ctrl.ladder_stillness||(ctrl.slashblade_animation!='')||ctrl.carryon_is_princess)"},
-						{"иђЅењ°е°Џ": "q.is_on_ground&&q.vertical_speed>=-16"}
+						{"下落": "q.all_animations_finished||q.vertical_speed<-16"},
+						{"落地": "q.is_on_ground&&q.ground_speed<1&&q.vertical_speed<-16"},
+						{"落地翻滚": "q.is_on_ground&&q.ground_speed>=1&&q.vertical_speed<-16"},
+						{"空闲": "(ctrl.fly||ctrl.elytra_fly||q.is_in_water||(ctrl.parcool_state!='')||ctrl.ladder_up||ctrl.ladder_down||ctrl.ladder_stillness||(ctrl.slashblade_animation!='')||ctrl.carryon_is_princess)"},
+						{"落地小": "q.is_on_ground&&q.vertical_speed>=-16"}
 					],
 					"blend_transition": 0.1,
 					"blend_via_shortest_path": true
 				},
-				"дё‹иђЅе€ќжњџ": {
-					"animations": ["дё‹иђЅе€ќжњџ"],
+				"下落初期": {
+					"animations": ["下落初期"],
 					"transitions": [
-						{"з©єй—І": "ctrl.fly||q.is_in_water||(ctrl.parcool_state!='')||ctrl.ladder_up||ctrl.ladder_down||ctrl.ladder_stillness||(ctrl.slashblade_animation!='')||ctrl.carryon_is_princess"},
-						{"дё‹иђЅ": "q.all_animations_finished&&q.vertical_speed<=0"},
-						{"иђЅењ°": "q.is_on_ground&&(q.ground_speed<1)&&q.vertical_speed<-16"},
-						{"иђЅењ°зї»ж»љ": "q.is_on_ground&&(q.ground_speed>=1)&&q.vertical_speed<-16"},
-						{"иђЅењ°е°Џ": "q.is_on_ground&&q.vertical_speed>=-16"}
+						{"空闲": "ctrl.fly||q.is_in_water||(ctrl.parcool_state!='')||ctrl.ladder_up||ctrl.ladder_down||ctrl.ladder_stillness||(ctrl.slashblade_animation!='')||ctrl.carryon_is_princess"},
+						{"下落": "q.all_animations_finished&&q.vertical_speed<=0"},
+						{"落地": "q.is_on_ground&&(q.ground_speed<1)&&q.vertical_speed<-16"},
+						{"落地翻滚": "q.is_on_ground&&(q.ground_speed>=1)&&q.vertical_speed<-16"},
+						{"落地小": "q.is_on_ground&&q.vertical_speed>=-16"}
 					],
 					"blend_transition": 0.1,
 					"blend_via_shortest_path": true
 				},
-				"дё‹иђЅ": {
-					"animations": ["дё‹иђЅ"],
+				"下落": {
+					"animations": ["下落"],
 					"transitions": [
-						{"иђЅењ°": "q.is_on_ground&&(q.ground_speed<1)"},
-						{"иђЅењ°зї»ж»љ": "q.is_on_ground&&(q.ground_speed>=1)"},
-						{"з©єй—І": "ctrl.fly||q.is_in_water||(ctrl.parcool_state!='')||ctrl.ladder_up||ctrl.ladder_down||ctrl.ladder_stillness||(ctrl.slashblade_animation!='')||ctrl.carryon_is_princess"}
+						{"落地": "q.is_on_ground&&(q.ground_speed<1)"},
+						{"落地翻滚": "q.is_on_ground&&(q.ground_speed>=1)"},
+						{"空闲": "ctrl.fly||q.is_in_water||(ctrl.parcool_state!='')||ctrl.ladder_up||ctrl.ladder_down||ctrl.ladder_stillness||(ctrl.slashblade_animation!='')||ctrl.carryon_is_princess"}
 					],
 					"blend_transition": 0.3,
 					"blend_via_shortest_path": true
 				},
-				"иђЅењ°е°Џ": {
-					"animations": ["иђЅењ°е°Џ"],
+				"落地小": {
+					"animations": ["落地小"],
 					"transitions": [
-						{"з©єй—І": "q.all_animations_finished||ctrl.sneak||ctrl.sneaking"},
-						{"иµ·и·і": "!ctrl.fly&&ctrl.jump&&q.vertical_speed>0"},
-						{"дё‹иђЅе€ќжњџ": "!ctrl.fly&&ctrl.jump&&q.vertical_speed<=0"},
-						{"еҐ”и·‘": "q.any_animation_finished&&ctrl.run&&!ctrl.tac_hold_gun"}
+						{"空闲": "q.all_animations_finished||ctrl.sneak||ctrl.sneaking"},
+						{"起跳": "!ctrl.fly&&ctrl.jump&&q.vertical_speed>0"},
+						{"下落初期": "!ctrl.fly&&ctrl.jump&&q.vertical_speed<=0"},
+						{"奔跑": "q.any_animation_finished&&ctrl.run&&!ctrl.tac_hold_gun"}
 					],
 					"blend_transition": 0.05,
 					"blend_via_shortest_path": true
 				},
-				"иђЅењ°": {
-					"animations": ["и·іи·ѓзј“е†І"],
+				"落地": {
+					"animations": ["跳跃缓冲"],
 					"transitions": [
-						{"з©єй—І": "q.all_animations_finished"}
+						{"空闲": "q.all_animations_finished"}
 					],
 					"blend_transition": 0.1,
 					"blend_via_shortest_path": true
 				},
-				"иђЅењ°зї»ж»љ": {
-					"animations": ["иђЅењ°зї»ж»љ"],
+				"落地翻滚": {
+					"animations": ["落地翻滚"],
 					"transitions": [
-						{"з©єй—І": "q.all_animations_finished"}
+						{"空闲": "q.all_animations_finished"}
 					],
 					"blend_transition": 0.1,
 					"blend_via_shortest_path": true
 				},
-				"йћзї…": {
+				"鞘翅": {
 					"animations": ["empty"],
 					"transitions": [
-						{"з©єй—І": "!ctrl.elytra_fly&&!q.is_on_ground"},
-						{"иђЅењ°зї»ж»љ": "!ctrl.elytra_fly&&q.is_on_ground"}
+						{"空闲": "!ctrl.elytra_fly&&!q.is_on_ground"},
+						{"落地翻滚": "!ctrl.elytra_fly&&q.is_on_ground"}
 					],
 					"blend_transition": 0.1,
 					"blend_via_shortest_path": true
 				},
-				"еҐ”и·‘": {
-					"animations": ["еҐ”и·‘"],
+				"奔跑": {
+					"animations": ["奔跑"],
 					"transitions": [
-						{"жЂҐеЃњ": "!ctrl.run&&!ctrl.jump&&q.is_on_ground"},
-						{"иµ·и·і": "!ctrl.fly&&!ctrl.elytra_fly&&ctrl.jump&&q.vertical_speed>0"},
-						{"дё‹иђЅе€ќжњџ": "!ctrl.fly&&!ctrl.elytra_fly&&ctrl.jump&&q.vertical_speed<=0"},
-						{"з©єй—І": "ctrl.tac_hold_gun||ctrl.hold('mainhand','$slashblade:slashblade')"}
+						{"急停": "!ctrl.run&&!ctrl.jump&&q.is_on_ground"},
+						{"起跳": "!ctrl.fly&&!ctrl.elytra_fly&&ctrl.jump&&q.vertical_speed>0"},
+						{"下落初期": "!ctrl.fly&&!ctrl.elytra_fly&&ctrl.jump&&q.vertical_speed<=0"},
+						{"空闲": "ctrl.tac_hold_gun||ctrl.hold('mainhand','$slashblade:slashblade')"}
 					],
 					"blend_transition": 0.1,
 					"blend_via_shortest_path": true
 				},
-				"жЂҐеЃњ": {
-					"animations": ["жЂҐеЃњ"],
+				"急停": {
+					"animations": ["急停"],
 					"transitions": [
-						{"з©єй—І": "q.all_animations_finished||ctrl.jump||ctrl.sneak||ctrl.sneaking||(ctrl.parcool_state!='')"},
-						{"еҐ”и·‘": "ctrl.run&&!ctrl.tac_hold_gun"}
+						{"空闲": "q.all_animations_finished||ctrl.jump||ctrl.sneak||ctrl.sneaking||(ctrl.parcool_state!='')"},
+						{"奔跑": "ctrl.run&&!ctrl.tac_hold_gun"}
 					],
 					"blend_transition": 0.1,
 					"blend_via_shortest_path": true

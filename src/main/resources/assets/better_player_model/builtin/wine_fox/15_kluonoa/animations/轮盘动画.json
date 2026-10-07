@@ -1,7 +1,7 @@
 ﻿{
 	"format_version": "1.8.0",
 	"animations": {
-		"з®—дє†": {
+		"算了": {
 			"animation_length": 2,
 			"bones": {
 				"Head": {
@@ -69,7 +69,7 @@
 				"0.0": "v.never_mind=1;"
 			}
 		},
-		"ејЂиЅ¦иЅ¦": {
+		"开车车": {
 			"loop": true,
 			"animation_length": 3.4,
 			"bones": {
@@ -581,7 +581,7 @@
 				}
 			}
 		},
-		"й‡Ќдј¤еЂ’ењ°": {
+		"重伤倒地": {
 			"loop": true,
 			"animation_length": 1,
 			"bones": {
@@ -678,7 +678,7 @@
 				}
 			}
 		},
-		"иђќиЋ‰ж‘‡": {
+		"萝莉摇": {
 			"loop": true,
 			"animation_length": 13.75,
 			"bones": {
@@ -5770,7 +5770,7 @@
 			},
 			"sound_effects": {
 				"0.0": {
-					"effect": "иђќиЋ‰ж‘‡"
+					"effect": "萝莉摇"
 				}
 			}
 		},
@@ -6254,7 +6254,7 @@
 				}
 			}
 		},
-		"и°ўи°ў": {
+		"谢谢": {
 			"animation_length": 1.5,
 			"bones": {
 				"Root": {
@@ -6602,7 +6602,7 @@
 				"0.0": "v.xiexie=1;"
 			}
 		},
-		"иµћж€ђ": {
+		"赞成": {
 			"animation_length": 1.5,
 			"bones": {
 				"Root": {
@@ -6960,7 +6960,7 @@
 				"0.0": "v.zancheng=1;"
 			}
 		},
-		"йј“жЋЊ": {
+		"鼓掌": {
 			"animation_length": 1.5,
 			"bones": {
 				"Root": {
@@ -7347,7 +7347,7 @@
 				"0.0": "v.guzhang=1;"
 			}
 		},
-		"иЇ·ж±‚ж”ЇжЏґ": {
+		"请求支援": {
 			"loop": true,
 			"animation_length": 4,
 			"bones": {
@@ -7446,7 +7446,7 @@
 				"0.0": "v.help=1;"
 			}
 		},
-		"еЏЌеЇ№": {
+		"反对": {
 			"animation_length": 1.5,
 			"bones": {
 				"Root": {
@@ -7831,7 +7831,7 @@
 				"0.0": "v.fandui=1;"
 			}
 		},
-		"еҐЅиЂ¶": {
+		"好耶": {
 			"animation_length": 4.5,
 			"bones": {
 				"Root": {
@@ -8677,7 +8677,7 @@
 				"0.0": "v.haoye=1;"
 			}
 		},
-		"еЇ№дёЌиµ·": {
+		"对不起": {
 			"animation_length": 3,
 			"bones": {
 				"Root": {
@@ -9084,7 +9084,7 @@
 				"0.0": "v.sorry=1;"
 			}
 		},
-		"еЌЎе…¶и„±з¦»е¤Є": {
+		"卡其脱离太": {
 			"loop": true,
 			"animation_length": 0.4167,
 			"bones": {
@@ -9726,7 +9726,7 @@
 				}
 			}
 		},
-		"е¤§йЈЋиЅ¦": {
+		"大风车": {
 			"loop": true,
 			"animation_length": 1,
 			"bones": {

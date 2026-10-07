@@ -33,7 +33,7 @@ public class  AnimationControllerInstance {
     private final AnimationControllerContext context;
 
     /**
-     * е®ћдЅ“еЇ№и±Ў
+     * The entity object
      */
     private final AnimatableEntity<?> animatable;
 
@@ -299,7 +299,7 @@ public class  AnimationControllerInstance {
     }
 
     /**
-     * еЅ“е‰Ќе…ій”®её§ж’­ж”ѕиї›еє¦
+     * Playback progress of the current keyframe
      **/
     private KeyFramePoint getKeyFramePointAtTick(InterpolationLookup<BoneKeyFrame> frames, float tick) {
         BoneKeyFrame frame = frames.getAtTime(tick);
@@ -307,14 +307,14 @@ public class  AnimationControllerInstance {
     }
 
     /**
-     * иї”иї‡жёЎиї›еє¦
+     * Return the transition progress
      **/
     private TransitionPoint getTransitionPointAtTick(InterpolationLookup<BoneKeyFrame> frames, float tick, float lerpFactor, Vector3f offsetPoint) {
         return new TransitionPoint(tick, lerpFactor, this.transitionInterpolator.getProgress(), offsetPoint, (TransitionKeyFrame) frames.getAtTime(0.0f), this.context);
     }
 
     /**
-     * йќ™жЂЃеЉЁз”»з‚№
+     * Static animation point
      */
     private ConstantPoint getConstantPointAtTick(float tick, Vector3f offsetPoint, boolean isInstant) {
         return new ConstantPoint(tick, isInstant ? 0.0f : defaultTransitionTick, offsetPoint, this.context);

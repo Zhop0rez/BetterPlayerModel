@@ -53,7 +53,7 @@ public final class ClientSetupEvent {
             if (maxTexSize <= 0) {
                 return Component.literal("YSM: OpenGL context not available");
             }
-            // еЋџе§‹C++зўјжЄўжџҐдє†GL20пј€и‘—и‰Іе™Ёпј‰е’Њ GL30пј€VAOпј‰зљ„еЏЇз”ЁжЂ§
+            // The original C++ code checked the availability of GL20 (shaders) and GL30 (VAO)
             try {
                 int testShader = GL20.glCreateShader(GL20.GL_VERTEX_SHADER);
                 if (testShader != 0) {
@@ -63,10 +63,10 @@ public final class ClientSetupEvent {
                 return Component.literal("YSM: GL20 (shaders) not available");
             }
 
-            // йў„иј‰е…ҐdefaultжЁЎећ‹пјЊе»¶йЃІи‡із¬¬дёЂж¬ЎжёІжџ“tick
-            // дёЌиѓЅењЁFMLClientSetupEventдё­еђЊж­Ґеџ·иЎЊModelAssemblerпјЊжњѓе°Ћи‡ґStackOverflow
+            // Preload the default model, deferred to the first render tick
+            // Do not run ModelAssembler synchronously in FMLClientSetupEvent; it causes StackOverflow
             //ClientModelManager.schedulePreloadDefaultModel();
-            return null; // ж€ђеЉџ
+            return null; // Success
         } catch (Exception e) {
             return Component.literal("YSM Client Init Failed: " + e.getMessage());
         }
@@ -79,5 +79,5 @@ public final class ClientSetupEvent {
         }
     }
 
-    // йЂ™иЈЎжњ¬дѕ†жњ‰дёЂеЂ‹nativeж–№жі•пјЊеЏЇиѓЅжЇйЃ‹иЎЊж™‚жњѓе€ќе§‹еЊ–иј‰е…ҐжЁЎећ‹
+    // There used to be a native method here; it may initialize model loading at runtime
 }

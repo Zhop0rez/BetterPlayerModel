@@ -22,7 +22,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 
 public class RenderFirstPlayerBackground {
-    // йЌҐзЉ±иґџRenderHandEventйЌ™о€›ж№ЃйЌ‘зЉµе·јжµјж°­и¦†йЏЊж’іоїеЁ†в…зґќйЋµв‚¬жµ гѓ¤иґџжµње—›дј©йЌЏе¶…оїеЁ†в„ѓи¦†йЏЊж“„зґќжќ©ж¬ђз‰±з’ЃжЌђо…ё
+    // Because RenderHandEvent may render multiple times, this is designed to avoid multiple renders
     private static boolean currentFrameRendered = false;
 
     private RenderFirstPlayerBackground() {
