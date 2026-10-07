@@ -402,8 +402,8 @@ public class AnimationControllerRuntime<T extends AnimatableEntity<?>> implement
 
         private boolean isMarked;
 
-        // е¤Ќз”Ёиї™е‡ дёЄеђ‘й‡Џд»ҐйЃїе…ЌжЇЏеё§з»™жЇЏж №йЄЁе¤ґж–°е»є 3 дёЄ TransitionVector3f
-        // gc ењЁе¤©дёЉе¤±жњ›зљ„зњ‹зќЂдЅ гЂ‚гЂ‚гЂ‚
+        // Reuse these vectors to avoid creating 3 TransitionVector3f per bone on every frame
+        // gc looks down at you from the sky in disappointment...
         private final TransitionVector3f rotationOut = new TransitionVector3f();
         private final TransitionVector3f positionOut = new TransitionVector3f();
         private final TransitionVector3f scaleOut = new TransitionVector3f(1.0f, 1.0f, 1.0f);

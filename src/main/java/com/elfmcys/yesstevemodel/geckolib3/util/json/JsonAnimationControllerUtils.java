@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 /**
- * и§ЈжћђеЉЁз”»жЋ§е€¶е™Ё
+ * Parse the animation controller
  */
 public class JsonAnimationControllerUtils {
     public static Set<Map.Entry<String, JsonElement>> getAnimationControllers(JsonObject json) {

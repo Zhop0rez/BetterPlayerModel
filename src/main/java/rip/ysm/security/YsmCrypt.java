@@ -81,7 +81,7 @@ public class YsmCrypt {
 
             CityHash ch = new CityHash();
             long calculatedHash = ch.hash64WithSeed(finalBuf.array(), 0, finalPayloadLen, SEED_CACHE_VERIFICATION);
-            long realHash = calculatedHash ^ hash1 ^ hash2; // з­ѕеђЌ
+            long realHash = calculatedHash ^ hash1 ^ hash2; // Signature
 
             finalBuf.putLong(realHash);
 
@@ -128,10 +128,10 @@ public class YsmCrypt {
 //                "\r\n" +
 //                "----------------------- [ Metadata ] -----------------------\r\n" +
 //                "\r\n" +
-//                "<name> Trissyз‰№иЋ‰дёќ\r\n" +
+//                "<name> Trissy\r\n" +
 //                "<author> \r\n" +
 //                "    <name> Almeta_owx\r\n" +
-//                "    <role> жЁЎећ‹/еЉЁз”»\r\n" +
+//                "    <role> Model/Animation\r\n" +
 //                "    <contact-Bilibili>  https://b23.tv/iAsj6Ee\r\n" +
 //                "    <contact-Afdian> https://afdian.com/a/Almeta\r\n" +
 //                "    <comment> and the universe said I love you\r\n" +
@@ -143,7 +143,7 @@ public class YsmCrypt {
 //                "\r\n" +
 //                "------------------------- [ Tips ] -------------------------\r\n" +
 //                "\r\n" +
-//                "еЋџе€›и§’и‰Іе…ЅиЂіеЁзі»е€—еЏЇз€±з™Ѕи‰Ій­”жі•зЊ«зЊ«Trissyз‰№иЋ‰дёќгЂ‚Our journey, now a memory fading from sight~\r\n" +
+//                "An original kemonomimi-series cute white magic cat, Trissy. Our journey, now a memory fading from sight~\r\n" +
 //                "\r\n" +
 //                "------------------------ [ Export ] ------------------------\r\n" +
 //                "\r\n" +

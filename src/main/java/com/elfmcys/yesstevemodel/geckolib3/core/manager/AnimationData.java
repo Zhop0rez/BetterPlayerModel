@@ -26,9 +26,9 @@ public class AnimationData {
     }
 
     /**
-     * иї™жЇд»»дЅ•жІЎжњ‰еЉЁз”»зљ„йЄЁйЄјжЃўе¤Ќе€°е…¶е€ќе§‹дЅЌзЅ®ж‰ЂйњЂзљ„ж—¶й—ґ
+     * The time any bone without animation takes to return to its initial position
      *
-     * @param resetTickLength й‡ЌзЅ®ж—¶ж‰ЂйњЂзљ„ tickгЂ‚дёЌиѓЅдёєиґџж•°
+     * @param resetTickLength ticks required for a reset. Must not be negative
      */
     public void setResetSpeedInTicks(float resetTickLength) {
         this.resetTickLength = resetTickLength < 0 ? 0 : resetTickLength;

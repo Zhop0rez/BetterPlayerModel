@@ -8,10 +8,10 @@ import java.util.Locale;
 
 public interface ILoopType {
     /**
-     * д»ЋеЉЁз”»ж–‡д»¶иЇ»еЏ–ж’­ж”ѕз±»ећ‹
+     * Read the play type from the animation file
      *
-     * @param json json ж–‡д»¶
-     * @return ж’­ж”ѕз±»ећ‹
+     * @param json the json file
+     * @return the play type
      */
     static ILoopType fromJson(JsonElement json) {
         if (json == null || !json.isJsonPrimitive()) {
@@ -38,16 +38,16 @@ public interface ILoopType {
     }
 
     /**
-     * жЇеђ¦ењЁеЉЁз”»з»“жќџеђЋй‡Ќе¤Ќ
+     * Whether it repeats after the animation ends
      *
-     * @return жЇеђ¦ењЁеЉЁз”»з»“жќџеђЋй‡Ќе¤Ќ
+     * @return whether it repeats after the animation ends
      */
     @Keep
     boolean isRepeatingAfterEnd();
 
     enum EDefaultLoopTypes implements ILoopType {
         /**
-         * еЉЁз”»ж’­ж”ѕз±»ећ‹
+         * Animation play type
          */
         LOOP(true),
         PLAY_ONCE,

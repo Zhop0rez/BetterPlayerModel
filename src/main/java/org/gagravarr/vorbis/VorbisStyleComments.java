@@ -93,7 +93,7 @@ public abstract class VorbisStyleComments extends HighLevelOggStreamPacket imple
 
     /**
      * The tag name is case-insensitive and may consist of ASCII 0x20 
-     *  through 0x7D, 0x3D (вЂ™=вЂ™) excluded. ASCII 0x41 through 0x5A 
+     *  through 0x7D, 0x3D (’=’) excluded. ASCII 0x41 through 0x5A 
      *  inclusive (characters A-Z) is to be considered equivalent to 
      *  ASCII 0x61 through 0x7A inclusive (characters a-z).
      */

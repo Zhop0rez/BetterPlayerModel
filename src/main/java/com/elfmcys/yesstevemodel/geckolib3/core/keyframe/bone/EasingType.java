@@ -3,7 +3,7 @@ package com.elfmcys.yesstevemodel.geckolib3.core.keyframe.bone;
 import java.util.List;
 
 
-// Native Accessпјљж‰Ђжњ‰е­—ж®µйѓЅжњ‰и®ЂеЏ–
+// Native Access: all fields are read
 public interface EasingType {
 
     EasingType LINEAR = EasingType::buildLinearKeyFrame;

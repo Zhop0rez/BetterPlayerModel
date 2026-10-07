@@ -18,7 +18,7 @@ public class Animation {
     public final ILoopType loop;
 
     // TODO https://github.com/bernie-g/geckolib/blob/4d62f40ab2d33db3c9d15d6867608ebc74242413/common/src/main/java/com/geckolib/loading/definition/animation/ActorAnimation.java#L54
-    // жІЎи°ѓз”Ё
+    // Not called
     @Nullable
     public final IValue unKnowData1;
 

@@ -17,7 +17,7 @@ public class YSMClientCache {
 
     public static String generateCacheFileName(long hash1, long hash2, byte[] rtKey) {
         if (rtKey == null || rtKey.length != 56) return null;
-        int seed = 114514; // todo: жЌўж€ђзњџйљЏжњєж•°
+        int seed = 114514; // todo: switch to a true random number
 
         MT19937 mt = new MT19937(Integer.toUnsignedLong(seed));
         long m1 = hash1 ^ mt.extract_number();

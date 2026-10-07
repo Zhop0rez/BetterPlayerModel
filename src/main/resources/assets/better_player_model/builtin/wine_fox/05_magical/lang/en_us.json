@@ -17,10 +17,10 @@
   "properties.extra_animation_buttons.staff.config_forms.0.description": "Hide & Show",
   "properties.extra_animation_buttons.charge_circle.config_forms.0.title": "Turn Off/On Charging Circle Effect",
   "properties.extra_animation_buttons.charge_circle.config_forms.0.description": "Turn Off & On",
-  "files.player.texture.magic": "В§5Starry Sky Magic Fox",
-  "files.player.texture.winefox": "В§6Primal Fire Fox",
-  "files.player.texture.ice": "В§bFrost Snow Fox",
-  "files.player.texture.flower": "В§dFloral Fairy Fox",
-  "files.player.texture.blood": "В§4Crimson Blood Fox",
-  "files.player.texture.water": "В§9Spring Water Fox"
+  "files.player.texture.magic": "§5Starry Sky Magic Fox",
+  "files.player.texture.winefox": "§6Primal Fire Fox",
+  "files.player.texture.ice": "§bFrost Snow Fox",
+  "files.player.texture.flower": "§dFloral Fairy Fox",
+  "files.player.texture.blood": "§4Crimson Blood Fox",
+  "files.player.texture.water": "§9Spring Water Fox"
 }

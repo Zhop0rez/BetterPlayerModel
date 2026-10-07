@@ -17,7 +17,7 @@ import java.util.Locale;
 import static com.elfmcys.yesstevemodel.geckolib3.util.AnimationUtils.*;
 
 /**
- * з”ЁдєЋе°† json иЅ¬жЌўж€ђе…ій”®её§зљ„е·Ґе…·з±»
+ * Utility class for converting json into keyframes
  */
 public class JsonKeyFrameUtils {
     public static void getKeyFrames(List<RawBoneKeyFrame> boneKeyFrames, @Nullable JsonElement element, MolangParser parser) throws NumberFormatException {
@@ -67,7 +67,7 @@ public class JsonKeyFrameUtils {
                         if (pre != null) {
                             readPreKeyFrame(pre, keyframe, parser);
                         } else if (post != null) {
-                            // жІЎй”™пјЊpost иµ‹з»™ pre
+                            // Right, post is assigned to pre
                             readPreKeyFrame(post, keyframe, parser);
                         }
                     }
@@ -78,7 +78,7 @@ public class JsonKeyFrameUtils {
             boneKeyFrames.add(keyframe);
         }
 
-        // жЋ’еєЏ
+        // Sort
         boneKeyFrames.sort(Comparator.comparingDouble(k -> k.startTick));
     }
 

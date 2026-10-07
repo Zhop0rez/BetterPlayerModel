@@ -7,18 +7,18 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ServerModelData {
-    // е¦ЇвЂізЂ·йђЁе‹­жґ°й–·е‹«ж‚•з»‹?
+    // The model's directory name
     private final String modelId;
     private final ServerAnimationInfo serverAnimationInfo;
     private final Set<Identifier> entityTypes = new HashSet<>();
     private final Set<Identifier> excludedEntityTypes = new HashSet<>();
     private final ServerModelInfo info;
-    private final boolean isCustomSkinModel; // йЌ™о€ќе…ж·‡?
-    private final boolean isAuth; // йЌ¦в•ќuthз’©е›ЁжћЎжѕ¶еЏҐз¬–is_freeйђђзЇєalse
+    private final boolean isCustomSkinModel; // Possibly deprecated
+    private final boolean isAuth; // In the auth folder and is_free is false
 
-    // йЋ·е¬Єзљ йђ—?жёље¬Єо›§з» ?ж¶“е¤Љеј¶йЋґ?ж¶”е¬®о”ЈйђЁ?йЏ‰ж„Їе”±йЌ¦в•°extures minecraft:arrow ....
+    // Projectile, e.g. arrow/trident/etc.; textures are under textures minecraft:arrow ....
     private Object[] projectiles;
-    // йЌ§ж„°в—Ј жёље¬Єо›§ й‘ё?з»Ђп№ЃзІ– жЈЈ?minecraft:horse ....
+    // Mount, e.g. boat/minecart/horse -> minecraft:horse ....
     private Object[] vehicles;
 
     public ServerModelData(String modelId, ServerAnimationInfo serverAnimationInfo, Object[] projectiles, Object[] vehicles, ServerModelInfo info, boolean encrypted, boolean isAuth) {

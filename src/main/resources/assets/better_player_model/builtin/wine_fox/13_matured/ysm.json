@@ -1,15 +1,15 @@
 ﻿{
 	"spec": 2,
 	"metadata": {
-		"name": "е¤§й…’з‹ђ",
-		"tips": "В§7е–њж¬ўе–ќи‘Ўиђ„й…’зљ„з‹ђеЁгЂ‚еЉ е…Ґдє†йѓЁе€†е°Џе·§жЂќ",
+		"name": "大酒狐",
+		"tips": "§7喜欢喝葡萄酒的狐娘。加入了部分小巧思",
 		"license": {
 			"type": "CC BY-NC-SA 4.0"
 		},
 		"authors": [
 			{
-				"name": "еЏ—дёЌдє†иЂЃеё€",
-				"role": "дї®ж”№",
+				"name": "受不了老师",
+				"role": "修改",
 				"avatar": "avatar/sbl.webp",
 				"contact": {
 					"Bilibili": "https://space.bilibili.com/7033128"
@@ -23,23 +23,23 @@
 		"width_scale": 0.8,
 		"extra_animation": {
 			"extra0": "#extra_config",
-			"extra1": "ж‰“ж‹›е‘ј",
-			"extra2": "йј“жЋЊ",
+			"extra1": "打招呼",
+			"extra2": "鼓掌",
 			"extra3": "Get Down",
-			"extra4": "д№±и€ћ",
-			"extra5": "еЌ–иђЊ",
-			"extra6": "еѕЎз¬”ж‘‡",
-			"extra7": "и€ћи№€"
+			"extra4": "乱舞",
+			"extra5": "卖萌",
+			"extra6": "御笔摇",
+			"extra7": "舞蹈"
 		},
 		"extra_animation_buttons": [
 			{
 				"id": "extra_config",
-				"name": "еЏиє« & й›Ёдјћ",
+				"name": "变身 & 雨伞",
 				"config_forms": [
 					{
 						"type": "checkbox",
-						"title": "й›Ёдјћ",
-						"description": "жЇеђ¦жѕз¤єж€–йљђи—Џй›Ёдјћ",
+						"title": "雨伞",
+						"description": "是否显示或隐藏雨伞",
 						"value": "v.roaming.umbrella"
 					}
 				]

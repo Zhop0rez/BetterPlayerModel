@@ -15,11 +15,11 @@ import java.util.Map;
 
 /**
  * error.better_player_model.decode_texture
- * еЉ иЅЅе¤±иґҐе­—ж®µ
+ * Load failure field
  */
 public class JsonTextureUtils {
     /**
-     * з»™playerз”Ёзљ„
+     * For player use
      */
     public static OrderedStringMap<String, OuterFileTexture> getTextures(Map<String, byte[]> resource, JsonElement element) {
         if (element == null) return null;

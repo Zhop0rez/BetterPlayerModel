@@ -2,15 +2,15 @@
   "spec": 2,
   "metadata": {
     "name": "MoMo Wine Fox",
-    "tips": "ж¬ўиїЋжќҐе€°з‹ђз‹ђзљ„дё–з•Њ~",
+    "tips": "欢迎来到狐狐的世界~",
     "license": {
       "type": "CC BY-NC-SA 4.0"
     },
     "authors": [
       {
-        "name": "е†ЌжќҐе‡ ж–¤е°ЏиЋ«иЋ«",
-        "role": "й­”ж”№еЉЁз”»/жќђиґЁ",
-        "comment": "е¦‚жћњдЅ жњ‰ж‰Ђзѓ­з€±зљ„зѕЋеҐЅзљ„ж„їжњ›пјЊе°±е¤§иѓ†еЋ»иїЅж±‚е®ѓ",
+        "name": "再来几斤小莫莫",
+        "role": "魔改动画/材质",
+        "comment": "如果你有所热爱的美好的愿望，就大胆去追求它",
         "avatar": "avatar/zljjxmm.png",
         "contact": {
           "bilibili": "https://space.bilibili.com/3493267685509797"
@@ -18,7 +18,7 @@
       },
       {
         "name": "Tex_offcial",
-        "role": "жќђиґЁ",
+        "role": "材质",
         "contact": {
           "blibli": "https://b23.tv/0angYgR"
         },
@@ -29,9 +29,9 @@
   "properties": {
     "extra_animation": {
       "huhupeizhi": "#huhu_config",
-      "ж‰ѕдёЌе€°з‹ђж‰ѕдёЌе€°з‹ђ": "и—Џиµ·жќҐ~",
-      "#H_d_c": "з‹ђи№€~",
-      "ж‹›ж‰‹": "ж‹›ж‰‹"
+      "找不到狐找不到狐": "藏起来~",
+      "#H_d_c": "狐蹈~",
+      "招手": "招手"
     },
     "preview_animation": "gui",
     "free": true,
@@ -43,12 +43,12 @@
     "extra_animation_buttons": [
       {
         "id": "huhu_config",
-        "name": "з‹ђз‹ђж•Ізє§й…Ќд»¶",
+        "name": "狐狐敲级配件",
         "config_forms": [
           {
             "type": "range",
-            "title": "з‹ђз‹ђе¤§е°ЏеЏпјЃ",
-            "description": "е°±жЇз‹ђз‹ђе¤§е°ЏеЏпјЃ",
+            "title": "狐狐大小变！",
+            "description": "就是狐狐大小变！",
             "value": "v.player_size",
             "step": 0.2,
             "min": 0.2,
@@ -56,8 +56,8 @@
           },
           {
             "type": "range",
-            "title": "з‹ђз‹ђе¤§е®ќе‰‘пјЃ",
-            "description": "е°±и¦Ѓз‹ђз‹ђе¤§е®ќе‰‘пјЃ",
+            "title": "狐狐大宝剑！",
+            "description": "就要狐狐大宝剑！",
             "value": "v.hold",
             "step": 1,
             "min": 0,
@@ -65,14 +65,14 @@
           },
           {
             "type": "checkbox",
-            "title": "иѓЊеЊ…жёІжџ“",
-            "description": "е°±жЇиѓЊеЊ…жёІжџ“пјЃ",
+            "title": "背包渲染",
+            "description": "就是背包渲染！",
             "value": "v.roaming.back"
           },
           {
             "type": "checkbox",
-            "title": "е°Џз‹ђз‹ёжёІжџ“ејЂе…і",
-            "description": "йљѕйЃ“дёЌеЏЇз€±е›",
+            "title": "小狐狸渲染开关",
+            "description": "难道不可爱嘛",
             "value": "v.roaming.smallfox_size"
           }
         ]
@@ -82,13 +82,13 @@
       {
         "id": "H_d_c",
         "extra_animation": {
-          "з‹ђз‹ђж‘‡пј€е®Њж•ґпј‰": "з‹ђз‹ђж‘‡",
+          "狐狐摇（完整）": "狐狐摇",
           "dooble": "dooble",
-          "еЌ–иђЊ": "еЌ–иђЊ",
-          "ж‘‡ж‘‡": "ж‘‡ж‘‡",
-          "дё‰д»Ѕйє¦йњё": "дё‰д»Ѕйє¦йњё~",
-          "extra:ciallo": "CialloпЅћ(в€ гѓ»П‰< )вЊ’в…",
-          "дјёж‡’и…°": "дјёж‡’и…°~"
+          "卖萌": "卖萌",
+          "摇摇": "摇摇",
+          "三份麦霸": "三份麦霸~",
+          "extra:ciallo": "Ciallo～(∠・ω< )⌒★",
+          "伸懒腰": "伸懒腰~"
         }
       }
     ],
