@@ -46,6 +46,11 @@ models:
   # If true, requires players to have the permission "bpm.model.<model_id>" to use a model.
   require-model-permission: false
 ```
+## Command
+
+```
+/bpm reload //reload all models
+```
 
 ## Compilation
 
