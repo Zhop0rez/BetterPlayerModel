@@ -114,8 +114,8 @@ public class YsmSessionManager {
     private final org.bukkit.NamespacedKey TEXTURE_KEY;
 
     private long globalTokens = 0;
-    private final long globalBytesPerTick;
-    private final long playerBytesPerTick;
+    private long globalBytesPerTick;
+    private long playerBytesPerTick;
     private final Semaphore modelProcessingPermits;
 
     public YsmSessionManager(BetterPlayerModelPlugin plugin) {
@@ -169,7 +169,19 @@ public class YsmSessionManager {
     }
 
     private void loadModelsFromDisk() {
-        if (!modelsDir.exists()) return;
+        serverModels.putAll(buildModelCatalog());
+    }
+
+    /**
+     * Scans the models folder and compiles every model into a fresh map.
+     * <p>
+     * This is the slow part of loading. It only reads disk and returns a new map,
+     * never touching shared state or Bukkit APIs, so it is safe to run off the main
+     * thread — which is exactly what {@link #reload} does to avoid the Paper watchdog.
+     */
+    private Map<String, ServerModel> buildModelCatalog() {
+        Map<String, ServerModel> result = new LinkedHashMap<>();
+        if (!modelsDir.exists()) return result;
         try {
             java.nio.file.Path modelsPath = modelsDir.toPath();
             // FIX: wrap Files.walk in try-with-resources to avoid file handle leak on Windows
@@ -211,13 +223,78 @@ public class YsmSessionManager {
                     }
 
                     ServerModel sm = createServerModel(modelId, data);
-                    serverModels.put(sm.modelId, sm);
+                    result.put(sm.modelId, sm);
                     plugin.getLogger().info("Loaded model from disk: " + sm.modelId);
                 }
             }
         } catch (Exception e) {
             plugin.getLogger().severe("Failed to load models: " + e.getMessage());
         }
+        return result;
+    }
+
+    /**
+     * Hot-reload: re-reads config.yml, re-scans the models folder and pushes the
+     * refreshed catalog to every online player that has finished the handshake.
+     * Triggered from the {@code /bpm reload} console command.
+     * <p>
+     * The model scan/compile is the slow part, so it runs on an async worker. Only
+     * the cheap map swap and the packet resync touch the server thread, which keeps
+     * the reload from tripping the Paper watchdog.
+     *
+     * @param onComplete called on the server thread with a short summary; the same
+     *                   summary is also printed to the console (STDOUT)
+     */
+    public void reload(java.util.function.Consumer<String> onComplete) {
+        // Re-read config.yml and recompute the throttling budgets (cheap, main thread).
+        try {
+            plugin.reloadConfig();
+        } catch (Throwable t) {
+            plugin.getLogger().warning("Failed to reload config.yml: " + t.getMessage());
+        }
+        long globalMbps = plugin.getConfig().getLong("network.global-bandwidth-limit", 100);
+        long playerMbps = plugin.getConfig().getLong("network.player-bandwidth-limit", 5);
+        this.globalBytesPerTick = (globalMbps * 1000000L) / 8L / 20L;
+        this.playerBytesPerTick = (playerMbps * 1000000L) / 8L / 20L;
+
+        // Heavy part off the main thread so the server keeps ticking.
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+            Map<String, ServerModel> fresh;
+            try {
+                fresh = buildModelCatalog();
+            } catch (Throwable t) {
+                plugin.getLogger().severe("Reload failed while scanning models: " + t.getMessage());
+                return;
+            }
+
+            // Cheap part back on the server thread: swap the catalog and resync players.
+            plugin.getServer().getScheduler().runTask(plugin, () -> {
+                int previous = serverModels.size();
+                serverModels.clear();
+                serverModels.putAll(fresh);
+                int loaded = serverModels.size();
+
+                int resynced = 0;
+                for (Player player : plugin.getServer().getOnlinePlayers()) {
+                    PlayerSyncState state = sessions.get(player.getUniqueId());
+                    if (state == null || state.step < 2) {
+                        continue;
+                    }
+                    try {
+                        sendPacket03(player, state);
+                        resynced++;
+                    } catch (Exception e) {
+                        plugin.getLogger().warning("Failed to resend catalog to " + player.getName() + ": " + e.getMessage());
+                    }
+                }
+
+                String summary = "Reloaded " + loaded + " model(s) (was " + previous + "), re-synced " + resynced + " player(s).";
+                plugin.getLogger().info(summary);
+                if (onComplete != null) {
+                    onComplete.accept(summary);
+                }
+            });
+        });
     }
 
     private byte[] compileModelToYsm(byte[] rawData, String modelId) throws Exception {

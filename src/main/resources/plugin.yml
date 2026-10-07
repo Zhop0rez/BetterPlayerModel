@@ -5,3 +5,16 @@ api-version: '1.20'
 authors: [Zhoporez]
 description: Server-side synchronization plugin for BetterPlayerModel.
 prefix: BPM
+
+commands:
+  bpm:
+    description: BetterPlayerModel plugin administration.
+    usage: |
+      /bpm reload - hot-reload config.yml and the models folder
+    aliases: [paperbpm, betterplayermodel]
+    permission: bpm.command
+
+permissions:
+  bpm.command:
+    description: Allows using /bpm reload to hot-reload models and config.
+    default: op
