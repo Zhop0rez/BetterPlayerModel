@@ -151,7 +151,11 @@ public class ModelButton extends Button {
         LocalPlayer localPlayer;
         if (!this.isStarred && (localPlayer = Minecraft.getInstance().player) != null) {
             PlayerCapability.get(localPlayer).ifPresent(cap -> {
-                String selectedModelId = this.modelIdHolder.getModelId();
+                String localModelId = this.modelIdHolder.getModelId();
+                String selectedModelId = ClientModelManager.resolveKnownServerModelId(localModelId);
+                if (!Objects.equals(localModelId, selectedModelId)) {
+                    ClientModelManager.markLocalModelUploaded(localModelId, selectedModelId);
+                }
                 String selectedTextureName = resolveSelectionTextureName();
                 cap.initModelWithTexture(selectedModelId, selectedTextureName);
                 if (!NetworkHandler.isClientConnected()) {
@@ -237,8 +241,9 @@ public class ModelButton extends Button {
                 if (session.getState() == ModelUploadSession.State.FAILED) {
                     ModelUploadSession.removeListener(this);
                     if (session.getLastStatus() == 1 && session.getUploadId() == 0L) {
-                        ClientModelManager.markLocalModelUploaded(modelId);
-                        sendSwitchModel(modelId, textureName);
+                        String serverModelId = ClientModelManager.resolveKnownServerModelId(modelId);
+                        ClientModelManager.markLocalModelUploaded(modelId, serverModelId);
+                        sendSwitchModel(serverModelId, textureName);
                     } else if (player != null) {
                         player.displayClientMessage(session.getMessage(), false);
                     }
