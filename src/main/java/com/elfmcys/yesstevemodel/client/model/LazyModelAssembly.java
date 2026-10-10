@@ -89,16 +89,7 @@ public class LazyModelAssembly extends ModelAssembly {
                     try (com.elfmcys.yesstevemodel.resource.YSMBinaryDeserializer deserializer = new com.elfmcys.yesstevemodel.resource.YSMBinaryDeserializer(decompressed, 32)) {
                         rawModel = deserializer.deserializeKeepOpen();
                         
-                        rawModel.footer.version = deserializer.getReader().readVarInt();
-                        rawModel.footer.unkInt1 = deserializer.getReader().readVarInt();
-                        if (rawModel.footer.unkInt1 != 0) {
-                            rawModel.footer.rand = deserializer.getReader().readString();
-                        }
-                        rawModel.footer.time = deserializer.getReader().readVarLong();
-                        if (rawModel.footer.unkInt1 != 0) {
-                            rawModel.footer.extra = deserializer.getReader().readString();
-                            rawModel.footer.unkInt2 = deserializer.getReader().readVarInt();
-                        }
+                        deserializer.parseYSMFooter(rawModel);
                     }
                 }
                 
