@@ -23,7 +23,7 @@ public class CacheCommand {
             return 0;
         }
 
-        player.displayClientMessage(YSMMessageFormatter.withPrefix(Component.literal("开始解析并导出客户端缓存模型...")), false);
+        player.displayClientMessage(YSMMessageFormatter.withPrefix(Component.translatable("message.better_player_model.export.cache.start")), false);
 
         ClientModelManager.exportAllCachedModels(null, exportResult -> {
             if (exportResult.getMessage() != null) {
