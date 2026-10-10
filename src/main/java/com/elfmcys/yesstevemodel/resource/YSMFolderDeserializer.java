@@ -54,7 +54,19 @@ public class YSMFolderDeserializer implements AutoCloseable {
             this.zipFileSystem = null;
         } else if (sourcePath.toString().endsWith(".zip") || sourcePath.toString().endsWith(".ysm")) {
             URI uri = URI.create("jar:" + sourcePath.toUri());
-            this.zipFileSystem = FileSystems.newFileSystem(uri, Collections.emptyMap());
+            FileSystem openedZip;
+            try {
+                openedZip = FileSystems.newFileSystem(uri, Collections.emptyMap());
+            } catch (java.util.zip.ZipException utf8Error) {
+                // Some older Chinese model archives store entry names as GBK instead of UTF-8.
+                try {
+                    openedZip = FileSystems.newFileSystem(uri, Map.of("encoding", "GBK"));
+                } catch (IOException gbkError) {
+                    gbkError.addSuppressed(utf8Error);
+                    throw gbkError;
+                }
+            }
+            this.zipFileSystem = openedZip;
             this.rootPath = this.zipFileSystem.getPath("/");
         } else {
             throw new IllegalArgumentException("Unsupported file type. Expected directory or .zip");
