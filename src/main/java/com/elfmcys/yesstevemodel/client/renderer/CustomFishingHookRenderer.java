@@ -26,14 +26,14 @@ public class CustomFishingHookRenderer {
                 SubmitRenderContext.set(collector);
                 try {
                     RendererManager.getProjectileRenderer().render(cap, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+                    Player playerOwner = fishingHook.getPlayerOwner();
+                    if (playerOwner != null) {
+                        poseStack.pushPose();
+                        renderFishingLine(fishingHook, partialTick, poseStack, bufferSource, packedLight, playerOwner);
+                        poseStack.popPose();
+                    }
                 } finally {
                     SubmitRenderContext.set(null);
-                }
-                Player playerOwner = fishingHook.getPlayerOwner();
-                if (playerOwner != null) {
-                    poseStack.pushPose();
-                    renderFishingLine(fishingHook, partialTick, poseStack, bufferSource, packedLight, playerOwner);
-                    poseStack.popPose();
                 }
                 return false;
             }
