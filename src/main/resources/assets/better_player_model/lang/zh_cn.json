@@ -443,6 +443,7 @@
   "error.better_player_model.read_cache": "无法读取客户端缓存 %s",
   "error.better_player_model.export.cache_unavailable": "尚未生成任何缓存或缓存文件夹不存在: %s",
   "error.better_player_model.export.batch_failed": "批量导出过程发生严重错误: %s",
+  "message.better_player_model.export.cache.start": "开始解析并导出客户端缓存模型...",
   "error.better_player_model.unsupported_platform": "§6§l[§aYSM§6§l] §r不支持当前平台：%s",
   "error.better_player_model.unsupported_platform_ext": "§6§l[§aYSM§6§l] §r不支持当前平台：{2}",
   "error.better_player_model.unsatisfied_runtime_env": "§6§l[§aYSM§6§l] §r当前运行环境不满足: %s",
