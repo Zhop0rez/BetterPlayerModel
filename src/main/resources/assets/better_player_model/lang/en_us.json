@@ -452,6 +452,7 @@
   "error.better_player_model.read_cache": "Failed to read model cache %s",
   "error.better_player_model.export.cache_unavailable": "No cache has been generated, or the cache folder does not exist: %s",
   "error.better_player_model.export.batch_failed": "A serious error occurred while exporting models: %s",
+  "message.better_player_model.export.cache.start": "Starting to parse and export cached client models...",
   "error.better_player_model.unsupported_platform": "§6§l[§aYSM§6§l] §rCurrent platform is unsupported: %s",
   "error.better_player_model.unsupported_platform_ext": "§6§l[§aYSM§6§l] §rCurrent platform is unsupported: {2}",
   "error.better_player_model.unsatisfied_runtime_env": "§6§l[§aYSM§6§l] §rUnsatisfied runtime environment: %s",
