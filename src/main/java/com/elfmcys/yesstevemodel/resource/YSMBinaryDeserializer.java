@@ -62,31 +62,24 @@ public class YSMBinaryDeserializer implements AutoCloseable{
     }
 
     public void parseYSMFooter(RawYsmModel footer) {
-        try {
-            if (format < 9) { // гЂЉ9жІЎжњ‰
-                return;
-            }
-            if (format > 26) { // >26 иї™й‡Њжњ‰дёЄз‰€жњ¬еЏ·
-                model.footer.version = reader.readVarInt();
-            } else {
-                model.footer.version = format;
-            }
-
-            model.footer.unkInt1 = reader.readVarInt(); // always 1
-
-            model.footer.rand = reader.readString(); // йљЏжњєе­—з¬¦дёІ
-
-            model.footer.time = reader.readVarLong(); // Unix ж—¶й—ґж€і е¦‚ 1775738769
-
-            model.footer.extra = reader.readString(); // еЇје‡єж—¶зљ„йўќе¤–е­—з¬¦дёІ
-
-            if (format >= 24) { // TODO: иї™дёЄжЇд»Ђд№€ж•°жЌ®пјџ
-                model.footer.unkInt2 = reader.readVarInt(); // always 0пјЊжљ‚ж—¶жІЎзњ‹е€°иї‡е…¶д»–зљ„жѓ…е†µпјЊдјјд№ЋжЇе­—з¬¦дёІ
-            }
-
-        } catch (Throwable t) {
-            System.out.println("ERROR");
-            t.printStackTrace(System.out);
+        if (format < 9 || !reader.getRawBuf().isReadable()) {
+            return;
+        }
+        if (format > 26) {
+            model.footer.version = reader.readVarInt();
+        } else {
+            model.footer.version = format;
+        }
+        if (!reader.getRawBuf().isReadable()) return;
+        model.footer.unkInt1 = reader.readVarInt();
+        if (!reader.getRawBuf().isReadable()) return;
+        model.footer.rand = reader.readString();
+        if (!reader.getRawBuf().isReadable()) return;
+        model.footer.time = reader.readVarLong();
+        if (!reader.getRawBuf().isReadable()) return;
+        model.footer.extra = reader.readString();
+        if (format >= 24 && reader.getRawBuf().isReadable()) {
+            model.footer.unkInt2 = reader.readVarInt();
         }
     }
 
@@ -693,16 +686,31 @@ public class YSMBinaryDeserializer implements AutoCloseable{
 
         if (format <= 15) return;
 
-        int backgroundImagesCount = reader.readVarInt();
-        for (int i = 0; i < backgroundImagesCount; i++) {
-            RawYsmModel.RawImage bg = new RawYsmModel.RawImage();
-            bg.name = reader.readString();
-            bg.data = reader.readByteArray();
-            bg.width = reader.readVarInt();
-            bg.height = reader.readVarInt();
-            bg.format = reader.readVarInt();
-            bg.unknownFlag = reader.readVarInt();
-            model.properties.backgroundImages.add(bg);
+        // Format-32 caches produced by older BPM builds end directly with the
+        // footer and do not contain this optional image table.  Leave the
+        // reader at the footer in that case so old server caches stay usable.
+        int backgroundImagesOffset = reader.getOffset();
+        try {
+            int backgroundImagesCount = reader.readVarInt();
+            if (backgroundImagesCount < 0 || backgroundImagesCount > reader.getRawBuf().readableBytes() / 6) {
+                reader.setOffset(backgroundImagesOffset);
+                return;
+            }
+
+            List<RawYsmModel.RawImage> backgroundImages = new ArrayList<>(backgroundImagesCount);
+            for (int i = 0; i < backgroundImagesCount; i++) {
+                RawYsmModel.RawImage bg = new RawYsmModel.RawImage();
+                bg.name = reader.readString();
+                bg.data = reader.readByteArray();
+                bg.width = reader.readVarInt();
+                bg.height = reader.readVarInt();
+                bg.format = reader.readVarInt();
+                bg.unknownFlag = reader.readVarInt();
+                backgroundImages.add(bg);
+            }
+            model.properties.backgroundImages.addAll(backgroundImages);
+        } catch (IndexOutOfBoundsException | IllegalArgumentException ignored) {
+            reader.setOffset(backgroundImagesOffset);
         }
     }
 

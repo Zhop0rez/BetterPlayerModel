@@ -337,6 +337,7 @@ public class YsmSessionManager {
             // before parsing the body (the explicit-format constructor does NOT skip them)
             try (com.elfmcys.yesstevemodel.resource.YSMBinaryDeserializer deserializer = new com.elfmcys.yesstevemodel.resource.YSMBinaryDeserializer(decrypted)) {
                 com.elfmcys.yesstevemodel.resource.pojo.RawYsmModel rawModel = deserializer.deserializeKeepOpen();
+                deserializer.parseYSMFooter(rawModel);
                 return compileRawModel(rawModel);
             }
         } catch (Exception e) {
@@ -1383,6 +1384,7 @@ public class YsmSessionManager {
                     byte[] decompressed = rip.ysm.security.YsmCrypt.decryptYsmFile(sm.data);
                     try (com.elfmcys.yesstevemodel.resource.YSMBinaryDeserializer deserializer = new com.elfmcys.yesstevemodel.resource.YSMBinaryDeserializer(decompressed, 32)) {
                         com.elfmcys.yesstevemodel.resource.pojo.RawYsmModel rawModel = deserializer.deserializeKeepOpen();
+                        deserializer.parseYSMFooter(rawModel);
                         try (rip.ysm.security.YSMByteBuf serialized = com.elfmcys.yesstevemodel.resource.YSMBinarySerializer.serialize(rawModel, 32, true)) {
                             io.netty.buffer.ByteBuf raw = serialized.getRawBuf();
                             if (raw.hasArray()) {
