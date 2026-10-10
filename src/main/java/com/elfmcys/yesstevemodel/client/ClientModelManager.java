@@ -1552,7 +1552,7 @@ public class ClientModelManager {
 
                 if (!cacheDir.exists() || !cacheDir.isDirectory()) {
                     if (callback != null) {
-                        callback.accept(new ExportResult(false, Component.literal("尚未生成任何缓存或缓存文件夹不存在 " + folder), "", "", 0));
+                        callback.accept(new ExportResult(false, Component.translatable("error.better_player_model.export.cache_unavailable", folder), "", "", 0));
                     }
                     return;
                 }
@@ -1637,7 +1637,7 @@ public class ClientModelManager {
             } catch (Exception e) {
                 YesSteveModel.LOGGER.error("[BPM] Error during batch export", e);
                 if (callback != null) {
-                    callback.accept(new ExportResult(false, Component.literal("批量导出过程发生严重错误: " + e.getMessage()), "", "", 0));
+                    callback.accept(new ExportResult(false, Component.translatable("error.better_player_model.export.batch_failed", e.getMessage()), "", "", 0));
                 }
             }
         });
