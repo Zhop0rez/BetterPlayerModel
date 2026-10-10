@@ -508,6 +508,7 @@
   "error.better_player_model.read_cache": "Failed to read model cache %s",
   "error.better_player_model.export.cache_unavailable": "Кэш ещё не создан или папка кэша не существует: %s",
   "error.better_player_model.export.batch_failed": "При пакетном экспорте моделей произошла серьёзная ошибка: %s",
+  "message.better_player_model.export.cache.start": "Начинается обработка и экспорт кэшированных моделей клиента...",
   "error.better_player_model.unsupported_platform": "\u00a76\u00a7l[\u00a7aYSM\u00a76\u00a7l] \u00a7rCurrent platform is unsupported: %s",
   "error.better_player_model.unsupported_platform_ext": "\u00a76\u00a7l[\u00a7aYSM\u00a76\u00a7l] \u00a7rCurrent platform is unsupported: {2}",
   "error.better_player_model.unsatisfied_runtime_env": "\u00a76\u00a7l[\u00a7aYSM\u00a76\u00a7l] \u00a7rUnsatisfied runtime environment: %s",
