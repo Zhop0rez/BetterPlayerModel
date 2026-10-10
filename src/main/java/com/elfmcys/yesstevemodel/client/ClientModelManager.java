@@ -692,15 +692,26 @@ public class ClientModelManager {
         return modelId != null && localOnlyModelIds.contains(modelId);
     }
 
+    public static String resolveKnownServerModelId(String modelId) {
+        if (modelId == null || knownServerModelIds.contains(modelId)) {
+            return modelId;
+        }
+        String normalized = normalizeUploadedModelId(modelId);
+        return normalized != null && knownServerModelIds.contains(normalized) ? normalized : modelId;
+    }
+
     public static void removeLocalModels(Collection<String> modelIds) {
         if (modelIds == null || modelIds.isEmpty()) {
             return;
         }
+        Set<String> idsToRemove = new HashSet<>(modelIds);
+        pendingModelQueue.removeIf(entry -> idsToRemove.contains(entry.getRight()));
         ((Executor) Minecraft.getInstance()).execute(() -> {
             Object2ReferenceOpenHashMap<String, ModelAssembly> map = new Object2ReferenceOpenHashMap<>(modelAssemblyMap);
             ArrayList<ModelAssembly> removed = new ArrayList<>();
-            for (String modelId : modelIds) {
+            for (String modelId : idsToRemove) {
                 localOnlyModelIds.remove(modelId);
+                localModelSources.remove(modelId);
                 modelLastUsedAt.remove(modelId);
                 gpuCacheTrimmedModels.remove(modelId);
                 ModelAssembly assembly = map.remove(modelId);
@@ -712,9 +723,7 @@ public class ClientModelManager {
             for (ModelAssembly assembly : removed) {
                 releaseModelAssembly(assembly);
             }
-            if (!removed.isEmpty()) {
-                forEachGuiWidget(guiWidget -> guiWidget.onModelsLoaded(map));
-            }
+            forEachGuiWidget(guiWidget -> guiWidget.onModelsLoaded(map));
         });
     }
 
@@ -1192,6 +1201,19 @@ public class ClientModelManager {
 
     private static String normalizeLocalModelId(String modelId) {
         return stripImportExtension(modelId.replace('\\', '/').toLowerCase(Locale.ROOT).replaceAll("/+", "/"));
+    }
+
+    @Nullable
+    private static String normalizeUploadedModelId(String modelId) {
+        if (modelId == null) {
+            return null;
+        }
+        String normalized = stripImportExtension(modelId.trim().replace('\\', '/').toLowerCase(Locale.ROOT));
+        while (normalized.startsWith("/")) {
+            normalized = normalized.substring(1);
+        }
+        normalized = normalized.replaceAll("[^a-z0-9_./-]+", "_").replaceAll("/+", "/");
+        return normalized.isBlank() || normalized.contains("..") ? null : normalized;
     }
 
     private static byte[] readLimitedFileBytes(Path file, long maxBytes) throws IOException {
