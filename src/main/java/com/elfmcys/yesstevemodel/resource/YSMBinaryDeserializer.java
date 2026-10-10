@@ -62,31 +62,24 @@ public class YSMBinaryDeserializer implements AutoCloseable{
     }
 
     public void parseYSMFooter(RawYsmModel footer) {
-        try {
-            if (format < 9) { // <9 has none
-                return;
-            }
-            if (format > 26) { // >26 there is a version number here
-                model.footer.version = reader.readVarInt();
-            } else {
-                model.footer.version = format;
-            }
-
-            model.footer.unkInt1 = reader.readVarInt(); // always 1
-
-            model.footer.rand = reader.readString(); // Random string
-
-            model.footer.time = reader.readVarLong(); // Unix timestamp, e.g. 1775738769
-
-            model.footer.extra = reader.readString(); // Extra string at export time
-
-            if (format >= 24) { // TODO: what is this data?
-                model.footer.unkInt2 = reader.readVarInt(); // always 0; no other cases seen so far; appears to be a string
-            }
-
-        } catch (Throwable t) {
-            System.out.println("ERROR");
-            t.printStackTrace(System.out);
+        if (format < 9 || !reader.getRawBuf().isReadable()) {
+            return;
+        }
+        if (format > 26) { // >26 stores a footer version number
+            model.footer.version = reader.readVarInt();
+        } else {
+            model.footer.version = format;
+        }
+        if (!reader.getRawBuf().isReadable()) return;
+        model.footer.unkInt1 = reader.readVarInt();
+        if (!reader.getRawBuf().isReadable()) return;
+        model.footer.rand = reader.readString();
+        if (!reader.getRawBuf().isReadable()) return;
+        model.footer.time = reader.readVarLong();
+        if (!reader.getRawBuf().isReadable()) return;
+        model.footer.extra = reader.readString();
+        if (format >= 24 && reader.getRawBuf().isReadable()) {
+            model.footer.unkInt2 = reader.readVarInt();
         }
     }
 
