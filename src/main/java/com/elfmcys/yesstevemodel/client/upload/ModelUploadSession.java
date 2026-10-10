@@ -30,6 +30,7 @@ public final class ModelUploadSession {
     private volatile int nextOffset = 0;
     private volatile Component message = Component.empty();
     private volatile byte lastStatus = 0;
+    private volatile String serverModelId;
 
     private ModelUploadSession(String modelId, String fileName, byte[] data) {
         this.modelId = modelId;
@@ -147,6 +148,7 @@ public final class ModelUploadSession {
         }
         s.lastStatus = status;
         if (status == 0) {
+            s.serverModelId = modelId;
             s.state = State.COMPLETED;
             s.message = Component.translatable("gui.better_player_model.import.state.imported_as", modelId);
             com.elfmcys.yesstevemodel.YesSteveModel.LOGGER.info("[BPM-NET] CLIENT: Model upload completed successfully! Model ID on server: '{}'", modelId);
@@ -293,6 +295,10 @@ public final class ModelUploadSession {
 
     public String getModelId() {
         return modelId;
+    }
+
+    public String getServerModelId() {
+        return serverModelId == null || serverModelId.isBlank() ? modelId : serverModelId;
     }
 
     public String getFileName() {
