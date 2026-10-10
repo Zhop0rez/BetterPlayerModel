@@ -229,8 +229,9 @@ public class ModelButton extends Button {
                 }
                 if (session.getState() == ModelUploadSession.State.COMPLETED) {
                     ModelUploadSession.removeListener(this);
-                    ClientModelManager.markLocalModelUploaded(modelId);
-                    sendSwitchModel(modelId, textureName);
+                    String serverModelId = session.getServerModelId();
+                    ClientModelManager.markLocalModelUploaded(modelId, serverModelId);
+                    sendSwitchModel(serverModelId, textureName);
                     return;
                 }
                 if (session.getState() == ModelUploadSession.State.FAILED) {

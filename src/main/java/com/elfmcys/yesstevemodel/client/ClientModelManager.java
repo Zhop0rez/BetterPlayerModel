@@ -790,13 +790,21 @@ public class ClientModelManager {
         }
     }
 
-    public static void markLocalModelUploaded(String modelId) {
-        if (modelId == null) {
+    public static void markLocalModelUploaded(String localModelId) {
+        markLocalModelUploaded(localModelId, localModelId);
+    }
+
+    public static void markLocalModelUploaded(String localModelId, String serverModelId) {
+        if (localModelId == null) {
             return;
         }
-        knownServerModelIds.add(modelId);
-        localOnlyModelIds.remove(modelId);
-        localModelSources.remove(modelId);
+        String resolvedModelId = serverModelId == null || serverModelId.isBlank() ? localModelId : serverModelId;
+        knownServerModelIds.add(resolvedModelId);
+        localOnlyModelIds.remove(localModelId);
+        localModelSources.remove(localModelId);
+        if (!localModelId.equals(resolvedModelId)) {
+            removeLocalModels(Collections.singleton(localModelId));
+        }
     }
 
     public static void reloadLocalModels(@Nullable Consumer<Component> callback) {
