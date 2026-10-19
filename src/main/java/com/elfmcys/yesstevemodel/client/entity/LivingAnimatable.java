@@ -185,9 +185,17 @@ public abstract class LivingAnimatable<T extends LivingEntity> extends GeoEntity
                 ((TexturedModelWrapper) getRenderShape()).setTexture(abstractTexture);
                 this.textureIndex = map.getValuesList().indexOf(abstractTexture);
             } else {
-                this.currentTextureName = map.getKeyAt(0);
-                ((TexturedModelWrapper) getRenderShape()).setTexture(map.getValueAt(0));
-                this.textureIndex = 0;
+                String defaultTextureName = getModelAssembly().getAnimationBundle().getDefaultTextureName();
+                AbstractTexture defaultTexture = map.get(defaultTextureName);
+                if (defaultTexture != null) {
+                    this.currentTextureName = defaultTextureName;
+                    ((TexturedModelWrapper) getRenderShape()).setTexture(defaultTexture);
+                    this.textureIndex = map.getValuesList().indexOf(defaultTexture);
+                } else {
+                    this.currentTextureName = map.getKeyAt(0);
+                    ((TexturedModelWrapper) getRenderShape()).setTexture(map.getValueAt(0));
+                    this.textureIndex = 0;
+                }
             }
         }
     }
@@ -215,7 +223,7 @@ public abstract class LivingAnimatable<T extends LivingEntity> extends GeoEntity
         }
         ModelAssembly modelAssembly = getModelAssembly();
         if (modelAssembly != null && !modelAssembly.getAnimationBundle().getTextures().isEmpty()) {
-            return modelAssembly.getAnimationBundle().getTextures().getKeyAt(0);
+            return modelAssembly.getAnimationBundle().getDefaultTextureName();
         }
         return "";
     }

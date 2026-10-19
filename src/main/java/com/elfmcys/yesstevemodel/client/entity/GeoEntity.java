@@ -134,6 +134,11 @@ public abstract class GeoEntity<T extends Entity> extends AnimatableEntity<T> {
                 }
             }
             if (shouldRebuild) {
+                // A lazy fallback may temporarily have no animation bundle
+                // during disconnect/reconnect; do not build a wrapper for it.
+                if (assembly.getAnimationBundle() == null) {
+                    return;
+                }
                 this.renderShape = buildRenderShape(assembly, false);
             }
         }, () -> {
@@ -156,6 +161,9 @@ public abstract class GeoEntity<T extends Entity> extends AnimatableEntity<T> {
                 }
             }
             if (shouldRebuild) {
+                if (modelAssembly.getAnimationBundle() == null) {
+                    return;
+                }
                 this.renderShape = buildRenderShape(modelAssembly, true);
             }
         });

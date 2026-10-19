@@ -18,6 +18,7 @@ import com.elfmcys.yesstevemodel.geckolib3.core.builder.AnimationController;
 import com.elfmcys.yesstevemodel.geckolib3.file.AnimationControllerFile;
 import com.elfmcys.yesstevemodel.geckolib3.file.AnimationFile;
 import com.elfmcys.yesstevemodel.util.FileTypeUtil;
+import com.elfmcys.yesstevemodel.util.data.OrderedStringMap;
 import com.elfmcys.yesstevemodel.geckolib3.file.ProjectileModelFiles;
 import it.unimi.dsi.fastutil.objects.*;
 import net.minecraft.client.renderer.texture.AbstractTexture;
@@ -198,7 +199,9 @@ public class ModelAssemblyFactory {
             org.apache.logging.log4j.LogManager.getLogger("better_player_model").warn("[BPM] Model has no textures: {}", clientModelInfo.getInfo().getModelProperties().getDefaultTexture());
             return null;
         }
-        defaultTextureName = (StringUtils.isEmpty(clientModelInfo.getInfo().getModelProperties().getDefaultTexture()) || !hierarchyData.getTextureMap().containsKey(clientModelInfo.getInfo().getModelProperties().getDefaultTexture())) ? hierarchyData.getTextureMap().getKeyAt(0) : clientModelInfo.getInfo().getModelProperties().getDefaultTexture();
+        defaultTextureName = resolveDefaultTextureName(
+                hierarchyData.getTextureMap(),
+                clientModelInfo.getInfo().getModelProperties().getDefaultTexture());
         return new PlayerModelBundle(
                 mainModel,
                 armModel,
@@ -211,6 +214,20 @@ public class ModelAssemblyFactory {
                 defaultTextureName,
                 hierarchyData.getTextureMap().get(defaultTextureName),
                 resourceBundle);
+    }
+
+    private static String resolveDefaultTextureName(OrderedStringMap<String, ? extends AbstractTexture> textures, String configuredName) {
+        if (StringUtils.isNotEmpty(configuredName)) {
+            if (textures.containsKey(configuredName)) return configuredName;
+            String alternate = configuredName.endsWith(".png")
+                    ? configuredName.substring(0, configuredName.length() - 4)
+                    : configuredName + ".png";
+            if (textures.containsKey(alternate)) return alternate;
+        }
+        for (String key : textures.getKeys()) {
+            if ("texture".equalsIgnoreCase(key) || "texture.png".equalsIgnoreCase(key)) return key;
+        }
+        return textures.getKeyAt(0);
     }
 
     private static Animation mergeBoatPaddleAnimation(Animation importedBoat, Animation primaryBoat) {

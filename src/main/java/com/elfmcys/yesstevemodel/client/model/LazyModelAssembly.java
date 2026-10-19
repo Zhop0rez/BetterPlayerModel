@@ -114,6 +114,11 @@ public class LazyModelAssembly extends ModelAssembly {
         return fallback;
     }
 
+    /** Returns the finished assembly without triggering parsing or a fallback. */
+    public synchronized ModelAssembly getResolvedAssembly() {
+        return resolved;
+    }
+
     private ModelAssembly getFallback() {
         ModelAssembly defaultModel = ClientModelManager.getLocalModelContext();
         if (defaultModel != null && defaultModel != this && !(defaultModel instanceof LazyModelAssembly)) {
@@ -129,7 +134,7 @@ public class LazyModelAssembly extends ModelAssembly {
                     new com.elfmcys.yesstevemodel.resource.models.ModelProperties(1.0f, 1.0f, "", "idle", new com.elfmcys.yesstevemodel.util.data.OrderedStringMap<>(new String[0], new String[0]), new com.elfmcys.yesstevemodel.client.gui.custom.ExtraAnimationButtons[0], new com.elfmcys.yesstevemodel.util.data.StringMapPair[0], true, false, false),
                     new com.elfmcys.yesstevemodel.resource.models.MainModelInfo(0, 0, 0),
                     65535,
-                    "",
+                    "00000000000000000000000000000000",
                     "",
                     0L,
                     ""

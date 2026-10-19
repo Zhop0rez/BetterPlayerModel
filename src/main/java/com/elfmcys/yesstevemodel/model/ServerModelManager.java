@@ -77,7 +77,6 @@ public final class ServerModelManager {
     private static final long MAX_ACTIVE_UPLOAD_BYTES_HARD_CAP = 512L * 1024L * 1024L;
     private static final long MAX_MODEL_FILE_BYTES = 512L * 1024L * 1024L;
     private static final long MAX_PACK_ICON_BYTES = 4L * 1024L * 1024L;
-    private static final Pattern MODEL_ID_PATTERN = Pattern.compile("[a-z0-9_./-]+");
     private static final String EXT_YSM = ".ysm";
     private static final String EXT_ZIP = ".zip";
     private static final String EXT_7Z = ".7z";
@@ -1546,10 +1545,18 @@ public final class ServerModelManager {
                 }
             }
         } while (stripped);
-        normalized = normalized.replaceAll("[^a-z0-9_./-]+", "_");
         normalized = normalized.replaceAll("/+", "/");
-        if (normalized.isBlank() || normalized.contains("..") ) {
+        // Preserve Unicode names: ASCII-only normalization collapsed different
+        // catalog entries onto the same model id.
+        if (normalized.isBlank() || normalized.contains("..") || normalized.indexOf('\0') >= 0) {
             return null;
+        }
+        for (int i = 0; i < normalized.length(); i++) {
+            char c = normalized.charAt(i);
+            if (Character.isISOControl(c) || c == ':' || c == '*' || c == '?' || c == '"'
+                    || c == '<' || c == '>' || c == '|') {
+                return null;
+            }
         }
         return normalized;
     }
@@ -1763,15 +1770,23 @@ public final class ServerModelManager {
         if (textures.isEmpty()) {
             return null;
         }
-        String normalizedRequested = normalizeTextureId(requestedTexture);
-        if (normalizedRequested != null && textures.contains(normalizedRequested)) {
-            return normalizedRequested;
-        }
-        String modelDefault = normalizeTextureId(modelData.getLoadedModelData().getModelProperties().getDefaultTexture());
-        if (modelDefault != null && textures.contains(modelDefault)) {
-            return modelDefault;
-        }
+        String requested = findTextureId(textures, requestedTexture);
+        if (requested != null) return requested;
+        String modelDefault = findTextureId(textures, modelData.getLoadedModelData().getModelProperties().getDefaultTexture());
+        if (modelDefault != null) return modelDefault;
+        String conventionalTexture = findTextureId(textures, "texture");
+        if (conventionalTexture != null) return conventionalTexture;
         return textures.get(0);
+    }
+
+    @Nullable
+    private static String findTextureId(List<String> textures, @Nullable String requestedTexture) {
+        if (requestedTexture == null) return null;
+        if (textures.contains(requestedTexture)) return requestedTexture;
+        String normalized = normalizeTextureId(requestedTexture);
+        if (normalized != null && textures.contains(normalized)) return normalized;
+        if (normalized != null && textures.contains(normalized + ".png")) return normalized + ".png";
+        return null;
     }
 
     @Nullable
