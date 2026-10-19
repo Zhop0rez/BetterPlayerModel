@@ -17,6 +17,7 @@ public final class Pie {
     }
 
     public static void draw(GuiGraphicsExtractor graphics, float centerX, float centerY, float innerRadius, float outerRadius, float startAngle, float endAngle, int rgba, float feather) {
+        if (!GpuCompat.isGl()) return; // Vulkan backend: no GL context, GL calls would abort the JVM
         if (!PieShader.ensureCompiled()) return;
 
         float pad = feather + 1.0f;

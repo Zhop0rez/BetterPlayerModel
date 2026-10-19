@@ -111,6 +111,17 @@ public class YSMFolderDeserializer implements AutoCloseable {
                 }
             }
 
+            // Older model ZIPs often contain one wrapper directory (for
+            // example bee/main.json) instead of placing legacy files in the
+            // archive root.  Use it only when the requested file has one
+            // unambiguous match; never guess between duplicate entries.
+            if (data == null) {
+                data = findUniqueNestedResource(normalizedPath);
+                if (data != null) {
+                    validateResourceSize(data.length, normalizedPath);
+                }
+            }
+
             if (data != null && !readFilesMd5Map.containsKey(normalizedPath)) {
                 reserveResourceBytes(data.length, normalizedPath);
                 readFilesMd5Map.put(normalizedPath, md5Hex(data));
@@ -121,6 +132,31 @@ public class YSMFolderDeserializer implements AutoCloseable {
             System.err.println("[BPM] Warning: Failed to read resource: " + relativePath);
         }
         return null;
+    }
+
+    private byte[] findUniqueNestedResource(String normalizedPath) throws IOException {
+        String suffix = "/" + normalizedPath;
+        if (inMemoryFiles != null) {
+            byte[] match = null;
+            for (Map.Entry<String, byte[]> entry : inMemoryFiles.entrySet()) {
+                String key = entry.getKey().replace('\\', '/');
+                if (!key.endsWith(suffix)) continue;
+                if (match != null) return null;
+                match = entry.getValue();
+            }
+            return match;
+        }
+
+        Path match = null;
+        try (Stream<Path> stream = Files.walk(rootPath)) {
+            for (Path path : (Iterable<Path>) stream.filter(Files::isRegularFile)::iterator) {
+                String relative = rootPath.relativize(path).toString().replace('\\', '/');
+                if (!relative.endsWith(suffix)) continue;
+                if (match != null) return null;
+                match = path;
+            }
+        }
+        return match == null ? null : Files.readAllBytes(match);
     }
 
     public RawYsmModel deserialize() {
@@ -1157,16 +1193,16 @@ public class YSMFolderDeserializer implements AutoCloseable {
         List<String> pngFiles = new ArrayList<>();
         if (inMemoryFiles != null) {
             for (String pathKey : inMemoryFiles.keySet()) {
-                if (pathKey.endsWith(".png") && !pathKey.contains("/")) {
+                if (pathKey.endsWith(".png")) {
                     pngFiles.add(pathKey);
                 }
             }
         } else {
-            try (Stream<Path> stream = Files.list(rootPath)) {
+            try (Stream<Path> stream = Files.walk(rootPath)) {
                 stream.filter(Files::isRegularFile).forEach(path -> {
-                    String fileName = path.getFileName().toString();
-                    if (fileName.endsWith(".png")) {
-                        pngFiles.add(fileName);
+                    String relativePath = rootPath.relativize(path).toString().replace('\\', '/');
+                    if (relativePath.endsWith(".png")) {
+                        pngFiles.add(relativePath);
                     }
                 });
             } catch (IOException e) { e.printStackTrace(); }
@@ -1174,7 +1210,7 @@ public class YSMFolderDeserializer implements AutoCloseable {
 
         boolean hasMainTexture = false;
         for (String texName : pngFiles) {
-            if (!texName.equals("arrow.png")) {
+            if (!extractFileName(texName).equals("arrow")) {
                 hasMainTexture = true;
                 break;
             }
@@ -1185,7 +1221,7 @@ public class YSMFolderDeserializer implements AutoCloseable {
         }
 
         byte[] arrowData = readResource("arrow.json");
-        if (arrowData != null && !pngFiles.contains("arrow.png")) {
+        if (arrowData != null && pngFiles.stream().noneMatch(texName -> extractFileName(texName).equals("arrow"))) {
             throw new RuntimeException("arrow.json is present but arrow.png is missing.");
         }
 
@@ -1205,7 +1241,7 @@ public class YSMFolderDeserializer implements AutoCloseable {
         model.mainEntity.armModel = parseGeometry(armData, 2);
 
         for (String texName : pngFiles) {
-            if (texName.equals("arrow.png")) continue;
+            if (extractFileName(texName).equals("arrow")) continue;
             byte[] texData = readResource(texName);
             if (texData != null) {
                 ImageMeta meta = parseImageMeta(texData, texName);

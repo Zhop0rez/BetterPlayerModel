@@ -1,6 +1,7 @@
 package com.elfmcys.yesstevemodel.client.texture;
 
 import com.elfmcys.yesstevemodel.YesSteveModel;
+import com.elfmcys.yesstevemodel.resource.YSMFolderDeserializer;
 import com.elfmcys.yesstevemodel.util.ModelMemoryProfiler;
 import rip.ysm.compat.oculus.ShadersTextureType;
 import com.mojang.blaze3d.platform.NativeImage;
@@ -14,8 +15,13 @@ import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.jetbrains.annotations.NotNull;
+import rip.ysm.imagestream.avif.AvifDecoder;
+import rip.ysm.imagestream.webp.WebpDecoder;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Map;
 
@@ -46,12 +52,38 @@ public class OuterFileTexture extends AbstractTexture implements ITextureMap {
                 throw new IOException("Texture source bytes were released");
             }
             ModelMemoryProfiler.logBytes("texture-decode-start", null, textureData);
-            image = NativeImage.read(new ByteArrayInputStream(textureData));
+            image = decodeImage(textureData);
         } catch (IOException e) {
             YesSteveModel.LOGGER.warn("Failed to decode YSM texture, using fallback texture", e);
             image = createFallbackImage();
         }
         uploadImage(image);
+    }
+
+    /** Converts formats supplied by YSM models to the PNG-only NativeImage input. */
+    private static NativeImage decodeImage(byte[] textureData) throws IOException {
+        int format = YSMFolderDeserializer.detectFormat(textureData);
+        if (format != 4 && format != 5) {
+            return NativeImage.read(new ByteArrayInputStream(textureData));
+        }
+
+        BufferedImage decoded;
+        try {
+            decoded = format == 4
+                    ? new WebpDecoder().read(textureData)
+                    : new AvifDecoder().read(textureData);
+        } catch (Exception error) {
+            throw new IOException("ImageStream could not decode texture", error);
+        }
+        if (decoded == null) {
+            throw new IOException("ImageStream returned no image");
+        }
+        try (ByteArrayOutputStream png = new ByteArrayOutputStream()) {
+            if (!ImageIO.write(decoded, "png", png)) {
+                throw new IOException("No PNG writer available for decoded texture");
+            }
+            return NativeImage.read(new ByteArrayInputStream(png.toByteArray()));
+        }
     }
 
     public boolean isLoaded() {

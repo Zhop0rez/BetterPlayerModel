@@ -74,6 +74,11 @@ public final class BlurStack {
 
     public static void flush(GuiGraphicsExtractor graphics) {
         if (regions.isEmpty()) return;
+        // At the moment flush is not called on Vulkan either, but the guard is needed in case it is called again.
+        if (!GpuCompat.isGl()) {
+            regions.clear();
+            return;
+        }
         if (!BlurShader.ensureCompiled()) {
             regions.clear();
             return;

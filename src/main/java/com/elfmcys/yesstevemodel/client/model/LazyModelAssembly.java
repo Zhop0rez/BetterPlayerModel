@@ -28,11 +28,17 @@ public class LazyModelAssembly extends ModelAssembly {
     private final LazyModelDisplayAssets lazyTextureRegistry;
     private final boolean isLocal;
     private final boolean isLocalDirectory;
+    /** Connection generation captured when this lazy parse was queued. */
+    private final int syncSessionId;
 
     private ModelAssembly resolved;
     private boolean isResolving = false;
 
     public LazyModelAssembly(String modelId, File cachedFile, byte[] clientKey, boolean isAuth) {
+        this(modelId, cachedFile, clientKey, isAuth, ClientModelManager.getCurrentSyncSessionId());
+    }
+
+    public LazyModelAssembly(String modelId, File cachedFile, byte[] clientKey, boolean isAuth, int syncSessionId) {
         super(null, null, null, null, null, null, null);
         this.modelId = modelId;
         this.cachedFile = cachedFile;
@@ -40,10 +46,15 @@ public class LazyModelAssembly extends ModelAssembly {
         this.isAuth = isAuth;
         this.isLocal = false;
         this.isLocalDirectory = false;
+        this.syncSessionId = syncSessionId;
         this.lazyTextureRegistry = new LazyModelDisplayAssets(this, isAuth);
     }
 
     public LazyModelAssembly(String modelId, File cachedFile, boolean isLocalDirectory) {
+        this(modelId, cachedFile, isLocalDirectory, ClientModelManager.getCurrentSyncSessionId());
+    }
+
+    public LazyModelAssembly(String modelId, File cachedFile, boolean isLocalDirectory, int syncSessionId) {
         super(null, null, null, null, null, null, null);
         this.modelId = modelId;
         this.cachedFile = cachedFile;
@@ -51,6 +62,7 @@ public class LazyModelAssembly extends ModelAssembly {
         this.isAuth = false;
         this.isLocal = true;
         this.isLocalDirectory = isLocalDirectory;
+        this.syncSessionId = syncSessionId;
         this.lazyTextureRegistry = new LazyModelDisplayAssets(this, false);
     }
 
@@ -58,7 +70,15 @@ public class LazyModelAssembly extends ModelAssembly {
         return resolved != null;
     }
 
+    /** Returns the finished assembly without triggering a parse or fallback. */
+    public synchronized ModelAssembly getResolvedAssembly() {
+        return resolved;
+    }
+
     public synchronized ModelAssembly resolve() {
+        if (!ClientModelManager.isCurrentSyncSession(syncSessionId)) {
+            return getFallback();
+        }
         if (resolved != null) {
             return resolved;
         }
@@ -70,6 +90,9 @@ public class LazyModelAssembly extends ModelAssembly {
         
         java.util.concurrent.CompletableFuture.runAsync(() -> {
             try {
+                if (!ClientModelManager.isCurrentSyncSession(syncSessionId)) {
+                    return;
+                }
                 YesSteveModel.LOGGER.info("[BPM] Lazily loading model async: " + modelId);
                 long start = System.currentTimeMillis();
                 
@@ -93,6 +116,18 @@ public class LazyModelAssembly extends ModelAssembly {
                     }
                 }
                 
+                // The server may claim the same ID while this local task is already
+                // parsing.  Do not let that stale result race the authoritative server
+                // model back into the selector after its queue entry was removed.
+                if (!ClientModelManager.isCurrentSyncSession(syncSessionId)) {
+                    YesSteveModel.LOGGER.info("[BPM] Discarded lazy model from an old connection: " + modelId);
+                    return;
+                }
+                if (isLocal && !ClientModelManager.isLocalOnlyModel(modelId)) {
+                    YesSteveModel.LOGGER.info("[BPM] Discarded superseded local lazy model: " + modelId);
+                    return;
+                }
+
                 ClientModelInfo parsedBundle = com.elfmcys.yesstevemodel.resource.YSMClientMapper.buildParsedBundle(rawModel, modelId);
                 
                 boolean success = ClientModelManager.processModelData(parsedBundle, modelId, false, isAuth);
@@ -129,7 +164,11 @@ public class LazyModelAssembly extends ModelAssembly {
                     new com.elfmcys.yesstevemodel.resource.models.ModelProperties(1.0f, 1.0f, "", "idle", new com.elfmcys.yesstevemodel.util.data.OrderedStringMap<>(new String[0], new String[0]), new com.elfmcys.yesstevemodel.client.gui.custom.ExtraAnimationButtons[0], new com.elfmcys.yesstevemodel.util.data.StringMapPair[0], true, false, false),
                     new com.elfmcys.yesstevemodel.resource.models.MainModelInfo(0, 0, 0),
                     65535,
-                    "",
+                    // ServerModelInfo derives a compact render key from the first
+                    // eight hex characters.  A lazy fallback is rendered briefly
+                    // during a connection transition, so it needs a real sentinel
+                    // hash instead of the old empty string.
+                    "00000000000000000000000000000000",
                     "",
                     0L,
                     ""

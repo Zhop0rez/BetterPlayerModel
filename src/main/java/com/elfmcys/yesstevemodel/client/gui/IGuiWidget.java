@@ -1,6 +1,7 @@
 package com.elfmcys.yesstevemodel.client.gui;
 
 import com.elfmcys.yesstevemodel.client.model.ModelAssembly;
+import com.elfmcys.yesstevemodel.resource.models.ModelPackData;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 
@@ -20,6 +21,9 @@ public interface IGuiWidget {
     }
 
     default void onModelsUpdated(Map<String, ModelAssembly> map) {
+    }
+
+    default void onModelPacksUpdated(Map<String, ModelPackData> map) {
     }
 
     default void onSyncComplete() {

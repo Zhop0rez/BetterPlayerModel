@@ -30,6 +30,8 @@ import java.util.Arrays;
 
 public class NativeModelRenderer {
     private static final int FULL_BRIGHT_LIGHT = 0xF000F0;
+    private static boolean pathProbeLogged;
+    private static boolean pearlDebugHookLogged;
 
     private static final Matrix4f projectionModelViewMatrix = new Matrix4f();
     private static final ThreadLocal<RenderScratch> FALLBACK_SCRATCH = ThreadLocal.withInitial(RenderScratch::new);
@@ -62,6 +64,37 @@ public class NativeModelRenderer {
         // Submit-based world renders must keep the normal geometry path so the
         // entity still reaches the feature/shadow pipeline.
         boolean useGpuRenderer = allowDirectGpuRenderer && !disableGlow && textureLocation != null && SubmitRenderContext.get() == null && ModelPreviewRenderer.isWorldRender() && !isPreview && !ModelPreviewRenderer.isFirstPerson() && NativeLibLoader.isLoaded() && !GeneralConfig.USE_COMPATIBILITY_RENDERER.get() && GeneralConfig.USE_GPU_RENDERER.get();
+        if (!pathProbeLogged) {
+            pathProbeLogged = true;
+            com.elfmcys.yesstevemodel.YesSteveModel.LOGGER.info(
+                    "[BPM] renderMesh path probe: allowGpu={}, submitCtx={}, worldRender={}, preview={}, firstPerson={}, shaderPack={}, glow={}",
+                    allowDirectGpuRenderer, SubmitRenderContext.get() != null, ModelPreviewRenderer.isWorldRender(), isPreview,
+                    ModelPreviewRenderer.isFirstPerson(), OculusCompat.isShaderPackInUse(), disableGlow);
+            com.elfmcys.yesstevemodel.YesSteveModel.LOGGER.info(
+                    "[BPM] renderMesh path probe: native={}, compatRenderer={}, gpuSetting={}, boneParams={}, texLoc={}",
+                    NativeLibLoader.isLoaded(), GeneralConfig.USE_COMPATIBILITY_RENDERER.get(), GeneralConfig.USE_GPU_RENDERER.get(),
+                    boneParams != null ? boneParams.length : -1, textureLocation);
+            com.elfmcys.yesstevemodel.YesSteveModel.LOGGER.info(
+                    "[BPM] renderMesh path probe: gpuCap={}, pearlDebugFlag={}",
+                    GpuCapability.isAvailable(), Boolean.getBoolean("bpm.pearlDebug"));
+        }
+        // M1 pearl debug harness: fire on the first eligible mesh draw of ANY path.
+        // The GPU gate above can be false in submit-flush contexts (worldRender=false
+        // after LevelRenderer.render RETURN), so this hook is intentionally
+        // independent of useGpuRenderer — it only schedules a self-contained render.
+        if (!pearlDebugHookLogged
+                && textureLocation != null
+                && rip.ysm.gpu.pearl.PearlGpuPath.debugEnabled()) {
+            pearlDebugHookLogged = true;
+            com.elfmcys.yesstevemodel.YesSteveModel.LOGGER.info("[BPM] Pearl debug hook: firing from renderMesh (useGpuRenderer={})", useGpuRenderer);
+            try {
+                rip.ysm.gpu.pearl.PearlGpuPath.scheduleDebugRender(model, pose, boneParams, stateBuffer,
+                        packedLight, packedOverlay, red, green, blue, alpha, textureLocation,
+                        model.isTranslucentTexture(textureIndex));
+            } catch (Throwable t) {
+                com.elfmcys.yesstevemodel.YesSteveModel.LOGGER.warn("[BPM] Pearl debug hook failed", t);
+            }
+        }
         if (useGpuRenderer) {
             if (!GpuCapability.isAvailable()) {
                 ChatLogger.INSTANCE.logFormatted("Disabled GPU renderer for: " + GpuCapability.getReason());

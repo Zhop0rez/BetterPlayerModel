@@ -9,6 +9,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.renderpearl.api.textures.FilterMode;
 import com.mojang.renderpearl.api.textures.GpuSampler;
 import com.mojang.renderpearl.api.textures.GpuTextureView;
+import rip.ysm.gpu.pearl.PearlGpuPath;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -65,6 +66,10 @@ public final class GpuRenderPath {
             boolean translucentTexture
     ) {
         if (!GpuCapability.isAvailable()) return false;
+        if (PearlGpuPath.debugEnabled()) {
+            PearlGpuPath.scheduleDebugRender(model, pose, boneParams, stateBuffer, packedLight, packedOverlay,
+                    r, g, b, a, textureLocation, translucentTexture);
+        }
         if (!BoneSkinShader.ensureCompiled()) return false;
         if (model.bakedBones == null || model.bakedBones.isEmpty()) return false;
         stateCache.invalidate();
@@ -194,7 +199,7 @@ public final class GpuRenderPath {
         currentLights[1] = light1Scratch;
     }
 
-    private static boolean computeBoneMatrices(
+    public static boolean computeBoneMatrices(
             GeoModel model,
             Matrix4f rootPose,
             Matrix3f rootNormal,

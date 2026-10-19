@@ -40,6 +40,7 @@ public final class BlurShader {
     public static synchronized boolean ensureCompiled() {
         if (program != 0) return true;
         if (failed) return false;
+        if (!GpuCompat.isGl()) return false; // Vulkan backend: no GL context
         // RenderSystem.assertOnRenderThreadOrInit();
         try {
             int vs = ShaderUtil.compileShaderFromResource(GL20.GL_VERTEX_SHADER, "/blur.vsh");

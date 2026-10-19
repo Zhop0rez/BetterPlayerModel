@@ -13,6 +13,7 @@ import net.minecraft.network.chat.Component;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import rip.ysm.api.PlatformAPI;
+import rip.ysm.gpu.GpuCompat;
 import net.minecraft.client.KeyMapping;
 
 public final class ClientSetupEvent {
@@ -27,6 +28,13 @@ public final class ClientSetupEvent {
         }
         ClientLifecycleEvent.CLIENT_STARTED.register(client -> {
             if (!YesSteveModel.isAvailable()) {
+                return;
+            }
+            // Detect the OpenGL/Vulkan backend before ANY GL call: LWJGL aborts the
+            // JVM natively on GL calls without a GL context (uncatchable by try/catch).
+            GpuCompat.detect();
+            if (GpuCompat.isVulkan()) {
+                YesSteveModel.LOGGER.info("[BPM] Vulkan backend active: OpenGL-dependent GPU renderer disabled, CPU renderer in use");
                 return;
             }
             checkNativeInitialization();
@@ -48,6 +56,11 @@ public final class ClientSetupEvent {
     }
 
     public static Object nativeClientInit() {
+        if (!GpuCompat.isGl()) {
+            // Vulkan backend: probing GL here would abort the JVM natively.
+            // Native ysm-core (SIMD/zstd) stays loaded; GPU render path stays off.
+            return null;
+        }
         try {
             int maxTexSize = GL11.glGetInteger(GL11.GL_MAX_TEXTURE_SIZE);
             if (maxTexSize <= 0) {

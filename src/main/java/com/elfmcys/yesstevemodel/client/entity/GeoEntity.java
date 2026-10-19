@@ -134,6 +134,12 @@ public abstract class GeoEntity<T extends Entity> extends AnimatableEntity<T> {
                 }
             }
             if (shouldRebuild) {
+                // A server model can be replaced by a lazy/fallback assembly during
+                // disconnect/reconnect.  That transient assembly has no animation
+                // bundle yet; do not construct a textured wrapper from it.
+                if (assembly.getAnimationBundle() == null) {
+                    return;
+                }
                 this.renderShape = buildRenderShape(assembly, false);
             }
         }, () -> {
@@ -156,6 +162,9 @@ public abstract class GeoEntity<T extends Entity> extends AnimatableEntity<T> {
                 }
             }
             if (shouldRebuild) {
+                if (modelAssembly.getAnimationBundle() == null) {
+                    return;
+                }
                 this.renderShape = buildRenderShape(modelAssembly, true);
             }
         });

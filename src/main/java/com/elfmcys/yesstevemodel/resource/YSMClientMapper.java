@@ -1,6 +1,7 @@
 package com.elfmcys.yesstevemodel.resource;
 
 import com.elfmcys.yesstevemodel.NativeLibLoader;
+import java.io.IOException;
 import com.elfmcys.yesstevemodel.audio.AudioCodec;
 import com.elfmcys.yesstevemodel.audio.AudioTrackData;
 import com.elfmcys.yesstevemodel.client.ClientModelInfo;

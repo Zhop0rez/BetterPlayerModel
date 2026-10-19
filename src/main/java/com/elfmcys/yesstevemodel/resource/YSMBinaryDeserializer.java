@@ -65,21 +65,36 @@ public class YSMBinaryDeserializer implements AutoCloseable{
         if (format < 9 || !reader.getRawBuf().isReadable()) {
             return;
         }
-        if (format > 26) { // >26 stores a footer version number
-            model.footer.version = reader.readVarInt();
-        } else {
-            model.footer.version = format;
-        }
-        if (!reader.getRawBuf().isReadable()) return;
-        model.footer.unkInt1 = reader.readVarInt();
-        if (!reader.getRawBuf().isReadable()) return;
-        model.footer.rand = reader.readString();
-        if (!reader.getRawBuf().isReadable()) return;
-        model.footer.time = reader.readVarLong();
-        if (!reader.getRawBuf().isReadable()) return;
-        model.footer.extra = reader.readString();
-        if (format >= 24 && reader.getRawBuf().isReadable()) {
-            model.footer.unkInt2 = reader.readVarInt();
+        int footerOffset = reader.getOffset();
+        try {
+            if (format > 26) { // >26 stores a footer version number
+                model.footer.version = reader.readVarInt();
+            } else {
+                model.footer.version = format;
+            }
+            if (!reader.getRawBuf().isReadable()) return;
+            model.footer.unkInt1 = reader.readVarInt();
+            if (!reader.getRawBuf().isReadable()) return;
+            model.footer.rand = reader.readString();
+            if (!reader.getRawBuf().isReadable()) return;
+            model.footer.time = reader.readVarLong();
+            if (!reader.getRawBuf().isReadable()) return;
+            model.footer.extra = reader.readString();
+            if (format >= 24 && reader.getRawBuf().isReadable()) {
+                model.footer.unkInt2 = reader.readVarInt();
+            }
+        } catch (IndexOutOfBoundsException | IllegalArgumentException error) {
+            // Cached format-32 files from older BPM releases can end right
+            // after the model payload or use a footer layout we do not know.
+            // Footer fields are metadata only; rejecting the entire geometry
+            // here makes a valid model silently fall back to the default one.
+            reader.setOffset(footerOffset);
+            model.footer.version = 0;
+            model.footer.unkInt1 = 0;
+            model.footer.rand = "";
+            model.footer.time = 0L;
+            model.footer.extra = "";
+            model.footer.unkInt2 = 0;
         }
     }
 
@@ -272,7 +287,7 @@ public class YSMBinaryDeserializer implements AutoCloseable{
 
         }
 
-        if (format > 9) { // C++ эталон: звуки в legacy с format 10
+        if (format > 10) {
             parseSoundFiles();
             int soundTableCount = reader.readVarInt();
             for (int i = 0; i < soundTableCount; ++i) {
@@ -346,7 +361,20 @@ public class YSMBinaryDeserializer implements AutoCloseable{
             }
         }
 
-        parseYSMJson();
+        if (format == 10) {
+            // Some format-10 exports use an older optional metadata tail
+            // (buttons/classification).  The main model payload is already
+            // complete at this point, so do not reject its geometry, textures
+            // and animations merely because that non-rendering tail differs.
+            int metadataOffset = reader.getOffset();
+            try {
+                parseYSMJson();
+            } catch (IndexOutOfBoundsException | IllegalArgumentException ignored) {
+                reader.setOffset(metadataOffset);
+            }
+        } else {
+            parseYSMJson();
+        }
 
         for (int i = 0; i < tempAvatars.size(); i++) {
             RawYsmModel.RawImage avatar = tempAvatars.get(i);
@@ -783,7 +811,7 @@ public class YSMBinaryDeserializer implements AutoCloseable{
             }
 
             // Effects
-            if (format > 9) { // C++ эталон: sound_effects в анимациях с format 10
+            if (format > 10) {
                 int soundEffectsCount = reader.readVarInt();
                 for (int i = 0; i < soundEffectsCount; i++) {
                     RawYsmModel.RawSoundEffect sfx = new RawYsmModel.RawSoundEffect();

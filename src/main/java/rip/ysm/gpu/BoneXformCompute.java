@@ -16,6 +16,7 @@ public final class BoneXformCompute {
     public static synchronized boolean ensureCompiled() {
         if (program != 0) return true;
         if (failed) return false;
+        if (!GpuCompat.isGl()) return false; // Vulkan backend: no GL context
         // RenderSystem.assertOnRenderThreadOrInit();
 
         try {

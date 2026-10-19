@@ -8,12 +8,12 @@ import com.elfmcys.yesstevemodel.util.obfuscate.Keep;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.ysm.architectury.platform.Platform;
-import net.minecraft.network.chat.Component;
 import net.neoforged.fml.config.ModConfig;
+import rip.ysm.api.config.ConfigRegistration;
+import net.minecraft.network.chat.Component;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import rip.ysm.api.PlatformAPI;
-import rip.ysm.api.config.ConfigRegistration;
 
 import java.io.File;
 import java.io.IOException;

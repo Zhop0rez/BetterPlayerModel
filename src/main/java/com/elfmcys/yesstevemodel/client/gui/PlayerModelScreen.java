@@ -78,6 +78,9 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
     private int maxPage;
     private volatile boolean needsInit = false;
 
+    /** Refresh once after a lazy-loading batch settles, never once per completed model. */
+    private volatile long lazyPreviewRefreshAt = -1L;
+
     private EditBox searchBox;
 
     private Category category;
@@ -85,6 +88,8 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
     private boolean selectionMode;
 
     private final Set<String> selectedModelIds = new HashSet<>();
+
+    private Set<String> lastModelIds = Collections.emptySet();
 
     private Component selectionStatus = Component.empty();
 
@@ -115,7 +120,12 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
             this.hiddenModels.addAll(ServerConfig.CLIENT_NOT_DISPLAY_MODELS.get());
         }
         ClientModelManager.registerGuiWidget(this);
-ClientModelManager.ensureLocalModelsLoaded();
+        // On a BPM server, wait until its catalog has registered all server IDs.  A local
+        // scan then filters matching IDs but still exposes unique local models for upload.
+        // On a server without BPM there is no such catalog, so use local models directly.
+        if (!NetworkHandler.isClientConnected() || ClientModelManager.hasServerCatalog()) {
+            ClientModelManager.ensureLocalModelsLoaded();
+        }
         this.modelPackMap = new Object2ReferenceOpenHashMap<>(ClientModelManager.getModelPackMap());
     }
 
@@ -238,6 +248,7 @@ ClientModelManager.ensureLocalModelsLoaded();
             return v0.compareTo(v1);
         });
         this.maxPage = ((this.filteredModels.size() + this.filteredPacks.size()) - 1) / 10;
+        this.lastModelIds = Set.copyOf(ClientModelManager.getModelAssemblyMap().keySet());
     }
 
     private boolean isDirectChild(String str, String str2) {
@@ -502,6 +513,10 @@ ClientModelManager.ensureLocalModelsLoaded();
 
     @Override
     public void extractRenderState(GuiGraphicsExtractor extractor, int mouseX, int mouseY, float partialTick) {
+        if (this.lazyPreviewRefreshAt >= 0L && System.currentTimeMillis() >= this.lazyPreviewRefreshAt) {
+            this.lazyPreviewRefreshAt = -1L;
+            this.needsInit = true;
+        }
         if (this.needsInit) {
             this.needsInit = false;
             this.init();
@@ -913,12 +928,41 @@ ClientModelManager.ensureLocalModelsLoaded();
 
     @Override
     public void onModelsLoaded(Map<String, ModelAssembly> map) {
+        refreshPackCatalog();
         this.needsInit = true;
     }
 
     @Override
     public void onModelsUpdated(Map<String, ModelAssembly> map) {
+        // A resolved LazyModelAssembly keeps the same ID and is updated in place.  Its
+        // existing button can render the result without recreating all slots.  Rebuilding
+        // during a click destroys and recreates the input widgets mid-frame, which made a
+        // selected card appear to vanish and shifted the remaining grid.
+        if (!this.lastModelIds.equals(map.keySet())) {
+            this.needsInit = true;
+        } else {
+            // ModelButton takes its initial caption from the fallback while a lazy model
+            // is unresolved.  Refresh once after the batch completes so the caption and
+            // preview leave "default" without rebuilding the grid per model.
+            this.lazyPreviewRefreshAt = System.currentTimeMillis() + 200L;
+        }
+    }
+
+    @Override
+    public void onModelPacksUpdated(Map<String, ModelPackData> map) {
+        refreshPackCatalog();
         this.needsInit = true;
+    }
+
+    /**
+     * The server replaces its pack map whenever a full catalog arrives.  This screen keeps
+     * a mutable working copy because it also synthesizes parent folders for model paths;
+     * refresh that copy before rebuilding the buttons so obsolete folders cannot reserve
+     * slots and make clicks appear to select a different entry.
+     */
+    private void refreshPackCatalog() {
+        this.modelPackMap.clear();
+        this.modelPackMap.putAll(ClientModelManager.getModelPackMap());
     }
 
     private Optional<ModelPackData> getPackData(String str) {

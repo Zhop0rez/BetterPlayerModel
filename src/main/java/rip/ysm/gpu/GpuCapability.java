@@ -29,6 +29,11 @@ public final class GpuCapability {
             reason = "gpu renderer disabled by OYSM_DISABLE_GPU";
             return;
         }
+        if (!GpuCompat.isGl()) {
+            // No GL context under the Vulkan backend — never touch GLxx calls here.
+            reason = "Vulkan backend active: OpenGL renderer unavailable";
+            return;
+        }
         if (!NativeLibLoader.isLoaded()) {
             reason = "native ysm-core not loaded";
             return;

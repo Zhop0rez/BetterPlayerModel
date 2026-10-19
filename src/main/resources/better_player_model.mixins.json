@@ -20,6 +20,7 @@
     "client.LivingRendererMixin",
     "client.MinecraftAccessor",
     "client.PauseScreenMixin",
+    "client.RenderTypeInvoker",
     "client.ScreenAccessor",
     "client.ThrowableItemProjectileAccessor",
     "client.WorldRendererMixin",

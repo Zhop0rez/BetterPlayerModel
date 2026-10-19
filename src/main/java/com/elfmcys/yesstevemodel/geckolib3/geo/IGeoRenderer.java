@@ -42,10 +42,23 @@ public interface IGeoRenderer<T extends AnimatableEntity<?>> {
         SubmitNodeCollector collector = SubmitRenderContext.get();
         if (collector != null && vertexConsumer == null) {
             animatable.resetAnimationState();
-            float[] matrixData = Arrays.copyOf(model.getMatrixData(), model.getMatrixData().length);
-            float[] absPivotData = Arrays.copyOf(model.getAbsPivotData(), model.getAbsPivotData().length);
             boolean previewContext =
                     ModelPreviewRenderer.isPreview() || ModelPreviewRenderer.isExtraPlayer();
+            if (!previewContext
+                    && !ModelPreviewRenderer.isFirstPerson()
+                    && !rip.ysm.compat.oculus.OculusCompat.isShaderPackInUse()
+                    && rip.ysm.gpu.pearl.PearlCollectorGpuPath.trySubmit(
+                            animatable, collector, poseStack.last(), model.getGeoModel(), model.getMatrixData(), model.getAbsPivotData(),
+                            0, i2, f2, f3, f4, f5, textureLocation, model.getGeoModel().isTranslucentTexture(i))) {
+                setCurrentModelRenderCycle(EModelRenderCycle.REPEATED);
+                return;
+            }
+            // The CPU fallback executes from the collector later in the frame, so
+            // it needs stable animation snapshots.  The Vulkan path above consumes
+            // the live arrays synchronously and therefore avoids these per-frame
+            // allocations/copies entirely.
+            float[] matrixData = Arrays.copyOf(model.getMatrixData(), model.getMatrixData().length);
+            float[] absPivotData = Arrays.copyOf(model.getAbsPivotData(), model.getAbsPivotData().length);
             collector.submitCustomGeometry(poseStack, renderType, (pose, buffer) ->
                     NativeModelRenderer.renderMesh(
                             buffer, pose, model.getGeoModel(), matrixData, absPivotData,
