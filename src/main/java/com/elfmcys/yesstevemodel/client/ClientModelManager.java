@@ -74,8 +74,15 @@ public class ClientModelManager {
     private static byte[] lastKey;
     private static byte[] serverKey;
     private static byte[] clientKey;
+    public static final byte[] FIXED_CACHE_KEY = new byte[]{
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+            16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+            32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
+            48, 49, 50, 51, 52, 53, 54, 55
+    };
     private static String currentCacheFolderName;
     private static final AtomicInteger pendingModelsCount = new AtomicInteger(0);
+    private static final AtomicInteger syncSessionId = new AtomicInteger(0);
     private static final int MAX_SERVER_MODEL_BYTES = 512 * 1024 * 1024;
 
     private static final ThreadPoolExecutor modelPhraseExecutor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(),
@@ -103,9 +110,16 @@ public class ClientModelManager {
     private static final WeakHashMap<IGuiWidget, Object> guiWidgets = new WeakHashMap<>();
     private static final Set<String> localOnlyModelIds = ConcurrentHashMap.newKeySet();
     private static final Set<String> knownServerModelIds = ConcurrentHashMap.newKeySet();
+    /** Canonical (case-insensitive, slash-normalized) ID -> protocol ID from the server. */
+    private static final ConcurrentHashMap<String, String> knownServerModelIdsByCanonicalId = new ConcurrentHashMap<>();
+    /** Server upload normalization -> protocol ID, only when that normalization is unique. */
+    private static final ConcurrentHashMap<String, String> knownServerModelIdsByUploadId = new ConcurrentHashMap<>();
+    private static final Set<String> ambiguousServerUploadIds = ConcurrentHashMap.newKeySet();
     private static final ConcurrentHashMap<String, LocalModelSource> localModelSources = new ConcurrentHashMap<>();
     private static final AtomicBoolean localReloadInProgress = new AtomicBoolean(false);
     private static final AtomicBoolean localModelsLoadedOnce = new AtomicBoolean(false);
+    /** True only after this connection supplied its authoritative full model catalog. */
+    private static final AtomicBoolean serverCatalogReceived = new AtomicBoolean(false);
     private static final SyncStatus syncState = new SyncStatus();
     private static volatile boolean isOysmServer = false;
     private static volatile boolean allowUpload = false;
@@ -296,6 +310,7 @@ public class ClientModelManager {
     private static final List<ModelHash> cachedModelHashes = new ArrayList<>();
 
     private static void handlePacket03(YSMByteBuf buf) throws Exception {
+        int currentSession = syncSessionId.get();
         buf.skipGarbageHeader();
         int type = buf.readVarInt(); // expect 3
         long folderHash = buf.readVarLong();
@@ -313,7 +328,7 @@ public class ClientModelManager {
         File cacheDir = ServerModelManager.CACHE_CLIENT.resolve(currentCacheFolderName).toFile();
         if (!cacheDir.exists()) cacheDir.mkdirs();
 
-        Map<UUID, File> localCacheMap = YSMClientCache.buildCacheIndex(cacheDir, clientKey);
+        Map<UUID, File> localCacheMap = YSMClientCache.buildCacheIndex(cacheDir, FIXED_CACHE_KEY);
         List<ModelHash> modelsToRequest = new ArrayList<>();
 
         int unkSize = buf.readVarInt();
@@ -323,11 +338,16 @@ public class ClientModelManager {
         cachedModelHashes.clear();
 
         Set<String> validServerModelIds = new HashSet<>();
+        Set<String> catalogModelIds = new HashSet<>();
         List<String> previousModelIds = new ArrayList<>();
         List<String> updatedModelIds = new ArrayList<>();
         List<Boolean> isModelReadyList = new ArrayList<>();
         if (!partialSync) {
             knownServerModelIds.clear();
+            knownServerModelIdsByCanonicalId.clear();
+            knownServerModelIdsByUploadId.clear();
+            ambiguousServerUploadIds.clear();
+            serverCatalogReceived.set(false);
         }
 
         for (int i = 0; i < unkSize; i++) {
@@ -340,22 +360,46 @@ public class ClientModelManager {
             boolean isAuth = buf.readVarInt() == 1;// isAuth
             int isCustomSkinModel = buf.readVarInt();// is misc/2_steve misc/1_alex
 //            System.out.println("Received model hash: " + mHash + ", id: " + modelId + ", unk1: " + isAuth + ", unk2: " + isCustomSkinModel);
-            int version = buf.readVarInt(); // зЂµйЂ›з°¬йЏ‚е›¦ж¬ўжѕ¶и§„ж№­йЌ”зЉІз‘йђЁе‹¬ДЃйЌЁе¬¶зґќж¶“?5535
+            int version = buf.readVarInt(); // For models whose folder is not encrypted, defaults to 65535
 
             ServerModelContext ctx = new ServerModelContext(hash1, hash2, modelId, isAuth, isCustomSkinModel, version);
+            String canonicalModelId = normalizeLocalModelId(modelId);
+            // Older server metadata can preserve case while the local folder scanner
+            // normalizes it.  Register both spellings before filtering aliases so the
+            // scanner cannot add the same model beside its server counterpart.
+            knownServerModelIds.add(modelId);
+            knownServerModelIdsByCanonicalId.putIfAbsent(canonicalModelId, modelId);
+            registerServerUploadId(modelId);
+            // The selector and switch packets are keyed by model ID.  Suppress only a
+            // repeated ID: the same archive hash can legitimately be published under
+            // several distinct filenames (for example repo/1fda... and unknown/-小空).
+            // Collapsing those by hash made a valid local-world card disappear.
+            if (!catalogModelIds.add(canonicalModelId)) {
+                YesSteveModel.LOGGER.warn("[BPM] Ignoring duplicate server catalog entry: {} ({})", modelId, ctx.uuid);
+                continue;
+            }
             ServerModelContext existing = serverModels.putIfAbsent(ctx.uuid, ctx);
             if (existing != null) {
                 ctx = existing;
             }
             validServerModelIds.add(modelId);
-            knownServerModelIds.add(modelId);
-            localOnlyModelIds.remove(modelId);
-            localModelSources.remove(modelId);
+            // A model-selection screen can open in the small interval before the BPM
+            // handshake finishes.  In that case a local lazy task may already exist for
+            // this exact ID.  The server catalog is authoritative for matching IDs, so
+            // remove that queued local task and force its cached server counterpart in.
+            boolean replacingLocalModel = localOnlyModelIds.remove(canonicalModelId);
+            localModelSources.remove(canonicalModelId);
+            if (replacingLocalModel) {
+                pendingModelQueue.removeIf(entry -> canonicalModelId.equals(entry.getRight()));
+                YesSteveModel.LOGGER.info("[BPM] Server catalog replaced pre-handshake local model: {}", canonicalModelId);
+            }
 
             File cachedFile = localCacheMap.get(ctx.uuid);
-            boolean isFileValid = YSMClientCache.verifyFileContent(cachedFile, hash1, hash2, clientKey);
+            boolean isFileValid = YSMClientCache.verifyFileContent(cachedFile, hash1, hash2, FIXED_CACHE_KEY);
 
-            boolean alreadyInMemory = modelAssemblyMap != null && modelAssemblyMap.containsKey(modelId);
+            boolean alreadyInMemory = !replacingLocalModel
+                    && modelAssemblyMap != null
+                    && modelAssemblyMap.containsKey(modelId);
 
             if (isFileValid) {
                 YesSteveModel.LOGGER.info("[BPM] Cache HIT & Validated: " + ctx.uuid);
@@ -365,7 +409,7 @@ public class ClientModelManager {
                     isModelReadyList.add(isAuth);
                     incrementSyncProgress();
                 } else {
-                    LazyModelAssembly lazyAssembly = new LazyModelAssembly(modelId, cachedFile, clientKey, isAuth);
+                    LazyModelAssembly lazyAssembly = new LazyModelAssembly(modelId, cachedFile, FIXED_CACHE_KEY, isAuth, currentSession);
                     pendingModelQueue.add(Pair.of(lazyAssembly, modelId));
                     incrementSyncProgress();
                 }
@@ -418,11 +462,39 @@ public class ClientModelManager {
             parsedPacks.add(new ModelPackData(folderPath, folderName, folderDesc, iconTexture, languageData));
         }
 
-        if (!partialSync && !parsedPacks.isEmpty()) {
+        // A full catalog is authoritative even when it contains no pack entries.  Keeping
+        // the previous map in that case leaves ghost folders in an already-open selector.
+        if (!partialSync) {
             onModelPacksReceived(parsedPacks.toArray(new ModelPackData[0]));
+            // Local-only models may now be loaded safely: loadLocalModel filters IDs
+            // present in this completed server catalog, while unique local models stay
+            // selectable and available for a permitted upload.
+            serverCatalogReceived.set(true);
         }
 
         List<String> modelsToRemove = new ArrayList<>();
+        if (!partialSync) {
+            // The server normalizes upload IDs (for example "femme soule" becomes
+            // "femme_soule"), while the local scanner intentionally keeps the
+            // original folder name.  Reconcile the whole local set only after the
+            // complete catalog is known, otherwise both spellings can survive and
+            // create two cards for one server model.
+            Set<String> supersededLocalIds = new HashSet<>();
+            for (String localModelId : localOnlyModelIds) {
+                if (findKnownServerModelId(localModelId) != null) {
+                    supersededLocalIds.add(localModelId);
+                }
+            }
+            if (!supersededLocalIds.isEmpty()) {
+                localOnlyModelIds.removeAll(supersededLocalIds);
+                for (String localModelId : supersededLocalIds) {
+                    localModelSources.remove(localModelId);
+                    pendingModelQueue.removeIf(entry -> localModelId.equals(entry.getRight()));
+                }
+                modelsToRemove.addAll(supersededLocalIds);
+                YesSteveModel.LOGGER.info("[BPM] Server catalog superseded {} local model aliases.", supersededLocalIds.size());
+            }
+        }
         if (!partialSync && modelAssemblyMap != null) {
             for (String loadedId : modelAssemblyMap.keySet()) {
                 if ("default".equals(loadedId)) continue;
@@ -455,11 +527,13 @@ public class ClientModelManager {
         if (modelsToRequest.isEmpty()) {
             if (pendingModelsCount.get() == 0) {
                 modelPhraseExecutor.submit(() -> {
+                    if (syncSessionId.get() != currentSession) return;
                     YesSteveModel.LOGGER.info("[BPM-NET] CLIENT: All models loaded from local cache. Handshake complete!");
                     onSyncComplete();
                 });
             }
         } else {
+            if (syncSessionId.get() != currentSession) return;
             pendingModelsCount.addAndGet(modelsToRequest.size());
             
             int garbageLen = 16 + SECURE_RANDOM.nextInt(48);
@@ -484,6 +558,7 @@ public class ClientModelManager {
     }
 
     private static void handlePacket05(YSMByteBuf buf) throws Exception {
+        int currentSession = syncSessionId.get();
         buf.skipGarbageHeader();
         int type = buf.readVarInt();
         if (type != 5) return;
@@ -526,16 +601,17 @@ public class ClientModelManager {
             ctx.fileBuffer = null;
 
             modelPhraseExecutor.submit(() -> {
+                if (syncSessionId.get() != currentSession) return;
                 if (clientKey == null) return;
                 try {
                     String folder = currentCacheFolderName != null ? currentCacheFolderName : "default_cache";
                     File cacheDir = ServerModelManager.CACHE_CLIENT.resolve(folder).toFile();
                     if (!cacheDir.exists()) cacheDir.mkdirs();
 
-                    byte[] cachedFileData = YsmCrypt.transcodeServerDataToClientCache(fileBuffer, serverKey, clientKey, hash1, hash2);
+                    byte[] cachedFileData = YsmCrypt.transcodeServerDataToClientCache(fileBuffer, serverKey, FIXED_CACHE_KEY, hash1, hash2);
                     ModelMemoryProfiler.logBytes("download-transcoded-cache", ctx.modelId, cachedFileData);
 
-                    String legitFileName = YSMClientCache.generateCacheFileName(hash1, hash2, clientKey);
+                    String legitFileName = YSMClientCache.generateCacheFileName(hash1, hash2, FIXED_CACHE_KEY);
                     File outFile = new File(cacheDir, legitFileName);
 
                     try (FileOutputStream fos = new FileOutputStream(outFile)) {
@@ -543,16 +619,18 @@ public class ClientModelManager {
                     }
 
                     YesSteveModel.LOGGER.info("[BPM-NET] CLIENT: Downloaded & Cached model: " + ctx.modelId + " -> " + outFile.getAbsolutePath());
-                    LazyModelAssembly lazyAssembly = new LazyModelAssembly(ctx.modelId, outFile, clientKey, ctx.isAuth);
+                    LazyModelAssembly lazyAssembly = new LazyModelAssembly(ctx.modelId, outFile, FIXED_CACHE_KEY, ctx.isAuth);
                     pendingModelQueue.add(Pair.of(lazyAssembly, ctx.modelId));
                     touchModel(ctx.modelId);
                     incrementSyncProgress();
                 } catch (Exception e) {
                     YesSteveModel.LOGGER.error("[BPM] Failed to save/parse downloaded model: " + ctx.modelId, e);
                 } finally {
-                    if (pendingModelsCount.decrementAndGet() <= 0) {
-                        YesSteveModel.LOGGER.info("[BPM-NET] CLIENT: All missing models downloaded and loaded successfully! Handshake complete.");
-                        onSyncComplete();
+                    if (syncSessionId.get() == currentSession) {
+                        if (pendingModelsCount.decrementAndGet() <= 0) {
+                            YesSteveModel.LOGGER.info("[BPM-NET] CLIENT: All missing models downloaded and loaded successfully! Handshake complete.");
+                            onSyncComplete();
+                        }
                     }
                 }
             });
@@ -615,6 +693,28 @@ public class ClientModelManager {
         serverConnection = null;
 
         modelPhraseExecutor.getQueue().clear();
+        pendingModelQueue.clear();
+        syncSessionId.incrementAndGet();
+
+        // A disconnect changes the authority for every non-default model.  Keeping
+        // the old registry here made models from an integrated server remain visible
+        // when joining Paper or a vanilla server; a later local scan then added a
+        // second instance of the same card.  Retain only the built-in default model.
+        Map<String, ModelAssembly> oldModelAssemblyMap = modelAssemblyMap;
+        ModelAssembly defaultModel = oldModelAssemblyMap == null ? null : oldModelAssemblyMap.get("default");
+        Object2ReferenceOpenHashMap<String, ModelAssembly> freshModelAssemblyMap = new Object2ReferenceOpenHashMap<>();
+        if (defaultModel != null) {
+            freshModelAssemblyMap.put("default", defaultModel);
+        }
+        modelAssemblyMap = freshModelAssemblyMap;
+        localModelContext = defaultModel;
+        if (oldModelAssemblyMap != null) {
+            for (Map.Entry<String, ModelAssembly> entry : oldModelAssemblyMap.entrySet()) {
+                if (!"default".equals(entry.getKey())) {
+                    releaseModelAssembly(entry.getValue());
+                }
+            }
+        }
 
         currentCacheFolderName = null;
         pendingModelsCount.set(0);
@@ -622,6 +722,9 @@ public class ClientModelManager {
 
         serverModels.clear();
         knownServerModelIds.clear();
+        knownServerModelIdsByCanonicalId.clear();
+        knownServerModelIdsByUploadId.clear();
+        ambiguousServerUploadIds.clear();
 
         Map<String, ModelPackData> oldPreviews = modelPackMap;
         if (oldPreviews != null && !oldPreviews.isEmpty()) {
@@ -640,6 +743,9 @@ public class ClientModelManager {
         pendingModelQueue.clear();
         localOnlyModelIds.clear();
         localModelSources.clear();
+        localReloadInProgress.set(false);
+        localModelsLoadedOnce.set(false);
+        serverCatalogReceived.set(false);
         modelLastUsedAt.clear();
         gpuCacheTrimmedModels.clear();
 
@@ -650,6 +756,15 @@ public class ClientModelManager {
                 t.printStackTrace();
             }
         });
+    }
+
+    /** Whether work created for a connection is still allowed to publish results. */
+    public static boolean isCurrentSyncSession(int sessionId) {
+        return syncSessionId.get() == sessionId;
+    }
+
+    public static int getCurrentSyncSessionId() {
+        return syncSessionId.get();
     }
 
     public static SyncStatus getSyncStatus() {
@@ -676,15 +791,54 @@ public class ClientModelManager {
         return modelId != null && localOnlyModelIds.contains(modelId);
     }
 
+    public static String resolveKnownServerModelId(String modelId) {
+        if (modelId == null || knownServerModelIds.contains(modelId)) {
+            return modelId;
+        }
+        String serverModelId = findKnownServerModelId(modelId);
+        return serverModelId == null ? modelId : serverModelId;
+    }
+
+    @Nullable
+    private static String findKnownServerModelId(String modelId) {
+        if (modelId == null) {
+            return null;
+        }
+        String serverModelId = knownServerModelIdsByCanonicalId.get(normalizeLocalModelId(modelId));
+        if (serverModelId != null) {
+            return serverModelId;
+        }
+        String uploadId = normalizeUploadedModelId(modelId);
+        if (uploadId == null || ambiguousServerUploadIds.contains(uploadId)) {
+            return null;
+        }
+        return knownServerModelIdsByUploadId.get(uploadId);
+    }
+
+    private static void registerServerUploadId(String modelId) {
+        String uploadId = normalizeUploadedModelId(modelId);
+        if (uploadId == null || ambiguousServerUploadIds.contains(uploadId)) {
+            return;
+        }
+        String previous = knownServerModelIdsByUploadId.putIfAbsent(uploadId, modelId);
+        if (previous != null && !previous.equals(modelId)) {
+            knownServerModelIdsByUploadId.remove(uploadId, previous);
+            ambiguousServerUploadIds.add(uploadId);
+        }
+    }
+
     public static void removeLocalModels(Collection<String> modelIds) {
         if (modelIds == null || modelIds.isEmpty()) {
             return;
         }
+        Set<String> idsToRemove = new HashSet<>(modelIds);
+        pendingModelQueue.removeIf(entry -> idsToRemove.contains(entry.getRight()));
         ((Executor) Minecraft.getInstance()).execute(() -> {
             Object2ReferenceOpenHashMap<String, ModelAssembly> map = new Object2ReferenceOpenHashMap<>(modelAssemblyMap);
             ArrayList<ModelAssembly> removed = new ArrayList<>();
-            for (String modelId : modelIds) {
+            for (String modelId : idsToRemove) {
                 localOnlyModelIds.remove(modelId);
+                localModelSources.remove(modelId);
                 modelLastUsedAt.remove(modelId);
                 gpuCacheTrimmedModels.remove(modelId);
                 ModelAssembly assembly = map.remove(modelId);
@@ -696,9 +850,7 @@ public class ClientModelManager {
             for (ModelAssembly assembly : removed) {
                 releaseModelAssembly(assembly);
             }
-            if (!removed.isEmpty()) {
-                forEachGuiWidget(guiWidget -> guiWidget.onModelsLoaded(map));
-            }
+            forEachGuiWidget(guiWidget -> guiWidget.onModelsLoaded(map));
         });
     }
 
@@ -747,6 +899,10 @@ public class ClientModelManager {
         });
     }
 
+    public static boolean hasServerCatalog() {
+        return serverCatalogReceived.get();
+    }
+
     public static Component uploadLocalModelForSelection(String modelId) {
         if (!isLocalOnlyModel(modelId)) {
             return null;
@@ -757,7 +913,7 @@ public class ClientModelManager {
         if (!isAllowUpload()) {
             return Component.translatable("gui.better_player_model.import.error.disabled_by_server");
         }
-        if (knownServerModelIds.contains(modelId)) {
+        if (findKnownServerModelId(modelId) != null) {
             localOnlyModelIds.remove(modelId);
             return null;
         }
@@ -774,27 +930,40 @@ public class ClientModelManager {
         }
     }
 
-    public static void markLocalModelUploaded(String modelId) {
-        if (modelId == null) {
+    public static void markLocalModelUploaded(String localModelId) {
+        markLocalModelUploaded(localModelId, localModelId);
+    }
+
+    public static void markLocalModelUploaded(String localModelId, String serverModelId) {
+        if (localModelId == null) {
             return;
         }
-        knownServerModelIds.add(modelId);
-        localOnlyModelIds.remove(modelId);
-        localModelSources.remove(modelId);
+        String resolvedModelId = serverModelId == null || serverModelId.isBlank() ? localModelId : serverModelId;
+        knownServerModelIds.add(resolvedModelId);
+        knownServerModelIdsByCanonicalId.putIfAbsent(normalizeLocalModelId(resolvedModelId), resolvedModelId);
+        registerServerUploadId(resolvedModelId);
+        localOnlyModelIds.remove(localModelId);
+        localModelSources.remove(localModelId);
+        if (!localModelId.equals(resolvedModelId)) {
+            removeLocalModels(Collections.singleton(localModelId));
+        }
     }
 
     public static void reloadLocalModels(@Nullable Consumer<Component> callback) {
+        int currentSession = syncSessionId.get();
         modelPhraseExecutor.submit(() -> {
             Component error = null;
             try {
-                loadDirectoryModels(ServerModelManager.BUILT);
-                loadDirectoryModels(ServerModelManager.CUSTOM);
-                loadDirectoryModels(ServerModelManager.AUTH);
+                if (isCurrentSyncSession(currentSession)) {
+                    loadDirectoryModels(ServerModelManager.BUILT, currentSession);
+                    loadDirectoryModels(ServerModelManager.CUSTOM, currentSession);
+                    loadDirectoryModels(ServerModelManager.AUTH, currentSession);
+                }
             } catch (Exception e) {
                 YesSteveModel.LOGGER.error("[BPM] Failed to reload local model folders", e);
                 error = Component.translatable("gui.better_player_model.import.error.local_reload_failed", e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage());
             }
-            if (callback != null) {
+            if (callback != null && isCurrentSyncSession(currentSession)) {
                 Component result = error;
                 ((Executor) Minecraft.getInstance()).execute(() -> callback.accept(result));
             }
@@ -811,7 +980,7 @@ public class ClientModelManager {
             return model;
         }
 
-        // з‘™п№ЂеЅ‚жЈ°е‹«е§ћжќћ?        loadDefaultModel();
+        // Trigger preload        loadDefaultModel();
         model = localModelContext;
         if (model != null) {
             touchAssembly(model);
@@ -958,6 +1127,9 @@ public class ClientModelManager {
             }
         }
         modelPackMap = newPackMap;
+        // Pack metadata is rendered independently from model data.  Do not report this as
+        // a model update: resolving one preview would otherwise rebuild the entire grid.
+        forEachGuiWidget(guiWidget -> guiWidget.onModelPacksUpdated(modelPackMap));
     }
 
     private static void onModelContextsUpdated(String[] removedModelIds, String[] previousModelIds, String[] updatedModelIds, boolean[] isModelReady) {
@@ -1065,7 +1237,7 @@ public class ClientModelManager {
         }
     }
 
-    private static boolean loadDirectoryModels(Path baseDir) throws IOException {
+    private static boolean loadDirectoryModels(Path baseDir, int expectedSession) throws IOException {
         if (baseDir == null || !Files.isDirectory(baseDir)) {
             return false;
         }
@@ -1073,13 +1245,16 @@ public class ClientModelManager {
         Files.walkFileTree(baseDir, new SimpleFileVisitor<>() {
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
+                if (!isCurrentSyncSession(expectedSession)) {
+                    return FileVisitResult.TERMINATE;
+                }
                 if (dir.equals(baseDir)) {
                     return FileVisitResult.CONTINUE;
                 }
                 try {
                     if (YSMFolderDeserializer.isModelFolder(dir)) {
                         String modelId = normalizeLocalModelId(baseDir.relativize(dir).toString());
-                        if (registerLocalModelLazy(modelId, dir.toFile(), true)) {
+                        if (registerLocalModelLazy(modelId, dir.toFile(), true, expectedSession)) {
                             localModelSources.put(modelId, new LocalModelSource(dir.toAbsolutePath().normalize(), FileTypeUtil.getFinalPathSegment(modelId) + ".zip", true));
                             loadedAny[0] = true;
                         }
@@ -1093,6 +1268,9 @@ public class ClientModelManager {
 
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+                if (!isCurrentSyncSession(expectedSession)) {
+                    return FileVisitResult.TERMINATE;
+                }
                 String fileName = file.getFileName() == null ? "" : file.getFileName().toString();
                 String lower = fileName.toLowerCase(Locale.ROOT);
                 if (!lower.endsWith(".ysm") && !lower.endsWith(".zip")) {
@@ -1100,7 +1278,7 @@ public class ClientModelManager {
                 }
                 try {
                     String modelId = stripImportExtension(normalizeLocalModelId(baseDir.relativize(file).toString()));
-                    if (registerLocalModelLazy(modelId, file.toFile(), false)) {
+                    if (registerLocalModelLazy(modelId, file.toFile(), false, expectedSession)) {
                          localModelSources.put(modelId, new LocalModelSource(file.toAbsolutePath().normalize(), fileName, false));
                          loadedAny[0] = true;
                     }
@@ -1113,19 +1291,27 @@ public class ClientModelManager {
         return loadedAny[0];
     }
 
-    private static boolean registerLocalModelLazy(String modelId, File file, boolean isDirectory) {
+    private static boolean registerLocalModelLazy(String modelId, File file, boolean isDirectory, int expectedSession) {
+        if (!isCurrentSyncSession(expectedSession)) {
+            return false;
+        }
         if (modelId == null || modelId.isBlank()) {
             return false;
         }
-        if (knownServerModelIds.contains(modelId)) {
+        if (findKnownServerModelId(modelId) != null) {
             localOnlyModelIds.remove(modelId);
             localModelSources.remove(modelId);
             return false;
         }
-        localOnlyModelIds.add(modelId);
+        // The same model can be present in more than one local root (or both as a folder
+        // and an archive).  One model ID must produce exactly one queue entry.
+        if (!localOnlyModelIds.add(modelId)) {
+            YesSteveModel.LOGGER.info("[BPM] Ignoring duplicate local model source: {}", modelId);
+            return false;
+        }
         touchModel(modelId);
         runPendingModelCallback();
-        LazyModelAssembly lazyAssembly = new LazyModelAssembly(modelId, file, isDirectory);
+        LazyModelAssembly lazyAssembly = new LazyModelAssembly(modelId, file, isDirectory, expectedSession);
         pendingModelQueue.add(Pair.of(lazyAssembly, modelId));
         return true;
     }
@@ -1140,7 +1326,7 @@ public class ClientModelManager {
         if (modelId == null || modelId.isBlank()) {
             return false;
         }
-        if (knownServerModelIds.contains(modelId)) {
+        if (findKnownServerModelId(modelId) != null) {
             localOnlyModelIds.remove(modelId);
             localModelSources.remove(modelId);
             return false;
@@ -1168,6 +1354,19 @@ public class ClientModelManager {
 
     private static String normalizeLocalModelId(String modelId) {
         return stripImportExtension(modelId.replace('\\', '/').toLowerCase(Locale.ROOT).replaceAll("/+", "/"));
+    }
+
+    @Nullable
+    private static String normalizeUploadedModelId(String modelId) {
+        if (modelId == null) {
+            return null;
+        }
+        String normalized = stripImportExtension(modelId.trim().replace('\\', '/').toLowerCase(Locale.ROOT));
+        while (normalized.startsWith("/")) {
+            normalized = normalized.substring(1);
+        }
+        normalized = normalized.replaceAll("[^a-z0-9_./-]+", "_").replaceAll("/+", "/");
+        return normalized.isBlank() || normalized.contains("..") ? null : normalized;
     }
 
     private static byte[] readLimitedFileBytes(Path file, long maxBytes) throws IOException {
@@ -1350,7 +1549,15 @@ public class ClientModelManager {
         if (assembly == modelAssemblyMap.get("default")) {
             return;
         }
-        if (assembly instanceof LazyModelAssembly lazy && !lazy.isResolved()) {
+        if (assembly instanceof LazyModelAssembly lazy) {
+            // Never call getters on a lazy wrapper while releasing it: its getters
+            // resolve on demand and used to restart a discarded parse during world
+            // disconnect.  Only an already-built delegate owns releasable resources.
+            ModelAssembly resolvedAssembly = lazy.getResolvedAssembly();
+            if (resolvedAssembly == null) {
+                return;
+            }
+            releaseModelAssembly(resolvedAssembly);
             return;
         }
         if (!RenderSystem.isOnRenderThread()) {
@@ -1551,7 +1758,7 @@ public class ClientModelManager {
 
                 if (!cacheDir.exists() || !cacheDir.isDirectory()) {
                     if (callback != null) {
-                        callback.accept(new ExportResult(false, Component.literal("зЃЏж°­ж№­йђўз†ёећљжµ и®із¶Ќзј‚ж’із“ЁйЋґж «зґ¦зЂ›жЁ»жћѓжµ и·єгЃ™ж¶“е¶…з“ЁйЌ¦? " + folder), "", "", 0));
+                        callback.accept(new ExportResult(false, Component.translatable("error.better_player_model.export.cache_unavailable", folder), "", "", 0));
                     }
                     return;
                 }
@@ -1570,7 +1777,7 @@ public class ClientModelManager {
 
                     try {
                         byte[] fileBytes = readLimitedFileBytes(file.toPath(), MAX_SERVER_MODEL_BYTES);
-                        byte[] clearText = YsmCrypt.read(fileBytes, clientKey);
+                        byte[] clearText = YsmCrypt.read(fileBytes, FIXED_CACHE_KEY);
 
                         int coreDataLength;
                         String exportName = file.getName(); // Fallback name
@@ -1636,7 +1843,7 @@ public class ClientModelManager {
             } catch (Exception e) {
                 YesSteveModel.LOGGER.error("[BPM] Error during batch export", e);
                 if (callback != null) {
-                    callback.accept(new ExportResult(false, Component.literal("йЋµеЅ’е™єзЂµз…Ћељ­жќ©е›©в–јйЌ™ж€ ж•“ж¶“гѓ©е™ёй–їж¬’о‡¤: " + e.getMessage()), "", "", 0));
+                    callback.accept(new ExportResult(false, Component.translatable("error.better_player_model.export.batch_failed", e.getMessage()), "", "", 0));
                 }
             }
         });
