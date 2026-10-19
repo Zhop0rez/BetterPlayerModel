@@ -115,7 +115,12 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
             this.hiddenModels.addAll(ServerConfig.CLIENT_NOT_DISPLAY_MODELS.get());
         }
         ClientModelManager.registerGuiWidget(this);
-ClientModelManager.ensureLocalModelsLoaded();
+        // On a BPM server wait for the authoritative catalog, so its IDs can
+        // suppress matching local files before cards are created. Vanilla and
+        // pluginless servers still load the local catalog immediately.
+        if (!NetworkHandler.isClientConnected() || ClientModelManager.hasServerCatalog()) {
+            ClientModelManager.ensureLocalModelsLoaded();
+        }
         this.modelPackMap = new Object2ReferenceOpenHashMap<>(ClientModelManager.getModelPackMap());
     }
 

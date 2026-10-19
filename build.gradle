@@ -45,7 +45,6 @@ dependencies {
     include "com.electronwill.night-config:core:3.8.3"
     implementation "com.electronwill.night-config:toml:3.8.3"
     include "com.electronwill.night-config:toml:3.8.3"
-    compileOnly "com.terraformersmc:modmenu:15.0.0"
     
     implementation "com.github.TartaricAlkaline:ImageStream:-SNAPSHOT"
     include "com.github.TartaricAlkaline:ImageStream:-SNAPSHOT"

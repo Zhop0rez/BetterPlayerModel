@@ -29,6 +29,13 @@ public final class GpuCapability {
             reason = "gpu renderer disabled by OYSM_DISABLE_GPU";
             return;
         }
+        // 26.2 still has the old direct-OpenGL GPU renderer.  Do this check
+        // before GL.getCapabilities()/glGetString: under Vulkan either call can
+        // terminate the JVM at native level rather than raise an exception.
+        if (GpuCompat.isVulkan()) {
+            reason = "Vulkan backend is active; the 26.2 legacy OpenGL GPU path is disabled (CPU fallback)";
+            return;
+        }
         if (!NativeLibLoader.isLoaded()) {
             reason = "native ysm-core not loaded";
             return;
