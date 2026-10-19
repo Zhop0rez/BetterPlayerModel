@@ -18,7 +18,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
-import java.util.regex.Pattern;
+import java.util.Comparator;
 
 public class YsmSessionManager {
 
@@ -33,7 +33,6 @@ public class YsmSessionManager {
     private static final int MAX_FILE_NAME_LENGTH = 256;
     private static final int MAX_EXPRESSION_VALUES = 64;
     private static final short MODEL_SWITCH_FLAG = 2048;
-    private static final Pattern MODEL_ID_PATTERN = Pattern.compile("[a-z0-9_./-]+");
     private static final byte[] CLIENT_KEY = createClientKey();
     public static byte[] SERVER_KEY = new byte[56];
 
@@ -186,10 +185,18 @@ public class YsmSessionManager {
             java.nio.file.Path modelsPath = modelsDir.toPath();
             // FIX: wrap Files.walk in try-with-resources to avoid file handle leak on Windows
             try (java.util.stream.Stream<java.nio.file.Path> walk = java.nio.file.Files.walk(modelsPath)) {
-                for (java.nio.file.Path path : walk.filter(p -> {
+                java.nio.file.Path[] modelPaths = walk.filter(p -> {
                     UploadImportKind importKind = importKindFromFileName(p.getFileName().toString());
                     return importKind == UploadImportKind.YSM || importKind == UploadImportKind.ZIP;
-                }).toArray(java.nio.file.Path[]::new)) {
+                }).sorted(Comparator.comparing(p -> modelsPath.relativize(p).toString(), String.CASE_INSENSITIVE_ORDER))
+                        .toArray(java.nio.file.Path[]::new);
+                for (java.nio.file.Path path : modelPaths) {
+                    // A ZIP may be replaced by its compiled .ysm form while this
+                    // snapshot is being processed.  Do not let that stale entry abort
+                    // the complete catalog scan.
+                    if (!java.nio.file.Files.isRegularFile(path)) {
+                        continue;
+                    }
                     byte[] data = java.nio.file.Files.readAllBytes(path);
 
                     String relativePath = modelsPath.relativize(path).toString().replace('\\', '/');
@@ -223,6 +230,13 @@ public class YsmSessionManager {
                     }
 
                     ServerModel sm = createServerModel(modelId, data);
+                    if (result.containsKey(sm.modelId)) {
+                        // .ysm/.zip pairs and case/Unicode aliases can resolve to the
+                        // same wire ID.  Publish one deterministic entry only; do not
+                        // let map insertion order create duplicate selector cards.
+                        plugin.getLogger().warning("Ignoring duplicate model ID: " + sm.modelId + " (" + relativePath + ")");
+                        continue;
+                    }
                     result.put(sm.modelId, sm);
                     plugin.getLogger().info("Loaded model from disk: " + sm.modelId);
                 }
@@ -1008,10 +1022,16 @@ public class YsmSessionManager {
             }
         } while (stripped);
 
-        normalized = normalized.replaceAll("[^a-z0-9_./-]+", "_");
         normalized = normalized.replaceAll("/+", "/");
-        if (normalized.isBlank() || normalized.contains("..") || !MODEL_ID_PATTERN.matcher(normalized).matches()) {
+        if (normalized.isBlank() || normalized.contains("..") || normalized.length() > MAX_MODEL_ID_LENGTH) {
             return null;
+        }
+        for (int i = 0; i < normalized.length(); i++) {
+            char c = normalized.charAt(i);
+            if (Character.isISOControl(c) || c == '\0' || c == ':' || c == '*' || c == '?' || c == '"'
+                    || c == '<' || c == '>' || c == '|') {
+                return null;
+            }
         }
         return normalized;
     }

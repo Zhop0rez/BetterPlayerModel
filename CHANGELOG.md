@@ -1,7 +1,10 @@
 # Changelog
 
-## 1.0.1 Beta
+## 1.0.3
 
-- Potentially fixed an issue where a player joining with an empty model cache could fail to see models already selected by other players after the download completed.
-- Added bounded model-state resynchronization after catalog delivery and after the final model transfer chunk is sent.
-- The existing Better Player Model client protocol remains unchanged.
+- Stabilized the server model catalog by normalizing model IDs and ignoring duplicate entries during directory scans.
+- Reloads now replace the catalog atomically and resynchronize online players after the scan completes.
+- Improved model upload validation, duplicate-ID rejection, and cleanup of incomplete or timed-out upload sessions.
+- Added bounded model-state resynchronization after catalog delivery, model transfers, reconnects, and model selection changes.
+- Validated requested texture IDs and fall back to a valid model texture when a client requests an unavailable texture.
+- Improved compatibility with YSM archives and raw format-32 model uploads, including safer parser error handling.

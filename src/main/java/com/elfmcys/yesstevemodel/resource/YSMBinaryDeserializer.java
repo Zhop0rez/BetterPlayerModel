@@ -272,7 +272,9 @@ public class YSMBinaryDeserializer implements AutoCloseable{
 
         }
 
-        if (format > 9) { // C++ эталон: звуки в legacy с format 10
+        // Format 10 does not carry this sound section. Reading it shifts the
+        // stream and makes the next string length look enormous.
+        if (format > 10) {
             parseSoundFiles();
             int soundTableCount = reader.readVarInt();
             for (int i = 0; i < soundTableCount; ++i) {
@@ -346,7 +348,19 @@ public class YSMBinaryDeserializer implements AutoCloseable{
             }
         }
 
-        parseYSMJson();
+        if (format == 10) {
+            // Some format-10 exports use an older optional metadata tail.
+            // The render data above is complete, so retain it if that tail
+            // cannot be interpreted by the newer layout.
+            int metadataOffset = reader.getOffset();
+            try {
+                parseYSMJson();
+            } catch (IndexOutOfBoundsException | IllegalArgumentException ignored) {
+                reader.setOffset(metadataOffset);
+            }
+        } else {
+            parseYSMJson();
+        }
 
         for (int i = 0; i < tempAvatars.size(); i++) {
             RawYsmModel.RawImage avatar = tempAvatars.get(i);
@@ -783,7 +797,7 @@ public class YSMBinaryDeserializer implements AutoCloseable{
             }
 
             // Effects
-            if (format > 9) { // C++ эталон: sound_effects в анимациях с format 10
+            if (format > 10) {
                 int soundEffectsCount = reader.readVarInt();
                 for (int i = 0; i < soundEffectsCount; i++) {
                     RawYsmModel.RawSoundEffect sfx = new RawYsmModel.RawSoundEffect();
