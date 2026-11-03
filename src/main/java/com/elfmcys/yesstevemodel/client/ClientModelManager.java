@@ -658,6 +658,28 @@ public class ClientModelManager {
         pendingModelQueue.clear();
         syncSessionId.incrementAndGet();
 
+        // A disconnect changes the authority for every non-default model.  Lazy
+        // wrappers capture the sync session they were created in and resolve only
+        // to the fallback once it is over, so keeping them here made every custom
+        // model turn into the default (or an empty, invisible) model after a
+        // reconnect: the next catalog saw the stale ID as "already in memory" and
+        // never queued a fresh parse.  Retain only the built-in default model.
+        Map<String, ModelAssembly> oldModelAssemblyMap = modelAssemblyMap;
+        ModelAssembly defaultModel = oldModelAssemblyMap == null ? null : oldModelAssemblyMap.get("default");
+        Object2ReferenceOpenHashMap<String, ModelAssembly> freshModelAssemblyMap = new Object2ReferenceOpenHashMap<>();
+        if (defaultModel != null) {
+            freshModelAssemblyMap.put("default", defaultModel);
+        }
+        modelAssemblyMap = freshModelAssemblyMap;
+        localModelContext = defaultModel;
+        if (oldModelAssemblyMap != null) {
+            for (Map.Entry<String, ModelAssembly> entry : oldModelAssemblyMap.entrySet()) {
+                if (!"default".equals(entry.getKey())) {
+                    releaseModelAssembly(entry.getValue());
+                }
+            }
+        }
+
         currentCacheFolderName = null;
         pendingModelsCount.set(0);
         cachedModelHashes.clear();
@@ -1466,7 +1488,16 @@ public class ClientModelManager {
         if (assembly == modelAssemblyMap.get("default")) {
             return;
         }
-        if (assembly instanceof LazyModelAssembly lazy && !lazy.isResolved()) {
+        if (assembly instanceof LazyModelAssembly lazy) {
+            // Never call getters on a lazy wrapper while releasing it: they resolve
+            // on demand, and a wrapper from an old session resolves to the fallback,
+            // i.e. the shared default model, whose textures would then be closed.
+            // Only an already-built delegate owns releasable resources.
+            ModelAssembly resolvedAssembly = lazy.getResolvedAssembly();
+            if (resolvedAssembly == null) {
+                return;
+            }
+            releaseModelAssembly(resolvedAssembly);
             return;
         }
         if (!RenderSystem.isOnRenderThread()) {
