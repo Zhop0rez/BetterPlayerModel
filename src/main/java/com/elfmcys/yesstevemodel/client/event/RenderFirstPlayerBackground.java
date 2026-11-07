@@ -51,9 +51,11 @@ public class RenderFirstPlayerBackground {
             if (!cap.isModelActive()) {
                 return;
             }
+            cap.tickModel();
             String modelId = cap.getModelId();
             ModelAssembly modelAssembly = cap.getModelAssembly();
-            if (modelAssembly == null || !modelAssembly.getAnimationBundle().getArmModel().hasCustomLimbs) {
+            if (modelAssembly == null || modelAssembly.getAnimationBundle() == null || modelAssembly.getAnimationBundle().getArmModel() == null
+                    || !modelAssembly.getAnimationBundle().getArmModel().hasCustomLimbs) {
                 return;
             }
             CustomPlayerRenderer instance = RendererManager.getPlayerRenderer();

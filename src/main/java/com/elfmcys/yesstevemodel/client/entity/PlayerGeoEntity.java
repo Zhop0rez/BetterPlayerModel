@@ -37,7 +37,13 @@ public class PlayerGeoEntity extends GeoEntity<LocalPlayer> {
 
     @Override
     public void tickModel() {
-        if (this.playerCapability.getModelAssembly() != getModelAssembly()) {
+        // A lazy model keeps the same assembly object while it swaps the bundled
+        // default fallback for the real model.  The capability rebuilds its render
+        // shape at that moment; follow it, otherwise the arms keep the fallback's
+        // geometry/controllers but draw the new model's texture.
+        if (this.playerCapability.getModelAssembly() != getModelAssembly()
+                || this.playerCapability.getRenderShape() != getRenderShape()
+                || !java.util.Objects.equals(this.playerCapability.getModelId(), getModelId())) {
             setModelId(this.playerCapability.getModelId());
         }
     }
