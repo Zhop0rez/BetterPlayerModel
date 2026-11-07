@@ -498,6 +498,12 @@ public class PlayerModelScreen extends Screen implements IGuiWidget {
                 previewEntity.resetModel();
                 capability.ifPresent(value3 -> {
                     ModelAssembly modelAssembly2 = this.filteredModels.get(str2);
+                    if (modelAssembly2 == null || modelAssembly2.getAnimationBundle() == null) {
+                        // A lazy model whose fallback is not ready yet has no bundle;
+                        // building a card from it crashed the selector.  Retry shortly.
+                        this.lazyPreviewRefreshAt = System.currentTimeMillis() + 200L;
+                        return;
+                    }
                     boolean isAuthLocked = modelAssembly2.getTextureRegistry().isAuthModel() && !value3.getAuthModels().contains(str2);
                     previewEntity.initModelWithTexture(str2, modelAssembly2.getAnimationBundle().getDefaultTextureName());
                     previewEntity.getAnimationStateMachine().setCurrentAnimation(modelAssembly2.getModelData().getModelProperties().getPreviewAnimation());
