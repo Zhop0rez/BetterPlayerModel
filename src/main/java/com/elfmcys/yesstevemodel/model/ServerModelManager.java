@@ -1254,6 +1254,10 @@ public final class ServerModelManager {
         if (modelId == null || importKind == ImportKind.UNKNOWN || sha256 == null || !sha256.matches("[0-9a-fA-F]{64}")) {
             return UploadStartResult.reject((byte) 5, "Invalid model id or hash");
         }
+        if ("default".equals(modelId)) {
+            // "default" is the builtin model every client ships; a server copy would shadow it.
+            return UploadStartResult.reject((byte) 5, "Model ID is reserved");
+        }
         if (importKind == ImportKind.SEVEN_ZIP) {
             return UploadStartResult.reject((byte) 7, "7z import is not supported yet");
         }
