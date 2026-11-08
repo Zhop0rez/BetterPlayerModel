@@ -205,6 +205,10 @@ public class YsmSessionManager {
                         plugin.getLogger().warning("Skipping model with invalid id: " + relativePath);
                         continue;
                     }
+                    if (isReservedModelId(modelId)) {
+                        plugin.getLogger().warning("Skipping model with reserved id 'default' (the client bundles its own): " + relativePath);
+                        continue;
+                    }
 
                     try {
                         byte[] compiled = compileModelToYsm(data, modelId);
@@ -745,6 +749,12 @@ public class YsmSessionManager {
             sendUploadStartResult(player, 0L, (byte) 2, maxTotalBytes, "File exceeds server limit.");
             return;
         }
+        if (isReservedModelId(modelId)) {
+            // "default" is the model bundled with every client.  A server copy
+            // would shadow it in the catalog and break the fallback model.
+            sendUploadStartResult(player, 0L, (byte) 5, maxTotalBytes, "Model ID is reserved.");
+            return;
+        }
         if (serverModels.containsKey(modelId) || processingModelIds.contains(modelId) || hasActiveUploadForModel(modelId)) {
             sendUploadStartResult(player, 0L, (byte) 1, maxTotalBytes, "Model ID already exists.");
             return;
@@ -999,6 +1009,10 @@ public class YsmSessionManager {
 
         session.chunksInWindow++;
         return true;
+    }
+
+    private static boolean isReservedModelId(String modelId) {
+        return "default".equals(modelId);
     }
 
     private String normalizeUploadedModelId(String modelId) {
