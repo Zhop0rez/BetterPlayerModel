@@ -681,7 +681,8 @@ public class ClientModelManager {
         // reconnect: the next catalog saw the stale ID as "already in memory" and
         // never queued a fresh parse.  Retain only the built-in default model.
         Map<String, ModelAssembly> oldModelAssemblyMap = modelAssemblyMap;
-        ModelAssembly defaultModel = oldModelAssemblyMap == null ? null : oldModelAssemblyMap.get("default");
+        ModelAssembly defaultModel = builtinDefaultModel != null ? builtinDefaultModel
+                : (oldModelAssemblyMap == null ? null : oldModelAssemblyMap.get("default"));
         Object2ReferenceOpenHashMap<String, ModelAssembly> freshModelAssemblyMap = new Object2ReferenceOpenHashMap<>();
         if (defaultModel != null) {
             freshModelAssemblyMap.put("default", defaultModel);
@@ -690,7 +691,7 @@ public class ClientModelManager {
         localModelContext = defaultModel;
         if (oldModelAssemblyMap != null) {
             for (Map.Entry<String, ModelAssembly> entry : oldModelAssemblyMap.entrySet()) {
-                if (!"default".equals(entry.getKey())) {
+                if (!"default".equals(entry.getKey()) && entry.getValue() != defaultModel) {
                     releaseModelAssembly(entry.getValue());
                 }
             }
