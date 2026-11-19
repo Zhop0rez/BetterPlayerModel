@@ -31,8 +31,14 @@ public class ReplacePlayerHandRenderEvent {
                 if (!cap.isModelActive()) {
                     return;
                 }
+                // In first person the player renderer does not run for the local player,
+                // so nothing else refreshes the capability after a (lazy) model switch.
+                // Without this the arms used the new model's geometry with the previous
+                // model's texture until the model was switched again.
+                cap.tickModel();
                 ModelAssembly context = cap.getModelAssembly();
-                if (context == null || !hasArmBone(arm, context.getAnimationBundle().getArmModel())) {
+                if (context == null || context.getAnimationBundle() == null || context.getAnimationBundle().getArmModel() == null
+                        || !hasArmBone(arm, context.getAnimationBundle().getArmModel())) {
                     return;
                 }
                 RendererManager.getHandRenderer().renderHandItem(localPlayer, context, cap, arm, poseStack, collector, packedLight, Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(false));
