@@ -176,6 +176,9 @@ public abstract class LivingAnimatable<T extends LivingEntity> extends GeoEntity
 
     private void updateCurrentTexture() {
         if (isModelReady()) {
+            if (getModelAssembly().getAnimationBundle() == null) {
+                return;
+            }
             OrderedStringMap<String, ? extends AbstractTexture> map = getModelAssembly().getAnimationBundle().getTextures();
             if (map.isEmpty()) {
                 return;
@@ -222,7 +225,7 @@ public abstract class LivingAnimatable<T extends LivingEntity> extends GeoEntity
             return this.currentTextureName;
         }
         ModelAssembly modelAssembly = getModelAssembly();
-        if (modelAssembly != null && !modelAssembly.getAnimationBundle().getTextures().isEmpty()) {
+        if (modelAssembly != null && modelAssembly.getAnimationBundle() != null && !modelAssembly.getAnimationBundle().getTextures().isEmpty()) {
             return modelAssembly.getAnimationBundle().getDefaultTextureName();
         }
         return "";

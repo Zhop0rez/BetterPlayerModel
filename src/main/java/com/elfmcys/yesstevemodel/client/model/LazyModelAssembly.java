@@ -33,6 +33,8 @@ public class LazyModelAssembly extends ModelAssembly {
 
     private ModelAssembly resolved;
     private boolean isResolving = false;
+    /** Set when parsing failed; the wrapper then keeps serving the current fallback. */
+    private boolean failed = false;
 
     public LazyModelAssembly(String modelId, File cachedFile, byte[] clientKey, boolean isAuth) {
         this(modelId, cachedFile, clientKey, isAuth, ClientModelManager.getCurrentSyncSessionId());
@@ -76,6 +78,11 @@ public class LazyModelAssembly extends ModelAssembly {
         }
         if (resolved != null) {
             return resolved;
+        }
+        if (failed) {
+            // Do not freeze a fallback snapshot: it may be the empty placeholder
+            // created before the bundled default finished loading.
+            return getFallback();
         }
         ModelAssembly fallback = getFallback();
         if (isResolving) {
@@ -132,7 +139,7 @@ public class LazyModelAssembly extends ModelAssembly {
             } catch (Exception e) {
                 YesSteveModel.LOGGER.error("[BPM] Failed to lazily resolve model async: " + modelId, e);
                 synchronized (this) {
-                    resolved = getFallback();
+                    failed = true;
                     isResolving = false;
                 }
             }
@@ -147,7 +154,10 @@ public class LazyModelAssembly extends ModelAssembly {
     }
 
     private ModelAssembly getFallback() {
-        ModelAssembly defaultModel = ClientModelManager.getLocalModelContext();
+        ModelAssembly defaultModel = ClientModelManager.getBuiltinDefaultModel();
+        if (defaultModel == null || defaultModel == this) {
+            defaultModel = ClientModelManager.getLocalModelContext();
+        }
         if (defaultModel != null && defaultModel != this && !(defaultModel instanceof LazyModelAssembly)) {
             return defaultModel;
         } else {
@@ -215,6 +225,7 @@ public class LazyModelAssembly extends ModelAssembly {
     public synchronized void setResolved(ModelAssembly assembly) {
         this.resolved = assembly;
         this.isResolving = false;
+        this.failed = false;
     }
 
     public synchronized void unresolve() {

@@ -97,6 +97,14 @@ public class ClientModelManager {
 
     private static final java.security.SecureRandom SECURE_RANDOM = new java.security.SecureRandom();
     private static volatile ModelAssembly localModelContext;
+    /**
+     * The fully built bundled default model.  Unlike {@link #localModelContext}
+     * this is never a lazy wrapper, so lazy fallbacks and the model selector can
+     * always render something with a real animation bundle.
+     */
+    private static volatile ModelAssembly builtinDefaultModel;
+    /** ID of the bundled model; server catalogs and local folders may not shadow it. */
+    public static final String BUILTIN_MODEL_ID = "default";
     private static volatile Runnable pendingModelCallback;
     private static IResourceLocatable defaultTexture;
     private static volatile Connection serverConnection;
@@ -366,6 +374,14 @@ public class ClientModelManager {
             knownServerModelIds.add(modelId);
             knownServerModelIdsByCanonicalId.putIfAbsent(canonicalModelId, modelId);
             registerServerUploadId(modelId);
+            if (BUILTIN_MODEL_ID.equals(canonicalModelId)) {
+                // The client always ships its own "default"; a server entry with the
+                // same ID (usually an accidental upload of a local "default" folder)
+                // would shadow it and break every fallback that relies on it.
+                YesSteveModel.LOGGER.warn("[BPM] Ignoring server catalog entry that shadows the built-in default model ({})", ctx.uuid);
+                incrementSyncProgress();
+                continue;
+            }
             if (!catalogModelIds.add(canonicalModelId)) {
                 YesSteveModel.LOGGER.warn("[BPM] Ignoring duplicate server catalog entry: {} ({})", modelId, ctx.uuid);
                 continue;
@@ -658,6 +674,29 @@ public class ClientModelManager {
         pendingModelQueue.clear();
         syncSessionId.incrementAndGet();
 
+        // A disconnect changes the authority for every non-default model.  Lazy
+        // wrappers capture the sync session they were created in and resolve only
+        // to the fallback once it is over, so keeping them here made every custom
+        // model turn into the default (or an empty, invisible) model after a
+        // reconnect: the next catalog saw the stale ID as "already in memory" and
+        // never queued a fresh parse.  Retain only the built-in default model.
+        Map<String, ModelAssembly> oldModelAssemblyMap = modelAssemblyMap;
+        ModelAssembly defaultModel = builtinDefaultModel != null ? builtinDefaultModel
+                : (oldModelAssemblyMap == null ? null : oldModelAssemblyMap.get("default"));
+        Object2ReferenceOpenHashMap<String, ModelAssembly> freshModelAssemblyMap = new Object2ReferenceOpenHashMap<>();
+        if (defaultModel != null) {
+            freshModelAssemblyMap.put("default", defaultModel);
+        }
+        modelAssemblyMap = freshModelAssemblyMap;
+        localModelContext = defaultModel;
+        if (oldModelAssemblyMap != null) {
+            for (Map.Entry<String, ModelAssembly> entry : oldModelAssemblyMap.entrySet()) {
+                if (!"default".equals(entry.getKey()) && entry.getValue() != defaultModel) {
+                    releaseModelAssembly(entry.getValue());
+                }
+            }
+        }
+
         currentCacheFolderName = null;
         pendingModelsCount.set(0);
         cachedModelHashes.clear();
@@ -838,7 +877,7 @@ public class ClientModelManager {
     }
 
     public static Component uploadLocalModelForSelection(String modelId) {
-        if (!isLocalOnlyModel(modelId)) {
+        if (!isLocalOnlyModel(modelId) || isBuiltinModelId(modelId)) {
             return null;
         }
         if (!NetworkHandler.isClientConnected() || !isOysmServer()) {
@@ -906,6 +945,12 @@ public class ClientModelManager {
         flushPendingModels();
 
         ModelAssembly model = localModelContext;
+        if (model instanceof LazyModelAssembly && builtinDefaultModel != null) {
+            // A lazy entry must never act as the global fallback: while it parses it
+            // falls back to this very context and ends up with no animation bundle.
+            model = builtinDefaultModel;
+            localModelContext = model;
+        }
         if (model != null) {
             touchAssembly(model);
             return model;
@@ -921,9 +966,12 @@ public class ClientModelManager {
         Map<String, ModelAssembly> reg = modelAssemblyMap;
         if (reg != null && !reg.isEmpty()) {
             model = reg.get("default");
+            if (model instanceof LazyModelAssembly) {
+                model = null;
+            }
             if (model == null) {
                 for (ModelAssembly v : reg.values()) {
-                    if (v != null) {
+                    if (v != null && !(v instanceof LazyModelAssembly)) {
                         model = v;
                         break;
                     }
@@ -936,6 +984,16 @@ public class ClientModelManager {
             }
         }
         return null;
+    }
+
+    /** The bundled default model, or {@code null} before it has been built. */
+    @Nullable
+    public static ModelAssembly getBuiltinDefaultModel() {
+        return builtinDefaultModel;
+    }
+
+    public static boolean isBuiltinModelId(@Nullable String modelId) {
+        return modelId != null && BUILTIN_MODEL_ID.equals(normalizeLocalModelId(modelId));
     }
 
     public static Identifier getDefaultTexture() {
@@ -1217,6 +1275,11 @@ public class ClientModelManager {
         if (modelId == null || modelId.isBlank()) {
             return false;
         }
+        if (isBuiltinModelId(modelId)) {
+            // A local "default" folder used to be listed (and uploaded) as a separate
+            // model; the server then shadowed the bundled default with it.
+            return false;
+        }
         if (findKnownServerModelId(modelId) != null) {
             localOnlyModelIds.remove(modelId);
             localModelSources.remove(modelId);
@@ -1364,6 +1427,7 @@ public class ClientModelManager {
                 pendingModelQueue.add(Pair.of(runtimeModel, modelId));
                 touchModel(modelId);
                 if (isPrimary) {
+                    builtinDefaultModel = runtimeModel;
                     localModelContext = runtimeModel;
 
                     ((Executor) Minecraft.getInstance()).execute(() -> {
@@ -1438,6 +1502,16 @@ public class ClientModelManager {
         while (true) {
             Pair<ModelAssembly, String> pairPoll = pendingModelQueue.poll();
             if (pairPoll != null) {
+                ModelAssembly builtin = builtinDefaultModel;
+                if (builtin != null && BUILTIN_MODEL_ID.equals(pairPoll.getRight()) && pairPoll.getLeft() != builtin) {
+                    // A server or local model that happens to be called "default" must
+                    // not replace the bundled model every fallback depends on.
+                    YesSteveModel.LOGGER.warn("[BPM] Ignoring model that tries to replace the built-in default model");
+                    if (!(pairPoll.getLeft() instanceof LazyModelAssembly)) {
+                        releaseModelAssembly(pairPoll.getLeft());
+                    }
+                    continue;
+                }
                 ModelAssembly previous = object2ReferenceOpenHashMap.get(pairPoll.getRight());
                 if (previous instanceof com.elfmcys.yesstevemodel.client.model.LazyModelAssembly lazy && !(pairPoll.getLeft() instanceof com.elfmcys.yesstevemodel.client.model.LazyModelAssembly)) {
                     lazy.setResolved(pairPoll.getLeft());
@@ -1463,10 +1537,19 @@ public class ClientModelManager {
         if (assembly == null) {
             return;
         }
-        if (assembly == modelAssemblyMap.get("default")) {
+        if (assembly == modelAssemblyMap.get("default") || assembly == builtinDefaultModel) {
             return;
         }
-        if (assembly instanceof LazyModelAssembly lazy && !lazy.isResolved()) {
+        if (assembly instanceof LazyModelAssembly lazy) {
+            // Never call getters on a lazy wrapper while releasing it: they resolve
+            // on demand, and a wrapper from an old session resolves to the fallback,
+            // i.e. the shared default model, whose textures would then be closed.
+            // Only an already-built delegate owns releasable resources.
+            ModelAssembly resolvedAssembly = lazy.getResolvedAssembly();
+            if (resolvedAssembly == null) {
+                return;
+            }
+            releaseModelAssembly(resolvedAssembly);
             return;
         }
         if (!RenderSystem.isOnRenderThread()) {
